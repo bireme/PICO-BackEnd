@@ -1,13 +1,16 @@
 # PICO-BackEnd
 Search BVS via PICO (Patient, Intervention, Comparison, Outcome)
---------------------------------------------------------------------------------------------------------
-Entrega #1. 
+
+Entrega #1.
+-----------
+
 Contiene:
 1.	Integración para obtener descriptores DeCS (Plazo máximo 13/04/2019)
 2.	Integración para obtener sinónimos DeCS (Plazo máximo 18/04/2019)
 3.	Integración para obtener número de resultados de una query (Plazo máximo 23/04/2019, es parte de entrega #2)
-----------------------------------------------------------------------------------------------------------
+
 ¿Cómo se usa?
+-------------
 
 Se debe abrir index.php, el cual contiene dos formularios:
 
@@ -16,8 +19,9 @@ Se debe abrir index.php, el cual contiene dos formularios:
    separados por comas sin espacios
    
 2- Recuperador de número de resultados: Se debe introducir un query de búsqueda del cual se obtendrá el número de resultados
---------------------------------------------------------------------------------------------------------------
+  
 ¿Qué hace?
+----------
 
 LayerIntegration contiene la capa de integración, encargada de conectarse a los servicios web de bireme que entregan:
 1- Los descriptores DeCS
@@ -27,15 +31,17 @@ LayerIntegration contiene la capa de integración, encargada de conectarse a los
 Inicialmente los recupera en formato XML para posteriormente extraer la información necesitada en cada caso, y entregarla a la
 capa de negocios, BusinessLayer, en formato de texto simple y arrays para que posteriormente los controladores de negocios gestionen
 su uso.
-------------------------------------------------------------------------------------------------------------------
+
 Limitaciones y restricciones
+----------------------------
 
 Solo está construida la integración por lo que no existen controladores o funciones que se encarguen de gestionar que la información
 enviada sea correcta y no genere errores, ni que la información recibida no corresponda a errores.
-----------------------------------------------------------------------------------------------------------------
-Arquitectura y diseño
-Se diseño el sistema buscando:
 
+Arquitectura y diseño
+---------------------
+
+Se diseño el sistema buscando:
 1. Se utilizó arquitectura orientada a objetos y construcción de diagramas y paquetes para lograr trazabilidad
 2. Máxima seguridad y protección: Todos los métodos y variables tienen el mayor grado de privacidad que les permita funcionar
 3. Integridad de datos extensos: Se utilizaron POST requests para garantizar que no haya límite en el tamaño de los querys
@@ -46,4 +52,3 @@ Se diseño el sistema buscando:
    integración y la capa de negocios es el camino a través de la estrategia de contextos para integración (IntegrationStrategyContext)
    y la adyacente interfaz de integración (InterfaceIntegration) encargada de establecer el contrato de parametros para realizar la
    conexion a los distintos web service y la entrega de los resultados luego de procesar esa conexión.
--------------------------------------------------------------------------------------------------------
