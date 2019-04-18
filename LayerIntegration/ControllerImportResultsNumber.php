@@ -16,16 +16,27 @@ use \DOMDocument;
  */
 class ControllerImportResultsNumber extends ControllerImportModel {
 
+    private $Error;
+
     public function InnerObtain($params) {
+        $this->Error = false;
         $query = urlencode($params["query"]);
         $XMLObject = new ProxyReceiveResultsNumber($query);
         $this->setXMLObject($XMLObject->getResultdata());
         $this->ExtractFromXML();
+        unset($XMLObject);
     }
 
     private function ExtractFromXML() {
         $dom = new DOMDocument();
-        $xml = strval($this->getXMLObject());
+        $xml = $this->getXMLObject();
+        if (is_array($xml)) {
+            if (array_key_exists('Error', $xml)) {
+                $this->ErrorHandling($xml['Error']);
+                $this->Error = true;
+                return;
+            }
+        }
         $dom->loadxml($xml);
         $result = $dom->getElementsByTagName('result');
         if ($result->length == 0) {
@@ -34,6 +45,12 @@ class ControllerImportResultsNumber extends ControllerImportModel {
             $FinalArr = $result->item(0)->getAttribute('numFound');
         }
         $this->setResultVar($FinalArr);
+    }
+
+    private function ErrorHandling($Code) {
+        echo '</br></br>(Fatal Error): ';
+        echo $Code;
+        $this->setResultVar(array('Error'=>$Code));
     }
 
 }

@@ -8,11 +8,10 @@ use LayerBusiness\ControllerDeCSHandler;
 if (filter_has_var(INPUT_GET, 'submit')) {
 
     $keyword = $_GET['keyword'];
-    $arrayPosition = $_GET['position'];
     $langs = $_GET['languages'];
 
 
-    $obj = new ControllerDeCSHandler($keyword, $arrayPosition, $langs);
+    $obj = new ControllerDeCSHandler($keyword, $langs);
     exit;
 }
 ?>

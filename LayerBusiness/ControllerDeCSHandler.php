@@ -3,8 +3,10 @@
 namespace LayerBusiness;
 
 require_once(realpath(dirname(__FILE__)) . '/../IntegrationStrategyContext.php');
+require_once(realpath(dirname(__FILE__)) . '/../LayerEntities/ObjectDeCS.php');
 
 use StrategyContext;
+use LayerEntities\ObjectDeCS;
 
 /**
  * @access public
@@ -19,34 +21,33 @@ class ControllerDeCSHandler {
      * @param arrayPosition
      * @param langArr
      */
-    public function __construct($keyword, $position, $langs) {
-
-        $DeCSTitles = $this->getDeCSTitles($keyword);
-        $tree_id = $DeCSTitles[(int) $position]["tree_id"];
-        $DeCS = $this->getDeCS($tree_id, $langs);
-
-        $this->summary($keyword, $position, $DeCSTitles, $DeCS, $tree_id);
+    private $DeCSObject;
+    
+    public function __construct($keyword, $langs) {
+        $obj =new ObjectDeCS();
+        $this->DeCSObject= $obj;
+        $this->getDeCS($keyword, $langs);
+        $this->ShowSummary(); 
     }
 
-    private function getDeCSTitles($keyword) {
-        $strategyContextA = new StrategyContext('DeCSTitles');
-        return $strategyContextA->showResults(array('keyword' => $keyword));
-    }
-
-    private function getDeCS($tree_id, $langs) {
+    private function getDeCS($keyword,$langs) {
         $strategyContextA = new StrategyContext('DeCS');
-        return $strategyContextA->showResults(array('tree_id' => $tree_id, 'langs' => $langs));
+        $strategyContextA->obtainInfo(array('keyword' => $keyword,'langs'=>$langs,'DeCSObject' => $this->DeCSObject));
+    }
+   
+    private function buildPositionArr($positions) {
+        $Arr=explode(",",$positions);
+        return $Arr;
     }
 
-    private function summary($keyword, $position, $DeCSTitles, $DeCS, $tree_id) {
-        echo 'The DeCS descriptors for "' . $keyword . '" (' . $tree_id . ') are:</br>';
-        foreach ($DeCSTitles as $inArr) {
-            echo join($inArr, ' -> ') . '</br>';
-        }
-        echo '</br> The thesauri for "' . $DeCSTitles[$position]['term'] . '" (' . $tree_id . ') are:</br>';
-        echo join($DeCS, '</br>');
+    private function obtainInfo() {
+        $this->DeCSObject->obtainInfo();
     }
 
+    private function ShowSummary() {
+        $this->DeCSObject->ShowSummary();
+    }
+    
 }
 
 ?>

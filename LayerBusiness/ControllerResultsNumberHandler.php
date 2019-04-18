@@ -15,16 +15,18 @@ class ControllerResultsNumberHandler {
 
     public function __construct($query) {
         $ResultsNumber = $this->getResultsNumber($query);
-        $this->summary($query, $ResultsNumber);
+        if(!(is_array($ResultsNumber))){
+            $this->summary($query, $ResultsNumber);
+        }
     }
 
     private function getResultsNumber($query) {
         $strategyContextC = new StrategyContext('ResultsNumber');
-        return $strategyContextC->showResults(array('query' => $query));
+        return $strategyContextC->obtainInfo(array('query' => $query));
     }
 
     private function summary($query, $ResultsNumber) {
-        echo $ResultsNumber . " results found for this query:</br>";
+        echo '</br></br>'. $ResultsNumber . " results found for this query:</br>";
         echo $query;
     }
 
