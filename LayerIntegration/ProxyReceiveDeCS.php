@@ -13,11 +13,17 @@ use LayerIntegration\ProxyModel;
  */
 class ProxyReceiveDeCS extends ProxyModel {
 
-     function __construct($tree_id, $lang) {
+     function __construct($key, $lang,$ByKeyword) {
         $this->setBaseURL("http://decs.bvsalud.org/cgi-bin/mx/cgi=@vmx/decs/?");
-        $Fields = array('tree_id' => $tree_id,
+        if($ByKeyword==true){
+            $Fields = array('words' => $key,
             'lang' => $lang
         );
+        }else{
+            $Fields = array('tree_id' => $key,
+            'lang' => $lang
+        );
+        }        
         $this->setPOSTFields($Fields);
         $this->POSTRequest();
     }

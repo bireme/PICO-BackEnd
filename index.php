@@ -17,11 +17,9 @@ and open the template in the editor.
             <table>
                 <tbody>
                     <tr><td>KeyWord</td>
-                        <td><input type="text" name="keyword" placeholder="dengue" /> </td></tr>
-                    <tr><td>Position (number)</td>
-                        <td><input type="text" name="position" placeholder="1" /> </td></tr>
+                        <td><input type="text" name="keyword" value="dengue" /> </td></tr>
                     <tr><td>Languages (es,en,pt)</td>
-                        <td><input type="text" name="languages" placeholder="en,es,pt" /> </td></tr>
+                        <td><input type="text" name="languages" value="en,es,pt" /> </td></tr>
                 </tbody></table>
 
             <input type="submit" name="submit" />
@@ -31,7 +29,7 @@ and open the template in the editor.
             Number of results of query<br>
             <table><tbody>
                     <tr><td>Query</td>
-                        <td><input type="text" name="query" placeholder="dengue and zika" /> </td></tr>
+                        <td><input type="text" name="query" value="dengue and zika" /> </td></tr>
                     <tr><td><input type="submit" name="submit" /></td></tr>
                 </tbody></table>
 

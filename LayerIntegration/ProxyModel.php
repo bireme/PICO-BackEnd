@@ -75,7 +75,7 @@ abstract class ProxyModel {
 //create a new cURL resource
         $POSTquery = http_build_query($this->getPOSTFields());
 
-        echo '</br>(POST) Connecting to "' . $this->getBaseURL() . $POSTquery . '" : ';
+        echo '</br></br>(POST) Connecting to "' . $this->getBaseURL() . $POSTquery . '" : ';
         $ch = curl_init();
         curl_setopt($ch, CURLOPT_URL, $this->getBaseURL());
         curl_setopt($ch, CURLOPT_POST, 1);
@@ -87,17 +87,25 @@ abstract class ProxyModel {
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 
         $result = curl_exec($ch);
+
+        if (curl_error($ch)) {
+            $error_msg = curl_error($ch);
+        }
         curl_close($ch);
+
+        
+
+
+
 
 // further processing ....
 //if ($server_output == "OK") { ... } else { ... }
 
         if ($result and strlen($result) > 0) {
-            echo "(" . strlen($result) . " chars) </br>";
+            echo "(" . strlen($result) . " chars)";
             $this->setResultdata($result);
         } else {
-            echo "cURL error " . curl_strerror(curl_errno($ch));
-            $this->setResultdata(Strval(-1));
+            $this->setResultdata(array('Error' => $error_msg));
         }
     }
 

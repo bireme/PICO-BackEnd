@@ -11,12 +11,14 @@ use InterfaceIntegration;
  * @author Daniel Nieto
  * @package LayerIntegration
  */
-abstract class ControllerImportModel implements InterfaceIntegration {
+abstract class ControllerImportModel{
 
     private $ResultVar;
     private $XMLObject;
 
-    private function getResultVar() {
+    
+    
+    public function getResultVar() {
         return $this->ResultVar;
     }
 
@@ -29,7 +31,7 @@ abstract class ControllerImportModel implements InterfaceIntegration {
     }
 
     protected function setXMLObject($obj) {
-        $this->XMLObject = strval($obj);
+        $this->XMLObject = $obj;
     }
 
     public function obtainInfo($Params) {
