@@ -2,32 +2,15 @@
 
 namespace LayerIntegration;
 
-/**
- * @access public
- * @author Daniel Nieto
- * @package LayerIntegration
- */
+require_once 'vendor/autoload.php';
+require_once(realpath(dirname(__FILE__)) . '/../LayerIntegration/IntegrationExceptions.php');
+
 abstract class ProxyModel {
 
-    /**
-     * @AttributeType string
-     */
     private $baseURL;
-
-    /**
-     * @AttributeType int
-     */
     private $POSTFields;
     private $resultdata;
 
-    /**
-     * 
-     * 
-     * @return type
-     * @access private
-     * @return JSON
-     * @ReturnType JSON
-     */
     protected function getBaseURL() {
         return $this->baseURL;
     }
@@ -52,29 +35,10 @@ abstract class ProxyModel {
         $this->resultdata = $resultdata;
     }
 
-    /**
-     * @access private
-     * @return XML
-     * @ReturnType XML
-     */
-    protected function GETRequest() {
-        //API URL
-//create a new cURL resource
-        echo '</br>Connecting to "' . $this->getBaseURL() . ' --> ' . $this->getPOSTFields() . '" : ';
-        $result = file_get_contents($this->getBaseURL() . $this->getPOSTFields());
-        if ($result and strlen($result) > 0) {
-            echo "(" . strlen($result) . " chars) </br>";
-            $this->setResultdata($result);
-        } else {
-            echo "error in GET request";
-        }
-    }
+    public function POSTRequest() {
+        $start = microtime(true);
 
-    protected function POSTRequest() {
-        //API URL
-//create a new cURL resource
         $POSTquery = http_build_query($this->getPOSTFields());
-
         echo '</br></br>(POST) Connecting to "' . $this->getBaseURL() . $POSTquery . '" : ';
         $ch = curl_init();
         curl_setopt($ch, CURLOPT_URL, $this->getBaseURL());
@@ -86,27 +50,24 @@ abstract class ProxyModel {
         curl_setopt($ch, CURLOPT_HTTPHEADER, $HeaderArr);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 
+
         $result = curl_exec($ch);
-
-        if (curl_error($ch)) {
-            $error_msg = curl_error($ch);
-        }
-        curl_close($ch);
-
         
-
-
-
-
-// further processing ....
-//if ($server_output == "OK") { ... } else { ... }
-
-        if ($result and strlen($result) > 0) {
-            echo "(" . strlen($result) . " chars)";
-            $this->setResultdata($result);
-        } else {
-            $this->setResultdata(array('Error' => $error_msg));
+        $time_elapsed_secs = (int)((microtime(true) - $start)*1000);
+        echo ' ('. $time_elapsed_secs .' ms)';
+        $this->setResultdata(array('timer'=>$time_elapsed_secs,'result'=>$result));
+        
+        if (curl_error($ch)) {
+            $Ex = new ProxyConnectionException(curl_error($ch), $this->getBaseURL(), $POSTquery);
+            throw new IntegrationExceptions($Ex->build());
         }
+        curl_close($ch);        
+
+        if (!($result and strlen($result) > 0)) {
+            $Ex = new ProxyDownloadException($this->getBaseURL(), $POSTquery);
+            throw new IntegrationExceptions($Ex->build());
+        }
+        
     }
 
 }

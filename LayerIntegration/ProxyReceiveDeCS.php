@@ -1,17 +1,10 @@
 <?php
 
 namespace LayerIntegration;
-
 require_once(realpath(dirname(__FILE__)) . '/../LayerIntegration/ProxyModel.php');
-
 use LayerIntegration\ProxyModel;
 
-/**
- * @access public
- * @author Daniel Nieto
- * @package LayerIntegration
- */
-class ProxyReceiveDeCS extends ProxyModel {
+class ProxyReceiveDeCS extends ProxyModel{
 
      function __construct($key, $lang,$ByKeyword) {
         $this->setBaseURL("http://decs.bvsalud.org/cgi-bin/mx/cgi=@vmx/decs/?");
@@ -25,7 +18,6 @@ class ProxyReceiveDeCS extends ProxyModel {
         );
         }        
         $this->setPOSTFields($Fields);
-        $this->POSTRequest();
     }
 
 }
