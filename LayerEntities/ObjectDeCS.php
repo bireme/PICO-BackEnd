@@ -6,50 +6,49 @@ require_once(realpath(dirname(__FILE__)) . '/../LayerEntities/DeCSDescriptor.php
 
 use LayerEntities\DeCSDescriptor;
 
-/**
- * @access public
- * @author Daniel Nieto
- * @package LayerIntegration
- */
 class ObjectDeCS {
 
     private $DeCSList;
-    private $Error;
+    private $descendants;
+
+    public function getDescendants() {
+        return $this->descendants;
+    }
+
+    public function setDescendants($descendants) {
+        $this->descendants = $descendants;
+    }
 
     public function __construct() {
+        $this->descendants = array();
         $this->DeCSList = array();
-        $this->Error=false;
     }
 
-    public function SetError($ErrorCode) {
-        $this->DeCSList = array('Error'=>$ErrorCode);
-        $this->Error=true;
+    public function setNull() {
+        $this->DeCSList=NULL;
     }
     
+    public function isDeCSSet() {
+        return isset( $this->DeCSList);
+    }
+
     public function ShowSummary() {
         echo '</br></br>-------------------------------------------</br>Summary of results</br>-------------------------------------------</br>';
-        if($this->Error==true){
-            echo json_encode($this->DeCSList);
-            return;
-        }
         foreach ($this->DeCSList as $struct) {
             $struct->ShowSummary();
         }
     }
 
     private function DescriptorByTree($tree_id) {
-        if (array_key_exists($tree_id,$this->DeCSList)) {
+        if (array_key_exists($tree_id, $this->DeCSList)) {
             return $this->DeCSList[$tree_id];
         }
         return NULL;
     }
-    
-    public function SetDescendantsByTree($tree_id,$Descendants) {
+
+    public function SetDescendantsByTree($tree_id, $Descendants) {
         $this->DeCSList[$tree_id]->SetDescendants($Descendants);
     }
-    
-    
-    
 
     public function AddDeCSBasic($tree_id, $term, $DeCS, $isComplete) {
         $DeCSObject = $this->DescriptorByTree($tree_id);
@@ -89,7 +88,7 @@ class ObjectDeCS {
     }
 
     public function GetDeCSInfoByTree($tree_id) {
-        if (array_key_exists($tree_id,$this->DeCSList)) {
+        if (array_key_exists($tree_id, $this->DeCSList)) {
             return $this->DeCSList[$tree_id]->getDeCSInfo();
         } else {
             return -1;

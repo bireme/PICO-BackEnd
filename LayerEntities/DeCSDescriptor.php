@@ -2,11 +2,6 @@
 
 namespace LayerEntities;
 
-/**
- * @access public
- * @author Daniel Nieto
- * @package LayerIntegration
- */
 class DeCSDescriptor {
 
     private $DeCSTitle;

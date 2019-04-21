@@ -1,8 +1,6 @@
 <?php
 
-// Check if the form is submitted
 require_once(realpath(dirname(__FILE__)) . '/LayerBusiness/ControllerDeCSHandler.php');
-
 use LayerBusiness\ControllerDeCSHandler;
 
 if (filter_has_var(INPUT_GET, 'submit')) {
