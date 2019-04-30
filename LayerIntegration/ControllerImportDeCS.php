@@ -5,7 +5,9 @@ namespace LayerIntegration;
 require_once(realpath(dirname(__FILE__)) . '/../LayerIntegration/ProxyReceiveDeCS.php');
 require_once(realpath(dirname(__FILE__)) . '/../LayerIntegration/ControllerImportModel.php');
 require_once(realpath(dirname(__FILE__)) . '/../LayerIntegration/ControllerImportRelatedTrees.php');
+require_once(realpath(dirname(__FILE__)) . '/../SimpleLife/SimpleLifeMessages.php');
 
+use SimpleLife\SimpleLifeMessage;
 use LayerIntegration\ProxyReceiveDeCS;
 use LayerIntegration\ControllerImportModel;
 use LayerIntegration\ControllerImportRelatedTrees;
@@ -13,206 +15,127 @@ use \DOMDocument;
 
 class ControllerImportDeCS extends ControllerImportModel {
 
-    private $DeCSObject;
-    private $langs;
-    private $Descendants;
+    private $ObjectKeyword;
+    private $IsMainTree;
+
+//------------------------------------------------------------
+//------------------------------------------------------------
+//-THIS SECTION CONTAINS MAIN OPERATIONS----------------------
+//------------------------------------------------------------
+//------------------------------------------------------------
 
     public function InnerObtain($params) {
-        $this->langs = $params["langs"];
-        $this->DeCSObject = $params["DeCSObject"];
-
-        if (is_object($params["DeCSObject"]) == false) {
-            $Ex = new DeCSObjectNotMatch();
-            $this->DeCSObject = NULL;
-            throw new IntegrationExceptions($Ex->build());
-        }
-        if (get_class($params["DeCSObject"]) != 'LayerEntities\ObjectDeCS') {
-            $Ex = new DeCSObjectNotMatch();
-            $this->DeCSObject = NULL;
-            throw new IntegrationExceptions($Ex->build());
-        }
-
-        if (strlen($params["langs"]) == 0) {
-            $Ex = new NoLanguages();
-            $this->DeCSObject->setNull();
-            throw new IntegrationExceptions($Ex->build());
-        }
-        $langArr = explode(",", $params["langs"]);
-        if (count($langArr) == 0) {
-            $Ex = new NoArrLanguages();
-            $this->DeCSObject->setNull();
-            throw new IntegrationExceptions($Ex->build());
-        }
-
-        foreach ($langArr as $lang) {
-            if (!($lang == "es" || $lang == "en" || $lang == "pt")) {
-                $Ex = new UnrecognizedLanguage($lang);
-                $this->DeCSObject->setNull();
-                throw new IntegrationExceptions($Ex->build());
+        try {
+            if (!(array_key_exists('ObjectKeyword', $params))) {
+                throw new SimpleLifeException(new \SimpleLife\ObjectKeywordNotMatch());
             }
-        }
-
-        $this->Error = false;
-        if (array_key_exists('keyword', $params)) {
-            $MaximumQuerySize = 5000;
-            $keyword = str_replace("  ", " ", $params["keyword"]);
-            $keyword = str_replace(" ", "*", trim($keyword));
-            if (strlen($keyword) == 0) {
-                $Ex = new EmptyKeyword();
-                $this->DeCSObject->setNull();
-                throw new IntegrationExceptions($Ex->build());
+            $this->timeSum = $params['timeSum'];
+            $this->ObjectKeyword = $params['ObjectKeyword'];
+            if (is_object($this->ObjectKeyword) == false) {
+                throw new SimpleLifeException(new \SimpleLife\ObjectKeywordNotMatch());
             }
-            if (strlen($keyword) > $MaximumQuerySize) {
-                $Ex = new KeywordTooLarge(strlen($keyword), $MaximumQuerySize);
-                throw new IntegrationExceptions($Ex->build());
+            if (get_class($this->ObjectKeyword) != 'LayerEntities\ObjectKeyword') {
+                throw new SimpleLifeException(new \SimpleLife\ObjectKeywordNotMatch());
             }
-            $ByKeyword = true;
-            try {
-                $this->InnerObtainByLang($langArr, $keyword, $ByKeyword);
-            } catch (IntegrationExceptions $exc) {
-                if ($exc->HandleError()) {
-                    $this->DeCSObject->setNull();
-                    $Ex = new SuspendingDeCSError();
-                    throw new IntegrationExceptions($Ex->build(),$exc->PreviousUserErrorCode());
+            if (!(array_key_exists('SimpleLifeMessage', $params))) {
+                $this->SimpleLifeMessage = new SimpleLifeMessage('[Retrieveing deCS] Keyword= ' . $this->ObjectKeyword->getKeyword() . ' Langs =' . json_encode($this->ObjectKeyword->getLang()));
+            } else {
+                $this->SimpleLifeMessage = $params["SimpleLifeMessage"];
+            }
+            if (!(array_key_exists('tree_id', $params))) {
+                $this->IsMainTree = true;
+                $this->SimpleLifeMessage->AddEmptyLine();
+                $this->SimpleLifeMessage->Add('Initial Trees: ');
+                $fun = $this->InnerObtainByLang($this->ObjectKeyword->getKeyword());
+                if ($fun) {
+                    return $fun;
                 }
-            }
-        } else {
-            $tree_list = $params["tree_list"];
-            $ByKeyword = false;
-            foreach ($tree_list as $tree_id) {
-                try {
-                    $this->InnerObtainByLang($langArr, $tree_id, $ByKeyword);
-                } catch (IntegrationExceptions $exc) {
-                    if ($exc->HandleError()) {
-                        $this->DeCSObject->setNull();
-                        $Ex = new SuspendingDeCSError();
-                        throw new IntegrationExceptions($Ex->build(),$exc->PreviousUserErrorCode());
-                    }
+            } else {
+                $tree_id = $params['tree_id'];
+                $this->IsMainTree = false;
+                $fun = $this->InnerObtainByLang($tree_id);
+                if ($fun) {
+                    return $fun;
                 }
+                $this->ObjectKeyword->SetRelatedTreeAsExplored($tree_id);
             }
+            $this->ExploreTreesAndDescendants();
+
+            if ($this->IsMainTree == true) {
+                $this->SimpleLifeMessage->SendAsLog();
+            }
+        } catch (SimpleLifeException $exc) {
+            return $exc->PreviousUserErrorCode();
         }
-        $Descendants = $this->DeCSObject->getDescendants();
-        if (count($Descendants) > 0) {
-            $RelatedTrees = new ControllerImportRelatedTrees($this->DeCSObject, $Descendants, $this->langs);
-            try {
-                $RelatedTrees->ExploreRelatedTrees();
-            } catch (IntegrationExceptions $exc) {
-                if ($exc->HandleError()) {
-                    $this->DeCSObject->setNull();
-                    $Ex = new SuspendingDeCSError();
-                    throw new IntegrationExceptions($Ex->build(),$exc->PreviousUserErrorCode());
-                }
-            } finally {
-                $this->addTimer($RelatedTrees->getTimer());
+    }
+
+    private function ExploreTreesAndDescendants() {
+        $RelatedList = $this->ObjectKeyword->GetAllUnexploredTrees();
+        if (count($RelatedList) > 0) {
+            $RelatedTrees = new ControllerImportRelatedTrees($this->ObjectKeyword, $this->SimpleLifeMessage, $this->timeSum);
+
+            $fun = $RelatedTrees->ExploreRelatedTrees();
+            if ($fun) {
+                return $fun;
             }
         }
     }
 
-    public function InnerObtainByLang($langArr, $key, $ByKeyword) {
-        $ResultsArr = array();
+//------------------------------------------------------------
+//------------------------------------------------------------
+//-THIS SECTION CONTAINS EXPLORING BY LANGUAGES----------------------
+//------------------------------------------------------------
+//------------------------------------------------------------
+
+    public function InnerObtainByLang($key) {
         $i = 0;
-        foreach ($langArr as $lang) {
+        foreach ($this->ObjectKeyword->getLang() as $lang) {
             $CheckDescendants = true;
             $isComplete = false;
-            if ($i > 0 & $ByKeyword == false) {
+            if ($i > 0 and ( $this->IsMainTree == false)) {
                 $CheckDescendants = false;
             }
-            if ($i == count($langArr) - 1) {
+            if ($i == count($this->ObjectKeyword->getLang()) - 1) {
                 $isComplete = true;
             }
-            try {
-                $this->getDeCSOneLang($key, $lang, $CheckDescendants, $isComplete, $ByKeyword);
-            } catch (IntegrationExceptions $exc) {
-                if ($exc->HandleError()) {
-                    $Ex = new JustReturnException();
-                    throw new IntegrationExceptions($Ex->build(),$exc->PreviousUserErrorCode());
-                }
+
+
+            $fun = $this->getDeCSOneLang($key, $lang, $CheckDescendants, $isComplete);
+            if ($fun) {
+                return $fun;
             }
             $i++;
         }
     }
 
-    private function getDeCSOneLang($key, $lang, $CheckDescendants, $isComplete, $ByKeyword) {
-        try {
-            $XMLObject = new ProxyReceiveDeCS($key, $lang, $ByKeyword);
-            $XMLObject->POSTRequest();
-        } catch (IntegrationExceptions $exc) {
-            if ($exc->HandleError()) {
-                $Ex = new JustReturnException();
-                throw new IntegrationExceptions($Ex->build(),$exc->PreviousUserErrorCode());
-            }
-        } finally {
-            $result = $XMLObject->getResultdata();
-            $timer = $result['timer'];
-            $this->addTimer($timer);
+    private function getDeCSOneLang($key, $lang, $CheckDescendants, $isComplete) {
+        $XMLObject = new ProxyReceiveDeCS($key, $lang, $this->IsMainTree, $this->timeSum);
+        $fun = $XMLObject->POSTRequest();
+        if ($fun) {
+            return $fun;
         }
-        $result = $result['result'];
-
-
+        $preresult = $XMLObject->getResultdata();
+        $result = $preresult['result'];
         $this->setXMLObject($result);
-
-        try {
-            $this->ExtractFromXML($key, $CheckDescendants, $isComplete, $ByKeyword, $lang);
-        } catch (IntegrationExceptions $exc) {
-            if ($exc->HandleError()) {
-                $Ex = new JustReturnException();
-                throw new IntegrationExceptions($Ex->build(),$exc->PreviousUserErrorCode());
-            }
+        $fun = $this->ExtractFromXML($key, $CheckDescendants, $isComplete, $lang);
+        if ($fun) {
+            return $fun;
         }
-        unset($XMLObject);
+        $timer = $preresult['timer'];
+        $this->addTimer($timer);
+        $this->ObjectKeyword->setConnectionTime($timer);
     }
 
-    private function PushToDeCSObject($tree_id, $term, $DeCSArr, $isComplete) {
-        $this->DeCSObject->AddDeCSBasic($tree_id, $term, $DeCSArr, $isComplete);
+    private function PushToKeywordObject($tree_id, $term, $DeCSArr, $isComplete, $lang) {
+        $msg = $this->ObjectKeyword->AddDeCSBasic($tree_id, $term, $DeCSArr, $isComplete, $lang);
+        $this->SimpleLifeMessage->AddAsNewLine($msg);
     }
 
-    private function getDescendants($item, $ByKeyword) {
-        $descendantsArr = array();
-        $treesArr = array();
-
-        try {
-            $DeCSTitle = $item->getElementsByTagName('self')->item(0)->getElementsByTagName('term')->item(0);
-            $tree_id = $DeCSTitle->getAttribute('tree_id');
-            if (strlen($tree_id) == 0) {
-                throw 'no data';
-            }
-        } catch (Exception $exc) {
-            $Ex = new CouldntGetItemTreeId();
-            throw new IntegrationExceptions($Ex->build());
-        }
-
-        if ($ByKeyword == true) {
-            $descendants = array();
-            array_push($treesArr, $tree_id);
-        } else {
-            $descendants = $item->getElementsByTagName('descendants')->item(0)->getElementsByTagName('term');
-        }
-
-        $trees = $item->getElementsByTagName('record_list')->item(0)->getElementsByTagName('tree_id_list')->item(0);
-        $trees = $trees->getElementsByTagName('tree_id');
-
-        foreach ($descendants as $obj) {
-            array_push($descendantsArr, $obj->getAttribute('tree_id'));
-        }
-        foreach ($trees as $obj) {
-            array_push($treesArr, $obj->nodeValue);
-        }
-        $treesArr = array_unique($treesArr);
-        if ($ByKeyword == false) {
-            $this->DeCSObject->SetDescendantsByTree($tree_id, $descendantsArr);
-            echo '</br>Descendants:{' . join($descendantsArr, ', ') . '} ';
-        }
-        echo '   Trees:{' . join($treesArr, ', ') . '}</br>';
-        $finalArr = array_merge($descendantsArr, $treesArr);
-
-        if (count($finalArr) == 0) {
-            $Ex = new NoDescendantsNorTrees($tree_id, $lang);
-            throw new IntegrationExceptions($Ex->build());
-        }
-
-        $finalArr = array_unique(array_merge($this->DeCSObject->getDescendants(), $finalArr));
-        $this->DeCSObject->setDescendants($finalArr);
-    }
+//------------------------------------------------------------
+//------------------------------------------------------------
+//-THIS SECTION CONTAINS XML EXPLORATION---------------------
+//------------------------------------------------------------
+//------------------------------------------------------------
 
     private function getDeCS($item, $isComplete, $lang) {
 
@@ -226,62 +149,107 @@ class ControllerImportDeCS extends ControllerImportModel {
         foreach ($DeCS as $item) {
             array_push($FinalArr, $item->nodeValue);
         }
-        if (count($FinalArr) == 0) {
-            $Ex = new NoSynonymsFound($tree_id, $lang);
-            throw new IntegrationExceptions($Ex->build());
+        try {
+            if (count($FinalArr) == 0) {
+                throw new SimpleLifeException(new \SimpleLife\NoSynonymsFound($tree_id, $lang));
+            }
+            $this->PushToKeywordObject($tree_id, $DeCSTitle, $FinalArr, $isComplete, $lang);
+        } catch (SimpleLifeException $exc) {
+            return $exc->PreviousUserErrorCode();
         }
-        $this->PushToDeCSObject($tree_id, $DeCSTitle, $FinalArr, $isComplete);
     }
 
-    private function ExtractFromXML($keyword, $CheckDescendants, $isComplete, $ByKeyword, $lang) {
-        $dom = new DOMDocument();
-        $xml = $this->getXMLObject();
-        if (is_array($xml)) {
-            if (array_key_exists('Error', $xml)) {
-                $Ex = new ErrorTagInXML($keyword);
-                throw new IntegrationExceptions($Ex->build());
-            }
-        }
+    private function getDescendants($item) {
 
+            $descendantsArr = array();
+            $treesArr = array();
+            $DeCSTitle = $item->getElementsByTagName('self')->item(0)->getElementsByTagName('term')->item(0);
+            $tree_id = $DeCSTitle->getAttribute('tree_id');
+            if (strlen($tree_id) == 0) {
+                throw 'no data';
+            }
+
+            if ($this->IsMainTree == true) {
+                $descendants = array();
+                array_push($treesArr, $tree_id);
+            } else {
+                $descendants = $item->getElementsByTagName('descendants')->item(0)->getElementsByTagName('term');
+            }
+
+            $trees = $item->getElementsByTagName('record_list')->item(0)->getElementsByTagName('tree_id_list')->item(0);
+            $trees = $trees->getElementsByTagName('tree_id');
+
+            foreach ($descendants as $obj) {
+                array_push($descendantsArr, $obj->getAttribute('tree_id'));
+            }
+            foreach ($trees as $obj) {
+                array_push($treesArr, $obj->nodeValue);
+            }
+            $descendantsArr = array_unique($descendantsArr);
+            $treesArr = array_unique($treesArr);
+            $msg = '';
+            if ($this->IsMainTree == false) {
+                $this->ObjectKeyword->SetDescendantsByTree($tree_id, $descendantsArr);
+                $msg = $msg . ' --> Descendants:{' . join($descendantsArr, ', ') . '} . ';
+                $msg = $msg . 'Trees:{' . join($treesArr, ', ') . '}';
+            } else {
+                $msg = $msg . '  {' . join($treesArr, ', ') . '}';
+            }
+            $this->SimpleLifeMessage->Add($msg);
+            $finalArr = array_merge($descendantsArr, $treesArr);
         try {
-            $dom->loadxml($xml);
-        } catch (Exception $exc) {
-            $Ex = new XMLLoadException($exc->ToString());
-            throw new IntegrationExceptions($Ex->build());
-        }
-        if ($dom->getElementsByTagName('decsvmx')->length == 0) {
-            $Ex = new XMLNotBiremeType();
-            throw new IntegrationExceptions($Ex->build());
-        }
+            if (count($finalArr) == 0) {
+                throw new SimpleLifeException(new \SimpleLife\NoDescendantsNorTrees($tree_id, $lang));
+            }
 
-        $result = $dom->getElementsByTagName('decsws_response');
-        if ($result->length == 0) {
-            $Ex = new NoResponsesException($keyword, $lang);
-            throw new IntegrationExceptions($Ex->build());
+            $this->ObjectKeyword->AddKeywordRelatedTrees($finalArr);
+        } catch (Exception $exc) {
+            return $exc->PreviousUserErrorCode();
         }
-        foreach ($result as $item) {
-            if ($ByKeyword == false) {
-                try {
-                    $this->getDeCS($item, $isComplete, $lang);
-                } catch (IntegrationExceptions $exc) {
-                    if ($exc->HandleError()) {
-                        $Ex = new JustReturnException();
-                        throw new IntegrationExceptions($Ex->build(),$exc->PreviousUserErrorCode());
+    }
+
+    private function ExtractFromXML($keyword, $CheckDescendants, $isComplete, $lang) {
+        try {
+            $dom = new DOMDocument();
+            $xml = $this->getXMLObject();
+            if (is_array($xml)) {
+                if (array_key_exists('Error', $xml)) {
+                    throw new SimpleLifeException(new \SimpleLife\ErrorTagInXML($keyword));
+                }
+            }
+            try {
+                $dom->loadxml($xml);
+            } catch (Exception $exc) {
+                throw new SimpleLifeException(new \SimpleLife\XMLLoadException($exc->ToString()));
+            }
+
+            if ($dom->getElementsByTagName('decsvmx')->length == 0) {
+                //throw new SimpleLifeException(new \SimpleLife\XMLNotBiremeType());
+            }
+
+            $result = $dom->getElementsByTagName('decsws_response');
+            if ($result->length == 0) {
+                //throw new SimpleLifeException(new \SimpleLife\NoResponsesException($keyword, $lang));
+            }
+
+            foreach ($result as $item) {
+                if ($this->IsMainTree == false) {
+                    $fun = $this->getDeCS($item, $isComplete, $lang);
+                    if ($fun) {
+                        return $fun;
+                    }
+                }
+                if ($CheckDescendants == true) {
+                    $fun = $this->getDescendants($item);
+                    if ($fun) {
+                        return $fun;
                     }
                 }
             }
-            if ($CheckDescendants == true) {
-                try {
-                    $this->getDescendants($item, $ByKeyword);
-                } catch (IntegrationExceptions $exc) {
-                    if ($exc->HandleError()) {
-                        $Ex = new JustReturnException();
-                        throw new IntegrationExceptions($Ex->build(),$exc->PreviousUserErrorCode());
-                    }
-                }
-            }
+            unset($xml);
+        } catch (SimpleLifeException $exc) {
+            return $exc->PreviousUserErrorCode();
         }
-        unset($xml);
     }
 
 }

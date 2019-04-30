@@ -4,11 +4,20 @@ namespace LayerEntities;
 
 class DeCSDescriptor {
 
-    private $DeCSTitle;
-    private $Tree_id;
+    private $tree_id;
+    private $term;
     private $DeCS;
     private $Complete;
     private $Descendants;
+
+    public function __construct($tree_id, $term, $DeCS) {
+        $this->tree_id = $tree_id;
+        $this->term = $term;
+        $this->DeCS = $DeCS;
+        $this->Complete = false;
+        $this->Descendants = array();
+        $this->isSelected = false;
+    }
 
     function IsComplete() {
         return $this->Complete;
@@ -18,39 +27,32 @@ class DeCSDescriptor {
         $this->Complete = true;
     }
 
-    public function __construct($tree_id, $term, $DeCS) {
-        $this->DeCSTitle = $term;
-        $this->Tree_id = $tree_id;
-        $this->DeCS = $DeCS;
-        $this->Complete = false;
-        $this->Descendants=array();
-    }
-
-    public function getDeCSInfo() {
-        return array('term' => $DeCSTitle, 'tree_id' => $Tree_id, 'DeCS' => $DeCS,'Descendants' => $Descendants );
-    }
-
     public function ID() {
-        return $this->Tree_id;
+        return $this->tree_id;
     }
-    
+
+    public function getTerm() {
+        return $this->term;
+    }
+
     public function SetDescendants($Descendants) {
-        $this->Descendants=$Descendants;
+        $this->Descendants = $Descendants;
     }
 
-    public function ShowSummary() {
-        echo '</br>' . $this->DeCSTitle . '(';
-        echo $this->Tree_id . ') Descendants:{'.join($this->Descendants,', ').'}';
-        echo '</br>' . join($this->DeCS, ", ") . '</br>';
+    public function GetDescendants() {
+        return $this->Descendants;
     }
-    
+
+    public function GetDescendantsAsString() {
+        return '{' . join($this->Descendants, ', ') . '}';
+    }
+
     public function setDeCS($DeCS) {
-        $Final=array_merge($this->DeCS,$DeCS);
-        $this->DeCS = array_unique($Final);
+        $this->DeCS = array_unique(array_merge($this->DeCS, $DeCS));
     }
 
-    private function UniqueSynonym() {
-        $this->DeCS = array_unique($this->DeCS);
+    public function getDeCS() {
+        return $this->DeCS;
     }
 
 }

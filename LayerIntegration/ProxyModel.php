@@ -2,14 +2,16 @@
 
 namespace LayerIntegration;
 
-require_once 'vendor/autoload.php';
-require_once(realpath(dirname(__FILE__)) . '/../LayerIntegration/IntegrationExceptions.php');
+use SimpleLife\SimpleLifeException;
+use SimpleLife\SimpleLifeMessage;
 
 abstract class ProxyModel {
 
     private $baseURL;
     private $POSTFields;
     private $resultdata;
+    protected $timeSum;
+    private $SimpleLifeMessage;
 
     protected function getBaseURL() {
         return $this->baseURL;
@@ -36,10 +38,10 @@ abstract class ProxyModel {
     }
 
     public function POSTRequest() {
-        $start = microtime(true);
 
+        $timer = new \Simplelife\Timer();
         $POSTquery = http_build_query($this->getPOSTFields());
-        echo '</br></br>(POST) Connecting to "' . $this->getBaseURL() . $POSTquery . '" : ';
+        $this->SimpleLifeMessage = new SimpleLifeMessage('(POST) Connecting to "' . $this->getBaseURL() . $POSTquery . '" : ');
         $ch = curl_init();
         curl_setopt($ch, CURLOPT_URL, $this->getBaseURL());
         curl_setopt($ch, CURLOPT_POST, 1);
@@ -49,25 +51,24 @@ abstract class ProxyModel {
         curl_setopt($ch, CURLOPT_POSTFIELDS, $POSTquery);
         curl_setopt($ch, CURLOPT_HTTPHEADER, $HeaderArr);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-
-
         $result = curl_exec($ch);
-        
-        $time_elapsed_secs = (int)((microtime(true) - $start)*1000);
-        echo ' ('. $time_elapsed_secs .' ms)';
-        $this->setResultdata(array('timer'=>$time_elapsed_secs,'result'=>$result));
-        
-        if (curl_error($ch)) {
-            $Ex = new ProxyConnectionException(curl_error($ch), $this->getBaseURL(), $POSTquery);
-            throw new IntegrationExceptions($Ex->build());
+        $time_elapsed_secs = $timer->Stop();
+        $this->SimpleLifeMessage->Add('(' . $time_elapsed_secs . 'ms )');
+        $this->timeSum->AddTime($time_elapsed_secs);
+        $this->setResultdata(array('timer' => $time_elapsed_secs, 'result' => $result));
+        try {
+            if (curl_error($ch)) {
+                throw new SimpleLifeException(new \SimpleLife\ProxyConnectionException(curl_error($ch), $this->getBaseURL(), $POSTquery));
+            }
+            $this->SimpleLifeMessage->SendAsLog();
+            if (!($result and strlen($result) > 0)) {
+                throw new SimpleLifeException(new \SimpleLife\ProxyDownloadException($this->getBaseURL(), $POSTquery));
+            }
+        } catch (SimpleLifeException $exc) {
+            return $exc->PreviousUserErrorCode();
+        } finally {
+            curl_close($ch);
         }
-        curl_close($ch);        
-
-        if (!($result and strlen($result) > 0)) {
-            $Ex = new ProxyDownloadException($this->getBaseURL(), $POSTquery);
-            throw new IntegrationExceptions($Ex->build());
-        }
-        
     }
 
 }
