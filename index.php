@@ -11,11 +11,17 @@
             <br>
             <table>
                 <tbody>
-                    <tr><td>KeyWord</td>
-                        <td><input type="text" name="keyword" value="dengue" /> </td></tr>
-                    <tr><td>Languages (es,en,pt)</td>
-                        <td><input type="text" name="languages" value="en,es,pt" /> </td></tr>
-                </tbody></table>
+                    <tr><td>Query</td>
+                        <td><input type="text" name="Equation" value="dengue" /> </td></tr>
+                    <tr><td>Languages </td><td>
+                            <ul>
+                                <li><input type="checkbox" name="Languages[]" value="en" checked />English </li>
+                                <li><input type="checkbox" name="Languages[]" value="es" />Spanish </li>
+                                <li><input type="checkbox" name="Languages[]" value="pt" />Portuguese </li>
+                            </ul>
+                        </td></tr>
+                </tbody>
+            </table>
 
             <input type="submit" name="submit" />
         </form>

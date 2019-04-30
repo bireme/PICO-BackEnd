@@ -3,38 +3,45 @@
 namespace LayerBusiness;
 
 require_once(realpath(dirname(__FILE__)) . '/../IntegrationStrategyContext.php');
-require_once(realpath(dirname(__FILE__)) . '/../LayerEntities/ObjectDeCS.php');
+require_once(realpath(dirname(__FILE__)) . '/../SimpleLife/ManualExceptions.php');
 
 use StrategyContext;
-use LayerEntities\ObjectDeCS;
+use SimpleLife\SimpleLifeException;
 
 class ControllerDeCSHandler {
 
-    private $DeCSObject;
+    private $ObjectKeyWord;
 
-    public function __construct($keyword, $langs) {
-        $obj = new ObjectDeCS();
-        $this->DeCSObject = $obj;
-        $this->getDeCS($keyword, $langs);
+    public function __construct($ObjectKeyWord) {
+        $this->ObjectKeyWord = $ObjectKeyWord;
+    }
 
-
-        if ($this->DeCSObject->isDeCSSet()) {
-            $this->DeCSObject->ShowSummary();
+    public function getDeCS() {
+        $this->checkKeywords();
+        $strategyContextA = new StrategyContext('DeCS');
+        $info = '[Extracting DeCS] Keyword= ' . $this->ObjectKeyWord->getKeyword() . ' Langs=' . json_encode($this->ObjectKeyWord->getLang());
+        try {
+            $fun = $strategyContextA->obtainInfo(array('ObjectKeyword' => $this->ObjectKeyWord, 'info' => $info));
+            if ($fun) {
+                throw new SimpleLifeException(new \SimpleLife\PreviousIntegrationException($fun));
+            }
+        } catch (SimpleLifeException $Ex) {
+            return $Ex->PreviousUserErrorCode();
         }
     }
 
-    private function getDeCS($keyword, $langs) {
-        $strategyContextA = new StrategyContext('DeCS');
-        $strategyContextA->obtainInfo(array('keyword' => $keyword, 'langs' => $langs, 'DeCSObject' => $this->DeCSObject));
-    }
-
-    private function buildPositionArr($positions) {
-        $Arr = explode(",", $positions);
-        return $Arr;
-    }
-
-    private function obtainInfo() {
-        $this->DeCSObject->obtainInfo();
+    private function checkKeywords() {
+        try {
+            if (strlen($this->ObjectKeyWord->getKeyword()) == 0) {
+                throw new SimpleLifeException(new \SimpleLife\EmptyKeyword());
+            }
+            $MaximumQuerySize = 5000;
+            if (strlen($this->ObjectKeyWord->getKeyword()) > $MaximumQuerySize) {
+                throw new SimpleLifeException(new \SimpleLife\KeywordTooLarge(strlen($keyword), $MaximumQuerySize));
+            }
+        } catch (SimpleLifeException $Ex) {
+            return $Ex->PreviousUserErrorCode();
+        }
     }
 
 }

@@ -1,22 +1,25 @@
 <?php
 
 namespace LayerIntegration;
+
 require_once(realpath(dirname(__FILE__)) . '/../LayerIntegration/ProxyModel.php');
+
 use LayerIntegration\ProxyModel;
 
-class ProxyReceiveDeCS extends ProxyModel{
+class ProxyReceiveDeCS extends ProxyModel {
 
-     function __construct($key, $lang,$ByKeyword) {
+    function __construct($key, $lang, $ByKeyword, $timeSum) {
+        $this->timeSum = $timeSum;
         $this->setBaseURL("http://decs.bvsalud.org/cgi-bin/mx/cgi=@vmx/decs/?");
-        if($ByKeyword==true){
+        if ($ByKeyword == true) {
             $Fields = array('words' => $key,
-            'lang' => $lang
-        );
-        }else{
+                'lang' => $lang
+            );
+        } else {
             $Fields = array('tree_id' => $key,
-            'lang' => $lang
-        );
-        }        
+                'lang' => $lang
+            );
+        }
         $this->setPOSTFields($Fields);
     }
 
