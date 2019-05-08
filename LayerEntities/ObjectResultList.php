@@ -10,66 +10,60 @@ use LayerEntities\ObjectResult;
 
 class ObjectResultList {
 
-    private $PICOsElement;
-    private $ResultsList;
-    private $SearchField;
-    private $ConnectionTime;
+    private $EqNum;
+    private $ObjectResult;
+    private $PICOname;
 
-    public function setConnectionTime(int $time) {
-        $this->ConnectionTime += $time;
-    }
-
-    public function getConnectionTime() {
-        return $this->ConnectionTime;
-    }
-
-    public function getConnectionTimeSum() { //temp function
-        return $this->ConnectionTime;
-    }
-
-    public function __construct($PICOsElement, $SearchField) {
-        $this->ConnectionTime = 0;
-        $this->PICOsElement = $PICOsElement;
-        $this->ResultsList = array();
-        $this->SearchField = $SearchField;
-    }
-
-    public function getPICOsElement() {
-        return $this->PICOsElement;
-    }
-
-    //------------------------------------------------------------
-    //------------------------------------------------------------
-    //-THIS SECTION CONTAINS ADVANCED FUNCTIONS----------------------
-    //------------------------------------------------------------
-    //------------------------------------------------------------
-
-    public function getTitlesAsString() {
-        return 'Items: [' . join($this->getTitles(), ', ') . ']';
-    }
-
-    public function getTitles() {
-        $result = array();
-        foreach ($this->ResultsList as $ResultObj) {
-            array_push($result, $ResultObj->getTitle());
+    public function getConnectionTimeSum() {
+        $res = 0;
+        foreach ($this->ObjectResult as $ResultObj) {
+            $res += $ResultObj->getConnectionTime();
         }
-        return $result;
+        return $res;
     }
 
-    public function AddObjectResults($QueryList) {
-        foreach ($QueryList as $QueryTask) {
-            $NewResultObj = new ObjectResult($QueryTask['Query'], $QueryTask['Title']);
-            array_push($this->ResultsList, $NewResultObj);
+    public function __construct($EqNum, $resultsData, $PICOname) {
+        $this->EqNum = $EqNum;
+        $this->PICOname = $PICOname;
+        $this->setResultsData($EqNum, $resultsData, $PICOname);
+    }
+
+    public function getTitle() {
+        return $this->PICOname;
+    }
+
+    private function setResultsData($EqNum, $resultsData, $PICOname) {
+        $mes = new SimpleLifeMessage(json_encode($resultsData));
+        $mes->SendAsLog();
+        $local = array();
+        $global = array();
+        $EqNumCopy = $EqNum;
+        if ($EqNumCopy == 6) {
+            $EqNumCopy = 5;
         }
-    }
-
-    public function getResultList() {
-        return $this->ResultsList;
+        $i = 1;
+        while ($i <= $EqNumCopy) {
+            $key = 'PICO' . $i;
+            $obj = $resultsData[$key];
+            if ($i == $EqNumCopy && $EqNum!=6) {
+                $local[$key] = $obj;
+            }
+            $global[$key] = $obj;
+            $i++;
+        }
+        $resultQueryList = array();
+        if (count($local) > 0) {
+            $resultQueryList['local'] = new ResultQuery($local, $PICOname . ' - Local', false);
+        }
+        if (count($global) > 0) {
+            $resultQueryList['global'] = new ResultQuery($global, $PICOname . ' - Global', true);
+        }
+        $this->ObjectResult = new ObjectResult($resultQueryList, $PICOname);
     }
 
     public function ObjectResultInfo($SimpleLifeMessage) {
         $SimpleLifeMessage->AddAsNewLine('Summary of Results Number by Query: ');
-        foreach ($this->ResultsList as $ResultObj) {
+        foreach ($this->ObjectResult as $ResultObj) {
             $Title = $ResultObj->getTitle();
             $ResultsNumber = $ResultObj->getResultsNumber();
             $ResultsURL = $ResultObj->getResultsURL();
@@ -82,11 +76,13 @@ class ObjectResultList {
     }
 
     public function getResults() {
-        $result = array();
-        foreach ($this->ResultsList as $ResultObj) {
-            $result[$ResultObj->getTitle()] = $ResultObj->getResults();
-        }
+        $result = $this->ObjectResult->getResults();
+        $result['PICOnum'] = $this->EqNum;
         return $result;
+    }
+
+    public function getObjectResult() {
+        return $this->ObjectResult;
     }
 
 }

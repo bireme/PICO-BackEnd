@@ -7,5 +7,7 @@ $baseDir = dirname($vendorDir);
 
 return array(
     'Josantonius\\Cookie\\' => array($vendorDir . '/josantonius/cookie/src'),
+    'Exceptions\\Helpers\\' => array($vendorDir . '/crazycodr/standard-exceptions/Helpers'),
+    'Exceptions\\' => array($vendorDir . '/crazycodr/standard-exceptions/Exceptions'),
     'DElfimov\\Translate\\' => array($vendorDir . '/delfimov/translate/src'),
 );

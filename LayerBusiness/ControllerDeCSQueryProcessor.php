@@ -17,7 +17,11 @@ class ControllerDeCSQueryProcessor {
         $this->query = $query;
         $this->ObjectKeywordList = $ObjectKeywordList;
     }
-
+    
+    public function setEquation($Equation) {
+        $this->query=$Equation;
+    }
+    
     public function BuildKeywordList() {
         $KeywordList = explode(' AND ', $this->query);
         $KeywordList = $this->CleanKeywordList($KeywordList);

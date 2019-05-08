@@ -397,4 +397,41 @@ class PreviousIntegrationException Extends SimpleExceptionTypeModel {
 
 }
 
+class EquationMustBeString Extends SimpleExceptionTypeModel {
+
+    protected $code = 121;
+    protected $AlertLevel = 3;
+
+    public function __construct($EqName) {
+        $message = 'Error in: ' . $EqName . '. This equation must be string';
+        return parent::__construct($message, true);
+    }
+
+}
+
+class ParenthesesNumberNotMatch Extends SimpleExceptionTypeModel {
+
+    protected $code = 122;
+    protected $AlertLevel = 3;
+
+    public function __construct($EqName) {
+        $message = 'Error in: ' . $EqName . '. The number of parentheses does not match';
+        return parent::__construct($message, true);
+    }
+
+}
+
+class EqInvalidChars Extends SimpleExceptionTypeModel {
+
+    protected $code = 123;
+    protected $AlertLevel = 3;
+
+    public function __construct($EqName, $InvalidChars) {
+        $message = 'Error in: ' . $EqName . '. These InvalidChars were introduced: '.$InvalidChars;
+        return parent::__construct($message, true);
+    }
+
+}
+
+
 ?>

@@ -10,5 +10,8 @@
     "require": {
         "delfimov/translate": "dev-master",
         "josantonius/cookie": "dev-master"
+    },
+    "require-dev": {
+        "crazycodr/standard-exceptions": "dev-master"
     }
 }
