@@ -11,6 +11,11 @@ class ComposerStaticInitce47e5a1322a7de4edd89b859851bb78
         array (
             'Josantonius\\Cookie\\' => 19,
         ),
+        'E' => 
+        array (
+            'Exceptions\\Helpers\\' => 19,
+            'Exceptions\\' => 11,
+        ),
         'D' => 
         array (
             'DElfimov\\Translate\\' => 19,
@@ -21,6 +26,14 @@ class ComposerStaticInitce47e5a1322a7de4edd89b859851bb78
         'Josantonius\\Cookie\\' => 
         array (
             0 => __DIR__ . '/..' . '/josantonius/cookie/src',
+        ),
+        'Exceptions\\Helpers\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/crazycodr/standard-exceptions/Helpers',
+        ),
+        'Exceptions\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/crazycodr/standard-exceptions/Exceptions',
         ),
         'DElfimov\\Translate\\' => 
         array (

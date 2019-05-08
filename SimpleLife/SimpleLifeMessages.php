@@ -70,39 +70,31 @@ class SimpleLifeMessage Extends SimpleLifeConfig {
         $this->message = $this->message . $this->LineOperator . $msg;
     }
 
-    private function ClearMessage() {
-        $this->message = '';
-    }
-
     private function MessageColor($color) {
         $this->message = '<font color="' . $color . '" >' . $this->message . '</font>';
     }
 
-    public function SendAsLog() {
-        $this->AddBefore('[L]');
+    public function SaveToLog($prefix, $color,$isError) {
+        $this->AddBefore($prefix);
         $this->HeadersAndPrefixes();
-        //syslog($this->message);
-        $this->MessageColor('black');
-        echo $this->message;
-        $this->ClearMessage();
+        $this->MessageColor($color);
+        $prefix='log';
+        if($isError==true){
+            $prefix='error';
+        }
+        file_put_contents('./var/log/'.$prefix.'/' . date("d-m-y") . '.html', $this->message, FILE_APPEND);
+    }
+
+    public function SendAsLog() {
+        $this->SaveToLog('[L]', 'black',false);
     }
 
     public function SendAsWarning() {
-        $this->AddBefore('[W]');
-        $this->HeadersAndPrefixes();
-        $this->MessageColor('orange');
-//syslog($this->message);
-        echo $this->message;
-        $this->ClearMessage();
+        $this->SaveToLog('[W]', 'orange',true);
     }
 
     public function SendAsError() {
-        $this->AddBefore('[E]');
-        $this->HeadersAndPrefixes();
-        //syslog($this->message);
-        $this->MessageColor('red');
-        echo $this->message;
-        $this->ClearMessage();
+        $this->SaveToLog('[E]', 'red',true);
     }
 
 }

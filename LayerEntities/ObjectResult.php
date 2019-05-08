@@ -2,48 +2,68 @@
 
 namespace LayerEntities;
 
-require_once('ObjectKeyword.php');
+require_once('ResultQuery.php');
+require_once(realpath(dirname(__FILE__)) . '/../SimpleLife/SimpleLifeMessages.php');
 
-use LayerEntities\ObjectKeyword;
+use SimpleLife\SimpleLifeMessage;
+use LayerEntities\ResultQuery;
 
 class ObjectResult {
 
-    private $resultsNumber;
-    private $query;
-    private $ResultsURL;
+    private $ConnectionTime;
+    private $resultQueryList;
     private $title;
 
-    function getTitle() {
+    public function setConnectionTime(int $time) {
+        $this->ConnectionTime += $time;
+    }
+
+    public function getConnectionTime() {
+        return $this->ConnectionTime;
+    }
+
+    public function getTitle() {
         return $this->title;
     }
 
-    public function getResultsNumber() {
-        return $this->resultsNumber;
-    }
-
-    public function getResultsURL() {
-        return $this->ResultsURL;
-    }
-
-    public function setResultsNumber($resultsNumber) {
-        $this->resultsNumber = $resultsNumber;
-    }
-
-    public function setResultsURL($ResultsURL) {
-        $this->ResultsURL = $ResultsURL;
-    }
-
-    public function getQuery() {
-        return $this->query;
-    }
-    
-    public function getResults() {
-        return array('query'=>$this->query ,'ResultsNumber'=>$this->resultsNumber ,'ResultsURL'=>$this->ResultsURL);
-    }
-
-    public function __construct($query, $title) {
-        $this->query = $query;
+    public function __construct($resultQueryList, $title) {
+        $this->ConnectionTime = 0;
         $this->title = $title;
+        $this->resultQueryList = $resultQueryList;
+    }
+
+    public function ObjectResultInfo($SimpleLifeMessage) {
+        $SimpleLifeMessage->AddAsNewLine('Summary of Results Number by Query: ');
+        foreach ($this->ResultsList as $ResultObj) {
+            $Title = $ResultObj->getTitle();
+            $ResultsNumber = $ResultObj->getResultsNumber();
+            $ResultsURL = $ResultObj->getResultsURL();
+            $Query = $ResultObj->getQuery();
+            $SimpleLifeMessage->AddEmptyLine();
+            $SimpleLifeMessage->AddAsNewLine($Title . ' (' . $ResultsNumber . ' results)');
+            $SimpleLifeMessage->AddAsNewLine('-->Query: ' . $Query);
+            $SimpleLifeMessage->AddAsNewLine('-->ResultsURL: ' . $ResultsURL);
+        }
+    }
+
+    public function getResults() {
+        $result = array();
+        foreach ($this->resultQueryList as $ResultQuery) {
+            $tmp = $ResultQuery->getResults();
+            if ($ResultQuery->isGlobal()) {
+                $key = 'global';
+            } else {
+                $key = 'local';
+            }
+            if (isset($tmp)) {
+                $result[$key] = $tmp;
+            }
+        }
+        return $result;
+    }
+
+    public function getResultQueryList() {
+        return $this->resultQueryList;
     }
 
 }

@@ -1,5 +1,46 @@
 [
     {
+        "name": "crazycodr/standard-exceptions",
+        "version": "dev-master",
+        "version_normalized": "9999999-dev",
+        "source": {
+            "type": "git",
+            "url": "https://github.com/crazycodr/standard-exceptions.git",
+            "reference": "e1c0dd5cfe85a3f7bfc23bf7e8917bbe43c97ca7"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "https://api.github.com/repos/crazycodr/standard-exceptions/zipball/e1c0dd5cfe85a3f7bfc23bf7e8917bbe43c97ca7",
+            "reference": "e1c0dd5cfe85a3f7bfc23bf7e8917bbe43c97ca7",
+            "shasum": ""
+        },
+        "require-dev": {
+            "friendsofphp/php-cs-fixer": "^2.11",
+            "phpunit/phpunit": "^7.1"
+        },
+        "time": "2018-08-16T12:57:52+00:00",
+        "type": "library",
+        "installation-source": "dist",
+        "autoload": {
+            "psr-4": {
+                "Exceptions\\": "Exceptions/",
+                "Exceptions\\Helpers\\": "Helpers/"
+            }
+        },
+        "notification-url": "https://packagist.org/downloads/",
+        "license": [
+            "MIT"
+        ],
+        "authors": [
+            {
+                "name": "Mathieu Dumoulin",
+                "email": "thecrazycodr@gmail.com",
+                "role": "Developer"
+            }
+        ],
+        "description": "This project is aimed at providing additional standard exceptions to php. Many exceptions that are missing from the SPL are constantly being reproduced in different projects. By providing a package of high-quality, well organised exceptions, it will, in the long run, increase interoperability between projects."
+    },
+    {
         "name": "delfimov/translate",
         "version": "dev-master",
         "version_normalized": "9999999-dev",

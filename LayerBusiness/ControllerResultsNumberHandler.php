@@ -17,17 +17,18 @@ class ControllerResultsNumberHandler {
 
     public function __construct($ObjectResultList) {
         $this->ObjectResultList = $ObjectResultList;
-        $this->SimpleLifeMessage = new SimpleLifeMessage('DeCS Manager');
+        $this->SimpleLifeMessage = new SimpleLifeMessage('Results Manager');
     }
 
-    public function getResultsNumber() {
+    public function BuildResultsNumber() {
         $strategyContextB = new StrategyContext('ResultsNumber');
-        $info = '[Extracting ResultsNumber] ' . $this->ObjectResultList->getTitlesAsString();
         try {
-            $fun = $strategyContextB->obtainInfo(array('ObjectResultList' => $this->ObjectResultList, 'info' => $info));
+            $info = '[Extracting ResultsNumber] ' . $this->ObjectResultList->getTitle();
+            $fun = $strategyContextB->obtainInfo(array('ObjectResult' => $this->ObjectResultList->getObjectResult(), 'info' => $info));
             if ($fun) {
                 throw new SimpleLifeException(new \SimpleLife\PreviousIntegrationException($fun));
             }
+
             $this->ReportMessage();
         } catch (SimpleLifeException $Ex) {
             return $Ex->PreviousUserErrorCode();
@@ -39,15 +40,15 @@ class ControllerResultsNumberHandler {
         $this->SimpleLifeMessage->SendAsLog();
     }
 
-    private function CheckObjectResult($ObjectResult) {
+    private function CheckObjectResult() {
         try {
-            $query = $ObjectResult->getQuery();
+            $query = $this->ObjectResult->getQuery();
             $MaximumQuerySize = 5000;
             if (strlen($query) == 0) {
                 throw new SimpleLifeException(new \SimpleLife\EmptyQuery());
             }
             if (strlen($query) > $MaximumQuerySize) {
-                throw new SimpleLifeException(new \SimpleLife\QueryTooLarge(strlen($ObjectResult->getQuery()), $MaximumQuerySize));
+                throw new SimpleLifeException(new \SimpleLife\QueryTooLarge(strlen($this->ObjectResult->getQuery()), $MaximumQuerySize));
             }
         } catch (SimpleLifeException $Ex) {
             return $Ex->PreviousUserErrorCode();

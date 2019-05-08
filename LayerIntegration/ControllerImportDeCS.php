@@ -89,7 +89,12 @@ class ControllerImportDeCS extends ControllerImportModel {
 
     public function InnerObtainByLang($key) {
         $i = 0;
-        foreach ($this->ObjectKeyword->getLang() as $lang) {
+        if($this->IsMainTree==true){
+            $langs=array('en','pt','es');
+        }else{
+            $langs=$this->ObjectKeyword->getLang();
+        }
+        foreach ($langs as $lang) {
             $CheckDescendants = true;
             $isComplete = false;
             if ($i > 0 and ( $this->IsMainTree == false)) {
