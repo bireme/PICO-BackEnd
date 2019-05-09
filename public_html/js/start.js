@@ -1,7 +1,7 @@
 var currentrequest;
 $(document).ready(() => {
     $('a.ExpandDeCS').click(function (e) {
-        if ($(this).find('i').is(":hover")) {
+        if ($(this).find('.startlanguage').is(":hover")) {
             e.preventDefault();
             ExpandDeCSConfig();
             return;
@@ -14,14 +14,23 @@ $(document).ready(() => {
     $('#modal3').find('.btn-primary').click(function () {
         ProcessResults();
     });
-    $(document).find('a[id^=CalcRes]').click(function () {
-        getResultsNumber(($(this).attr('id')).substr(-1));
+    $(document).find('button[id^=CalcRes]').click(function () {
+        var PICOnum = ($(this).attr('id')).substr(-1);
+        getResultsNumber(PICOnum);
     });
     $(document).find('#modal4').find('.close').click(function () {
         hideLoading();
         CancelLoading();
     });
     $(document).find('a[id^=ResNum]').click(function (e) {
+        var PICOnum = ($(this).attr('id')).substr(-1);
+        if (PICOnum == 6) {
+            var obj = $(this).find('span').first();
+            if (isHiddenBootstrapObj(obj)) {
+                getResultsNumber(6);
+                return;
+            }
+        }
         if ($(this).find('.PICOiconzeroElement').is(":hover")) {
             e.preventDefault();
             InfoNoResults();
@@ -45,14 +54,18 @@ $(document).ready(() => {
     $(document).find('a[id^=page-lang]').click(function () {
         ChangeLanguage(($(this).attr('id')).substr(-1));
     });
-    $(document).find('.goLanguageSet').click(function () {
+    $(document).on('click', ".golanguage", function () {
         setLanguagesFromModal($(this).parent().parent());
     });
-
-
     UpdateLanguageInfo();
     SetAllToReDoButton();
 });
+
+
+
+
+
+
 
 function ChangeLanguage(langid) {
     globalLanguage = langid;
@@ -73,7 +86,7 @@ function ExpandDeCSConfig() {
                 ` + MessageCode(135) + `
             </label>
         </div>
-        <div class="col-md-5 sidebar LanguageContainer">
+        <div class="col-md-5 sidebar LanguageContainer text-left">
            <div class="LanguageInfoContainer">
                     <div class="CheckBoxRow" ><input type="checkbox" class="langCheck" name="Langs[]" value="en" checked /><label>English</label></div>
                     <div class="CheckBoxRow" ><input type="checkbox" class="langCheck" name="Langs[]" value="es" /><label>Spanish</label></div>
@@ -82,10 +95,8 @@ function ExpandDeCSConfig() {
         </div>
     </div>
 </div`
-    showInfoMessage('Config', msg, true, 'goLanguageSet');
     var langs = getLanguages();
-    alert(JSON.stringify(langs));
-    setLanguagesOfModal(langs);
+    showInfoMessage('Config', msg, true, 'golanguage', setLanguagesOfModal, langs);
 }
 
 function UpdateLanguageInfo() {
@@ -125,12 +136,35 @@ function setPlaceHolderLanguage() {
 
 function setExpandDeCSLanguage() {
     $(document).find('a[id^=Exp]').each(function () {
-        var msg = '</div><i class="fas fa-cog"></i> ' + MessageCode(131);
+        var msg = '<span class="badge badge-light badgeM startlanguage"><i class="fas fa-cog"></i></span> ' + MessageCode(131);
         $(this).html(msg);
     });
 }
 
+function setCalcResAsSyncAlt(PICOnum) {
+    var CalcResObj = $('#CalcRes' + PICOnum);
+    $(CalcResObj).html('<i class="fas fa-sync-alt"></i>');
+    $(CalcResObj).addClass(getCalcResColorClass(PICOnum));
+    $(CalcResObj).removeClass(getCalcResColorClass(-1));
+}
 
+function setCalcResAsResult(PICOnum) {
+    var CalcResObj = $('#CalcRes' + PICOnum);
+    $(CalcResObj).html('Results');
+    $(CalcResObj).addClass(getCalcResColorClass(-1));
+    $(CalcResObj).removeClass(getCalcResColorClass(PICOnum));
+
+}
+
+function getCalcResColorClass(PICOnum) {
+    if (PICOnum == -1) {
+        return 'btn-info';
+    }
+    if (PICOnum == 1) {
+        return 'btn-outline-info';
+    }
+    return 'btn-outline-warning';
+}
 
 function ShowPICOinfo(PICOnum) {
     var msg = getPICOinfo()[PICOnum - 1];
@@ -145,7 +179,7 @@ function InfoNoResults() {
 }
 
 function CalcResLanguage() {
-    $(document).find('a[id^=CalcRes]').each(function () {
+    $(document).find('button[id^=CalcRes]').each(function () {
         $(this).find('label').text(MessageCode(132));
     });
 }
@@ -201,10 +235,10 @@ function setLanguagesOfModal(langArr) {
     var count = 0;
     $(document).find('.langCheck').each(function () {
         var index = langArr.indexOf($(this).val());
-        if (index != -1) {
-            $(this).attr('checked', 'checked');
+        if (index > -1) {
+            $(this).attr('checked', true);
         } else {
-            $(this).attr('checked', '');
+            $(this).attr('checked', false);
         }
         count++;
     });
@@ -216,10 +250,10 @@ function setLanguages(langArr) {
     var count = 0;
     $(document).find('.languageCheckbox').each(function () {
         var index = langArr.indexOf($(this).val());
-        if (index != -1) {
-            $(this).attr('checked', 'checked');
+        if (index > -1) {
+            $(this).attr('checked', true);
         } else {
-            $(this).attr('checked', '');
+            $(this).attr('checked', false);
         }
         count++;
     });
@@ -363,10 +397,24 @@ function BuildImprovedQuery(PICOnum, data) {
 }
 
 function getResultsNumber(id) {
-    var cont = $('#datainput' + id).val();
-    if (cont.length == 0) {
-        showInfoMessage('Info', MessageCode(24), false);
-        return;
+    if (id < 5) {
+        var cont = $('#datainput' + id).val();
+        if (cont.length == 0) {
+            showInfoMessage('Info', MessageCode(24), false);
+            return;
+        }
+    }else{
+        var newid = 0;
+        for (var loop_i = 5; loop_i >= 1; loop_i--) {
+            if ($('#datainput' + loop_i).val().length > 0) {
+                newid = loop_i;
+                break;
+            }
+        }
+        if (newid == 0) {
+            showInfoMessage('Info', MessageCode(25), false);
+            return;
+        }
     }
     var resultsData = getAllInputFields();
     eventResultsNumber(id, resultsData);
@@ -385,11 +433,15 @@ function eventResultsNumber(PICOnum, resultsData) {
     });
 }
 
-function setResultsNumber(data) {
-    data.PICOnum = parseInt(data.PICOnum);
+function setResultsNumber(data,PICOnum) {
     var spanObj;
-    if (data.PICOnum < 5) {
-        spanObj = $('#ResNumLocal' + data.PICOnum).find('span').first();
+    hideBootstrapObj($('#CalcRes' + PICOnum));
+    setCalcResAsSyncAlt(PICOnum);
+
+
+    if (PICOnum< 5) {
+        spanObj = $('#ResNumLocal' + PICOnum).find('span').first();
+
         showBootstrapObj(spanObj.parent());
         RemoveReDoButton(spanObj);
         if (data.local.ResultsNumber == 0) {
@@ -398,37 +450,39 @@ function setResultsNumber(data) {
             $(spanObj).text(data.local.ResultsNumber);
         }
         $(spanObj).attr('data-oldval', data.local.ResultsNumber);
-        $('#ResNumLocal' + data.PICOnum).attr("href", data.local.ResultsURL);
+        $('#ResNumLocal' + PICOnum).attr("href", data.local.ResultsURL);
     }
-    if (data.PICOnum > 1 && data.PICOnum !== 5) {
-        spanObj = $('#ResNumGlobal' + data.PICOnum).find('span').first();
+    if (PICOnum> 1 && PICOnum!== 5) {
+        spanObj = $('#ResNumGlobal' + PICOnum).find('span').first();
         showBootstrapObj(spanObj.parent());
         RemoveReDoButton(spanObj);
-        addIconZeroResults(spanObj);
         if (data.global.ResultsNumber == 0) {
             addIconZeroResults(spanObj);
         } else {
             $(spanObj).text(data.global.ResultsNumber);
+            if(PICOnum==6){
+                showBootstrapObj(spanObj);
+            }
         }
         $(spanObj).attr('data-oldval', data.global.ResultsNumber);
-        $('#ResNumGlobal' + data.PICOnum).attr("href", data.global.ResultsURL);
+        $('#ResNumGlobal' + PICOnum).attr("href", data.global.ResultsURL);
     }
-    if (data.PICOnum === 6) {
+    if (PICOnum=== 6) {
         $('#FinalSearchDetails').val(data.global.ResultsURL);
         $('#FinalSearchDetails').attr('data-oldval', data.global.ResultsURL);
     }
     var loop_i;
-    var max = data.PICOnum;
+    var max = PICOnum;
     if (max > 4) {
         max = 4;
     }
-    if (data.PICOnum === 6) {
-        data.PICOnum = 5;
+    if (PICOnum=== 6) {
+        PICOnum= 5;
     }
-    var oldval = $('#datainput' + data.PICOnum).val();
-    $('#datainput' + data.PICOnum).attr('data-oldval', oldval);
-    if (data.PICOnum < 4) {
-        FieldListSetoldval(data.PICOnum);
+    var oldval = $('#datainput' +PICOnum).val();
+    $('#datainput' + PICOnum).attr('data-oldval', oldval);
+    if (PICOnum< 4) {
+        FieldListSetoldval(PICOnum);
     }
 }
 
@@ -481,7 +535,7 @@ function CancelLoading() {
 }
 
 
-function showInfoMessage(type, textcontent, asHTML, ActivateClassName = '') {
+function showInfoMessage(type, textcontent, asHTML, ActivateClassName = '', callback, cbparams) {
     $('#modalinfo').modal('show');
     var MessageTitles = getMessageTitles();
     var icon = $('#modalinfo').find('.iconElement').first();
@@ -545,12 +599,18 @@ function showInfoMessage(type, textcontent, asHTML, ActivateClassName = '') {
     }
     if (asHTML == true) {
         $('#modalinfo').find('.btn-primary').first().addClass(ActivateClassName)
-        $('#modalinfo').find('.InfoText').first().parent().html(textcontent);
+        $('#modalinfo').find('.InfoText').first().html(textcontent);
     } else {
         $('#modalinfo').find('.InfoText').first().text(textcontent);
+    }
+    if (isFunction(callback)) {
+        callback(cbparams);
+}
 }
 
-}
+function isFunction(functionToCheck) {
+    return functionToCheck && {}.toString.call(functionToCheck) === '[object Function]';
+} //author: Alex Grande @ StackOverFlow
 
 function CheckExistantHREF(Obj) {
 
@@ -559,6 +619,13 @@ function CheckExistantHREF(Obj) {
             showInfoMessage('Info', MessageCode(21), false);
         } else {
             showInfoMessage('Info', MessageCode(22), false);
+        }
+    } else {
+        var win = window.open((Obj).attr('href'), '_blank');
+        if (win) {
+            win.focus();
+        } else {
+            showInfoMessage('Error', MessageCode(3), false);
         }
     }
 }
@@ -588,8 +655,13 @@ function OpenInNewTab(url) {
 function SetAllToReDoButton() {
     $(document).find('a[id^=ResNum]').each(function () {
         objSpan = $(this).find('span').first();
-        SetToReDoButton(objSpan);
-        hideBootstrapObj($(this));
+        var num = ($(this).attr('id')).substr(-1);
+        if (num == 6) {
+
+        } else {
+            SetToReDoButton(objSpan);
+            hideBootstrapObj($(this));
+        }
     });
 }
 
@@ -614,8 +686,16 @@ function objSpanSetOldResult(objSpan) {
 }
 
 function objResNumSetOldResult(objResNum) {
-    objResNum.attr('href', (objSpan.attr('data-oldval')));
+    objResNum.attr('href', (objResNum.attr('data-oldval')));
 }
+
+function objResNumHasoldval(PICOnum) {
+    if ($('#ResNumLocal' + PICOnum).attr('data-oldval')) {
+        return true;
+    }
+    return false;
+}
+
 
 function ChangeSeeker(PICOnum) {
     var LocalObj = $('#ResNumLocal' + PICOnum);
@@ -632,8 +712,19 @@ function ChangeSeeker(PICOnum) {
 }
 
 function ShowExplodeButton(PICOnum) {
-    if ($('#datainput' + PICOnum).val().length == 1) {
-        showBootstrapObj($('#Exp' + PICOnum));
+    var explodebutton = $('#Exp' + PICOnum);
+    if ($('#datainput' + PICOnum).val().length > 0) {
+        showBootstrapObj(explodebutton);
+        if (objResNumHasoldval(PICOnum)) {
+            showBootstrapObj($('#ResNumLocal' + PICOnum));
+            showBootstrapObj($('#ResNumGloal' + PICOnum));
+            setCalcResAsSyncAlt(PICOnum);
+        }
+    } else {
+        setCalcResAsResult(PICOnum);
+        hideBootstrapObj($('#ResNumLocal' + PICOnum));
+        hideBootstrapObj($('#ResNumGloal' + PICOnum));
+        hideBootstrapObj(explodebutton);
     }
 }
 
@@ -667,6 +758,12 @@ function ReturnToOldState(PICOnum, LocalObj, LocalSpan, LocalField, ThishasReDo)
         objResNumSetOldResult(GlobalObj);
         objSpanSetOldResult(GlobalSpan);
         RemoveReDoButton(GlobalSpan);
+        if (loop_i < 6) {
+            if ($('#datainput' + loop_i).val().length > 0) {
+                hideBootstrapObj($('#CalcRes' + loop_i));
+            }
+        }
+
     }
     $('#FinalSearchDetails').val($('#FinalSearchDetails').attr('data-oldval'));
 }
@@ -683,6 +780,14 @@ function ChangeToMustUpdate(PICOnum, LocalObj, LocalSpan, LocalField, ThishasReD
         var GlobalSpan = GlobalObj.find('span').first();
         objResNumSetMustUpdate(GlobalObj);
         SetToReDoButton(GlobalSpan);
+        if (loop_i == 6) {
+            if (!(isHiddenBootstrapObj(GlobalSpan))) {
+                showBootstrapObj($('#CalcRes' + loop_i));
+            }
+        } else {
+            showBootstrapObj($('#CalcRes' + loop_i));
+        }
+
     }
     $('#FinalSearchDetails').attr('data-oldval', $('#FinalSearchDetails').val());
     $('#FinalSearchDetails').val(MessageCode(23));
@@ -709,17 +814,17 @@ function CompareNewOld(PICOnum) {
 }
 
 function isHiddenBootstrapObj(Obj) {
-    $(Obj).hasClass('d-none');
+    return $(Obj).hasClass('d-none');
 }
 
 function showBootstrapObj(Obj) {
-    if (isHiddenBootstrapObj) {
+    if (isHiddenBootstrapObj(Obj)) {
         $(Obj).removeClass('d-none');
     }
 }
 
 function hideBootstrapObj(Obj) {
-    if (isHiddenBootstrapObj) {
+    if (!(isHiddenBootstrapObj(Obj))) {
         $(Obj).addClass('d-none');
     }
 }

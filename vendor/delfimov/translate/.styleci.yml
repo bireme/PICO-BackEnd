@@ -1,5 +1,0 @@
-preset: PSR2
-
-finder:
-  exclude:
-    - "tests"

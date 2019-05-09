@@ -259,6 +259,16 @@ function MessageCode(Code) {
                 'Erreur de serveur inconnue lors du traitement des informations'
             ];
             break;
+        case 3:
+            Message = ['Please allow popups for this website',
+                'Por favor, permita pop-ups para este site',
+                'Por favor permita popups para este sitio web',
+                "S'il vous plaît autoriser les popups pour ce site"
+            ];
+            break;
+
+
+
         case 21:
             Message = ['You must calculate the results first. Press the Refresh button',
                 'Primeiro você deve calcular os resultados. Pressione o botão Atualizar',
@@ -285,6 +295,13 @@ function MessageCode(Code) {
                 'A consulta está vazia, insira as respectivas palavras-chave',
                 'La consulta está vacía, por favor introduzca las respectivas palabras clave',
                 "La requête est vide, veuillez saisir les mots-clés correspondants"
+            ];
+            break;
+        case 25:
+            Message = ['All the queries are empty, please introduce keywords in any of them',
+                'Todas as consultas estão vazias, por favor, introduza palavras-chave em qualquer uma delas',
+                'Todas las consultas están vacías, por favor introduzca palabras clave en cualquiera de ellas.',
+                "Toutes les requêtes sont vides, veuillez introduire des mots-clés dans l'un d'eux."
             ];
             break;
         case 31:
