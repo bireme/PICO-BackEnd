@@ -79,12 +79,9 @@
     color:#fff;
 }
 
-a[id^="CalcRes"] label {
-    margin:0;
-}
-
 #modalinfo  .InfoText{
-    white-space: pre-line;    
+    white-space: pre-line;
+    display:inline-flex;
 }
 
 
@@ -98,13 +95,13 @@ a[id^="CalcRes"] label {
 }
 
 #LanguageSection .CheckBoxRow{
-    display:table-row;
+    display:inline-flex;
     text-align:left;
 }
 
 #LanguageSection input{
     display:table-cell;
-    margin:5px;
+    margin:0;
 }
 
 
