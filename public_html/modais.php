@@ -78,12 +78,11 @@
                     <label>Loading...</label>
                 </div>
                 <div class="modal-footer">
-                    <button id='CancelLoading' type="button" class="btn btn-block close">Cancel</button>
+                    <button id='CancelLoading' type="button" class="btn btn-block btn-info">Cancel</button>
                 </div>
             </div>
         </div>
     </div>
-
 
     <!-------------------------------- Modal  info---------------------------------->
     <div id="modalinfo" class="modal fade">

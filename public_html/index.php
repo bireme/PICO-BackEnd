@@ -18,10 +18,10 @@
     <body>
         <header id="header">
             <div id="lang">
-                <a href="">Português</a>  |  
-                <a href="">English</a>  |  
-                <a href="">Español</a>  |  
-                <a href="">Français</a>  
+                <button class="langbut" id="page-lang0">Português</button><label id="sep-lang0">  |  </label>
+                <button class="langbut"id="page-lang1" >English</button><label id="sep-lang1">  |  </label>
+                <button class="langbut"id="page-lang2">Español</button><label id="sep-lang2">  |  </label>
+        <button class="langbut" id="page-lang3">Français</button><label id="sep-lang3">  </label>
             </div>
             <div class="container">
                 <div class="row">
@@ -89,7 +89,7 @@
                                         
                                         <button class="btn btn-primary margin2M ExpandDeCS d-none"  id="Exp1" name="Problem">Expand DeSH/MeSH Terms</button>
                                         <div class="btn-group">
-                                            <a id="ResNumLocal1" target="_blank"  class="btn colorP d-none" data-toggle="tooltip" data-placement="top" title="Click to see results">Population <span class="badge badge-light badgeM">15.039</span></a>
+                                            <a id="ResNumLocal1" target="_blank"  class="btn colorP d-none" data-toggle="tooltip" data-placement="top" title="Click to see results"><label></label> <span class="badge badge-light badgeM">15.039</span></a>
                                             <button id="CalcRes1" class="btn btn-info" data-toggle="tooltip" data-placement="top" title="Update Results">Results</button>
                                         </div>
                                     </div>
@@ -127,8 +127,8 @@
                                     <div class="col-12">
                                         <button class="btn btn-primary margin2M ExpandDeCS d-none" id="Exp2" name="Intervention" data-toggle="modal" data-target="#modal">Expand DeSH/MeSH Terms</button>
                                         <div class="btn-group">
-                                            <a id="ResNumLocal2" target="_blank" class="btn colorI  d-none" data-toggle="tooltip" data-placement="top" title="Click to see results">Intervention <span class="badge badge-light badgeM">350</span></a>
-                                            <a id="ResNumGlobal2" target="_blank" class="btn btn-warning  d-none" data-toggle="tooltip" data-placement="top" title="Click to see results">Population AND Intervention <span class="badge badge-light badgeM">150</span></a>
+                                            <a id="ResNumLocal2" target="_blank" class="btn colorI  d-none" data-toggle="tooltip" data-placement="top" title="Click to see results"><label></label> <span class="badge badge-light badgeM">350</span></a>
+                                            <a id="ResNumGlobal2" target="_blank" class="btn btn-warning  d-none" data-toggle="tooltip" data-placement="top" title="Click to see results"><label>Population AND Intervention </label><span class="badge badge-light badgeM">150</span></a>
                                             <button id="CalcRes2" class="btn btn-info" data-toggle="tooltip" data-placement="top" title="Update Results">Results</button>
                                         </div>
                                     </div>
@@ -166,8 +166,8 @@
                                     <div class="col-12">
                                         <button class="btn btn-primary margin2M ExpandDeCS d-none" id="Exp3" name="Comparison" data-toggle="modal" data-target="#modal">Expand DeSH/MeSH Terms</button>
                                         <div class="btn-group">
-                                            <a id="ResNumLocal3" target="_blank" class="btn colorC  d-none" data-toggle="tooltip" data-placement="top" title="Click to see results">Comparison <span class="badge badge-light badgeM">200</span></a>
-                                            <a id="ResNumGlobal3" target="_blank" class="btn btn-warning  d-none" data-toggle="tooltip" data-placement="top" title="Click to see results">Population AND Intervention AND Comparison <span class="badge badge-light badgeM">80</span></a>
+                                            <a id="ResNumLocal3" target="_blank" class="btn colorC  d-none" data-toggle="tooltip" data-placement="top" title="Click to see results"><label></label> <span class="badge badge-light badgeM">200</span></a>
+                                            <a id="ResNumGlobal3" target="_blank" class="btn btn-warning  d-none" data-toggle="tooltip" data-placement="top" title="Click to see results"><label>Population AND Intervention AND Comparison </label><span class="badge badge-light badgeM">80</span></a>
                                             <button id="CalcRes3" class="btn btn-info" data-toggle="tooltip" data-placement="top" title="Update Results">Results</button>
                                         </div>
                                     </div>
@@ -205,8 +205,8 @@
                                     <div class="col-12">
                                         <button class="btn btn-primary margin2M ExpandDeCS d-none" id="Exp4" name="Outcome" data-toggle="modal" data-target="#modal">Expand DeSH/MeSH Terms</button>
                                         <div class="btn-group">
-                                            <a id="ResNumLocal4" target="_blank" class="btn colorO  d-none" data-toggle="tooltip" data-placement="top" title="Click to see results">Outcomes <span class="badge badge-light badgeM">135</span></a>
-                                            <a id="ResNumGlobal4" target="_blank" class="btn btn-warning d-none" data-toggle="tooltip" data-placement="top" title="Click to see results">Population AND Intervention AND Comparison AND Outcomes <span class="badge badge-light badgeM">50</span></a>
+                                            <a id="ResNumLocal4" target="_blank" class="btn colorO  d-none" data-toggle="tooltip" data-placement="top" title="Click to see results"><label></label> <span class="badge badge-light badgeM">135</span></a>
+                                            <a id="ResNumGlobal4" target="_blank" class="btn btn-warning d-none" data-toggle="tooltip" data-placement="top" title="Click to see results"><label>Population AND Intervention AND Comparison AND Outcomes </label><span class="badge badge-light badgeM">50</span></a>
                                             <button id="CalcRes4" class="btn btn-info " data-toggle="tooltip" data-placement="top" title="Update Results">Results</button>
                                         </div>
                                     </div>
@@ -300,7 +300,7 @@
                 <div>
                     <h3 class="result text-center">
                         <div class="btn-group">
-                        <b><a id="ResNumGlobal6" class="btn btn-lg btn-success" data-toggle="tooltip" data-placement="top" title="" target="_blank" data-original-title="Click to see results">Search Results <span class="badge badge-light badgeM d-none">10</span></a></b>
+                            <b><a id="ResNumGlobal6" class="btn btn-lg btn-success" data-toggle="tooltip" data-placement="top" title="" target="_blank" data-original-title="Click to see results"><label class="nomargin">Search Results</label> <span class="badge badge-light badgeM d-none">10</span></a></b>
                         <button id="CalcRes6" class="btn btn-outline-info d-none" data-toggle="tooltip" data-placement="top" title="Update Results"><i class="fas fa-sync-alt"></i></button>
                         </div>
                     </h3>
@@ -310,7 +310,7 @@
 
             <div class="container"> <br>
                 <label for=""><b class="sdlabel">Search Details</b></label>
-                <textarea id="FinalSearchDetails" rows="4" class="form-control" readonly="readonly"></textarea>
+                <textarea id="FinalSearchDetails" rows="4" class="form-control" readonly="readonly">Please update the results...</textarea>
             </div>
         </section>
 
@@ -325,6 +325,16 @@
         <script src="js/jquery-3.3.1.min.js"></script>
         <script src="js/bootstrap.min.js"></script>
         <script type="text/javascript" src="js/main.js"></script>
-        <script src="js/BaseInfo.js"></script>
-        <script src="js/start.js"></script>
+        <script src="js/PICObuilder/base.js"></script>
+        <script src="js/PICObuilder/changeseeker.js"></script>
+        <script src="js/PICObuilder/debug.js"></script>
+        <script src="js/PICObuilder/decsmanager.js"></script>
+        <script src="js/PICObuilder/init.js"></script>
+        <script src="js/PICObuilder/languagedb.js"></script>
+        <script src="js/PICObuilder/languagemisc.js"></script>
+        <script src="js/PICObuilder/languagetoggler.js"></script>
+        <script src="js/PICObuilder/loadingrequest.js"></script>
+        <script src="js/PICObuilder/newquerybuild.js"></script>
+        <script src="js/PICObuilder/resultsmanager.js"></script>
+        <script src="js/PICObuilder/start.js"></script>
     </body></html>
