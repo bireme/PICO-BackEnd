@@ -238,3 +238,22 @@
     height: 250px;
     overflow-y: auto;
 }
+
+.langbut{
+    color: #fff;
+    background-color: Transparent;
+    border: none;
+    padding:0;
+}
+
+label.nomargin{
+    margin:0;
+}
+
+#lang label{
+    white-space: pre;
+}
+
+[id^=ResNum] label{
+    margin:0;
+}

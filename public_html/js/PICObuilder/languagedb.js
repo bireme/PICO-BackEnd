@@ -1,37 +1,11 @@
-////////////////////BORRAR ESTO LUEGO DEL DEBUG
-////////////////////BORRAR ESTO LUEGO DEL DEBUG
-$(document).ready(() => {
-    $(document).find('#debugEventInfo').click(function () {
-        OpenInNewTab(getBaseURL() + 'var/log/log/');
-    });
-    $(document).find('#debugErrorInfo').click(function () {
-        OpenInNewTab(getBaseURL() + 'var/log/error/');
-    });
-});
-
 var globalLanguage = 0;
-////////////////////BORRAR ESTO LUEGO DEL DEBUG
-////////////////////BORRAR ESTO LUEGO DEL DEBUG
-////////////////////BORRAR ESTO LUEGO DEL DEBUG
 
-
-function getBaseURL() {
-    return "http://localhost/PHP-Bireme/";
-}
-
-var currentrequest;
-
-function getPICOinfo() {
-    return [MessageCode(141), MessageCode(142), MessageCode(143), MessageCode(144), MessageCode(145)];
-}
-
-function getFieldListOptions() {
-    return [MessageCode(121), MessageCode(122), MessageCode(123), MessageCode(124)];
-}
-
-
-function getMessageTitles() {
-    return ['ERROR', MessageCode(102), MessageCode(103), MessageCode(104), MessageCode(106)];
+function getSearchDetailsInfo() {
+    return ['Please update the results...',
+        'Por favor atualize os resultados...',
+        'Por favor actualiza los resultados...',
+        "Veuillez mettre à jour les résultats..."
+    ];
 }
 
 function getPICOPlaceHolder(PICOnum) {
@@ -45,16 +19,7 @@ function getPICOPlaceHolder(PICOnum) {
     }
 }
 
-
-function getPICOElements() {
-    return [MessageCode(111), MessageCode(112), MessageCode(113), MessageCode(114), MessageCode(115), MessageCode(116)];
-}
-
-function getLanguage() {
-    return globalLanguage
-}
-
-function MessageCode(Code) {
+function MessageCode(Code, Lang) {
     var Message;
     switch (Code) {
         case 111:
@@ -163,8 +128,44 @@ function MessageCode(Code) {
                 "Sélectionnez les langues des termes développés qui seront importés"
             ];
             break;
+        case 136:
+            Message = ['Search results',
+                'Resultados da pesquisa',
+                'Resultados de búsqueda',
+                "Résultats de la recherche"
+            ];
+            break;
+        case 137:
+            Message = ['PICOS Search - All rights reserved',
+                'PICOS Search - Todos os direitos reservados',
+                'PICOS Search - Todos los derechos reservados',
+                "PICOS Search - Tous les droits sont réservés"
+            ];
+            break;
+        case 138:
+            Message = ['Update results',
+                'Atualizar resultados',
+                'Actualizar resultados',
+                "Mettre à jour les résultats"
+            ];
+            break;
+        case 139:
+            Message = ['Click to see results',
+                'Clique para ver os resultados',
+                'Haga clic para ver los resultados',
+                "Cliquez pour voir les résultats"
+            ];
+            break;
+        case 161:
+            Message = ['Press ⟳ to update results',
+                'Pressione ⟳ para atualizar os resultados',
+                'Presiona ⟳ para actualizar los resultados',
+                "Appuyez sur ⟳ pour mettre à jour les résultats"
+            ];
+            break;
 
-        case 141:
+        
+                case 141:
             Message = ['Keywords describing the characteristics or conditions present in the population of interest and the ones to exclude',
                 'Palavras-chave que descrevam as características ou condições presentes na população de interesse e as que excluem',
                 'Palabras clave que describen las características o condiciones presentes en la población de interés y las que se excluyen',
@@ -311,6 +312,83 @@ function MessageCode(Code) {
                 'Nombre de résultats mis à jour pour:\n'
             ];
             break;
+        case 201:
+            Message = ['English',
+                'Inglês',
+                'Inglés',
+                'Anglais'
+            ];
+            break;
+        case 202:
+            Message = ['Portuguese',
+                'Português',
+                'Portugués',
+                'Portugais'
+            ];
+            break;
+        case 203:
+            Message = ['Spanish',
+                'Espanhõl',
+                'Español',
+                'Espagnol'
+            ];
+            break;
+        case 204:
+            Message = ['French',
+                'Francês',
+                'Francés',
+                'Français'
+            ];
+            break;
+        case 221:
+            Message = ['Loading...',
+                'Cargando...',
+                'Cargando...',
+                'Chargement...'
+            ];
+            break;
+        case 222:
+            Message = ['Cancel',
+                'Cancelar',
+                'Cancelar',
+                'Annuler '
+            ];
+            break;
+        case 231:
+            Message = ['Select DeCS/MeSH Descriptor',
+                'Selecione o descritor DeCS/MeSH',
+                'Seleccione el descriptor DeCS/MeSH',
+                'Sélectionner le descripteur DeCS/MeSH '
+            ];
+            break;
+        case 232:
+            Message = ['Continue',
+                'Continuar',
+                'Continuar',
+                'Continuer '
+            ];
+            break;
+        case 233:
+            Message = ['Select DeCS/MeSH Synonym',
+                'Selecione DeCS / MeSH Sinônimo',
+                'Seleccione DeCS / MeSH Sinónimo',
+                'Sélectionnez le synonyme DeCS / MeSH '
+            ];
+            break;
+        case 234:
+            Message = ['Free keywords',
+                'Palavras-chave livres',
+                'Palabras clave libres',
+                'Mots-clés libres '
+            ];
+            break;
+        case 235:
+            Message = ['Improve search',
+                'Melhore a pesquisa',
+                'Mejorar la búsqueda',
+                'Améliorer la recherche'
+            ];
+            break;
         default:
             Message =
                     ['Unknown Error',
@@ -320,6 +398,10 @@ function MessageCode(Code) {
                     ];
             break;
     }
-    var Lan = getLanguage();
+    if (Lang !== undefined) {
+        var Lan = Lang;
+    } else {
+        var Lan = getLanguage();
+    }
     return Message[Lan];
 }
