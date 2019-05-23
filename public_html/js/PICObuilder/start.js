@@ -4,4 +4,3 @@ $(document).ready(() => {
         debugfunctions();
     }, 300);
 });
-

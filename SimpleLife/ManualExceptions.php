@@ -414,8 +414,8 @@ class ParenthesesNumberNotMatch Extends SimpleExceptionTypeModel {
     protected $code = 122;
     protected $AlertLevel = 3;
 
-    public function __construct($EqName) {
-        $message = 'Error in: ' . $EqName . '. The number of parentheses does not match';
+    public function __construct($EqName,$Equation) {
+        $message = 'Error in: ' . $EqName . '. The number of parentheses does not match<br>'.$Equation;
         return parent::__construct($message, true);
     }
 

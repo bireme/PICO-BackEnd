@@ -13,6 +13,7 @@ class DeCSDescriptor {
     public function __construct($tree_id, $term, $DeCS) {
         $this->tree_id = $tree_id;
         $this->term = $term;
+        $DeCS=$this->DeCScomma($DeCS);
         $this->DeCS = $DeCS;
         $this->Complete = false;
         $this->Descendants = array();
@@ -44,11 +45,31 @@ class DeCSDescriptor {
     }
 
     public function GetDescendantsAsString() {
-        return '{' . join($this->Descendants, ', ') . '}';
+        return '{' . join($this->Descendants, ' , ') . '}';
     }
 
     public function setDeCS($DeCS) {
         $this->DeCS = array_unique(array_merge($this->DeCS, $DeCS));
+    }
+
+    private function DeCScomma($DeCS) {
+        foreach ($DeCS as $key=>$subDeCS) {
+            
+            $tmp = explode(', ', $subDeCS);
+            if (count($tmp) > 1) {
+                $countx = count($tmp)-1;
+                $msgx = '';
+                while ($countx >= 0) {
+                    if(strlen($msgx)>0){
+                        $msgx = $msgx. ' ';
+                    }       
+                    $msgx = $msgx . $tmp[$countx];
+                    $countx--;
+                }
+                $DeCS[$key] = $msgx;
+            }
+        }
+        return $DeCS;
     }
 
     public function getDeCS() {

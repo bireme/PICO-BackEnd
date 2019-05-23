@@ -28,6 +28,7 @@ class ControllerDeCSLooper {
         $DeCSList = array();
 
         foreach ($this->ObjectKeywordList->getKeywordList() as $ObjectKeyword) {
+            
             $obj = new ControllerDeCSHandler($ObjectKeyword);
             $fun = $obj->getDeCS();
             if ($fun) {

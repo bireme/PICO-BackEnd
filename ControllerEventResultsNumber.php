@@ -15,20 +15,16 @@ $Obj->EchoResults();
 
 class ControllerEventResultsNumber {
 
-    private $ResultsNumber;
+    private $ResultsNumberObtainer;
 
-    public function __construct() {
-        $this->ResultsNumber = NULL;
-    }
 
     public function getResultsNumber($resultsData, $PICOnum,$PICOname) {
-        $obj = new FacadeResultsNumberObtainer($resultsData, $PICOnum,$PICOname);
-        $result = $obj->getResultsNumber();
-        $this->ResultsNumber = $result;
+        $this->ResultsNumberObtainer = new FacadeResultsNumberObtainer($resultsData, $PICOnum,$PICOname);
+        $this->ResultsNumberObtainer->buildResultsNumber();
     }
 
     public function EchoResults() {
-        echo json_encode($this->ResultsNumber);
+        echo $this->ResultsNumberObtainer->getResultsNumber();
     }
 
 }

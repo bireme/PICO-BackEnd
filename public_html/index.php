@@ -125,7 +125,7 @@
                                 </div>
                                 <div class="row margin1">
                                     <div class="col-12">
-                                        <button class="btn btn-primary margin2M ExpandDeCS d-none" id="Exp2" name="Intervention" data-toggle="modal" data-target="#modal">Expand DeSH/MeSH Terms</button>
+                                        <button class="btn btn-primary margin2M ExpandDeCS d-none" id="Exp2" name="Intervention">Expand DeSH/MeSH Terms</button>
                                         <div class="btn-group">
                                             <a id="ResNumLocal2" target="_blank" class="btn colorI  d-none" data-toggle="tooltip" data-placement="top" title="Click to see results"><label></label> <span class="badge badge-light badgeM">350</span></a>
                                             <a id="ResNumGlobal2" target="_blank" class="btn btn-warning  d-none" data-toggle="tooltip" data-placement="top" title="Click to see results"><label>Population AND Intervention </label><span class="badge badge-light badgeM">150</span></a>
@@ -164,7 +164,7 @@
                                 </div>
                                 <div class="row margin1">
                                     <div class="col-12">
-                                        <button class="btn btn-primary margin2M ExpandDeCS d-none" id="Exp3" name="Comparison" data-toggle="modal" data-target="#modal">Expand DeSH/MeSH Terms</button>
+                                        <button class="btn btn-primary margin2M ExpandDeCS d-none" id="Exp3" name="Comparison">Expand DeSH/MeSH Terms</button>
                                         <div class="btn-group">
                                             <a id="ResNumLocal3" target="_blank" class="btn colorC  d-none" data-toggle="tooltip" data-placement="top" title="Click to see results"><label></label> <span class="badge badge-light badgeM">200</span></a>
                                             <a id="ResNumGlobal3" target="_blank" class="btn btn-warning  d-none" data-toggle="tooltip" data-placement="top" title="Click to see results"><label>Population AND Intervention AND Comparison </label><span class="badge badge-light badgeM">80</span></a>
@@ -203,7 +203,7 @@
                                 </div>
                                 <div class="row margin1">
                                     <div class="col-12">
-                                        <button class="btn btn-primary margin2M ExpandDeCS d-none" id="Exp4" name="Outcome" data-toggle="modal" data-target="#modal">Expand DeSH/MeSH Terms</button>
+                                        <button class="btn btn-primary margin2M ExpandDeCS d-none" id="Exp4" name="Outcome">Expand DeSH/MeSH Terms</button>
                                         <div class="btn-group">
                                             <a id="ResNumLocal4" target="_blank" class="btn colorO  d-none" data-toggle="tooltip" data-placement="top" title="Click to see results"><label></label> <span class="badge badge-light badgeM">135</span></a>
                                             <a id="ResNumGlobal4" target="_blank" class="btn btn-warning d-none" data-toggle="tooltip" data-placement="top" title="Click to see results"><label>Population AND Intervention AND Comparison AND Outcomes </label><span class="badge badge-light badgeM">50</span></a>

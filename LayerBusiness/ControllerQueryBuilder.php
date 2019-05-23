@@ -4,7 +4,6 @@ namespace LayerBusiness;
 
 require_once(realpath(dirname(__FILE__)) . '/../SimpleLife/ManualExceptions.php');
 require_once(realpath(dirname(__FILE__)) . '/../SimpleLife/SimpleLifeMessages.php');
-require_once(realpath(dirname(__FILE__)) . '/../LayerEntities/ObjectQuery.php');
 
 use SimpleLife\SimpleLifeMessage;
 use SimpleLife\SimpleLifeException;
@@ -16,34 +15,73 @@ class ControllerQueryBuilder {
 
     public function __construct($ObjectQuery) {
         $this->ObjectQuery = $ObjectQuery;
-        $this->SimpleLifeMessage = new SimpleLifeMessage('Query Builder Manager');
     }
 
-    public function BuildnewQuery($SelectedDescriptors, $ImproveSearch) {
-        $fun = $this->CheckElements($SelectedDescriptors, $ImproveSearch);
+    public function BuildnewQuery() {
+        $results = json_decode($this->ObjectQuery->getPreviousResults(), true);
+        $SelectedDescriptors = $this->ObjectQuery->getSelectedDescriptors();
+        $ImproveSearchArr = $this->ObjectQuery->getImproveSearchArr();
+        $fun = $this->CheckElements($SelectedDescriptors, $ImproveSearchArr);
         if ($fun) {
             return $fun;
         }
-        $DeCSList = array();
+        $this->BuildEquation($results, $SelectedDescriptors);
+        $this->ImproveSearch($ImproveSearchArr);
+    }
 
-        foreach ($this->ObjectKeywordList->getKeywordList() as $ObjectKeyword) {
-            $obj = new ControllerDeCSHandler($ObjectKeyword);
-            $fun = $obj->getDeCS();
-            if ($fun) {
-                return $fun;
+    private function ImproveSearch($ImproveSearchArr) {
+        $query = $this->ObjectQuery->getEquationNoImprovement();
+        $result = $query;
+        $this->ObjectQuery->setQuery($result);
+    }
+
+    private function BuildEquation($results, $SelectedDescriptors) {
+        $msg = '';
+        foreach ($results as $item) {
+            $type = $item['type'];
+            if ($type == 'key' || $type == 'keyrep') {
+                $obj = $item['value'];
+                $keyword = ucfirst($obj['keyword']);
+                $Objkeyword = $obj['value'];
+                $msgkeyword = $keyword;
+                foreach ($Objkeyword as $tree_id => $ObjectDescriptor) {
+                    if (!(in_array($tree_id, $SelectedDescriptors))) {
+                        continue;
+                    }
+                    $tmp = '';
+                    foreach ($ObjectDescriptor['DeCS'] as $DeCS) {
+                        if (strpos($DeCS, ' ') !== false) {
+                            $DeCS = '"' . $DeCS . '"';
+                        }
+                        if (strlen($tmp) > 0) {
+                            $tmp = $tmp . ' OR ';
+                        }
+                        $tmp = $tmp .$DeCS;
+                    }
+                    if (strlen($tmp) > 0) {
+                        $tmp = '(' . $tmp . ')';
+                    }
+
+                    if (strlen($msgkeyword) != 0) {
+                        $msgkeyword = $msgkeyword . ' OR ';
+                    }
+                    $msgkeyword = $msgkeyword . $tmp;
+                }
+                if (strlen($msgkeyword) != 0) {
+                    $msgkeyword = '(' . $msgkeyword . ')';
+                }
+                $msg = $msg . $msgkeyword;
+            } else {
+                $msg = $msg . $item['value'];
             }
         }
-
-        $this->ReportMessage();
+        if (strlen($msg) != 0) {
+            $msg = '(' . $msg . ')';
+        }
+        $this->ObjectQuery->setEquationNoImprovement($msg);
     }
 
-    private function ReportMessage() {
-        $this->ObjectKeywordList->KeyWordListInfo($this->SimpleLifeMessage);
-        $this->SimpleLifeMessage->SendAsLog();
-    }
-
-    private function CheckElements($SelectedDescriptors, $ImproveSearch) {
-        $langArr = $this->ObjectKeywordList->getLang();
+    private function CheckElements($SelectedDescriptors, $ImproveSearchArr) {
         try {
             if (!($SelectedDescriptors)) {
                 throw new SimpleLifeException(new \SimpleLife\NullSelectedDescriptors());
@@ -54,22 +92,22 @@ class ControllerQueryBuilder {
             if (count($SelectedDescriptors) == 0) {
                 throw new SimpleLifeException(new \SimpleLife\NoItemsInSelectedDescriptors());
             }
-            foreach ($SelectedDescriptors as $item) {
-                if (!($item)) {
-                    throw new SimpleLifeException(new \SimpleLife\NullItemInSelectedDescriptors());
+            $openpar = 0;
+            $closepar = 0;
+            foreach ($ImproveSearchArr as $value) {
+                if ($value['value'] == '(') {
+                    $openpar = $openpar + 1;
+                    continue;
                 }
-                if (!(is_array($item))) {
-                    throw new SimpleLifeException(new \SimpleLife\ItemInSelectedDescriptorsNotArray());
-                }
-                if (count($item) == 0) {
-                    throw new SimpleLifeException(new \SimpleLife\NoItemsInItemInSelectedDescriptor());
+                if ($value['value'] == '(') {
+                    $closepar = $closepar + 1;
+                    continue;
                 }
             }
-            if (substr_count($ImproveSearch,'(')!=substr_count($ImproveSearch,'(')) {
-                throw new SimpleLifeException(new \SimpleLife\NullImproveSearch());
+
+            if ($openpar != $closepar) {
+                throw new SimpleLifeException(new \SimpleLife\ParenthesesNumberNotMatch('Equation @ query builder', join($ImproveSearchArr)));
             }
-            
-            
         } catch (SimpleLifeException $exc) {
             return $exc->PreviousUserErrorCode();
         }
