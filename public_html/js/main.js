@@ -5,8 +5,6 @@ $('.collapse').on('shown.bs.collapse', function(){
 	$(this).parent().find(".fa-minus").removeClass("fa-minus").addClass("fa-plus");
 });
 
-
-
 //tootip
 $(function () {
 	$('[data-toggle="tooltip"]').tooltip()

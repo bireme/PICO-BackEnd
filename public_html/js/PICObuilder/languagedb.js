@@ -164,8 +164,8 @@ function MessageCode(Code, Lang) {
             ];
             break;
 
-        
-                case 141:
+
+        case 141:
             Message = ['Keywords describing the characteristics or conditions present in the population of interest and the ones to exclude',
                 'Palavras-chave que descrevam as características ou condições presentes na população de interesse e as que excluem',
                 'Palabras clave que describen las características o condiciones presentes en la población de interés y las que se excluyen',
@@ -387,6 +387,13 @@ function MessageCode(Code, Lang) {
                 'Melhore a pesquisa',
                 'Mejorar la búsqueda',
                 'Améliorer la recherche'
+            ];
+            break;
+        case 236:
+            Message = ["Ex: tw:(chicungunya) AND (instance:'regional')",
+                "Ex: tw:(chicungunya) AND (instance:'regional')",
+                "Ej: tw:(chicungunya) AND (instance:'regional')",
+                "Ex: tw:(chicungunya) AND (instance:'regional')"
             ];
             break;
         default:

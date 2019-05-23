@@ -89,10 +89,10 @@ class ControllerImportDeCS extends ControllerImportModel {
 
     public function InnerObtainByLang($key) {
         $i = 0;
-        if($this->IsMainTree==true){
-            $langs=array('en','pt','es');
-        }else{
-            $langs=$this->ObjectKeyword->getLang();
+        if ($this->IsMainTree == true) {
+            $langs = array('en', 'pt', 'es');
+        } else {
+            $langs = $this->ObjectKeyword->getLang();
         }
         foreach ($langs as $lang) {
             $CheckDescendants = true;
@@ -166,42 +166,42 @@ class ControllerImportDeCS extends ControllerImportModel {
 
     private function getDescendants($item) {
 
-            $descendantsArr = array();
-            $treesArr = array();
-            $DeCSTitle = $item->getElementsByTagName('self')->item(0)->getElementsByTagName('term')->item(0);
-            $tree_id = $DeCSTitle->getAttribute('tree_id');
-            if (strlen($tree_id) == 0) {
-                throw 'no data';
-            }
+        $descendantsArr = array();
+        $treesArr = array();
+        $DeCSTitle = $item->getElementsByTagName('self')->item(0)->getElementsByTagName('term')->item(0);
+        $tree_id = $DeCSTitle->getAttribute('tree_id');
+        if (strlen($tree_id) == 0) {
+            throw 'no data';
+        }
 
-            if ($this->IsMainTree == true) {
-                $descendants = array();
-                array_push($treesArr, $tree_id);
-            } else {
-                $descendants = $item->getElementsByTagName('descendants')->item(0)->getElementsByTagName('term');
-            }
+        if ($this->IsMainTree == true) {
+            $descendants = array();
+            array_push($treesArr, $tree_id);
+        } else {
+            $descendants = $item->getElementsByTagName('descendants')->item(0)->getElementsByTagName('term');
+        }
 
-            $trees = $item->getElementsByTagName('record_list')->item(0)->getElementsByTagName('tree_id_list')->item(0);
-            $trees = $trees->getElementsByTagName('tree_id');
+        $trees = $item->getElementsByTagName('record_list')->item(0)->getElementsByTagName('tree_id_list')->item(0);
+        $trees = $trees->getElementsByTagName('tree_id');
 
-            foreach ($descendants as $obj) {
-                array_push($descendantsArr, $obj->getAttribute('tree_id'));
-            }
-            foreach ($trees as $obj) {
-                array_push($treesArr, $obj->nodeValue);
-            }
-            $descendantsArr = array_unique($descendantsArr);
-            $treesArr = array_unique($treesArr);
-            $msg = '';
-            if ($this->IsMainTree == false) {
-                $this->ObjectKeyword->SetDescendantsByTree($tree_id, $descendantsArr);
-                $msg = $msg . ' --> Descendants:{' . join($descendantsArr, ', ') . '} . ';
-                $msg = $msg . 'Trees:{' . join($treesArr, ', ') . '}';
-            } else {
-                $msg = $msg . '  {' . join($treesArr, ', ') . '}';
-            }
-            $this->SimpleLifeMessage->Add($msg);
-            $finalArr = array_merge($descendantsArr, $treesArr);
+        foreach ($descendants as $obj) {
+            array_push($descendantsArr, $obj->getAttribute('tree_id'));
+        }
+        foreach ($trees as $obj) {
+            array_push($treesArr, $obj->nodeValue);
+        }
+        $descendantsArr = array_unique($descendantsArr);
+        $treesArr = array_unique($treesArr);
+        $msg = '';
+        if ($this->IsMainTree == false) {
+            $this->ObjectKeyword->SetDescendantsByTree($tree_id, $descendantsArr);
+            $msg = $msg . ' --> Descendants:{' . join($descendantsArr, ', ') . '} . ';
+            $msg = $msg . 'Trees:{' . join($treesArr, ', ') . '}';
+        } else {
+            $msg = $msg . '  {' . join($treesArr, ', ') . '}';
+        }
+        $this->SimpleLifeMessage->Add($msg);
+        $finalArr = array_merge($descendantsArr, $treesArr);
         try {
             if (count($finalArr) == 0) {
                 throw new SimpleLifeException(new \SimpleLife\NoDescendantsNorTrees($tree_id, $lang));

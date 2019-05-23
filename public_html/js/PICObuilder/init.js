@@ -11,26 +11,6 @@ function initfunctions() {
     $('#modal').find('.btn-primary').click(function () {
         HideUnselectedDeCS();
     });
-    $('#modal2').find('.btn-primary').click(function (e) {
-        e.preventDefault();
-        e.stopPropagation();
-        var msg = '';
-        $('#modal2').find('input').each(function () {
-            if ($(this).is(':checked')) {
-                var id = $(this).attr('id');
-                var obj = $('#modal2').find('label[name="' + id + '"]').first();
-                var txt = $(obj).text();
-                txt = txt.replace(/ - /g, ' OR ');
-                txt = '(' + txt + ')';
-                if (msg.length > 0) {
-                    msg = msg + ' OR ';
-                }
-                msg = msg + txt;
-            }
-            $('#datainput' + PICOnumGlobal).val(msg);
-        });
-        hideModal2();
-    });
     $('#modal3').find('.btn-primary').click(function () {
         ProcessResults();
     });
@@ -116,9 +96,10 @@ function hideModal2() { //BORRARESTO
 }
 
 function ShowPICOinfo(PICOnum) {
+    var title= getPICOElements()[PICOnum-1];
     var msg = getPICOinfo()[PICOnum - 1];
     if (PICOnum < 5) {
-        msg = msg + ' \n \n' + getPICOPlaceHolder(PICOnum);
+        msg = title + ' \n \n' + msg + ' \n \n' + getPICOPlaceHolder(PICOnum);
     }
     showInfoMessage('Info', msg, false);
 }

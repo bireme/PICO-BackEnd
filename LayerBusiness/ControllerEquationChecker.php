@@ -8,48 +8,61 @@ require_once(realpath(dirname(__FILE__)) . '/../LayerEntities/ObjectEquation.php
 use SimpleLife\SimpleLifeException;
 
 class ControllerEquationChecker {
+    
+    private $EquationOwnerObj;
 
-    private $ObjectEquation;
-
-    public function __construct($ObjectEquation) {
-        $this->ObjectEquation = $ObjectEquation;
+    public function __construct($EquationOwnerObj) {
+        $this->EquationOwnerObj=$EquationOwnerObj;
     }
 
-    public function CheckEquation() {
-        $fun = $this->CheckEquationParameters();
+    public function CheckEquation($EqName) {
+        $query = $this->EquationOwnerObj->getQuery();
+        $fun = $this->CheckEquationParameters($query,$EqName);
         if ($fun) {
             return $fun;
         }
+        $query=$this->FixEquation($query);
+        $this->EquationOwnerObj->setQuery($query);
     }
 
-    public function FixEquation() {
-        try {
-            $Equation = $this->ObjectEquation->getEquation();
-            $Equation = trim(Equation, ' ');
-            $Equation = str_replace('  ', ' ', $Equation);
-            $Equation = str_replace('[', '(', $Equation);
-            $Equation = str_replace(']', ')', $Equation);
-            $Equation = str_replace('{', '(', $Equation);
-            $Equation = str_replace('}', ')', $Equation);
-            $Equation = str_replace('()', '', $Equation);
-            $Equation = str_replace('( )', '', $Equation);
-            $Equation = str_replace(')(', ') OR (', $Equation);
-            $Equation = str_replace(') (', ') OR (', $Equation);
-            $this->ObjectEquation->setNewEquation($Equation);
-        } catch (Exception $ex) {
-            return 350;
+    public function FixEquation($Equation) {
+        $Equation = trim($Equation, ' ');
+        $Equation = str_replace('  ', ' ', $Equation);
+        $Equation = str_replace('[', '(', $Equation);
+        $Equation = str_replace(']', ')', $Equation);
+        $Equation = str_replace('{', '(', $Equation);
+        $Equation = str_replace('}', ')', $Equation);
+        $Equation = str_replace('()', '', $Equation);
+        $Equation = str_replace('( )', '', $Equation);
+        $Equation = str_replace(')(', ') OR (', $Equation);
+        $Equation = str_replace(') (', ') OR (', $Equation);
+
+        $oriEq = '';
+        while ($Equation != $oriEq) {
+            $oriEq = $Equation;
+            $Equation = preg_replace_callback('/((?<!NOT )[(][A-Z0-9][)])/', function($matches) {
+                $matches[1] = substr($matches[1], 1, -1);
+                return $matches[1];
+            }, $Equation);
         }
-    }
+        $Equation = trim($Equation, ' ');
+        $Equation = preg_replace_callback('/((?<=|[() ])[A-Z0-9][ ](?=[)]))/', function($matches) {
+            $matches[1] = substr($matches[1], 0, 1);
 
-    private function CheckEquationParameters() {
+            return $matches[1];
+        }, $Equation);
+
+
+        return $Equation;
+    }
+    
+    private function CheckEquationParameters($Equation,$EqName) {
         try {
-            $Equation = $this->ObjectEquation->getEquation();
-            $EqName = $this->ObjectEquation->getName();
             if (!is_string($Equation) == true) {
                 throw new SimpleLifeException(new \SimpleLife\EquationMustBeString($EqName));
             }
-            if (substr_count($Equation, '(') == substr_count($Equation, ')')) {
-                throw new SimpleLifeException(new \SimpleLife\ParenthesesNumberNotMatch($EqName));
+            if (substr_count($Equation, '(') != substr_count($Equation, ')')) {
+                throw new SimpleLifeException(new \SimpleLife\ParenthesesNumberNotMatch($EqName,$Equation));
             }
             $InvalidChars = preg_replace("/[a-zA-Z0-9 ()]/", "", $Equation);
             $InvalidChars = preg_replace("/(.)\\1+/", "$1", $InvalidChars);

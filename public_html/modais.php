@@ -1,5 +1,6 @@
     <!---------------------------------- Modal  Parte 1 ---------------------------------->
     <div class="modal fade" id="modal" tabindex="-1" role="dialog">
+        <div class="cache-tmp-class d-none"></div>
         <div class="modal-dialog modal-dialog-centered modal-xl" role="document">
             <div class="modal-content">
                 <div class="modal-header">

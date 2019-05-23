@@ -102,7 +102,7 @@ function setDeCSImportLanguage() {
     $('#modal2').find('.modal-title').text(MessageCode(233));
     $('#modal3').find('.modal-title').text(MessageCode(234));
     $('#modal3').find('.modal-body').first().find('label').text(MessageCode(235));
-    $('#modal3').find('.modal-body').first().find('textarea').text(MessageCode(236));
+    $('#modal3').find('.modal-body').first().find('textarea').attr('placeholder',MessageCode(236));
     $('#modal').find('.modal-footer').first().find('button').text(MessageCode(232));
     $('#modal2').find('.modal-footer').first().find('button').text(MessageCode(232));
     $('#modal3').find('.modal-footer').first().find('button').text(MessageCode(232));

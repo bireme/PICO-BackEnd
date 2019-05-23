@@ -17,34 +17,40 @@ class FacadeResultsNumberObtainer {
     private $SimpleLifeMessage;
     private $FacadeResultsNumberTimer;
     private $ObjectResultList;
+    private $ErrorCode;
 
-    public function __construct($resultsData, $EqNum,$PICOname) {
+    public function __construct($resultsData, $EqNum, $PICOname) {
         $this->FacadeResultsNumberTimer = new \SimpleLife\Timer();
         $this->SimpleLifeMessage = new SimpleLifeMessage('FacadeResultsNumberObtainer');
         $this->SimpleLifeMessage->AddAsNewLine('$PICO=' . $PICOname . ' $ResultsQuery = ' . json_encode($resultsData));
-        $this->ObjectResultList = new ObjectResultList($EqNum,$resultsData,$PICOname);
+        $this->ObjectResultList = new ObjectResultList($EqNum, $resultsData, $PICOname);
         $this->ResultsNumberProcessor = new ControllerResultsNumberHandler($this->ObjectResultList);
     }
 
-    public function getResultsNumber() {
-        $fun = $this->BuildResultsNumber();
+    public function BuildResultsNumber() {
+        $fun = $this->ResultsNumberProcess();
         if ($fun) {
-            return $this->ShowErrorCodeToUser($fun);
+            return $this->setErrorCode($fun);
         }
-        $res = ($this->getResults());
-        $this->OperationReport($res);
-        return $res;
     }
 
-    private function BuildResultsNumber() {
+    private function ResultsNumberProcess() {
         $fun = $this->ResultsNumberProcessor->BuildResultsNumber();
         if ($fun) {
             return $fun;
         }
     }
 
-    private function getResults() {
-        return $this->ObjectResultList->getResults();
+    public function getResultsNumber() {
+        $res = $this->ObjectResultList->getResults();
+        $this->OperationReport($res);
+        if ($this->ErrorCode) {
+            $result= json_encode(array('Error' => $this->ShowErrorCodeToUser()));
+        } else {
+            $result= json_encode(array('Data' => $res));
+        }
+        $this->OperationReport($result);
+        return $result;
     }
 
     private function OperationReport($result) {
@@ -58,9 +64,13 @@ class FacadeResultsNumberObtainer {
         $this->SimpleLifeMessage->AddAsNewLine(json_encode($result));
         $this->SimpleLifeMessage->SendAsLog();
     }
-    
-    private function ShowErrorCodeToUser($ErrorCode) {
-        return '[Error ' . $ErrorCode . ']Este error se traducirá y se mostrará si es relevante para el usuario';
+
+    private function setErrorCode($ErrorCode) {
+        $this->ErrorCode = $ErrorCode;
+    }
+
+    private function ShowErrorCodeToUser() {
+        return '[Error ' . $this->ErrorCode . ']Este error se traducirá y se mostrará si es relevante para el usuario';
     }
 
 }

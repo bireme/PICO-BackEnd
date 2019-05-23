@@ -67,6 +67,7 @@ function setLanguagesOfModal(langArr) {
 function eventDeCSSearch(query, langs, PICOnum) {
     var url = "ControllerEventDeCSSearch.php";
     var data = {
+        previousData:getPreviousData(),
         query: query,
         langs: langs,
         PICOnum: PICOnum
@@ -82,10 +83,19 @@ function showDeCSMenu() {
 }
 
 
+function setPreviousData(results) {
+    $('#modal').find('.cache-tmp-class').first().text(results);
+}
+
+function getPreviousData() {
+    return $('#modal').find('.cache-tmp-class').first().text();
+}
+
 function createDeCSMenu(data) {
     var results = data.results;
     var HTMLDescriptors = data.HTMLDescriptors;
     var HTMLDeCS = data.HTMLDeCS;
+    setPreviousData(results);
     $('#modal').find('.modal-body').first().html(HTMLDescriptors);
     $('#modal2').find('.modal-body').first().html(HTMLDeCS);
 }
@@ -134,29 +144,4 @@ function getLanguages() {
         }
     });
     return langs;
-}
-
-function getSelectedDescriptors() {
-    var DeCSModalTitlePrefix = 'opcao';
-    var DeCSModalTitlePostfix = '-tab';
-    var num = 0;
-    var SelectedDescriptors = [];
-    $('#modal2').find('.DeCSCheckBoxElement').each(function () {
-        if (!($(this).find('input').first().is(':checked'))) {
-            return;
-        }
-        var identifier = ($(this).attr('id')).substring(DeCSModalTitlePrefix.length);
-        var tmp = identifier.split('-');
-        var DescriptorNum = tmp[0];
-        var DeCSLabelText = $(this).find('label').first().text();
-        var DeCSArr = DeCSLabelText.split(', ');
-        if (!(SelectedDescriptors[DescriptorNum])) {
-            SelectedDescriptors[DescriptorNum] = [];
-        }
-        SelectedDescriptors[DescriptorNum].push(DeCSArr);
-    });
-    var SelectedDescriptors = SelectedDescriptors.filter(function (item) {
-        return item !== null;
-    });
-    return SelectedDescriptors;
 }

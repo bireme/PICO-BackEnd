@@ -1,7 +1,12 @@
 var currentrequest;
 
 function getBaseURL() {
-    var foldername = '/PICO-BackEnd';
+    var foldername = '/PHP-Bireme';
+    var testfoldername = '/pico';
+    var isdeployed=true;
+    if(isdeployed){
+        foldername=testfoldername;
+    }
     var msg = location.protocol + '//' + location.hostname + foldername + '/';
     return msg;
 }
@@ -16,15 +21,13 @@ function POSTrequest(url, data, callback) {
             function (obtainedData) {
                 try {
                     var outerData = JSON.parse(obtainedData);
-                    var Data = outerData.Data;
-                    Data.length;
                     var Err = outerData.Error;
                     var War = outerData.Warning;
                     if (Err) {
                         hideLoading();
                         setTimeout(function () {
                             ConsoleErr(data, obtainedData);
-                            showInfoMessage('Error',Err, false);
+                            showInfoMessage('Error', Err, false);
                         }, 300);
                         return;
                     }
@@ -33,6 +36,15 @@ function POSTrequest(url, data, callback) {
                         setTimeout(function () {
                             ConsoleErr(data, obtainedData);
                             showInfoMessage('Warning', War, false);
+                        }, 300);
+                        return;
+                    }
+                    var Data = outerData.Data;
+                    if (!(Data)) {
+                        hideLoading();
+                        setTimeout(function () {
+                            ConsoleErr(data, obtainedData);
+                            showInfoMessage('Error', MessageCode(2), false);
                         }, 300);
                         return;
                     }
@@ -68,7 +80,7 @@ function showLoading() {
 
 function ConsoleErr(RequestData, ObtainedData) {
     var debug = true;
-    var msg = 'Sent JSON request: </br>' + JSON.stringify(RequestData) + ' </br></br></br> Received Data: </br> ' + ObtainedData;
+    var msg = 'Sent JSON request: </br>' + JSON.stringify(RequestData) + ' </br></br></br> Received Data: </br> ' + JSON.stringify(ObtainedData);
     if (debug === false) {
         msg = msg.replace("</br>", "\n");
         console.log(msg);
