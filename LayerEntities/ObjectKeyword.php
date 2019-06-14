@@ -11,27 +11,38 @@ use LayerEntities\DeCSDescriptor;
 class ObjectKeyword {
 
     private $keyword;
-    private $DeCSList;
-    private $KeywordRelatedTrees;
     private $langArr;
     private $InMainTree;
+    private $Completed;
+    private $basedata;
     private $ConnectionTime;
-
-    public function setConnectionTime(int $time) {
-        $this->ConnectionTime += $time;
-    }
 
     public function getConnectionTime() {
         return $this->ConnectionTime;
     }
+    
+    public function setPreviousBaseData($results) {
+        $this->basedata=$results;
+    }
 
-    public function __construct($keyword, $langArr) {
-        $this->ConnectionTime = 0;
+    public function setBaseData($results) {
+        $results = $this->ProcessResults($results);
+        $this->basedata = $this->orderDeCSListByTerm($results, $this->mainlanguage, $this->langArr);
+    }
+
+    public function SetAsCompleted() {
+        $this->Completed = true;
+    }
+
+    public function IsCompleted() {
+        return $this->Completed;
+    }
+
+    public function __construct($keyword, $langArr, $mainlanguage) {
         $this->keyword = $keyword;
-        $this->DeCSList = array();
-        $this->KeywordRelatedTrees = array();
+        $this->mainlanguage = $mainlanguage;
         $this->langArr = $langArr;
-        $this->InMainTree = true;
+        $this->Completed = false;
     }
 
     public function getLang() {
@@ -44,122 +55,148 @@ class ObjectKeyword {
 
     //------------------------------------------------------------
     //------------------------------------------------------------
-    //-THIS SECTION CONTAINS TREE EXPLORING----------------------
+    //-THIS SECTION CONTAINS RESULTS AND SUMMARIES
     //------------------------------------------------------------
     //------------------------------------------------------------
 
-    public function AddKeywordRelatedTrees($List) {
-        foreach ($List as $NewRelatedTree) {
-            if (!(array_key_exists($NewRelatedTree, $this->KeywordRelatedTrees))) {
-                $this->KeywordRelatedTrees[$NewRelatedTree] = false;
+    private function ProcessResults($inidata) {
+        $content = array();
+        $this->ConnectionTime = $inidata['ConnectionTime'];
+        foreach ($inidata['content'] as $tree_id => $TreeObject) {
+            $DeCSArrTotal = $TreeObject['DeCS'];
+            $TermsArr = $TreeObject['TermsArr'];
+            $Descendants = $TreeObject['descendants'];
+            $this->ExploreDescendants($Descendants, $DeCSArrTotal);
+            $langs = array_keys($DeCSArrTotal);
+            foreach ($langs as $lang) {
+                $DeCSArrTotal[$lang] = array_unique($DeCSArrTotal[$lang]);
             }
+            $content[$tree_id] = array('TermsArr' => $TermsArr, 'DeCSArr' => $DeCSArrTotal);
+        }
+        return $content;
+    }
+
+    private function ExploreDescendants($Descendants, $DeCSArrTotal) {
+        foreach ($Descendants as $tree_id => $TreeObject) {
+            $DeCSArr = $TreeObject['DeCS'];
+            $langs = array_unique(array_merge(array_keys($DeCSArrTotal), array_keys($DeCSArr)));
+            foreach ($langs as $lang) {
+                $DeCSArrTotal[$lang] = array_merge($DeCSArrTotal[$lang], $DeCSArr[$lang]);
+            }
+            $Descendants = $TreeObject['descendants'];
+            $this->ExploreDescendants($Descendants, $DeCSArrTotal);
         }
     }
 
-    public function GetAllUnexploredTrees() {
+    private function AddToContent($TermTitle, &$UsedTrees, &$Result, $TreeObject, $tree_id) {
+        if (!(isset($TermTitle)) ?: !(strlen($TermTitle) > 0)) {
+            return false;
+        }
+        if (in_array($tree_id, $UsedTrees)) {
+            return false;
+        }
+        array_push($UsedTrees, $tree_id);
+        if (!(array_key_exists($TermTitle, $Result))) {
+            $Result[$TermTitle] = array();
+        }
+        if (!(array_key_exists($tree_id, $Result[$TermTitle]))) {
+            $Result[$TermTitle][$tree_id] = array();
+        }
+        $Result[$TermTitle][$tree_id] = $TreeObject['DeCSArr'];
+    }
+
+    private function orderDeCSListByTerm($results, $mainlanguage, $langArr) {
         $Result = array();
-        foreach ($this->KeywordRelatedTrees as $tree_id => $boolX) {
-            if ($boolX == false) {
-                array_push($Result, $tree_id);
+        $UsedTrees = array();
+        foreach ($results as $tree_id => $TreeObject) {
+            $TermTitle = $this->CompareDescriptors(array('tree_id' => $tree_id, 'tree' => $TreeObject), NULL, $mainlanguage);
+            $this->AddToContent($TermTitle, $UsedTrees, $Result, $TreeObject, $tree_id);
+            foreach ($results as $tree_id2 => $TreeObject2) {
+                if ($tree_id == $tree_id2) {
+                    continue;
+                }
+                $TermTitle = $this->CompareDescriptors(array('tree_id' => $tree_id, 'tree' => $TreeObject), array('tree_id' => $tree_id2, 'tree' => $TreeObject2), $mainlanguage);
+                $this->AddToContent($TermTitle, $UsedTrees, $Result, $TreeObject2, $tree_id2);
             }
         }
         return $Result;
     }
 
-    public function SetRelatedTreeAsExplored($Tree_id) {
-        if (!(array_key_exists($Tree_id, $this->KeywordRelatedTrees))) {
-            throw new SimpleLifeException(new \SimpleLife\UnexistantTreeId($Tree_id));
+    private function getCompLang($TermsArr1, $TermsArr2, $mainlanguage) {
+        $keys1 = array_keys($TermsArr1);
+        if ($this->IsEmptyTermsArr($TermsArr2)) {
+            if (in_array($mainlanguage, $keys1)) {
+                return $mainlanguage;
+            } else {
+                return current((Array) $keys1);
+            }
+        } else {
+            $keys2 = array_keys($TermsArr2);
+            $langs = array_intersect($keys1, $keys2);
+            if (in_array($mainlanguage, $langs)) {
+                return $mainlanguage;
+            } else {
+                if (count($langs) == 0) {
+                    return current((Array) $keys1);
+                } else {
+                    return current((Array) $langs);
+                }
+            }
         }
-        $this->KeywordRelatedTrees[$Tree_id] = true;
     }
 
-    public function IsTreeExplored($Tree_id) {
-        if (!(array_key_exists($Tree_id, $this->KeywordRelatedTrees))) {
-            throw new SimpleLifeException(new \SimpleLife\UnexistantTreeId($Tree_id));
+    private function IsEmptyTermsArr($TermsArr) {
+        if (!(isset($TermsArr)) ?: !(is_array($TermsArr)) ?: count($TermsArr) == 0) {
+            return true;
+        } else {
+            return false;
         }
-        return $this->KeywordRelatedTrees[$Tree_id];
     }
 
-    //------------------------------------------------------------
-    //------------------------------------------------------------
-    //-THIS SECTION CONTAINS RESULTS AND SUMMARIES
-    //------------------------------------------------------------
-    //------------------------------------------------------------
-
-    public function Tree_List() {
-        return array_keys($this->DeCSList);
+    private function CompareDescriptors($tree1, $tree2, $mainlanguage) {
+        $tree_id1 = $tree1['tree_id'];
+        $tree_id2 = $tree2['tree_id'];
+        $TermsArr1 = (Array) $tree1['tree']['TermsArr'];
+        $TermsArr2 = (Array) $tree2['tree']['TermsArr'];
+        if ($this->IsEmptyTermsArr($TermsArr1)) {
+            return 'Undefined';
+        }
+        $lang = $this->getCompLang($TermsArr1, $TermsArr2, $mainlanguage);
+        if (!($this->IsEmptyTermsArr($TermsArr2))) {
+            if ($TermsArr1[$lang] == $TermsArr2[$lang]) {
+                return $TermsArr1[$lang];
+            } else {
+                return NULL;
+            }
+        } else {
+            return $TermsArr1[$lang];
+        }
     }
 
-    public function getFullDeCSList() {
-        $results = array();
-        foreach ($this->DeCSList as $key => $DeCSDescriptor) {
-            $tree_id = $DeCSDescriptor->ID();
-            $term = $DeCSDescriptor->getTerm();
-            $DeCS = $this->getDeCSAndDescendants($DeCSDescriptor);
-            $results[$tree_id] = array('term' => $term, 'DeCS' => $DeCS);
-        }
-        return $results;
+    private function getCompLangs($mainlanguage, $langArr) {
+        return array_unique(array_merge(array($mainlanguage), $langArr));
+    }
+
+    public function getFullDeCSListKeyword() {
+        return array(
+            'content' => $this->basedata,
+            'lang' => $this->langArr,
+        );
     }
 
     public function KeyWordInfo($SimpleLifeMessage) {
         $SimpleLifeMessage->AddEmptyLine();
         $SimpleLifeMessage->AddAsNewLine('Keyword ' . $this->keyword . ':');
-        foreach ($this->DeCSList as $item) {
-            $Descendants = '- Descendants: ' . $item->GetDescendantsAsString();
-            $SynCount = count($this->getDeCSAndDescendants($item));
-            $msg = $item->ID() . ' (' . $item->getTerm() . ') ' . $Descendants . '=> ' . $SynCount . ' Synonyms';
-            $SimpleLifeMessage->AddAsNewLine($msg);
-        }
-    }
-
-    //------------------------------------------------------------
-    //------------------------------------------------------------
-    //-THIS SECTION CONTAINS OPERATIONS ON DECSDESCRIPTOR OBJECT--
-    //------------------------------------------------------------
-    //------------------------------------------------------------
-
-    private function getDeCSAndDescendants($item) {
-        $res = $item->getDeCS();
-        $des = $this->getDescendantDeCS($item);
-        return array_unique(array_merge($res, $des));
-    }
-
-    private function getDescendantDeCS($item) {
-        $descendantsSyn = array();
-        foreach ($item->GetDescendants() as $tree_id) {
-            $Descendants = $this->getDeCSAndDescendants($this->DeCSList[$tree_id]);
-            $descendantsSyn = array_merge($descendantsSyn, $Descendants);
-        }
-        return $descendantsSyn;
-    }
-
-    public function AddDeCSBasic($tree_id, $term, $DeCS, $CompleteWithThis, $lang) {
-        $msg = $term . ' (' . $tree_id . ' [' . $lang . ']' . ') --> ';
-        if (!(array_key_exists($tree_id, $this->DeCSList))) {
-            $msg = $msg . 'created: ' . count($DeCS) . ' synonyms';
-            $DeCSObject = new DeCSDescriptor($tree_id, $term, $DeCS);
-            $this->DeCSList[$tree_id] = $DeCSObject;
-        } else {
-            $DeCSObject = $this->DeCSList[$tree_id];
-            if ($DeCSObject->IsComplete() == false) {
-                $DeCSObject->setDeCS($DeCS);
-                $msg = $msg . ' added ' . count($DeCS) . ' synonyms';
-                if ($CompleteWithThis == true) {
-                    $msg = $msg . ' (set as completed)';
-                    $DeCSObject->setComplete();
+        $data = $this->basedata;
+        foreach ($data as $term => $termObj) {
+            foreach ($termObj as $tree_id => $DeCSObj) {
+                foreach ($DeCSObj as $lang => $DeCSArr) {
+                    $msg = $term . ' (' . $tree_id . ') [' . $lang . ']= {';
+                    $msg = $msg . join($DeCSArr, ', ') . '}';
+                    $SimpleLifeMessage->AddAsNewLine($msg);
                 }
-            } else {
-                $msg = $msg . 'already completed';
             }
         }
-        return $msg;
-    }
-
-    public function SetDescendantsByTree($tree_id, $Descendants) {
-        if (!(array_key_exists($tree_id, $this->DeCSList))) {
-            throw new SimpleLifeException(new \SimpleLife\TreeIdDoesntNotExist($tree_id));
-        }
-        $this->DeCSList[$tree_id]->SetDescendants($Descendants);
     }
 
 }

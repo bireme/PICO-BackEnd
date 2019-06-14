@@ -3,67 +3,63 @@
 namespace LayerIntegration;
 
 require_once(realpath(dirname(__FILE__)) . '/../LayerIntegration/ProxyReceiveResultsNumber.php');
-require_once(realpath(dirname(__FILE__)) . '/../LayerIntegration/ControllerImportModel.php');
 require_once(realpath(dirname(__FILE__)) . '/../SimpleLife/SimpleLifeMessages.php');
 require_once(realpath(dirname(__FILE__)) . '/../SimpleLife/ManualExceptions.php');
 
 use SimpleLife\SimpleLifeException;
 use SimpleLife\SimpleLifeMessage;
 use LayerIntegration\ProxyReceiveResultsNumber;
-use LayerIntegration\ControllerImportModel;
 use \DOMDocument;
 
-class ControllerImportResultsNumber extends ControllerImportModel {
+class ControllerImportResultsNumber {
 
     private $ObjectResult;
     private $BaseURL = 'http://pesquisa.bvsalud.org/portal/?count=20&q=';
+    private $connectionTimer;
+    private $timeSum;
+    private $SimpleLifeMessage;
 
-    public function InnerObtain($params) {
-        try {
-            if (!(array_key_exists('ObjectResult', $params))) {
-                throw new SimpleLifeException(new \SimpleLife\ObjectResultNotMatch());
-            }
-            $this->timeSum = $params['timeSum'];
-            $this->ObjectResult = $params['ObjectResult'];
-            if (is_object($this->ObjectResult) == false) {
-                throw new SimpleLifeException(new \SimpleLife\ObjectResultNotMatch());
-            }
-            if (get_class($this->ObjectResult) != 'LayerEntities\ObjectResult') {
-                throw new SimpleLifeException(new \SimpleLife\ObjectResultNotMatch());
-            }
-            $this->SimpleLifeMessage = new SimpleLifeMessage('[Retrieveing Results] ' . $this->ObjectResult->getTitle());
-            $this->SimpleLifeMessage->AddEmptyLine();
+    public function getTimer() {
+        return $this->connectionTimer;
+    }
+    
+    public function getBaseURL() {
+        return $this->BaseURL;
+    }
 
-            foreach ($this->ObjectResult->getResultQueryList() as $ResultQuery) {
-                $fun = $this->ExploreEquation($ResultQuery);
-                if ($fun) {
-                    return $fun;
-                }
+    public function addTimer($time) {
+        $this->connectionTimer += $time;
+    }
+
+    public function startTimer() {
+        $this->connectionTimer = 0;
+    }
+
+    public function __construct($ObjectResult, $timeSum, $SimpleLifeMessage) {
+        $this->ObjectResult=$ObjectResult;
+        $this->timeSum=$timeSum;
+        $this->SimpleLifeMessage=$SimpleLifeMessage;
+    }
+
+    public function InnerObtain() {
+        foreach ($this->ObjectResult->getResultQueryList() as $ResultQuery) {
+            if ($fun = $this->ExploreEquation($ResultQuery)) {
+                return $fun;
             }
-            $this->SimpleLifeMessage->SendAsLog();
-        } catch (SimpleLifeException $exc) {
-            return $exc->PreviousUserErrorCode();
         }
     }
 
     private function ExploreEquation($ResultQuery) {
-        $fun = $this->CheckObjectResult($ResultQuery);
-        if ($fun) {
-            return $fun;
-        }
         $query = $ResultQuery->getQuery();
-        $ResultsURL = $this->BaseURL . $query;
+        $ResultsURL = $this->getBaseURL() . $query;
         $ResultQuery->setResultsURL($ResultsURL);
-        $XMLObject = new ProxyReceiveResultsNumber($query,$this->timeSum);
-        $fun = $XMLObject->POSTRequest();
-        if ($fun) {
+        $XMLObject = new ProxyReceiveResultsNumber($query, $this->timeSum);
+        $preresult=NULL;
+        if ($fun = $XMLObject->POSTRequest($preresult)) {
             return $fun;
         }
-        $preresult = $XMLObject->getResultdata();
-        $result = $preresult['result'];
-        $this->setXMLObject($result);
-        $fun = $this->ExtractFromXML($ResultQuery);
-        if ($fun) {
+        $xml = $preresult['data'];
+        if ($fun = $this->ExtractFromXML($xml, $ResultQuery)) {
             return $fun;
         }
         $timer = $preresult['timer'];
@@ -71,24 +67,8 @@ class ControllerImportResultsNumber extends ControllerImportModel {
         $this->ObjectResult->setConnectionTime($timer);
     }
 
-    private function CheckObjectResult($ResultQuery) {
-        try {
-            $query = $ResultQuery->getQuery();
-            $MaximumQuerySize = 5000;
-            if (strlen($query) == 0) {
-                throw new SimpleLifeException(new \SimpleLife\EmptyQuery());
-            }
-            if (strlen($query) > $MaximumQuerySize) {
-                throw new SimpleLifeException(new \SimpleLife\QueryTooLarge(strlen($ResultQuery->getQuery()), $MaximumQuerySize));
-            }
-        } catch (SimpleLifeException $Ex) {
-            return $Ex->PreviousUserErrorCode();
-        }
-    }
-
-    private function ExtractFromXML($ResultQuery) {
+    private function ExtractFromXML($xml, $ResultQuery) {
         $dom = new DOMDocument();
-        $xml = $this->getXMLObject();
         try {
             if (is_array($xml)) {
                 if (array_key_exists('Error', $xml)) {

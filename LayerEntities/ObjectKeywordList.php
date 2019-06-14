@@ -10,30 +10,25 @@ class ObjectKeywordList {
 
     private $ItemList;
     private $langArr;
-    private $HTMLDescriptors;
-    private $HTMLDeCS;
-    private $query;
+    private $MaxRelatedTrees;
+    private $MaxDescendantExplores;
 
-    public function getQuery() {
-        return $this->query;
+    public function getMaxImports() {
+        return array('MaxRelatedTrees' => $this->MaxRelatedTrees,
+            'MaxDescendantExplores' => $this->MaxDescendantExplores);
     }
 
-    public function setQuery($query) {
-        $this->query = $query;
-    }
-
-    public function __construct($langArr, $query) {
+    public function __construct($langArr,$MaxImports) {
         $this->ItemList = array();
         $this->langArr = $langArr;
-        $this->query = $query;
+        $this->MaxRelatedTrees = $MaxImports['MaxRelatedTrees'];
+        $this->MaxDescendantExplores = $MaxImports['MaxDescendantExplores'];
     }
 
     public function getConnectionTimeSum() {
         $res = 0;
         foreach ($this->ItemList as $item) {
-            if ($item['type'] == 'key') {
-                $res += $item['value']->getConnectionTime();
-            }
+            $res += $item->getConnectionTime();
         }
         return $res;
     }
@@ -46,18 +41,8 @@ class ObjectKeywordList {
         return $this->langArr;
     }
 
-    public function getKeywords() {
-        return array_keys($this->ItemList);
-    }
-
     public function getKeywordList() {
-        $Arr = array();
-        foreach ($this->ItemList as $item) {
-            if ($item['type'] == 'key') {
-                array_push($Arr, $item);
-            }
-        }
-        return $Arr;
+        return $this->ItemList;
     }
 
     public function AddKeyword($item) {
@@ -67,51 +52,24 @@ class ObjectKeywordList {
     public function KeyWordListInfo($SimpleLifeMessage) {
         $SimpleLifeMessage->AddAsNewLine('Summary of tree_ids,descendants and synonyms per keyword');
         foreach ($this->ItemList as $item) {
-            if ($item['type'] == 'key') {
-                $item['value']->KeyWordInfo($SimpleLifeMessage);
-            }
+            $item->KeyWordInfo($SimpleLifeMessage);
         }
     }
 
-    public function AddDescriptorsHTML($msg) {
-        $this->HTMLDescriptors = $this->HTMLDescriptors . $msg;
-    }
-
-    public function AddDeCSHTML($msg) {
-        $this->HTMLDeCS = $this->HTMLDeCS . $msg;
-    }
-
-    public function getFullDeCSList() {
+    public function getKeywordsTitlesAndObjects() {
         $results = array();
         foreach ($this->ItemList as $item) {
-            if ($item['type'] == 'key') {
-                $results[$item['value']->getKeyword()] = $item['value']->getFullDeCSList();
-            }
+            $results[$item->getKeyword()] = $item;
         }
         return $results;
     }
 
-    public function getOutputResults() {
+    public function getKeywordListResults() {
         $results = array();
-        foreach ($this->ItemList as $item) {
-            if ($item['type'] == 'key') {
-                $objKeyword= array('keyword' =>$item['value']->getKeyword(), 'value' => $item['value']->getFullDeCSList());
-                $obj=$objKeyword;
-            }else{
-                $obj=$item['value'];
-            }
-            $valx = array('type' => $item['type'], 'value' => $obj);
-            array_push($results,$valx);
+        foreach ($this->ItemList as $KeywordObj) {
+            $results[$KeywordObj->getKeyword()] = $KeywordObj->getFullDeCSListKeyword();
         }
-        return json_encode($results);
-    }
-
-    public function getResults() {
-        return array(
-            'HTMLDescriptors' => $this->HTMLDescriptors,
-            'HTMLDeCS' => $this->HTMLDeCS,
-            'results' => $this->getOutputResults()
-        );
+        return $results;
     }
 
 }

@@ -25,6 +25,18 @@ class FacadeQueryBuilder {
     private $FacadeQueryBuilderTimer;
     private $ErrorCode;
 
+    public function __construct($results, $SelectedDescriptors, $ImproveSearch, $EqName, $QuerySplit, $mainLanguage) {
+        $this->SimpleLifeMessage = new SimpleLifeMessage('FacadeQueryBuilder');
+        $this->SimpleLifeMessage->AddAsNewLine('results=' . $results . '$QuerySplit="' . $QuerySplit . 'SelectedDescriptors=' . json_encode($SelectedDescriptors) . ' ImproveSearch = "' . $ImproveSearch . '"');
+        $results = json_decode($results, true);
+        $QuerySplit = json_decode($QuerySplit, true);
+        $DeCSqueryProcessor = new ControllerDeCSQueryProcessor(NULL, NULL, NULL);
+        $ImproveSearchArr = $DeCSqueryProcessor->ProcessQuery($ImproveSearch);
+        $this->ObjectQuery = new ObjectQuery($results, $SelectedDescriptors, $ImproveSearchArr, $EqName, $QuerySplit);
+        $this->queryBuilder = new ControllerQueryBuilder($this->ObjectQuery);
+        $this->FacadeQueryBuilderTimer = new \SimpleLife\Timer();
+    }
+
     public function BuildnewQuery() {
         $fun = $this->queryBuilder->BuildnewQuery();
         if ($fun) {
@@ -38,17 +50,9 @@ class FacadeQueryBuilder {
 
     private function FixEquation() {
         $EquationProcessor = new ControllerEquationChecker(NULL);
-        $this->ObjectQuery->setQuery($EquationProcessor->FixEquation($this->ObjectQuery->getQuery()));
-    }
-
-    public function __construct($results, $SelectedDescriptors, $ImproveSearch, $EqName) {
-        $DeCSqueryProcessor = new ControllerDeCSQueryProcessor($ImproveSearch, NULL);
-        $ImproveSearchArr = $DeCSqueryProcessor->splitQuery($ImproveSearch);
-        $this->ObjectQuery = new ObjectQuery($results, $SelectedDescriptors, $ImproveSearchArr, $EqName);
-        $this->queryBuilder = new ControllerQueryBuilder($this->ObjectQuery);
-        $this->FacadeQueryBuilderTimer = new \SimpleLife\Timer();
-        $this->SimpleLifeMessage = new SimpleLifeMessage('FacadeQueryBuilder');
-        $this->SimpleLifeMessage->AddAsNewLine('results=' . $results . ' SelectedDescriptors=' . json_encode($SelectedDescriptors) . ' ImproveSearch = "' . $ImproveSearch . '"');
+        $query=$this->ObjectQuery->getQuery();
+        $query=$EquationProcessor->FixEquation($query);
+        $this->ObjectQuery->setQuery($query);
     }
 
     public function getResults() {
