@@ -18,14 +18,15 @@ class ControllerQueryBuilder {
     }
 
     public function BuildnewQuery() {
-        $results = json_decode($this->ObjectQuery->getPreviousResults(), true);
+        $results = $this->ObjectQuery->getPreviousResults();
+        $QuerySplit = $this->ObjectQuery->getQuerySplit();
         $SelectedDescriptors = $this->ObjectQuery->getSelectedDescriptors();
         $ImproveSearchArr = $this->ObjectQuery->getImproveSearchArr();
-        $fun = $this->CheckElements($SelectedDescriptors, $ImproveSearchArr);
+        $fun = $this->CheckElements($SelectedDescriptors, $ImproveSearchArr, $QuerySplit);
         if ($fun) {
             return $fun;
         }
-        $this->BuildEquation($results, $SelectedDescriptors);
+        $this->BuildEquation($results, $SelectedDescriptors, $QuerySplit);
         $this->ImproveSearch($ImproveSearchArr);
     }
 
@@ -35,44 +36,64 @@ class ControllerQueryBuilder {
         $this->ObjectQuery->setQuery($result);
     }
 
-    private function BuildEquation($results, $SelectedDescriptors) {
-        $msg = '';
-        foreach ($results as $item) {
-            $type = $item['type'];
-            if ($type == 'key' || $type == 'keyrep') {
-                $obj = $item['value'];
-                $keyword = ucfirst($obj['keyword']);
-                $Objkeyword = $obj['value'];
-                $msgkeyword = $keyword;
-                foreach ($Objkeyword as $tree_id => $ObjectDescriptor) {
-                    if (!(in_array($tree_id, $SelectedDescriptors))) {
-                        continue;
-                    }
-                    $tmp = '';
-                    foreach ($ObjectDescriptor['DeCS'] as $DeCS) {
-                        if (strpos($DeCS, ' ') !== false) {
-                            $DeCS = '"' . $DeCS . '"';
-                        }
-                        if (strlen($tmp) > 0) {
-                            $tmp = $tmp . ' OR ';
-                        }
-                        $tmp = $tmp .$DeCS;
-                    }
-                    if (strlen($tmp) > 0) {
-                        $tmp = '(' . $tmp . ')';
-                    }
+    private function BuildTermEquation($term) {
+        $txt = '';
+        foreach ($term as $DeCS) {
+            if (strpos($DeCS, ' ') !== false) {
+                $DeCS = '"' . $DeCS . '"';
+            }
+            if (strlen($txt) > 0) {
+                $txt = $txt . ' OR ';
+            }
+            $txt = $txt . ucfirst($DeCS);
+        }
+        if (strlen($txt) > 0) {
+            $txt = '(' . $txt . ')';
+        }
+        return $txt;
+    }
 
-                    if (strlen($msgkeyword) != 0) {
-                        $msgkeyword = $msgkeyword . ' OR ';
-                    }
-                    $msgkeyword = $msgkeyword . $tmp;
-                }
-                if (strlen($msgkeyword) != 0) {
-                    $msgkeyword = '(' . $msgkeyword . ')';
-                }
-                $msg = $msg . $msgkeyword;
+    private function BuildKeyWordEquation($keyword, $SelectedDescriptors) {
+        $msgkeyword = ucfirst($keyword);
+        if (!(array_key_exists($keyword, $SelectedDescriptors))) {
+            throw new SimpleLifeException(new \SimpleLife\KeywordNotExistsInSelected($keyword, $SelectedDescriptors));
+        }
+        $KeywordObj = $SelectedDescriptors[$keyword];
+        foreach ($KeywordObj as $term) {
+
+            if (strlen($msgkeyword) != 0) {
+                $msgkeyword = $msgkeyword . ' OR ';
+            }
+            $msgkeyword = $msgkeyword . $this->BuildTermEquation($term);
+        }
+        if (strlen($msgkeyword) != 0) {
+            $msgkeyword = '(' . $msgkeyword . ')';
+        }
+        return $msgkeyword;
+    }
+
+    private function BuildEquation($results, $SelectedDescriptors, $QuerySplit) {
+        $msg = '';
+        $Ops = array('or', 'and', 'not');
+        $Seps = array('(', ')', ' ', ':');
+        //$this->TestHub($results, $SelectedDescriptors, $QuerySplit);
+        foreach ($QuerySplit as $item) {
+            $type = $item['type'];
+            $value = $item['value'];
+            if ($type == 'key' || $type == 'keyrep' || $type == 'keyexplored') {
+                $msg = $msg . $this->BuildKeyWordEquation($value, $SelectedDescriptors);
             } else {
-                $msg = $msg . $item['value'];
+                if (in_array($value, $Ops)) {
+                    $value = strtoupper($value);
+                } else {
+                    if (!(in_array($value, $Seps))) {
+                        $value = ucfirst($value);
+                        if (strpos($value, ' ') !== false) {
+                            $value = '"' . $value . '"';
+                        }
+                    }
+                }
+                $msg = $msg . $value;
             }
         }
         if (strlen($msg) != 0) {
@@ -81,7 +102,7 @@ class ControllerQueryBuilder {
         $this->ObjectQuery->setEquationNoImprovement($msg);
     }
 
-    private function CheckElements($SelectedDescriptors, $ImproveSearchArr) {
+    private function CheckElements($SelectedDescriptors, $ImproveSearchArr, $QuerySplit) {
         try {
             if (!($SelectedDescriptors)) {
                 throw new SimpleLifeException(new \SimpleLife\NullSelectedDescriptors());

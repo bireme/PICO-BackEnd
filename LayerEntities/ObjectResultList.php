@@ -2,89 +2,72 @@
 
 namespace LayerEntities;
 
-require_once('ObjectResult.php');
-require_once(realpath(dirname(__FILE__)) . '/../SimpleLife/SimpleLifeMessages.php');
+require_once('ResultQuery.php');
 
-use SimpleLife\SimpleLifeMessage;
-use LayerEntities\ObjectResult;
+use LayerEntities\ResultQuery;
 
 class ObjectResultList {
 
-    private $EqNum;
-    private $ObjectResult;
+    private $PICONum;
+    private $ResultQueryList;
     private $PICOname;
+    private $queryobject;
+    
+    public function getInitialData(){
+        return $this->queryobject;
+    }
 
+    public function __construct($PICONum, $queryobject, $PICOname) {
+        $this->PICONum = $PICONum;
+        $this->PICOname = $PICOname;
+        $this->queryobject = $queryobject;
+        $this->ResultQueryList=array();
+    }
+    
+    function getPICONum() {
+        return $this->PICONum;
+    }
+
+    function getPICOname() {
+        return $this->PICOname;
+    }
+
+    
     public function getConnectionTimeSum() {
         $res = 0;
-        foreach ($this->ObjectResult as $ResultObj) {
+        foreach ($this->ResultQueryList as $ResultObj) {
             $res += $ResultObj->getConnectionTime();
         }
         return $res;
     }
-
-    public function __construct($EqNum, $resultsData, $PICOname) {
-        $this->EqNum = $EqNum;
-        $this->PICOname = $PICOname;
-        $this->setResultsData($EqNum, $resultsData, $PICOname);
+    
+    public function AddIntegrationResultsToResultQuery($key,$resultsNumber,$resultsURL){
+        $ResultsObj = $this->ResultQueryList[$key];
+        $ResultsObj->setResultsNumber($resultsNumber);
+        $ResultsObj->setResultsURL($resultsURL);
     }
 
-    public function getTitle() {
-        return $this->PICOname;
+    public function AddResultQuery($key,$query) {
+        if(array_key_exists($key,$this->ResultQueryList)){
+            return NULL;
+        }else{
+            $ObjResult = new ResultQuery($query);
+            $this->ResultQueryList[$key]=$ObjResult;
+            return $ObjResult;
+        }
     }
-
-    private function setResultsData($EqNum, $resultsData, $PICOname) {
-        $mes = new SimpleLifeMessage(json_encode($resultsData));
-        $mes->SendAsLog();
-        $local = array();
-        $global = array();
-        $EqNumCopy = $EqNum;
-        if ($EqNumCopy == 6) {
-            $EqNumCopy = 5;
-        }
-        $i = 1;
-        while ($i <= $EqNumCopy) {
-            $key = 'PICO' . $i;
-            $obj = $resultsData[$key];
-            if ($i == $EqNumCopy && $EqNum!=6) {
-                $local[$key] = $obj;
-            }
-            $global[$key] = $obj;
-            $i++;
-        }
-        $resultQueryList = array();
-        if (count($local) > 0) {
-            $resultQueryList['local'] = new ResultQuery($local, $PICOname . ' - Local', false);
-        }
-        if (count($global) > 0) {
-            $resultQueryList['global'] = new ResultQuery($global, $PICOname . ' - Global', true);
-        }
-        $this->ObjectResult = new ObjectResult($resultQueryList, $PICOname);
-    }
-
-    public function ObjectResultInfo($SimpleLifeMessage) {
-        $SimpleLifeMessage->AddAsNewLine('Summary of Results Number by Query: ');
-        foreach ($this->ObjectResult as $ResultObj) {
-            $Title = $ResultObj->getTitle();
-            $ResultsNumber = $ResultObj->getResultsNumber();
-            $ResultsURL = $ResultObj->getResultsURL();
-            $Query = $ResultObj->getQuery();
-            $SimpleLifeMessage->AddEmptyLine();
-            $SimpleLifeMessage->AddAsNewLine($Title . ' (' . $ResultsNumber . ' results)');
-            $SimpleLifeMessage->AddAsNewLine('-->Query: ' . $Query);
-            $SimpleLifeMessage->AddAsNewLine('-->ResultsURL: ' . $ResultsURL);
-        }
+    
+    public function getAllResultQueryObjects() {
+        return $this->ResultQueryList;
     }
 
     public function getResults() {
-        $result = $this->ObjectResult->getResults();
-        $result['PICOnum'] = $this->EqNum;
+        $result = array();
+        foreach ($this->ResultQueryList as $key => $ResultObj) {
+            $result[$key]=$ResultObj->getResults();
+        }
         return $result;
     }
-
-    public function getObjectResult() {
-        return $this->ObjectResult;
-    }
-
 }
 
 ?>

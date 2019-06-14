@@ -1,17 +1,20 @@
 function getSelectedDescriptors() {
-    var DeCSModalTitlePrefix = 'opcao';
-    var DeCSModalTitlePostfix = '-tab';
-    var num = 0;
-    var SelectedDescriptors = [];
-    $('#modal2').find('.DeCSCheckBoxElement').each(function () {
-        if (!($(this).find('input').first().is(':checked'))) {
-            return;
+    var SelectedDescriptors = {};
+    $('#modal2').find('input.DeCSCheckBoxElement:checked').each(function () {
+        var DeCS = $(this).attr('name');
+        var keyword = $(this).attr('data-keyword');
+        var term = $(this).attr('data-term');
+
+        if (!(keyword in SelectedDescriptors)) {
+            SelectedDescriptors[keyword] = {};
         }
-        SelectedDescriptors.push($(this).find('input').first().attr('name'));
+        if (!(term in SelectedDescriptors[keyword])) {
+            SelectedDescriptors[keyword][term] = [];
+        }
+        SelectedDescriptors[keyword][term].push(DeCS);
     });
     return SelectedDescriptors;
 }
-
 
 function ProcessResults() {
     var PICOnum = $('#modal').find('#PICONumTag').val();
@@ -23,7 +26,8 @@ function eventQueryBuild(PICOnum, ImproveSearch) {
     var url = "ControllerEventQueryBuild.php";
     var data = {
         PICOnum: PICOnum,
-        results: getPreviousData(),
+        QuerySplit: getTmpQuerySplit(PICOnum),
+        results: getPreviousResults(PICOnum),
         SelectedDescriptors: getSelectedDescriptors(),
         ImproveSearch: ImproveSearch
     };

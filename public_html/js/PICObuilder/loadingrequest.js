@@ -3,7 +3,7 @@ var currentrequest;
 function getBaseURL() {
     var foldername = '/PHP-Bireme';
     var testfoldername = '/pico';
-    var isdeployed=true;
+    var isdeployed=false;
     if(isdeployed){
         foldername=testfoldername;
     }
@@ -11,8 +11,27 @@ function getBaseURL() {
     return msg;
 }
 
+function setAsLoading() {
+    $('#loading').attr('isLoading',true);
+}
+
+function IsLoading() {
+    $('#loading').attr('isLoading');
+}
+
+function setAsNotLoading() {
+    $('#loading').attr('isLoading',false);
+}
+
+function getMainLanguage(){
+    var langnum=getLanguage();
+    var langArr=['en','pt','es','en'];
+    return langArr[langnum];
+}
+
 function POSTrequest(url, data, callback) {
     showLoading();
+    data.mainLanguage= getMainLanguage();
     url = getBaseURL() + url;
     var sendData = {
         data: JSON.stringify(data)
@@ -71,6 +90,7 @@ function POSTrequest(url, data, callback) {
 }
 
 function CancelLoading() {
+    setAsNotLoading();
     currentrequest.abort();
 }
 
@@ -96,6 +116,7 @@ function hideLoading() {
         $('#modal4').focus();
         $('#modal4').modal('toggle');
         $('#modal4').modal('hide');
+        setAsNotLoading();
         if (!($('#modal4').hasClass('show'))) {
             clearInterval(Interv);
         }

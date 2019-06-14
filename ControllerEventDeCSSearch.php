@@ -7,18 +7,21 @@ $data = json_decode($data,true);
 $Equation = $data['query'];
 $langArr = $data['langs'];
 $PICOnum = $data['PICOnum'];
+$PICOnum = $data['PICOnum'];
+$results=$data['results'];
+$mainLanguage= $data['mainLanguage'];
 $PICOLIST=array('Problem','Intervention','Comparison','Outcome','Tipe of Study','General');
 $PICOname=$PICOLIST[$PICOnum-1];
 $Obj = new ControllerEventDeCSSearch();
-$Obj->ObtainDeCS($Equation, $langArr,$PICOnum,$PICOname);
+$Obj->ObtainDeCS($Equation, $langArr,$PICOnum,$PICOname,$results,$mainLanguage);
 $Obj->EchoResults();
 
 class ControllerEventDeCSSearch {
 
     private $DeCSObtainer;
     
-    public function ObtainDeCS($Equation, $langArr,$PICOnum,$PICOname) {
-        $this->DeCSObtainer = new FacadeDeCSObtainer($Equation, $langArr,$PICOnum,$PICOname);
+    public function ObtainDeCS($Equation, $langArr,$PICOnum,$PICOname,$results,$mainLanguage) {
+        $this->DeCSObtainer = new FacadeDeCSObtainer($Equation, $langArr,$PICOnum,$PICOname,$results,$mainLanguage);
          $this->DeCSObtainer->getKeywordDeCS();
     }
 

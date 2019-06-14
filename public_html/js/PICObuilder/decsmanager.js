@@ -66,14 +66,16 @@ function setLanguagesOfModal(langArr) {
 
 function eventDeCSSearch(query, langs, PICOnum) {
     var url = "ControllerEventDeCSSearch.php";
+    console.log('PreviousData');
+    console.log(getPreviousResults());
     var data = {
-        previousData:getPreviousData(),
+        results:getPreviousResults(),
         query: query,
         langs: langs,
         PICOnum: PICOnum
     };
     POSTrequest(url, data, function (Data) {
-        createDeCSMenu(Data);
+        createDeCSMenu(Data,PICOnum);
         showDeCSMenu();
     });
 }
@@ -82,20 +84,31 @@ function showDeCSMenu() {
     $('#modal').modal('show');
 }
 
-
-function setPreviousData(results) {
-    $('#modal').find('.cache-tmp-class').first().text(results);
+function getPreviousResults() {
+    return $('#TmpCookieElement').attr('data-previous-decs');
 }
 
-function getPreviousData() {
-    return $('#modal').find('.cache-tmp-class').first().text();
+function setPreviousResults(results) {
+    $('#TmpCookieElement').attr('data-previous-decs',results);
 }
 
-function createDeCSMenu(data) {
+function setTmpQuerySplit(QuerySplit,PICOnum) {
+    $('#datainput'+PICOnum).attr('data-query-split',QuerySplit);
+}
+
+function getTmpQuerySplit(PICOnum) {
+    return $('#datainput'+PICOnum).attr('data-query-split');
+}
+
+function createDeCSMenu(data,PICOnum) {
     var results = data.results;
     var HTMLDescriptors = data.HTMLDescriptors;
     var HTMLDeCS = data.HTMLDeCS;
-    setPreviousData(results);
+    var QuerySplit=data.QuerySplit;
+    console.log('querysplit');
+    console.log(QuerySplit);
+    setTmpQuerySplit(QuerySplit,PICOnum);
+    setPreviousResults(results);
     $('#modal').find('.modal-body').first().html(HTMLDescriptors);
     $('#modal2').find('.modal-body').first().html(HTMLDeCS);
 }

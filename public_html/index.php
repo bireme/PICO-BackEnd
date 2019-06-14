@@ -16,6 +16,7 @@
     </head>  
 
     <body>
+        <div id="TmpCookieElement" class="d-none" data-previous-decs=""></div>
         <header id="header">
             <div id="lang">
                 <button class="langbut" id="page-lang0">Português</button><label id="sep-lang0">  |  </label>
@@ -73,7 +74,7 @@
                             <div class="card-body">
                                 <div class="row">
                                     <div class="col-md-8 margin2M">
-                                        <input type="text" id="datainput1" data-oldVal="" class="form-control" placeholder="Type of patient eg. diabetcs">
+                                        <input type="text" id="datainput1" data-query-split=""  data-oldVal="" class="form-control" placeholder="Type of patient eg. diabetcs">
                                     </div>
                                     <div class="col-md-4">
                                         <select name="" id="FieldList1" data-oldVal="" class="form-control formSelect">
@@ -112,7 +113,7 @@
                             <div class="card-body">
                                 <div class="row">
                                     <div class="col-md-8 margin2M">
-                                        <input type="text" id="datainput2" data-oldVal="" class="form-control" placeholder="Any Intervention eg. treatment, diagnostic test">
+                                        <input type="text" id="datainput2" data-query-split=""  data-oldVal="" class="form-control" placeholder="Any Intervention eg. treatment, diagnostic test">
                                     </div>
                                     <div class="col-md-4">
                                         <select name=""  id="FieldList2" data-oldVal="" class="form-control formSelect">
@@ -151,7 +152,7 @@
                             <div class="card-body">
                                 <div class="row">
                                     <div class="col-md-8 margin2M">
-                                        <input type="text" id="datainput3" data-oldVal="" class="form-control" placeholder="Comparing your intervention with another treatment">
+                                        <input type="text" id="datainput3" data-query-split=""  data-oldVal="" class="form-control" placeholder="Comparing your intervention with another treatment">
                                     </div>
                                     <div class="col-md-4">
                                         <select name=""  id="FieldList3" data-oldVal="" class="form-control formSelect">
@@ -190,7 +191,7 @@
                             <div class="card-body">
                                 <div class="row">
                                     <div class="col-md-8 margin2M">
-                                        <input type="text" id="datainput4" data-oldVal="" class="form-control" placeholder="Outcomes interest eg. reduced mortality, fewer exacerbati">
+                                        <input type="text" id="datainput4" data-query-split=""  data-oldVal="" class="form-control" placeholder="Outcomes interest eg. reduced mortality, fewer exacerbati">
                                     </div>
                                     <div class="col-md-4">
                                         <select name=""  id="FieldList4" data-oldVal="" class="form-control formSelect">
@@ -227,7 +228,7 @@
                             </h2>
                         </div>
                         <div id="collapseFive" class="collapse" aria-labelledby="heading5" data-oldVal="">
-                            <input type="hidden" id="datainput5" data-oldVal="" class="form-control">
+                            <input type="hidden" id="datainput5" data-query-split=""  data-oldVal="" class="form-control">
                             <div class="card-body">
                                 <div class="row">
                                     <div class="col-md-4">

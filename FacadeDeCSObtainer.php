@@ -11,7 +11,9 @@ require_once(realpath(dirname(__FILE__)) . '/LayerEntities/ObjectKeyword.php');
 require_once(realpath(dirname(__FILE__)) . '/LayerEntities/ObjectEquation.php');
 require_once(realpath(dirname(__FILE__)) . '/SimpleLife/Timer.php');
 require_once(realpath(dirname(__FILE__)) . '/LayerEntities/DeCSMenu.php');
+require_once(realpath(dirname(__FILE__)) . '/LayerEntities/ObjectQuerySplitList.php');
 
+use LayerEntities\ObjectQuerySplitList;
 use LayerEntities\DeCSMenu;
 use SimpleLife\Timer;
 use LayerEntities\ObjectKeywordList;
@@ -27,7 +29,7 @@ class FacadeDeCSObtainer {
 
     private $queryProcesser;
     private $DeCSProcessor;
-    private $ObjectKeywordList;
+    private $ObjectQuerySplitList;
     private $SimpleLifeMessage;
     private $FacadeDeCSTimer;
     private $DeCSMenuObject;
@@ -36,21 +38,27 @@ class FacadeDeCSObtainer {
     private $ErrorCode;
     private $EqName;
 
-    public function __construct($query, $langs, $PICOnum, $EqName) {
+    private function setMaxImports() {
+        return array('MaxRelatedTrees' => 5,
+            'MaxDescendantExplores' => 5);
+    }
+
+    public function __construct($query, $langs, $PICOnum, $EqName, $results, $mainLanguage) {
         $this->PICOnum = $PICOnum;
-        $this->EqName=$EqName;
-        $this->ObjectKeywordList = new ObjectKeywordList($langs,$query);
-        $this->EquationProcessor = new ControllerEquationChecker($this->ObjectKeywordList);
-        $this->queryProcesser = new ControllerDeCSQueryProcessor($this->ObjectKeywordList);
-        $this->DeCSProcessor = new ControllerDeCSLooper($this->ObjectKeywordList);
-        $this->DeCSMenuBuilder = new ControllerDeCSMenuBuilder($this->ObjectKeywordList);
+        $this->EqName = $EqName;
+        $ObjectKeywordList = new ObjectKeywordList($langs,$this->setMaxImports());
+        $this->ObjectQuerySplitList = new ObjectQuerySplitList($query, $ObjectKeywordList, $langs, $mainLanguage);
+        $this->EquationProcessor = new ControllerEquationChecker($this->ObjectQuerySplitList);
+        $this->queryProcesser = new ControllerDeCSQueryProcessor($this->ObjectQuerySplitList, $ObjectKeywordList, $results);
+        $this->DeCSProcessor = new ControllerDeCSLooper($ObjectKeywordList);
+        $this->DeCSMenuBuilder = new ControllerDeCSMenuBuilder($this->ObjectQuerySplitList);
         $this->FacadeDeCSTimer = new \SimpleLife\Timer();
         $this->SimpleLifeMessage = new SimpleLifeMessage('FacadeDeCSObtainer');
         $this->SimpleLifeMessage->AddAsNewLine('Langs=' . json_encode($langs) . ' query = "' . $query . '"');
     }
 
     public function buildDeCSMenu() {
-        $this->DeCSMenuBuilder->BuildHTML($this->PICOnum);
+        return $this->DeCSMenuBuilder->BuildHTML($this->PICOnum);
     }
 
     public function getKeywordDeCS() {
@@ -78,13 +86,19 @@ class FacadeDeCSObtainer {
 
     private function OperationReport($result) {
         $time_elapsed = $this->FacadeDeCSTimer->Stop();
-        $ConnectionTime = $this->ObjectKeywordList->getConnectionTimeSum();
+        $ConnectionTime = $this->ObjectQuerySplitList->getObjectKeywordList()->getConnectionTimeSum();
         $this->SimpleLifeMessage->AddAsNewLine('Total Time: ' . $time_elapsed . ' ms');
         $this->SimpleLifeMessage->AddAsNewLine('Time Spent in connections: ' . $ConnectionTime . ' ms');
         $this->SimpleLifeMessage->AddAsNewLine('Operational time: ' . ($time_elapsed - $ConnectionTime) . ' ms');
         $this->SimpleLifeMessage->AddEmptyLine();
         $this->SimpleLifeMessage->AddAsNewLine('Info returned to user:');
-        $this->SimpleLifeMessage->AddAsNewLine(json_encode(json_decode($result,true)['Data']['results']));
+        $result = json_decode($result, true);
+        if (array_key_exists('Data', $result)) {
+            $this->SimpleLifeMessage->AddAsNewLine(json_encode($result['Data']['results']));
+        } else {
+            $this->SimpleLifeMessage->AddAsNewLine(json_encode($result));
+        }
+
         $this->SimpleLifeMessage->SendAsLog();
     }
 
@@ -103,7 +117,7 @@ class FacadeDeCSObtainer {
         if ($this->ErrorCode) {
             $result = json_encode(array('Error' => $this->ShowErrorCodeToUser()));
         } else {
-            $result = json_encode(array('Data' => $this->ObjectKeywordList->getResults()));
+            $result = json_encode(array('Data' => $this->ObjectQuerySplitList->getResults()));
         }
         $this->OperationReport($result);
         return $result;
@@ -114,6 +128,9 @@ class FacadeDeCSObtainer {
     }
 
     private function ShowErrorCodeToUser() {
+        if ($this->ErrorCode == 321) {
+            return 'The equation did not change';
+        }
         return '[Error ' . $this->ErrorCode . ']Este error se traducirá y se mostrará si es relevante para el usuario';
     }
 

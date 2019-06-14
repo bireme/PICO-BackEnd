@@ -433,5 +433,61 @@ class EqInvalidChars Extends SimpleExceptionTypeModel {
 
 }
 
+class NoNewKeywordsInEquation Extends SimpleExceptionTypeModel {
+
+    protected $code = 321;
+    protected $AlertLevel = 3;
+
+    public function __construct() {
+        $message = 'Operation cancelled. No new keywords in equation';
+        return parent::__construct($message, true);
+    }
+
+}
+
+class KeywordNotExistsInSelected Extends SimpleExceptionTypeModel {
+
+    protected $code = 322;
+    protected $AlertLevel = 3;
+
+    public function __construct($keyword,$SelectedDescriptors) {
+        $message = 'Fatal error. The keyword '.$keyword.' found in QuerySplit was not imported in Selected descriptors: '.json_encode($SelectedDescriptors);
+        return parent::__construct($message, true);
+    }
+
+}
+
+class NullSelectedDescriptors Extends SimpleExceptionTypeModel {
+
+    protected $code = 323;
+    protected $AlertLevel = 3;
+
+    public function __construct() {
+        $message = 'No descriptors were selected';
+        return parent::__construct($message, true);
+    }
+
+}
+
+class ParentTreeDoesNotExist Extends SimpleExceptionTypeModel {
+
+    protected $code = 324;
+    protected $AlertLevel = 3;
+
+    public function __construct($key,$tree_id,$parentid,$itemlist) {
+        $message = '[Keyword = '.$key.'] -> Failed to put ('.$tree_id.') in ('.$parentid.'). Explored keys: '.join(array_keys($itemlist),', ');
+        return parent::__construct($message, true);
+    }
+
+}
+
+
+
+
+
+
+
+
+
 
 ?>

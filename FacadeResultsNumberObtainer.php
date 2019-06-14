@@ -1,76 +1,58 @@
 <?php
 
-require_once(realpath(dirname(__FILE__)) . '/SimpleLife/SimpleLifeMessages.php');
-require_once(realpath(dirname(__FILE__)) . '/SimpleLife/ManualExceptions.php');
-require_once(realpath(dirname(__FILE__)) . '/SimpleLife/Timer.php');
-require_once(realpath(dirname(__FILE__)) . '/LayerBusiness/ControllerResultsNumberHandler.php');
 require_once(realpath(dirname(__FILE__)) . '/LayerEntities/ObjectResultList.php');
+require_once(realpath(dirname(__FILE__)) . '/LayerBusiness/ControllerResultsNumberHandler.php');
+require_once(realpath(dirname(__FILE__)) . '/LayerBusiness/ControllerResultsNumberProcessor.php');
 
-use SimpleLife\Timer;
+use LayerBusiness\ControllerResultsNumberProcessor;
 use LayerBusiness\ControllerResultsNumberHandler;
 use LayerEntities\ObjectResultList;
-use SimpleLife\SimpleLifeException;
-use SimpleLife\SimpleLifeMessage;
+
 
 class FacadeResultsNumberObtainer {
 
     private $SimpleLifeMessage;
-    private $FacadeResultsNumberTimer;
+    private $ConnectionTimer;
     private $ObjectResultList;
-    private $ErrorCode;
+    private $data;
+    private $ResultsNumberProcessor;
+    private $ResultsNumberObtainer;
+    private $queryobject;
+    private $PICOnum;
+    private $PICOname;
+    private $mainLanguage;
 
-    public function __construct($resultsData, $EqNum, $PICOname) {
-        $this->FacadeResultsNumberTimer = new \SimpleLife\Timer();
-        $this->SimpleLifeMessage = new SimpleLifeMessage('FacadeResultsNumberObtainer');
-        $this->SimpleLifeMessage->AddAsNewLine('$PICO=' . $PICOname . ' $ResultsQuery = ' . json_encode($resultsData));
-        $this->ObjectResultList = new ObjectResultList($EqNum, $resultsData, $PICOname);
-        $this->ResultsNumberProcessor = new ControllerResultsNumberHandler($this->ObjectResultList);
+    public function __construct($data, $ConnectionTimer, $SimpleLifeMessage) {
+        $this->data = $data;
+        $this->SimpleLifeMessage = $SimpleLifeMessage;
+        $this->ConnectionTimer = $ConnectionTimer;
+    }
+    
+
+    public function getPICOExplorerResults() {
+        return $this->ObjectResultList->getResults();
     }
 
-    public function BuildResultsNumber() {
-        $fun = $this->ResultsNumberProcess();
-        if ($fun) {
-            return $this->setErrorCode($fun);
-        }
+    public function BuildPICOExplorerResults() {
+        return $this->CheckDataIntegrity() ||
+                $this->BuildObjects() ||
+                $this->ResultsNumberProcessor->BuildQueries() ||
+                $this->ResultsNumberObtainer->obtainResultsNumber();
     }
 
-    private function ResultsNumberProcess() {
-        $fun = $this->ResultsNumberProcessor->BuildResultsNumber();
-        if ($fun) {
-            return $fun;
-        }
+    private function CheckDataIntegrity() {
+        $this->queryobject = $this->data['queryobject'];
+        $this->PICOnum = $this->data['PICOnum'];
+        $PICOLIST = array('Problem', 'Intervention', 'Comparison', 'Outcome', 'Tipe of Study', 'General');
+        $this->PICOname = $PICOLIST[$this->PICOnum - 1];
+        $this->mainLanguage = $this->data['mainLanguage'];
     }
 
-    public function getResultsNumber() {
-        $res = $this->ObjectResultList->getResults();
-        $this->OperationReport($res);
-        if ($this->ErrorCode) {
-            $result= json_encode(array('Error' => $this->ShowErrorCodeToUser()));
-        } else {
-            $result= json_encode(array('Data' => $res));
-        }
-        $this->OperationReport($result);
-        return $result;
-    }
-
-    private function OperationReport($result) {
-        $time_elapsed = $this->FacadeResultsNumberTimer->Stop();
-        $ConnectionTime = $this->ObjectResultList->getConnectionTimeSum();
-        $this->SimpleLifeMessage->AddAsNewLine('Total Time: ' . $time_elapsed . ' ms');
-        $this->SimpleLifeMessage->AddAsNewLine('Time Spent in connections: ' . $ConnectionTime . ' ms');
-        $this->SimpleLifeMessage->AddAsNewLine('Operational time: ' . ($time_elapsed - $ConnectionTime) . ' ms');
-        $this->SimpleLifeMessage->AddEmptyLine();
-        $this->SimpleLifeMessage->AddAsNewLine('Info returned to user:');
-        $this->SimpleLifeMessage->AddAsNewLine(json_encode($result));
-        $this->SimpleLifeMessage->SendAsLog();
-    }
-
-    private function setErrorCode($ErrorCode) {
-        $this->ErrorCode = $ErrorCode;
-    }
-
-    private function ShowErrorCodeToUser() {
-        return '[Error ' . $this->ErrorCode . ']Este error se traducirá y se mostrará si es relevante para el usuario';
+    private function BuildObjects() {
+        $this->ObjectResultList = new ObjectResultList($this->PICOnum, $this->queryobject, $this->PICOname);
+        $this->ResultsNumberProcessor = new ControllerResultsNumberProcessor($this->ObjectResultList);
+        $this->ResultsNumberObtainer = new ControllerResultsNumberHandler($this->ObjectResultList, $this->ResultsNumberProcessor);
+        $this->SimpleLifeMessage->AddAsNewLine('$PICO=' . $this->PICOname . ' $queryObject = ' . json_encode($this->queryobject));
     }
 
 }

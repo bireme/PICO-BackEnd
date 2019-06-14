@@ -4,12 +4,13 @@ namespace LayerEntities;
 
 class ObjectQuery {
 
-    private $results;
+    private $previousresults;
     private $SelectedDescriptors;
     private $ImproveSearchArr;
     private $EqName;
     private $EquationNoImprovement;
     private $query;
+    private $QuerySplit;
 
     public function getSelectedDescriptors() {
         return $this->SelectedDescriptors;
@@ -34,8 +35,9 @@ class ObjectQuery {
         $this->query = $query;
     }
 
-    public function __construct($results, $SelectedDescriptors, $ImproveSearchArr, $EqName) {
+    public function __construct($results, $SelectedDescriptors, $ImproveSearchArr, $EqName, $QuerySplit) {
         $this->previousresults = $results;
+        $this->QuerySplit = $QuerySplit;
         $this->SelectedDescriptors = $SelectedDescriptors;
         $this->ImproveSearchArr = $ImproveSearchArr;
         $this->EqName = $EqName;
@@ -43,6 +45,10 @@ class ObjectQuery {
 
     public function getPreviousResults() {
         return $this->previousresults;
+    }
+
+    function getQuerySplit() {
+        return $this->QuerySplit;
     }
 
     function getImproveSearchArr() {

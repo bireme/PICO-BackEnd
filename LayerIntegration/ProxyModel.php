@@ -9,17 +9,8 @@ abstract class ProxyModel {
 
     private $baseURL;
     private $POSTFields;
-    private $resultdata;
     protected $timeSum;
     private $SimpleLifeMessage;
-
-    protected function getBaseURL() {
-        return $this->baseURL;
-    }
-
-    protected function getPOSTFields() {
-        return $this->POSTFields;
-    }
 
     protected function setBaseURL($baseURL) {
         $this->baseURL = $baseURL;
@@ -29,21 +20,13 @@ abstract class ProxyModel {
         $this->POSTFields = $txt;
     }
 
-    public function getResultdata() {
-        return $this->resultdata;
-    }
-
-    protected function setResultdata($resultdata) {
-        $this->resultdata = $resultdata;
-    }
-
-    public function POSTRequest() {
+    public function POSTRequest(&$Result) {
 
         $timer = new \Simplelife\Timer();
-        $POSTquery = http_build_query($this->getPOSTFields());
-        $this->SimpleLifeMessage = new SimpleLifeMessage('(POST) Connecting to "' . $this->getBaseURL() . $POSTquery . '" : ');
+        $POSTquery = http_build_query($this->POSTFields);
+        $this->SimpleLifeMessage = new SimpleLifeMessage('(POST) Connecting to "' .$this->baseURL . $POSTquery . '" : ');
         $ch = curl_init();
-        curl_setopt($ch, CURLOPT_URL, $this->getBaseURL());
+        curl_setopt($ch, CURLOPT_URL, $this->baseURL);
         curl_setopt($ch, CURLOPT_POST, 1);
         $HeaderArr = array(
             'Content-Type: application/x-www-form-urlencoded'
@@ -51,18 +34,19 @@ abstract class ProxyModel {
         curl_setopt($ch, CURLOPT_POSTFIELDS, $POSTquery);
         curl_setopt($ch, CURLOPT_HTTPHEADER, $HeaderArr);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        $result = curl_exec($ch);
+        $data = curl_exec($ch);
         $time_elapsed_secs = $timer->Stop();
         $this->SimpleLifeMessage->Add('(' . $time_elapsed_secs . 'ms )');
         $this->timeSum->AddTime($time_elapsed_secs);
-        $this->setResultdata(array('timer' => $time_elapsed_secs, 'result' => $result));
+        $obj=array('timer' => $time_elapsed_secs, 'data' => $data);
+        $Result=$obj;
         try {
             if (curl_error($ch)) {
-                throw new SimpleLifeException(new \SimpleLife\ProxyConnectionException(curl_error($ch), $this->getBaseURL(), $POSTquery));
+                throw new SimpleLifeException(new \SimpleLife\ProxyConnectionException(curl_error($ch), $this->baseURL, $POSTquery));
             }
             $this->SimpleLifeMessage->SendAsLog();
-            if (!($result and strlen($result) > 0)) {
-                throw new SimpleLifeException(new \SimpleLife\ProxyDownloadException($this->getBaseURL(), $POSTquery));
+            if (!($data and strlen($data) > 0)) {
+                throw new SimpleLifeException(new \SimpleLife\ProxyDownloadException($this->baseURL, $POSTquery));
             }
         } catch (SimpleLifeException $exc) {
             return $exc->PreviousUserErrorCode();

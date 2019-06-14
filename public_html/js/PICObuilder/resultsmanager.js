@@ -39,16 +39,16 @@ function getResultsNumber(id) {
             return;
         }
     }
-    var resultsData = getAllInputFields();
-    eventResultsNumber(id, resultsData);
+    var queryobject = getAllInputFields();
+    eventResultsNumber(id, queryobject);
 }
 
 
-function eventResultsNumber(PICOnum, resultsData) {
+function eventResultsNumber(PICOnum, queryobject) {
     var url = "ControllerEventResultsNumber.php";
     var data = {
         PICOnum: PICOnum,
-        resultsData: resultsData
+        queryobject: queryobject
     };
     POSTrequest(url, data, function (Data) {
         setResultsNumber(Data, PICOnum);
@@ -64,32 +64,32 @@ function setResultsNumber(data, PICOnum) {
         spanObj = $('#ResNumLocal' + PICOnum).find('span').first();
         showBootstrapObj(spanObj.parent());
         RemoveReDoButton(spanObj);
-        if (data.local.ResultsNumber == 0) {
+        if (data.local.resultsNumber == 0) {
             addIconZeroResults(spanObj);
         } else {
-            $(spanObj).text(data.local.ResultsNumber);
+            $(spanObj).text(data.local.resultsNumber);
         }
-        $(spanObj).attr('data-oldval', data.local.ResultsNumber);
-        $('#ResNumLocal' + PICOnum).attr("href", data.local.ResultsURL);
+        $(spanObj).attr('data-oldval', data.local.resultsNumber);
+        $('#ResNumLocal' + PICOnum).attr("href", data.local.resultsURL);
     }
     if (PICOnum > 1 && PICOnum !== 5) {
         spanObj = $('#ResNumGlobal' + PICOnum).find('span').first();
         showBootstrapObj(spanObj.parent());
         RemoveReDoButton(spanObj);
-        if (data.global.ResultsNumber == 0) {
+        if (data.global.resultsNumber == 0) {
             addIconZeroResults(spanObj);
         } else {
-            $(spanObj).text(data.global.ResultsNumber);
+            $(spanObj).text(data.global.resultsNumber);
             if (PICOnum == 6) {
                 showBootstrapObj(spanObj);
             }
         }
-        $(spanObj).attr('data-oldval', data.global.ResultsNumber);
-        $('#ResNumGlobal' + PICOnum).attr("href", data.global.ResultsURL);
+        $(spanObj).attr('data-oldval', data.global.resultsNumber);
+        $('#ResNumGlobal' + PICOnum).attr("href", data.global.resultsURL);
     }
     if (PICOnum === 6) {
-        $('#FinalSearchDetails').val(data.global.ResultsURL);
-        $('#FinalSearchDetails').attr('data-oldval', data.global.ResultsURL);
+        $('#FinalSearchDetails').val(data.global.resultsNumber);
+        $('#FinalSearchDetails').attr('data-oldval', data.global.resultsNumber);
     }
     var loop_i;
     var max = PICOnum;

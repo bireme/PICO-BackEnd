@@ -1,5 +1,9 @@
 function initfunctions() {
     $('button.ExpandDeCS').click(function (e) {
+        if (IsLoading()) {
+            return;
+        }
+        setAsLoading();
         if ($(this).find('.startlanguage').is(":hover")) {
             e.preventDefault();
             ExpandDeCSConfig();
@@ -15,6 +19,10 @@ function initfunctions() {
         ProcessResults();
     });
     $(document).find('button[id^=CalcRes]').click(function () {
+        if (IsLoading()) {
+            return;
+        }
+        setAsLoading();
         var PICOnum = ($(this).attr('id')).substr(-1);
         getResultsNumber(PICOnum);
     });
@@ -96,7 +104,7 @@ function hideModal2() { //BORRARESTO
 }
 
 function ShowPICOinfo(PICOnum) {
-    var title= getPICOElements()[PICOnum-1];
+    var title = getPICOElements()[PICOnum - 1];
     var msg = getPICOinfo()[PICOnum - 1];
     if (PICOnum < 5) {
         msg = title + ' \n \n' + msg + ' \n \n' + getPICOPlaceHolder(PICOnum);

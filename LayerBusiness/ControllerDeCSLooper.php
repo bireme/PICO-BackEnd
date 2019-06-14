@@ -27,10 +27,22 @@ class ControllerDeCSLooper {
         }
         $DeCSList = array();
 
+
+        $PrintKeywordList = new SimpleLifeMessage('Exploring this Keyword List');
         foreach ($this->ObjectKeywordList->getKeywordList() as $ObjectKeyword) {
-            
+            if ($ObjectKeyword->IsCompleted() == true) {
+                continue;
+            }
+            $PrintKeywordList->AddAsNewLine($ObjectKeyword->getKeyword());
+        }
+        $PrintKeywordList->SendAsLog();
+
+        foreach ($this->ObjectKeywordList->getKeywordList() as $ObjectKeyword) {
+            if ($ObjectKeyword->IsCompleted() == true) {
+                continue;
+            }
             $obj = new ControllerDeCSHandler($ObjectKeyword);
-            $fun = $obj->getDeCS();
+            $fun = $obj->retrieveDeCS($this->ObjectKeywordList->getMaxImports());
             if ($fun) {
                 return $fun;
             }
@@ -59,14 +71,11 @@ class ControllerDeCSLooper {
                     throw new SimpleLifeException(new \SimpleLife\UnrecognizedLanguage($lang));
                 }
             }
-
-            if (count($this->ObjectKeywordList->getKeywordList()) == 0) {
-                throw new SimpleLifeException(new \SimpleLife\NoKeywords());
-            }
         } catch (SimpleLifeException $exc) {
             return $exc->PreviousUserErrorCode();
         }
     }
+
 }
 
 ?>
