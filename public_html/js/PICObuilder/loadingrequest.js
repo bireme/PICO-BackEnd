@@ -3,7 +3,7 @@ var currentrequest;
 function getBaseURL() {
     var foldername = '/PHP-Bireme';
     var testfoldername = '/pico';
-    var isdeployed=false;
+    var isdeployed=true;
     if(isdeployed){
         foldername=testfoldername;
     }
