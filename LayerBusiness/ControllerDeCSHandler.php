@@ -2,63 +2,53 @@
 
 namespace LayerBusiness;
 
-require_once(realpath(dirname(__FILE__)) . '/../InterfaceIntegration.php');
-require_once(realpath(dirname(__FILE__)) . '/../SimpleLife/ManualExceptions.php');
-require_once(realpath(dirname(__FILE__)) . '/../SimpleLife/SimpleLifeMessages.php');
-
-use SimpleLife\SimpleLifeMessage;
-use InterfaceIntegration;
-use SimpleLife\SimpleLifeException;
+require_once(realpath(dirname(__FILE__)) . '/../LayerBusiness/ControllerDeCSDataProcessor.php');
+require_once(realpath(dirname(__FILE__)) . '/../LayerFacades/IntegrationPICOExplorer.php');
 
 class ControllerDeCSHandler {
 
     private $ObjectKeyWord;
+    private $DeCSDataProcessor;
 
-    public function __construct($ObjectKeyWord) {
+    public function __construct($DeCSDataProcessor) {
+        $this->DeCSDataProcessor = $DeCSDataProcessor;
+    }
+
+    ///////////////////////////////////////////////////////////////////
+    //PUBLIC FUNCTIONS
+    ///////////////////////////////////////////////////////////////////
+
+    public function setObjectKeyword($ObjectKeyWord) {
         $this->ObjectKeyWord = $ObjectKeyWord;
     }
 
-    public function retrieveDeCS($MaxImports) {
-        $this->checkKeywords();
+    public function obtainDeCS() {
+        return $this->DeCSFromIntegration();
+    }
 
-        $ObjectKeywordData = array(
+    ///////////////////////////////////////////////////////////////////
+    //INNER FUNCTIONS
+    /////////////////////////////////////////////////////////////////// 
+
+    private function DeCSFromIntegration() {
+        $Data = array(
             'keyword' => $this->ObjectKeyWord->getKeyword(),
             'langs' => $this->ObjectKeyWord->getLang(),
-            'MaxImports' => $MaxImports
         );
-        $Data = array(
-            'caller' => 'main',
-            'ObjectKeywordData' => $ObjectKeywordData
-        );
-
-        $info = 'Keyword= ' . $this->ObjectKeyWord->getKeyword() . ' Langs=' . json_encode($this->ObjectKeyWord->getLang());
-        $DeCSExplorer = new InterfaceIntegration('[Integration Report] ' . $info);
-        return $this->ProcessResults($DeCSExplorer->ImportDeCS(json_encode($Data)));
+        $DeCSExplorer = new \IntegrationPICOExplorer(json_encode($Data));
+        return $this->ProcessResults($DeCSExplorer->ImportDeCS());
     }
 
-    private function ProcessResults($results) {
-        $results = json_decode($results, true);
-        if (array_key_exists('Error', $results)) {
-            try {
-                $Error = $results['Error'];
-                throw new SimpleLifeException(new \SimpleLife\PreviousIntegrationException($Error));
-            } catch (SimpleLifeException $Ex) {
-                return $Ex->PreviousUserErrorCode();
-            }
-        } else {
-            $this->ObjectKeyWord->setBaseData($results['Data']);
-        }
-    }
-
-    private function checkKeywords() {
+    private function ProcessResults($resultdata) {
+        $results = json_decode($resultdata, true);
         try {
-            if (strlen($this->ObjectKeyWord->getKeyword()) == 0) {
-                throw new SimpleLifeException(new \SimpleLife\EmptyKeyword());
+            if (!(is_array($results))) {
+                throw new SimpleLifeException(new \SimpleLife\PreviousIntegrationException($results['Error']));
             }
-            $MaximumQuerySize = 5000;
-            if (strlen($this->ObjectKeyWord->getKeyword()) > $MaximumQuerySize) {
-                throw new SimpleLifeException(new \SimpleLife\KeywordTooLarge(strlen($keyword), $MaximumQuerySize));
+            if (array_key_exists('Error', $results)) {
+                throw new SimpleLifeException(new \SimpleLife\PreviousIntegrationException($results['Error']));
             }
+            $this->DeCSDataProcessor->setDataFromIntegration($this->ObjectKeyWord, $results['Data']);
         } catch (SimpleLifeException $Ex) {
             return $Ex->PreviousUserErrorCode();
         }

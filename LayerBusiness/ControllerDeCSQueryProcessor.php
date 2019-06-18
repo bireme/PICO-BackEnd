@@ -2,13 +2,9 @@
 
 namespace LayerBusiness;
 
-require_once(realpath(dirname(__FILE__)) . '/../SimpleLife/ManualExceptions.php');
-require_once(realpath(dirname(__FILE__)) . '/../SimpleLife/SimpleLifeMessages.php');
 require_once(realpath(dirname(__FILE__)) . '/../LayerEntities/ObjectKeyword.php');
 
 use LayerEntities\ObjectKeyword;
-use SimpleLife\SimpleLifeMessage;
-use SimpleLife\SimpleLifeException;
 
 class ControllerDeCSQueryProcessor {
 
@@ -23,14 +19,37 @@ class ControllerDeCSQueryProcessor {
         $this->AddPreviousDataToResults($ObjectKeywordList, $this->previousData);
     }
 
+    ///////////////////////////////////////////////////////////////////
+    //PUBLIC FUNCTIONS
+    /////////////////////////////////////////////////////////////////// 
+
+    public function ProcessQuery($query, &$QueryProcessed) {
+        $QuerySplitBySeparators = NULL;
+        return $this->splitQueryWithDelimiters($query, $QuerySplitBySeparators) ||
+                $this->setArrayItemElements($QuerySplitBySeparators, $QueryProcessed);
+    }
+
+    public function BuildKeywordList() {
+        $query = $this->ObjectQuerySplitList->getQuery();
+        $QueryProcessed = NULL;
+        $QuerySplitBySepsWithValues=NULL;
+        return $this->ProcessQuery($query, $QueryProcessed) ||
+                $this->setArrayItemType($QueryProcessed, $QuerySplitBySepsWithValues) ||
+                        $this->AddToItemList($QuerySplitBySepsWithValues);
+    }
+
+    ///////////////////////////////////////////////////////////////////
+    //INNER FUNCTIONS
+    /////////////////////////////////////////////////////////////////// 
+
+
     private function AddPreviousDataToResults($ObjectKeywordList, $previousData) {
         if (!(is_array($previousData))) {
             return;
         }
         foreach ($previousData as $keyword => $KeywordData) {
-            $KeywordObj = new ObjectKeyword($keyword, $this->ObjectQuerySplitList->getUsedLangs(),$this->ObjectQuerySplitList->getMainLanguage());
-            $KeywordObj->setPreviousBaseData($previousData);
-            $ObjectKeywordList->AddKeyword($KeywordObj);
+            $KeywordObj = $this->ObjectKeywordList->CreateKeywordObject($keyword);
+            $KeywordObj->setBaseData($previousData);
         }
     }
 
@@ -66,19 +85,7 @@ class ControllerDeCSQueryProcessor {
         return false;
     }
 
-    public function ProcessQuery($query) {
-        $PreFixArr = $this->splitQueryWithDelimiters($query);
-        return $this->setArrayItemElements($PreFixArr);
-    }
-
-    public function BuildKeywordList() {
-        $query = $this->ObjectQuerySplitList->getQuery();
-        $PreArr = $this->ProcessQuery($query);
-        $ListObj = $this->setArrayItemType($PreArr);
-        $this->AddToItemList($ListObj);
-    }
-
-    private function AddToItemList($ItemArray) {
+    private function AddToItemList($ItemArray) {;
         foreach ($ItemArray as $Item) {
             $this->ObjectQuerySplitList->AddToItemList($Item);
         }
@@ -108,11 +115,16 @@ class ControllerDeCSQueryProcessor {
         return $typeX;
     }
 
-    private function BuildDeCSList($ExploredKeywords) {
-        return $this->ObjectKeywordList->getAllDeCS();
+    private function getKeywordsTitlesAndObjects() {
+        $AllItemList = $this->ObjectKeywordList->getKeywordList();
+        $results = array();
+        foreach ($AllItemList as $item) {
+            $results[$item->getKeyword()] = $item;
+        }
+        return $results;
     }
 
-    private function setArrayItemType($ItemArray) {
+    private function setArrayItemType($ItemArray, &$QuerySplitBySepsWithValues) {
         $ItemArray = array_map('strtolower', $ItemArray);
         $ItemArrayCopy = json_decode(json_encode($ItemArray), true);
         $QuerySplit = array();
@@ -120,7 +132,7 @@ class ControllerDeCSQueryProcessor {
         $Ops = array('or', 'and', 'not');
         $Seps = array('(', ')', ' ', ':');
         $UsedKeyWords = array();
-        $ExploredKeywords = $this->ObjectKeywordList->getKeywordsTitlesAndObjects();
+        $ExploredKeywords = $this->getKeywordsTitlesAndObjects();
         foreach ($ItemArray as $value) {
             $keywordObj = NULL;
             if (strlen($value) == 0) {
@@ -136,8 +148,7 @@ class ControllerDeCSQueryProcessor {
                     switch ($type) {
                         case 'key':
                             array_push($UsedKeyWords, $value);
-                            $obj = new ObjectKeyword($value, $this->ObjectQuerySplitList->getUsedLangs(),$this->ObjectQuerySplitList->getMainLanguage());
-                            $this->ObjectKeywordList->AddKeyword($obj);
+                            $KeywordObj = $this->ObjectKeywordList->CreateKeywordObject($value);
                             break;
                         case 'keyexplored':
                             array_push($UsedKeyWords, $value);
@@ -147,70 +158,68 @@ class ControllerDeCSQueryProcessor {
             }
             array_push($QuerySplit, array('type' => $type, 'value' => $value));
         }
-        return $QuerySplit;
+        $QuerySplitBySepsWithValues = $QuerySplit;
     }
-
-    private function splitQueryWithDelimiters($query) {
+    
+    private function splitQueryWithDelimiters($query, &$QuerySplitBySeparators) {
         $query = str_replace('  ', ' ', $query);
         $query = strtolower($query);
         $pattern = '/([()": ])/';
-        $Ops = array('or', 'and', 'not');
-        $PreFixArr = preg_split($pattern, $query, -1, PREG_SPLIT_DELIM_CAPTURE | PREG_SPLIT_NO_EMPTY);
-        return $PreFixArr;
+        $QuerySplitBySeparators = preg_split($pattern, $query, -1, PREG_SPLIT_DELIM_CAPTURE | PREG_SPLIT_NO_EMPTY);
     }
 
-    private function FixComposeParenthesesQuoted($IniArr) {
+    private function FixComposeParenthesesQuoted($QuerySplitBySeparators, &$FixedQuoted) {
         $Arr = array();
         $doublequote = 0;
-        foreach ($IniArr as $value) {
+        foreach ($QuerySplitBySeparators as $QuerySplitBySepsElement) {
             if ($doublequote == 0) {
-                if ($value == '"') {
+                if ($QuerySplitBySepsElement == '"') {
                     $doublequote = 1;
-                    $tmpx = '';
+                    $NewComposedKeyword = '';
                 } else {
-                    array_push($Arr, $value);
+                    array_push($Arr, $QuerySplitBySepsElement);
                 }
             } else {
-                if ($value == '"') {
+                if ($QuerySplitBySepsElement == '"') {
                     $doublequote = 0;
-                    array_push($Arr, $tmpx);
+                    array_push($Arr, $NewComposedKeyword);
                 } else {
-                    $tmpx = $tmpx . $value;
+                    $NewComposedKeyword = $NewComposedKeyword . $QuerySplitBySepsElement;
                 }
             }
         }
-        return $Arr;
+        $FixedQuoted = $Arr;
     }
 
-    private function FixComposeParentheses($IniArr) {
-        $index = count($IniArr);
+    private function FixComposeParentheses($FixedQuoted,&$QueryProcessed) {
+        $index = count($FixedQuoted);
         $Ops = array('or', 'and', 'not');
         $Seps = array('(', ')', ' ', ':');
         $i = 0;
         $Arr = array();
         while ($i < $index) {
             if ((($i + 2 < $index))) {
-                if (((!(in_array(strtolower($IniArr[$i]), $Seps) || in_array(strtolower($IniArr[$i]), $Ops))) && ($IniArr[$i + 1] == ' ' && (!(in_array(strtolower($IniArr[$i + 2]), $Seps) || in_array(strtolower($IniArr[$i + 2]), $Ops)))))) {
-                    $valx = $IniArr[$i] . $IniArr[$i + 1] . $IniArr[$i + 2];
+                if (((!(in_array(strtolower($FixedQuoted[$i]), $Seps) || in_array(strtolower($FixedQuoted[$i]), $Ops))) && ($FixedQuoted[$i + 1] == ' ' && (!(in_array(strtolower($FixedQuoted[$i + 2]), $Seps) || in_array(strtolower($FixedQuoted[$i + 2]), $Ops)))))) {
+                    $valx = $FixedQuoted[$i] . $FixedQuoted[$i + 1] . $FixedQuoted[$i + 2];
                     $i = $i + 3;
                 } else {
-                    $valx = $IniArr[$i];
+                    $valx = $FixedQuoted[$i];
                     $i++;
                 }
             } else {
-                $valx = $IniArr[$i];
+                $valx = $FixedQuoted[$i];
                 $i++;
             }
             $valx = ucfirst($valx);
             array_push($Arr, $valx);
         }
-        return $Arr;
+        $QueryProcessed = $Arr;
     }
 
-    private function setArrayItemElements($PreFixArr) {
-        $Arr=$this->FixComposeParenthesesQuoted($PreFixArr);
-        $Arr=$this->FixComposeParentheses($Arr);
-        return $Arr;
+    private function setArrayItemElements($QuerySplitBySeparators, &$QueryProcessed) {
+        $FixedQuoted=NULL;
+        return $this->FixComposeParenthesesQuoted($QuerySplitBySeparators, $FixedQuoted) ||
+                $this->FixComposeParentheses($FixedQuoted,$QueryProcessed);
     }
 
 }

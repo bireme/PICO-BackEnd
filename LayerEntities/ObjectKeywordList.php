@@ -10,19 +10,12 @@ class ObjectKeywordList {
 
     private $ItemList;
     private $langArr;
-    private $MaxRelatedTrees;
-    private $MaxDescendantExplores;
+    private $mainLanguage;
 
-    public function getMaxImports() {
-        return array('MaxRelatedTrees' => $this->MaxRelatedTrees,
-            'MaxDescendantExplores' => $this->MaxDescendantExplores);
-    }
-
-    public function __construct($langArr,$MaxImports) {
+    public function __construct($langArr, $mainLanguage) {
         $this->ItemList = array();
         $this->langArr = $langArr;
-        $this->MaxRelatedTrees = $MaxImports['MaxRelatedTrees'];
-        $this->MaxDescendantExplores = $MaxImports['MaxDescendantExplores'];
+        $this->mainLanguage = $mainLanguage;
     }
 
     public function getConnectionTimeSum() {
@@ -45,23 +38,22 @@ class ObjectKeywordList {
         return $this->ItemList;
     }
 
-    public function AddKeyword($item) {
-        array_push($this->ItemList, $item);
-    }
-
-    public function KeyWordListInfo($SimpleLifeMessage) {
-        $SimpleLifeMessage->AddAsNewLine('Summary of tree_ids,descendants and synonyms per keyword');
-        foreach ($this->ItemList as $item) {
-            $item->KeyWordInfo($SimpleLifeMessage);
+    public function ExistsKeyword($keyword) {
+        if (array_key_exists($keyword, $this->ItemList)) {
+            return true;
+        } else {
+            return false;
         }
     }
 
-    public function getKeywordsTitlesAndObjects() {
-        $results = array();
-        foreach ($this->ItemList as $item) {
-            $results[$item->getKeyword()] = $item;
+    public function CreateKeywordObject($keyword) {
+        if ($this->ExistsKeyword($keyword)) {
+            $keywordObj = $this->ItemList[$keyword];
+        } else {
+            $keywordObj = new ObjectKeyword($keyword, $this->langArr, $this->mainLanguage);
+            $this->ItemList[$keyword] = $keywordObj;
         }
-        return $results;
+        return $keywordObj;
     }
 
     public function getKeywordListResults() {

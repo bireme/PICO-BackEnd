@@ -2,83 +2,100 @@
 
 namespace LayerBusiness;
 
-require_once(realpath(dirname(__FILE__)) . '/../SimpleLife/ManualExceptions.php');
-
-use SimpleLife\SimpleLifeException;
-
 class ControllerDeCSMenuBuilder {
 
     private $ObjectQuerySplitList;
+    private $Result;
 
     public function __construct($ObjectQuerySplitList) {
         $this->ObjectQuerySplitList = $ObjectQuerySplitList;
     }
 
-    public function BuildHTML($PICOnum) {
-        $langs = $this->ObjectQuerySplitList->getUsedLangs();
-        $mainlanguage = $this->ObjectQuerySplitList->getMainLanguage();
-        $ItemList = $this->ObjectQuerySplitList->getItemList();
-        $results = $this->ObjectQuerySplitList->getObjectKeywordList()->getKeywordListResults();
+    ///////////////////////////////////////////////////////////////////
+    //PUBLIC FUNCTIONS
+    ///////////////////////////////////////////////////////////////////
 
-        $results = $this->ProcessResults($results, $mainlanguage, $langs, $ItemList);
-        try {
-            if (count($results) == 0) {
-                throw new SimpleLifeException(new \SimpleLife\NoNewKeywordsInEquation());
-            }
-        } catch (SimpleLifeException $exc) {
-            return $exc->PreviousUserErrorCode();
-        }
-
-        $this->BuildDescriptorsHTML($results, $PICOnum);
-        $this->BuildDeCSHTML($results);
+    public function BuildHTML() {
+        return $results = $this->ProcessResults() ||
+                $this->BuildDescriptorsHTML() ||
+                $this->BuildDeCSHTML();
     }
 
-    private function ProcessResults($results, $mainlanguage, $langs, $ItemList) {
-        $Result = array();
-        $keylist = array();
-        foreach ($ItemList as $item) {
-            if ($item['type'] == 'key' || $item['type'] == 'keyrep' || $item['type'] == 'keyexplored') {
-                array_push($keylist, $item['value']);
-            }
-        }
+    ///////////////////////////////////////////////////////////////////
+    //INNER FUNCTIONS
+    /////////////////////////////////////////////////////////////////// 
 
+    private function BuildDeCSHTML() {
+        $this->HTMLaddLine(1, '<form action="">');
+        $this->BuildDeCSHTMLTabs();
+        $this->BuildDeCSHTMLContent();
+        $this->HTMLaddLine(1, '</form>');
+    }
+
+    private function BuildDescriptorsHTML() {
+        $this->HTMLaddLine(0, '<form action="">');
+        $this->BuildDescriptorsHTMLTabs();
+        $this->BuildDescriptorsHTMLContent();
+        $this->HTMLaddLine(0, '</form>');
+    }
+
+    private function HTMLaddLine($HTMLfile, $txt) {
+        if ($HTMLfile == 0) {
+            $this->ObjectQuerySplitList->AddDescriptorsHTML($txt . PHP_EOL);
+        } else {
+            $this->ObjectQuerySplitList->AddDeCSHTML($txt . PHP_EOL);
+        }
+    }
+
+    private function ProcessResults() {
+        $langs = $this->ObjectQuerySplitList->getUsedLangs();
+        $ItemQuerySplitList = $this->ObjectQuerySplitList->getItemList();
+        $results = $this->ObjectQuerySplitList->getObjectKeywordList()->getKeywordListResults();
+        $Result = array();
+        $keylist = $this->BuildUsedKeyList($ItemQuerySplitList);
         foreach ($results as $keyword => $ObjKeyword) {
             if (!(in_array($keyword, $keylist))) {
                 continue;
             }
-            $ObjectKeyword = $ObjKeyword['content'];
             $Result[$keyword] = array();
-            foreach ($ObjectKeyword as $term => $TermObj) {
-                if (!(array_key_exists($term, $Result[$keyword]))) {
-                    $Result[$keyword][$term] = array();
-                }
-                foreach ($TermObj as $tree_id => $DeCSLanObj) {
-                    foreach ($DeCSLanObj as $lang => $DeCSArr) {
-                        if (!(in_array($lang, $langs))) {
-                            continue;
-                        }
-                        $Result[$keyword][$term] = array_merge($Result[$keyword][$term], $DeCSArr);
-                    }
-                }
-                $Result[$keyword][$term] = array_unique($Result[$keyword][$term]);
-            }
+            $this->ProcessInnerObjectKeyword($ObjKeyword['content'], $Result[$keyword], $langs);
         }
-        return $Result;
+        $this->Result = $Result;
     }
 
-    private function BuildDescriptorsHTML($results, $PICOnum) {
-        $titletabname = 'myTab';
-        $contenttabname = 'myTabContent';
-        $itemsnameprexif = 'opcao';
-        $this->HTMLaddLine(0, '<form action="">');
+    private function BuildUsedKeyList($ItemQuerySplitList) {
+        $keylist = array();
+        foreach ($ItemQuerySplitList as $item) {
+            if ($item['type'] == 'key' || $item['type'] == 'keyrep' || $item['type'] == 'keyexplored') {
+                array_push($keylist, $item['value']);
+            }
+        }
+        return $keylist;
+    }
 
-///////////////////////////////////////////////////////////
-////TAB HEADER
-/////////////////////////////////////////////////////////////
-        $this->HTMLaddLine(0, '<input type="hidden" id="PICONumTag" value="' . $PICOnum . '"></input>');
-        $this->HTMLaddLine(0, '<ul class = "nav nav-tabs" id = "' . $titletabname . '" role = "tablist">');
+    private function ProcessInnerObjectKeyword($ObjectKeyword, &$ResultKeyword, $langs) {
+        
+        foreach ($ObjectKeyword as $term => $TermObj) {
+            if (!(array_key_exists($term, $ResultKeyword))) {
+                $ResultKeyword[$term] = array();
+            }
+            foreach ($TermObj as $tree_id => $DeCSLanObj) {
+                foreach ($DeCSLanObj as $lang => $DeCSArr) {
+                    if (!(in_array($lang, $langs))) {
+                        continue;
+                    }
+                    $ResultKeyword[$term] = array_merge($ResultKeyword[$term], $DeCSArr);
+                }
+            }
+            $ResultKeyword[$term] = array_unique($ResultKeyword[$term]);
+        }
+    }
+
+    private function BuildDescriptorsHTMLTabs() {
+        $this->HTMLaddLine(0, '<input type="hidden" id="PICONumTag" value="' . $this->ObjectQuerySplitList->getPICOnum() . '"></input>');
+        $this->HTMLaddLine(0, '<ul class = "nav nav-tabs" id = "myTab" role = "tablist">');
         $keywordNum = 1;
-        foreach ($results as $keyword => $ObjKeyword) {
+        foreach ($this->Result as $keyword => $ObjKeyword) {
             $this->HTMLaddLine(0, '<li class="nav-item">');
             $tmp = '';
             $tmp2 = 'false';
@@ -87,7 +104,7 @@ class ControllerDeCSMenuBuilder {
                 $tmp = ' active';
                 $tmp2 = 'true';
             }
-            $itemname = $itemsnameprexif . $keywordNum;
+            $itemname = 'opcao' . $keywordNum;
             $msg = '<a class = "nav-link' . $tmp . '" id = "' . $itemname . '-tab"  data-toggle = "tab" href = "#' . $itemname . '" role = "tab" aria-controls = "' . $itemname . '" aria-selected = "' . $tmp2 . '">' . $keyword . ' <span class = "badge badge-info">' . $NumberOfDescriptors . '</span></a>';
             $this->HTMLaddLine(0, $msg);
 
@@ -95,15 +112,13 @@ class ControllerDeCSMenuBuilder {
             $keywordNum++;
         }
         $this->HTMLaddLine(0, '</ul>');
+    }
 
-///////////////////////////////////////////////////////////
-////TAB CONTENT
-/////////////////////////////////////////////////////////////
-
-        $this->HTMLaddLine(0, '<div class="tab-content" id="' . $contenttabname . '">');
+    private function BuildDescriptorsHTMLContent() {
+        $this->HTMLaddLine(0, '<div class="tab-content" id="myTabContent">');
         $keywordNum = 1;
-        foreach ($results as $keyword => $ObjKeyword) {
-            $itemname = $itemsnameprexif . $keywordNum;
+        foreach ($this->Result as $keyword => $ObjKeyword) {
+            $itemname = 'opcao' . $keywordNum;
             $tmp = '';
             if ($keywordNum == 1) {
                 $tmp = ' show active';
@@ -127,24 +142,13 @@ class ControllerDeCSMenuBuilder {
             $keywordNum++;
         }
         $this->HTMLaddLine(0, '</div>');
-        $this->HTMLaddLine(0, '</form>');
     }
 
-    private function BuildDeCSHTML($results) {
-        $titletabname = 'myTab2';
-        $contenttabname = 'myTabContent2';
-        $itemsnameprexif = 'opcao';
-
-        $this->HTMLaddLine(1, '<form action="">');
-
-///////////////////////////////////////////////////////////
-////TAB HEADER
-/////////////////////////////////////////////////////////////
-
-        $this->HTMLaddLine(1, '<ul class = "nav nav-tabs" id = "' . $titletabname . '" role = "tablist">');
+    private function BuildDeCSHTMLTabs() {
+        $this->HTMLaddLine(1, '<ul class = "nav nav-tabs" id = "myTab2" role = "tablist">');
         $keywordNum = 1;
         $itemNum = 1;
-        foreach ($results as $keyword => $ObjKeyword) {
+        foreach ($this->Result as $keyword => $ObjKeyword) {
             $DescriptorOfKeywordNum = 1;
             foreach ($ObjKeyword as $DescriptorTag => $DeCSArr) {
                 $tmp = '';
@@ -153,7 +157,7 @@ class ControllerDeCSMenuBuilder {
                     $tmp = ' active';
                     $tmp2 = 'true';
                 }
-                $itemname = $itemsnameprexif . $keywordNum . '-' . $DescriptorOfKeywordNum;
+                $itemname = 'opcao' . $keywordNum . '-' . $DescriptorOfKeywordNum;
                 $NumberOfDeCS = count($DeCSArr);
                 $msg = '<a class = "nav-link' . $tmp . '" id = "' . $itemname . '-tab"  data-toggle = "tab" href = "#' . $itemname . '" role = "tab" aria-controls = "' . $itemname . '" aria-selected = "' . $tmp2 . '">' . $DescriptorTag . ' <span class = "badge badge-info">' . $NumberOfDeCS . '</span></a>';
                 $this->HTMLaddLine(1, '<li class = "nav-item">');
@@ -165,19 +169,17 @@ class ControllerDeCSMenuBuilder {
             $keywordNum++;
         }
         $this->HTMLaddLine(1, '</ul>');
+    }
 
-///////////////////////////////////////////////////////////
-////TAB CONTENT
-/////////////////////////////////////////////////////////////
-
-        $this->HTMLaddLine(1, '<div class="tab-content" id="' . $contenttabname . '">');
+    private function BuildDeCSHTMLContent() {
+        $this->HTMLaddLine(1, '<div class="tab-content" id="myTabContent2">');
         $keywordNum = 1;
 
         $itemNum = 1;
-        foreach ($results as $keyword => $ObjKeyword) {
+        foreach ($this->Result as $keyword => $ObjKeyword) {
             $DescriptorOfKeywordNum = 1;
             foreach ($ObjKeyword as $DescriptorTag => $DeCSArr) {
-                $itemname = $itemsnameprexif . $keywordNum . '-' . $DescriptorOfKeywordNum;
+                $itemname = 'opcao' . $keywordNum . '-' . $DescriptorOfKeywordNum;
                 $tmp = '';
                 if ($itemNum == 1) {
                     $tmp = ' show active';
@@ -202,18 +204,6 @@ class ControllerDeCSMenuBuilder {
             $keywordNum++;
         }
         $this->HTMLaddLine(1, '</div>');
-        $this->HTMLaddLine(1, '</form>');
-    }
-
-    private function HTMLaddLine($HTMLfile, $txt) {
-        switch ($HTMLfile) {
-            case 0:
-                $this->ObjectQuerySplitList->AddDescriptorsHTML($txt . PHP_EOL);
-                break;
-            case 1:
-                $this->ObjectQuerySplitList->AddDeCSHTML($txt . PHP_EOL);
-                break;
-        }
     }
 
 }

@@ -2,30 +2,29 @@
 
 namespace LayerBusiness;
 
-require_once(realpath(dirname(__FILE__)) . '/../SimpleLife/SimpleLifeMessages.php');
-require_once(realpath(dirname(__FILE__)) . '/../LayerEntities/ObjectEquation.php');
-
-use SimpleLife\SimpleLifeException;
-
 class ControllerEquationChecker {
-    
-    private $ObjectQuerySplitList;
 
-    public function __construct($ObjectQuerySplitList) {
-        $this->ObjectQuerySplitList=$ObjectQuerySplitList;
+    private $AnyObjectWithQuerySetterGetter;
+
+    public function __construct($AnyObjectWithQuerySetterGetter) {
+        $this->AnyObjectWithQuerySetterGetter = $AnyObjectWithQuerySetterGetter;
     }
 
-    public function CheckEquation($EqName) {
-        $query = $this->ObjectQuerySplitList->getQuery();
-        $fun = $this->CheckEquationParameters($query,$EqName);
-        if ($fun) {
-            return $fun;
-        }
-        $query=$this->FixEquation($query);
-        $this->ObjectQuerySplitList->setQuery($query);
+    ///////////////////////////////////////////////////////////////////
+    //PUBLIC FUNCTIONS
+    ///////////////////////////////////////////////////////////////////
+
+    public function CheckAndFixEquation() {
+        return $this->CheckEquationParameters() ||
+                $this->FixEquation();
     }
 
-    public function FixEquation($Equation) {
+    ///////////////////////////////////////////////////////////////////
+    //INNER FUNCTIONS
+    /////////////////////////////////////////////////////////////////// 
+
+    private function FixEquation() {
+        $Equation = $this->AnyObjectWithQuerySetterGetter->getQuery();
         $Equation = trim($Equation, ' ');
         $Equation = str_replace('  ', ' ', $Equation);
         $Equation = str_replace('[', '(', $Equation);
@@ -52,22 +51,23 @@ class ControllerEquationChecker {
             return $matches[1];
         }, $Equation);
 
-
-        return $Equation;
+        $this->AnyObjectWithQuerySetterGetter->setQuery($Equation);
     }
-    
-    private function CheckEquationParameters($Equation,$EqName) {
+
+    private function CheckEquationParameters() {
+        $Equation = $this->AnyObjectWithQuerySetterGetter->getQuery();
+        $title = $this->AnyObjectWithQuerySetterGetter->getTitle();
         try {
             if (!is_string($Equation) == true) {
-                throw new SimpleLifeException(new \SimpleLife\EquationMustBeString($EqName));
+                throw new SimpleLifeException(new \SimpleLife\EquationMustBeString($title));
             }
             if (substr_count($Equation, '(') != substr_count($Equation, ')')) {
-                throw new SimpleLifeException(new \SimpleLife\ParenthesesNumberNotMatch($EqName,$Equation));
+                throw new SimpleLifeException(new \SimpleLife\ParenthesesNumberNotMatch($title, $Equation));
             }
             //$InvalidChars = preg_replace("/[a-zA-Z0-9 ()/-\"]/", "", $Equation);
             //$InvalidChars = preg_replace("/(.)\\1+/", "$1", $InvalidChars);
             //if (strlen($InvalidChars) > 0) {
-              //  throw new SimpleLifeException(new \SimpleLife\EqInvalidChars($EqName, $InvalidChars));
+            //  throw new SimpleLifeException(new \SimpleLife\EqInvalidChars($EqName, $InvalidChars));
             //}
         } catch (SimpleLifeException $exc) {
             return $exc->PreviousUserErrorCode();

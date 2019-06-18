@@ -12,8 +12,8 @@ class ObjectResultList {
     private $ResultQueryList;
     private $PICOname;
     private $queryobject;
-    
-    public function getInitialData(){
+
+    public function getInitialData() {
         return $this->queryobject;
     }
 
@@ -21,9 +21,9 @@ class ObjectResultList {
         $this->PICONum = $PICONum;
         $this->PICOname = $PICOname;
         $this->queryobject = $queryobject;
-        $this->ResultQueryList=array();
+        $this->ResultQueryList = array();
     }
-    
+
     function getPICONum() {
         return $this->PICONum;
     }
@@ -32,7 +32,6 @@ class ObjectResultList {
         return $this->PICOname;
     }
 
-    
     public function getConnectionTimeSum() {
         $res = 0;
         foreach ($this->ResultQueryList as $ResultObj) {
@@ -40,23 +39,22 @@ class ObjectResultList {
         }
         return $res;
     }
-    
-    public function AddIntegrationResultsToResultQuery($key,$resultsNumber,$resultsURL){
+
+    public function AddIntegrationResultsToResultQuery($key, $resultsNumber, $resultsURL) {
         $ResultsObj = $this->ResultQueryList[$key];
-        $ResultsObj->setResultsNumber($resultsNumber);
-        $ResultsObj->setResultsURL($resultsURL);
+        $ResultsObj->setIntegrationResults($resultsURL, $resultsNumber);
     }
 
-    public function AddResultQuery($key,$query) {
-        if(array_key_exists($key,$this->ResultQueryList)){
+    public function AddResultQuery($key, $query) {
+        if (array_key_exists($key, $this->ResultQueryList)) {
             return NULL;
-        }else{
+        } else {
             $ObjResult = new ResultQuery($query);
-            $this->ResultQueryList[$key]=$ObjResult;
+            $this->ResultQueryList[$key] = $ObjResult;
             return $ObjResult;
         }
     }
-    
+
     public function getAllResultQueryObjects() {
         return $this->ResultQueryList;
     }
@@ -64,10 +62,11 @@ class ObjectResultList {
     public function getResults() {
         $result = array();
         foreach ($this->ResultQueryList as $key => $ResultObj) {
-            $result[$key]=$ResultObj->getResults();
+            $result[$key] = $ResultObj->getResults();
         }
         return $result;
     }
+
 }
 
 ?>

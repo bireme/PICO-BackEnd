@@ -6,7 +6,7 @@ class ObjectQuery {
 
     private $previousresults;
     private $SelectedDescriptors;
-    private $ImproveSearchArr;
+    private $ImproveSearchQuery;
     private $EqName;
     private $EquationNoImprovement;
     private $query;
@@ -35,11 +35,11 @@ class ObjectQuery {
         $this->query = $query;
     }
 
-    public function __construct($results, $SelectedDescriptors, $ImproveSearchArr, $EqName, $QuerySplit) {
+    public function __construct($results, $SelectedDescriptors, $ImproveSearchQuery, $EqName, $QuerySplit) {
         $this->previousresults = $results;
         $this->QuerySplit = $QuerySplit;
         $this->SelectedDescriptors = $SelectedDescriptors;
-        $this->ImproveSearchArr = $ImproveSearchArr;
+        $this->ImproveSearchQuery = $ImproveSearchQuery;
         $this->EqName = $EqName;
     }
 
@@ -51,8 +51,8 @@ class ObjectQuery {
         return $this->QuerySplit;
     }
 
-    function getImproveSearchArr() {
-        return $this->ImproveSearchArr;
+    function getImproveSearchQuery() {
+        return $this->ImproveSearchQuery;
     }
 
     public function getResults() {

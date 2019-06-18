@@ -45,7 +45,7 @@ function getResultsNumber(id) {
 
 
 function eventResultsNumber(PICOnum, queryobject) {
-    var url = "ControllerEventResultsNumber.php";
+    var url = "PICOExplorerResultsNumber.php";
     var data = {
         PICOnum: PICOnum,
         queryobject: queryobject
@@ -88,8 +88,8 @@ function setResultsNumber(data, PICOnum) {
         $('#ResNumGlobal' + PICOnum).attr("href", data.global.resultsURL);
     }
     if (PICOnum === 6) {
-        $('#FinalSearchDetails').val(data.global.resultsNumber);
-        $('#FinalSearchDetails').attr('data-oldval', data.global.resultsNumber);
+        $('#FinalSearchDetails').val(data.global.query);
+        $('#FinalSearchDetails').attr('data-oldval', data.global.query);
     }
     var loop_i;
     var max = PICOnum;

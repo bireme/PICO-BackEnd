@@ -18,18 +18,18 @@ function getSelectedDescriptors() {
 
 function ProcessResults() {
     var PICOnum = $('#modal').find('#PICONumTag').val();
-    var ImproveSearch = $('#modal3').find('textarea').val();
-    eventQueryBuild(PICOnum, ImproveSearch);
+    var ImproveSearchQuery = $('#modal3').find('textarea').val();
+    eventQueryBuild(PICOnum, ImproveSearchQuery);
 }
 
-function eventQueryBuild(PICOnum, ImproveSearch) {
-    var url = "ControllerEventQueryBuild.php";
+function eventQueryBuild(PICOnum, ImproveSearchQuery) {
+    var url = "PICOExplorerQueryBuild.php";
     var data = {
         PICOnum: PICOnum,
         QuerySplit: getTmpQuerySplit(PICOnum),
         results: getPreviousResults(PICOnum),
         SelectedDescriptors: getSelectedDescriptors(),
-        ImproveSearch: ImproveSearch
+        ImproveSearchQuery: ImproveSearchQuery
     };
     POSTrequest(url, data, function (Data) {
         BuildImprovedQuery(PICOnum, Data);

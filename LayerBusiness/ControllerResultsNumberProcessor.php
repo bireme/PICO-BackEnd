@@ -2,12 +2,6 @@
 
 namespace LayerBusiness;
 
-require_once(realpath(dirname(__FILE__)) . '/../SimpleLife/ManualExceptions.php');
-require_once(realpath(dirname(__FILE__)) . '/../SimpleLife/SimpleLifeMessages.php');
-
-use SimpleLife\SimpleLifeMessage;
-use SimpleLife\SimpleLifeException;
-
 class ControllerResultsNumberProcessor {
 
     private $fields = array('', 'ti', 'tw', 'mh');
@@ -17,15 +11,23 @@ class ControllerResultsNumberProcessor {
         $this->ObjectResultList = $ObjectResultList;
     }
 
+    ///////////////////////////////////////////////////////////////////
+    //PUBLIC FUNCTIONS
+    ///////////////////////////////////////////////////////////////////
+
     public function BuildQueries() {
         $Inidata = $this->getInitialData();
         $ResultsClusters = $this->buildGlobalAndLocalArrays($Inidata);
         $this->BuildQueriesAndCreateObject($ResultsClusters);
     }
 
-    ///////////////////////////////////////////////
-    //COMPLEX OPERATIONS
-    ///////////////////////////////////////////////
+    public function IntegrationResultsToObject($data) {
+        return $this->IntegrationResultsToObjectInner($data);
+    }
+
+    ///////////////////////////////////////////////////////////////////
+    //INNER FUNCTIONS
+    /////////////////////////////////////////////////////////////////// 
 
     private function BuildQueriesAndCreateObject($ResultsClusters) {
         foreach ($ResultsClusters as $key => $ResultsCluster) {
@@ -102,7 +104,7 @@ class ControllerResultsNumberProcessor {
         $this->ObjectResultList->AddResultQuery($key, $query);
     }
 
-    public function IntegrationResultsToObject($data) {
+    private function IntegrationResultsToObjectInner($data) {
         $keysdata = array_keys($data);
         $keysResultList = array_keys($this->ObjectResultList->getAllResultQueryObjects());
         $inter = array_intersect($keysdata, $keysResultList);

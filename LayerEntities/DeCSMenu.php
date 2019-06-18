@@ -14,10 +14,8 @@ class DeCSMenu {
     }
 
     public function setResults($results) {
-        $this->results=$results;
+        $this->results = $results;
     }
-
-
 
 }
 

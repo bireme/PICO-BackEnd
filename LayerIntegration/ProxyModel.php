@@ -12,19 +12,31 @@ abstract class ProxyModel {
     protected $timeSum;
     private $SimpleLifeMessage;
 
-    protected function setBaseURL($baseURL) {
+    ///////////////////////////////////////////////////////////////////
+    //PUBLIC FUNCTIONS
+    /////////////////////////////////////////////////////////////////// 
+
+    public function POSTRequest(&$Result) {
+        return $this->PerformPOSTRequest($Result);
+    }
+
+    ///////////////////////////////////////////////////////////////////
+    //INNER FUNCTIONS
+    /////////////////////////////////////////////////////////////////// 
+
+    protected function setBaseURLAndTimer($baseURL, &$timeSum) {
         $this->baseURL = $baseURL;
+        $this->timeSum = $timeSum;
     }
 
     protected function setPOSTFields($txt) {
         $this->POSTFields = $txt;
     }
 
-    public function POSTRequest(&$Result) {
-
+    private function PerformPOSTRequest(&$Result) {
         $timer = new \Simplelife\Timer();
         $POSTquery = http_build_query($this->POSTFields);
-        $this->SimpleLifeMessage = new SimpleLifeMessage('(POST) Connecting to "' .$this->baseURL . $POSTquery . '" : ');
+        $this->SimpleLifeMessage = new SimpleLifeMessage('(POST) Connecting to "' . $this->baseURL . $POSTquery . '" : ');
         $ch = curl_init();
         curl_setopt($ch, CURLOPT_URL, $this->baseURL);
         curl_setopt($ch, CURLOPT_POST, 1);
@@ -38,8 +50,7 @@ abstract class ProxyModel {
         $time_elapsed_secs = $timer->Stop();
         $this->SimpleLifeMessage->Add('(' . $time_elapsed_secs . 'ms )');
         $this->timeSum->AddTime($time_elapsed_secs);
-        $obj=array('timer' => $time_elapsed_secs, 'data' => $data);
-        $Result=$obj;
+        $Result = $data;
         try {
             if (curl_error($ch)) {
                 throw new SimpleLifeException(new \SimpleLife\ProxyConnectionException(curl_error($ch), $this->baseURL, $POSTquery));
