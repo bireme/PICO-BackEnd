@@ -3,77 +3,49 @@
 namespace LayerBusiness;
 
 require_once(realpath(dirname(__FILE__)) . '/../LayerBusiness/ControllerDeCSHandler.php');
-require_once(realpath(dirname(__FILE__)) . '/../SimpleLife/ManualExceptions.php');
-require_once(realpath(dirname(__FILE__)) . '/../SimpleLife/SimpleLifeMessages.php');
 require_once(realpath(dirname(__FILE__)) . '/../LayerEntities/ObjectKeyword.php');
-
-use SimpleLife\SimpleLifeMessage;
-use SimpleLife\SimpleLifeException;
 
 class ControllerDeCSLooper {
 
     private $ObjectKeywordList;
-    private $SimpleLifeMessage;
+    private $DeCSExplorer;
 
     public function __construct($ObjectKeywordList) {
         $this->ObjectKeywordList = $ObjectKeywordList;
-        $this->SimpleLifeMessage = new SimpleLifeMessage('DeCS Manager');
+        $DeCSDataProcessor = new ControllerDeCSDataProcessor();
+        $this->DeCSExplorer = new ControllerDeCSHandler($DeCSDataProcessor);
     }
 
-    public function BuildDeCSList() {
-        $fun = $this->CheckLangsAndKeywords();
-        if ($fun) {
-            return $fun;
-        }
-        $DeCSList = array();
+    ///////////////////////////////////////////////////////////////////
+    //PUBLIC FUNCTIONS
+    ///////////////////////////////////////////////////////////////////
 
-
-        $PrintKeywordList = new SimpleLifeMessage('Exploring this Keyword List');
-        foreach ($this->ObjectKeywordList->getKeywordList() as $ObjectKeyword) {
-            if ($ObjectKeyword->IsCompleted() == true) {
-                continue;
-            }
-            $PrintKeywordList->AddAsNewLine($ObjectKeyword->getKeyword());
-        }
-        $PrintKeywordList->SendAsLog();
-
-        foreach ($this->ObjectKeywordList->getKeywordList() as $ObjectKeyword) {
-            if ($ObjectKeyword->IsCompleted() == true) {
-                continue;
-            }
-            $obj = new ControllerDeCSHandler($ObjectKeyword);
-            $fun = $obj->retrieveDeCS($this->ObjectKeywordList->getMaxImports());
-            if ($fun) {
+    public function ExploreDeCSLooper() {
+        $List = $this->getUnexploredKeywordList();
+        foreach ($List as $ObjectKeyword) {
+            if ($fun = $this->KeywordLoopExplorer($ObjectKeyword)) {
                 return $fun;
             }
         }
-
-        $this->ReportMessage();
     }
 
-    private function ReportMessage() {
-        $this->ObjectKeywordList->KeyWordListInfo($this->SimpleLifeMessage);
-        $this->SimpleLifeMessage->SendAsLog();
+    ///////////////////////////////////////////////////////////////////
+    //INNER FUNCTIONS
+    /////////////////////////////////////////////////////////////////// 
+
+    private function KeywordLoopExplorer($ObjectKeyword) {
+        return $this->DeCSExplorer->setObjectKeyword($ObjectKeyword) ||
+                $this->DeCSExplorer->obtainDeCS();
     }
 
-    private function CheckLangsAndKeywords() {
-        $langArr = $this->ObjectKeywordList->getLang();
-        try {
-            if (is_array($langArr) == false) {
-                throw new SimpleLifeException(new \SimpleLife\LangArrNotArray());
+    private function getUnexploredKeywordList() {
+        $Result = array();
+        foreach ($this->ObjectKeywordList->getKeywordList() as $keyword => $KeywordObj) {
+            if ($KeywordObj->IsCompleted() == false) {
+                $Result[$keyword] = $KeywordObj;
             }
-
-            if (count($langArr) == 0) {
-                throw new SimpleLifeException(new \SimpleLife\NoArrLanguages());
-            }
-            foreach ($langArr as $lang) {
-                if (!($lang == "es" || $lang == "en" || $lang == "pt")) {
-                    throw new SimpleLifeException(new \SimpleLife\UnrecognizedLanguage($lang));
-                }
-            }
-        } catch (SimpleLifeException $exc) {
-            return $exc->PreviousUserErrorCode();
         }
+        return $Result;
     }
 
 }

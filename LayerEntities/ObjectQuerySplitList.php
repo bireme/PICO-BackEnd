@@ -10,6 +10,21 @@ class ObjectQuerySplitList {
     private $HTMLDescriptors;
     private $HTMLDeCS;
     private $query;
+    private $PICOnum;
+
+    public function __construct($query, $ObjectKeywordList, $usedLangs, $mainLanguage, $title, $PICOnum) {
+        $this->usedLangs = $usedLangs;
+        $this->mainLanguage = $mainLanguage;
+        $this->ItemList = array();
+        $this->ObjectKeywordList = $ObjectKeywordList;
+        $this->query = $query;
+        $this->title = 'QuerySplit-' . $title;
+        $this->PICOnum = $PICOnum;
+    }
+
+    public function getPICOnum() {
+        return $this->PICOnum;
+    }
 
     public function getUsedLangs() {
         return $this->usedLangs;
@@ -27,12 +42,8 @@ class ObjectQuerySplitList {
         $this->query = $query;
     }
 
-    public function __construct($query, $ObjectKeywordList, $usedLangs, $mainLanguage) {
-        $this->usedLangs = $usedLangs;
-        $this->mainLanguage = $mainLanguage;
-        $this->ItemList = array();
-        $this->ObjectKeywordList = $ObjectKeywordList;
-        $this->query = $query;
+    public function getTitle() {
+        return $this->title;
     }
 
     public function AddToItemList($item) {

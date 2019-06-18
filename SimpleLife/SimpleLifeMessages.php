@@ -82,7 +82,7 @@ class SimpleLifeMessage Extends SimpleLifeConfig {
         if($isError==true){
             $prefix='error';
         }
-        file_put_contents('./var/log/'.$prefix.'/' . date("d-m-y") . '.html', $this->message, FILE_APPEND);
+        file_put_contents('./public_html/var/log/'.$prefix.'/' . date("d-m-y") . '.html', $this->message, FILE_APPEND);
     }
 
     public function SendAsLog() {

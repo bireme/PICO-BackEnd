@@ -65,11 +65,11 @@ function setLanguagesOfModal(langArr) {
 }
 
 function eventDeCSSearch(query, langs, PICOnum) {
-    var url = "ControllerEventDeCSSearch.php";
+    var url = "PICOExplorerDeCSExplore.php";
     console.log('PreviousData');
     console.log(getPreviousResults());
     var data = {
-        results:getPreviousResults(),
+        PreviousData:getPreviousResults(),
         query: query,
         langs: langs,
         PICOnum: PICOnum

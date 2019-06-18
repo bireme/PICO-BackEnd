@@ -8,27 +8,22 @@ use LayerEntities\ResultQuery;
 
 class ObjectResult {
 
-    private $ConnectionTime;
     private $resultQueryList;
 
-    public function setConnectionTime(int $time) {
-        $this->ConnectionTime += $time;
+    public function __construct($ResultQueryRequest) {
+        $this->resultQueryList = array();
+        foreach ($ResultQueryRequest as $key => $ResultQueryString) {
+            $this->CreateResultQueryObject($ResultQueryString, $key);
+        }
     }
 
-    public function getConnectionTime() {
-        return $this->ConnectionTime;
-    }
-
-    public function AddResultQueryObject($Object, $key) {
-        $this->resultQueryList[$key] = $Object;
+    public function CreateResultQueryObject($query, $key) {
+        $ResultQueryObject = new ResultQuery($query);
+        $this->resultQueryList[$key] = $ResultQueryObject;
     }
 
     public function getResultQueryList() {
         return $this->resultQueryList;
-    }
-
-    public function __construct() {
-        $this->ConnectionTime = 0;
     }
 
     public function getResults() {

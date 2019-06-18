@@ -8,18 +8,22 @@ use LayerIntegration\ProxyModel;
 
 class ProxyReceiveDeCS extends ProxyModel {
 
-    function __construct($key, $lang, $ByKeyword, $timeSum) {
-        $this->timeSum = $timeSum;
-        $this->setBaseURL("http://decs.bvsalud.org/cgi-bin/mx/cgi=@vmx/decs/?");
+    public function __construct(&$timer) {
+        $this->setBaseURLAndTimer("http://decs.bvsalud.org/cgi-bin/mx/cgi=@vmx/decs/?", $timer);
+    }
+
+    ///////////////////////////////////////////////////////////////////
+    //PUBLIC FUNCTIONS
+    /////////////////////////////////////////////////////////////////// 
+
+    public function setConnectionInfo($key, $lang, $ByKeyword) {
+        $FirstArgument = 'tree_id';
         if ($ByKeyword == true) {
-            $Fields = array('words' => $key,
-                'lang' => $lang
-            );
-        } else {
-            $Fields = array('tree_id' => $key,
-                'lang' => $lang
-            );
+            $FirstArgument = 'words';
         }
+        $Fields = array($FirstArgument => $key,
+            'lang' => $lang
+        );
         $this->setPOSTFields($Fields);
     }
 

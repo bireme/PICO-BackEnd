@@ -8,9 +8,15 @@ use LayerIntegration\ProxyModel;
 
 class ProxyReceiveResultsNumber extends ProxyModel {
 
-    public function __construct($query, $timeSum) {
-        $this->timeSum = $timeSum;
-        $this->setBaseURL("http://pesquisa.bvsalud.org/portal/?");
+    public function __construct(&$timer) {
+        $this->setBaseURLAndTimer("http://pesquisa.bvsalud.org/portal/?", $timer);
+    }
+
+    ///////////////////////////////////////////////////////////////////
+    //PUBLIC FUNCTIONS
+    /////////////////////////////////////////////////////////////////// 
+
+    public function setConnectionInfo($query) {
         $Fields = array('output' => 'xml',
             'count=' => 20,
             'q' => $query
