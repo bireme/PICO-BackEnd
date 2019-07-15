@@ -1,8 +1,8 @@
 <div class="accordion" id="accordionPicos">
 
     <?php
-    use \PICOExplorer\Http\Controllers\SearchFieldsRepositoryController;
-    use \PICOExplorer\Http\Controllers\StudiesRepositoryController;
+    use \PICOExplorer\Http\Controllers\RepositoriesControllers\SearchFieldsRepositoryController;
+    use \PICOExplorer\Http\Controllers\RepositoriesControllers\StudiesRepositoryController;
 
     $TOS = (new StudiesRepositoryController())->TypeOfStudies() ?? array();
     $FieldNames = (new SearchFieldsRepositoryController())->SearchFields() ?? array();

@@ -39,7 +39,7 @@ return [
     |
     */
 
-    'debug' => env('APP_DEBUG', true),
+    'debug' => env('APP_DEBUG', false),
 
     /*
     |--------------------------------------------------------------------------
@@ -161,6 +161,8 @@ return [
         Illuminate\Translation\TranslationServiceProvider::class,
         Illuminate\Validation\ValidationServiceProvider::class,
         Illuminate\View\ViewServiceProvider::class,
+        GrahamCampbell\Throttle\ThrottleServiceProvider::class,
+        hedronium\SpacelessBlade\SpacelessBladeProvider::class,
 
         /*
          * Package Service Providers...
@@ -175,6 +177,11 @@ return [
         PICOExplorer\Providers\EventServiceProvider::class,
         PICOExplorer\Providers\RouteServiceProvider::class,
         Rap2hpoutre\LaravelLogViewer\LaravelLogViewerServiceProvider::class,
+        PICOExplorer\Providers\PICOServiceProvider::class,
+        PICOExplorer\Providers\ResultsNumberIntegrationProvider::class,
+        PICOExplorer\Providers\DeCSIntegrationProvider::class,
+        PICOExplorer\Providers\ResultsNumberProvider::class,
+        PICOExplorer\Providers\DeCSProvider::class,
 
     ],
 
@@ -226,8 +233,18 @@ return [
         'URL' => Illuminate\Support\Facades\URL::class,
         'Validator' => Illuminate\Support\Facades\Validator::class,
         'View' => Illuminate\Support\Facades\View::class,
-        'StudiesRepository' =>   PICOExplorer\Http\Controllers\StudiesRepositoryController::class,
-        'SearchFieldsRepository' => PICOExplorer\Http\Controllers\SearchFieldsRepositoryController::class,
+        'Throttle' => GrahamCampbell\Throttle\Facades\Throttle::class,
+
+        //PICO Facades
+        'Timer' => PICOExplorer\Facades\Timer::class,
+        'ResultsNumberBIREME' => PICOExplorer\Facades\ResultsNumberBIREME::class,
+        'DeCSBIREME' => PICOExplorer\Facades\DeCSBIREME::class,
+        'ResultsNumberProcess' => PICOExplorer\Facades\ResultsNumberProcess::class,
+        'DeCSProcess' => PICOExplorer\Facades\DeCSProcess::class,
+        'QueryProcess' => PICOExplorer\Facades\QueryProcess::class,
+
+        //PICO Services
+        'DeCSQueryProcessor' => PICOExplorer\Services\DeCS\ControllerDeCSQueryProcessor::class,
     ],
 
 ];

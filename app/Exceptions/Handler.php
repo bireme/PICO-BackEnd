@@ -2,27 +2,20 @@
 
 namespace PICOExplorer\Exceptions;
 
-use Exception;
-use Illuminate\Support\Facades\Log;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
-use PICOExplorer\Exceptions\AbstractExceptions\CustomException;
-use PICOExplorer\Exceptions\AbstractExceptions\InfoException;
-use PICOExplorer\Exceptions\AbstractExceptions\InternalFatalException;
-use PICOExplorer\Exceptions\AbstractExceptions\InternalWarningException;
-use PICOExplorer\Exceptions\AbstractExceptions\RegularException;
-use PICOExplorer\Exceptions\AbstractExceptions\VisualException;
-use PICOExplorer\Exceptions\AbstractExceptions\WarningException;
+use Exception;
+use PICOExplorer\Http\Traits\ExceptionLogBuilderTrait;
+use Illuminate\Contracts\Debug\ExceptionHandler as ExceptionHandlerContract;
 
-class Handler extends ExceptionHandler
+class Handler extends ExceptionHandler implements ExceptionHandlerContract
 {
+    use ExceptionLogBuilderTrait;
+
     /**
      * A list of the exception types that are not reported.
      *
      * @var array
      */
-    protected $dontReport = [
-        //
-    ];
 
     /**
      * A list of the inputs that are never flashed for validation exceptions.
@@ -34,102 +27,50 @@ class Handler extends ExceptionHandler
         'password_confirmation',
     ];
 
-    /**
-     * Report or log an exception.
-     *
-     * @param \Exception $exception
-     * @return void
-     */
-
-    /**
-     * Render an exception into an HTTP response.
-     *
-     * @param \Illuminate\Http\Request $request
-     * @param \Exception $exception
-     * @return \Illuminate\Http\Response
-     */
-    public function render($request, Exception $exception)
+    public function report(Exception $e)
     {
-        if ($exception instanceof InternalWarningException) {
-            return $this->RenderErrorMessage($request, $exception, 'InternalWarning');
-        }
-        if ($exception instanceof InternalFatalException) {
-            return $this->RenderErrorMessage($request, $exception, 'InternalFatal');
-        }
-        if ($exception instanceof RegularException) {
-            return $this->RenderErrorMessage($request, $exception, 'ClientErrors');
-        }
-        if ($exception instanceof WarningException) {
-            return $this->RenderErrorMessage($request, $exception, 'Warning');
-        }
-        if ($exception instanceof InfoException) {
-            return $this->RenderErrorMessage($request, $exception, 'Info');
-        }
-        if ($exception instanceof VisualException) {
-            return $this->RenderErrorMessage($request, $exception, 'View');
-        }
-        return $this->RenderUnknownError($request, $exception);
-        //return parent::render($request, $exception);
+
     }
 
-
-    protected function RenderUnknownError($request, Exception $exception)
+    public function render($request, Exception $ex)
     {
-        $ip = '['.$request['ip'].']: ';
-        $code = $exception->getCode();
-        $msgplus = $code . ' | ' .  $exception->getMessage();
-        $line = ' @ ' .$exception->getLine().': '.$exception->getFile();
-        $trace = $exception->getTraceAsString();
-        $this->getLogChannel('UnknownErrors')->error($ip.$msgplus.$line.$trace);
-        return parent::render($request, $exception);
-    }
+        $CustomExceptionTypes = [
+            'AppErrors' => ['channel' => 'AppDebug', 'level' => 'error', 'IpPath' => 1, 'ReqContent' => 1, 'Headers' => 0],
+            'Emergency' => ['channel' => 'Emergency', 'level' => 'emergency', 'IpPath' => 1, 'ReqContent' => 1, 'Headers' => 1],
+            'ClientErrors' => ['channel' => 'ClientDebug', 'level' => 'error', 'IpPath' => 1, 'ReqContent' => 1, 'Headers' => 1],
+        ];
+        $ExtraExceptionTypes = [
+            'ValidationException' => ['channel' => 'AppDebug', 'level' => 'warning', 'IpPath' => 1, 'ReqContent' => 0, 'Headers' => 0],
+            'AuthenticationException' => ['channel' => 'ClientDebug', 'level' => 'error', 'IpPath' => 1, 'ReqContent' => 1, 'Headers' => 1],
+            'HttpResponseException' => ['channel' => 'AppDebug', 'level' => 'error', 'IpPath' => 1, 'ReqContent' => 1, 'Headers' => 1],
+        ];
 
-    protected function RenderErrorMessage($request,CustomException $exception, $type)
-    {
-        $predata = explode(" | ", $exception->getMessage());
-        if (count($predata) > 1) {
-            $responsecode = $predata[0];
-            $message = $predata[1];
-        } else {
-            $message = $predata[0];
-            $responsecode = null;
-        }
-        $code = $exception->getCode();
-        $line = ' @ ' .$exception->getLine().': '.$exception->getFile();
-        $trace = $exception->getTraceAsString();
-        $ip = '['.$request['ip'].']: ';
-        $msgplus = $code . ' | ' . $message;
-        switch ($type) {
-            case 'InternalFatal':
-                $this->getLogChannel($type)->error($ip.$msgplus.$line.$trace);
-                return abort($responsecode ?? 500);
-            case 'InternalWarning':
-                $this->getLogChannel($type)->warning($msgplus.$line);
-                return false;
-            case 'ClientErrors':
-                $this->getLogChannel($type)->error($ip.$msgplus.$line.$trace);
-                return Response()->json([
-                    'Error' => $message
-                ], $responsecode ?? 400);
-            case 'Warning':
-                $this->getLogChannel($type)->warning($ip.$msgplus.$line);
-            case 'Info':
-                session()->put('warning', [$type => $message]);
-                return false;
-            case 'View':
-                $this->getLogChannel($type)->warning($msgplus.$line);
-                return view($responsecode)->with(['message' => $msgplus]);
-            default:
-                $this->getLogChannel($type)->error($msgplus.$line.$trace);
-                return Response()->json([
-                    $type => $msgplus
-                ], $responsecode ?? 400);
+        try {
+            $ExInfo = null;
+            if (is_a($ex, 'CustomException')) {
+                foreach ($CustomExceptionTypes as $BaseType => $BaseInfo) {
+                    if (is_a($ex, $BaseType)) {
+                        $ExInfo = $BaseInfo;
+                        break;
+                    }
+                }
+            } else {
+                foreach ($ExtraExceptionTypes as $BaseType => $BaseInfo) {
+                    if (is_a($ex, $BaseType)) {
+                        $ExInfo = $BaseInfo;
+                        break;
+                    }
+                }
+            }
+
+            $channel = $ExInfo ? ($ExInfo['channel']) : ('InternalErrors');
+            $level = $ExInfo ? ($ExInfo['level']) : ('critical');
+            $this->ExceptionLogBuilder($ex,$channel,$level);
+        } catch (Exception $newex) {
+            //
+        }finally{
+            return parent::render($request, $ex);
         }
     }
-
-    protected function getLogChannel($channel){
-        return Log::channel($channel);
-    }
-
 
 }

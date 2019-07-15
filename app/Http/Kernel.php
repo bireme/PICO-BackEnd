@@ -2,6 +2,7 @@
 
 namespace PICOExplorer\Http;
 
+use GrahamCampbell\Throttle\Http\Middleware\ThrottleMiddleware;
 use Illuminate\Foundation\Http\Kernel as HttpKernel;
 
 class Kernel extends HttpKernel
@@ -15,6 +16,7 @@ class Kernel extends HttpKernel
      */
     protected $middleware = [
         \PICOExplorer\Http\Middleware\CheckForMaintenanceMode::class,
+        \PICOExplorer\Http\Middleware\ConnectionsLogger::class,
         \Illuminate\Foundation\Http\Middleware\ValidatePostSize::class,
         \PICOExplorer\Http\Middleware\TrimStrings::class,
         \Illuminate\Foundation\Http\Middleware\ConvertEmptyStringsToNull::class,
@@ -31,11 +33,10 @@ class Kernel extends HttpKernel
             \PICOExplorer\Http\Middleware\EncryptCookies::class,
             \Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse::class,
             \Illuminate\Session\Middleware\StartSession::class,
-
+            \PICOExplorer\Http\Middleware\VerifyCsrfToken::class,
             \PICOExplorer\Http\Middleware\Language::class,
             // \Illuminate\Session\Middleware\AuthenticateSession::class,
             \Illuminate\View\Middleware\ShareErrorsFromSession::class,
-            \PICOExplorer\Http\Middleware\VerifyCsrfToken::class,
             \Illuminate\Routing\Middleware\SubstituteBindings::class,
             \PICOExplorer\Http\Middleware\Localization::class,
         ],
@@ -45,10 +46,10 @@ class Kernel extends HttpKernel
 
 
 
-        'api' => [
-            'throttle:60,1',
-            'bindings',
-        ],
+        //'api' => [
+        //    'throttle:60,1',
+        //    'bindings',
+        //],
     ];
 
     /**
@@ -59,6 +60,8 @@ class Kernel extends HttpKernel
      * @var array
      */
     protected $routeMiddleware = [
+
+        'throttle' => ThrottleMiddleware::class,
         'auth' => \PICOExplorer\Http\Middleware\Authenticate::class,
         'auth.basic' => \Illuminate\Auth\Middleware\AuthenticateWithBasicAuth::class,
         'bindings' => \Illuminate\Routing\Middleware\SubstituteBindings::class,
@@ -66,8 +69,7 @@ class Kernel extends HttpKernel
         'can' => \Illuminate\Auth\Middleware\Authorize::class,
         'guest' => \PICOExplorer\Http\Middleware\RedirectIfAuthenticated::class,
         'signed' => \Illuminate\Routing\Middleware\ValidateSignature::class,
-        'throttle' => \Illuminate\Routing\Middleware\ThrottleRequests::class,
-        'throttle.build' => \PICOExplorer\Http\Middleware\ThrottleBuilder::class,
+        //'throttle' => \Illuminate\Routing\Middleware\ThrottleRequests::class,
         'verified' => \Illuminate\Auth\Middleware\EnsureEmailIsVerified::class,
     ];
 

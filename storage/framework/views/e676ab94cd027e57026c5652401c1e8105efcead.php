@@ -3,4 +3,5 @@
         <?php echo e(__('lang.rights')); ?>
 
     </div>
-</footer><?php /**PATH C:\xampp\htdocs\PICO-BackEnd\resources\views/partials/footer.blade.php ENDPATH**/ ?>
+</footer>
+<?php /**PATH C:\xampp\htdocs\PICO-BackEnd\resources\views/partials/footer.blade.php ENDPATH**/ ?>

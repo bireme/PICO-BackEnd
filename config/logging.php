@@ -1,8 +1,5 @@
 <?php
 
-use Monolog\Handler\StreamHandler;
-use Monolog\Handler\SyslogUdpHandler;
-
 return [
 
     /*
@@ -16,7 +13,7 @@ return [
     |
     */
 
-    'default' => env('LOG_CHANNEL', 'stack'),
+    'default' => env('LOG_CHANNEL', 'InternalErrors'),
 
     /*
     |--------------------------------------------------------------------------
@@ -33,107 +30,71 @@ return [
     |
     */
 
-
     'channels' => [
-        'stack' => [
-            'driver' => 'stack',
-            'channels' => ['UnknownErrors','InternalFatal','RegularErrors','UserWarnings','VisualExceptions','UserIps','UserRequests',],
+        'InternalErrors' => [
+            'driver' => 'daily',
+            'path' => storage_path('logs/InternalErrors/InternalErrors.log'),
+            'level' => 'debug',
+            'days' => 60,
             'ignore_exceptions' => false,
         ],
 
-        'UnknownErrors' => [
+        'Emergency' => [
             'driver' => 'daily',
-            'path' => storage_path('logs/UnknownErrors/log.log'),
-            'level' => 'debug',
-            'days' => 14,
-        ],
-
-        'InternalFatal' => [
-            'driver' => 'daily',
-            'path' => storage_path('logs/InternalFatal/log.log'),
-            'level' => 'debug',
-            'days' => 14,
-        ],
-
-        'InternalWarning' => [
-            'driver' => 'daily',
-            'path' => storage_path('logs/InternalWarning/log.log'),
-            'level' => 'debug',
-            'days' => 14,
-        ],
-
-        'ClientErrors' => [
-            'driver' => 'daily',
-            'path' => storage_path('logs/ClientErrors/log.log'),
-            'level' => 'debug',
-            'days' => 14,
-        ],
-
-        'Warning' => [
-            'driver' => 'daily',
-            'path' => storage_path('logs/UserWarnings/log.log'),
-            'level' => 'debug',
-            'days' => 14,
-        ],
-
-        'View' => [
-            'driver' => 'daily',
-            'path' => storage_path('logs/VisualExceptions/log.log'),
-            'level' => 'debug',
-            'days' => 14,
-        ],
-
-        'UserRequests' => [
-            'driver' => 'daily',
-            'path' => storage_path('logs/UserRequests/log.log'),
-            'level' => 'debug',
-            'days' => 14,
-        ],
-
-        'UserIps' => [
-            'driver' => 'daily',
-            'path' => storage_path('logs/UserIps/log.log'),
+            'path' => storage_path('logs/Emergency/Emergency.log'),
             'level' => 'debug',
             'days' => 1204,
         ],
 
-
-        'slack' => [
-            'driver' => 'slack',
-            'url' => env('LOG_SLACK_WEBHOOK_URL'),
-            'username' => 'Laravel Log',
-            'emoji' => ':boom:',
-            'level' > 'critical',
-        ],
-
-        'papertrail' => [
-            'driver' => 'monolog',
+        'AppDebug' => [
+            'driver' => 'daily',
+            'path' => storage_path('logs/AppDebug/AppDebug.log'),
             'level' => 'debug',
-            'handler' => SyslogUdpHandler::class,
-            'handler_with' => [
-                'host' => env('PAPERTRAIL_URL'),
-                'port' => env('PAPERTRAIL_PORT'),
-            ],
+            'days' => 60,
         ],
 
-        'stderr' => [
-            'driver' => 'monolog',
-            'handler' => StreamHandler::class,
-            'formatter' => env('LOG_STDERR_FORMATTER'),
-            'with' => [
-                'stream' => 'php://stderr',
-            ],
-        ],
-
-        'syslog' => [
-            'driver' => 'syslog',
+        'ClientDebug' => [
+            'driver' => 'daily',
+            'path' => storage_path('logs/ClientDebug/ClientDebug.log'),
             'level' => 'debug',
+            'days' => 14,
         ],
 
-        'errorlog' => [
-            'driver' => 'errorlog',
+        'AppInfo' => [
+            'driver' => 'daily',
+            'path' => storage_path('logs/AppInfo/AppInfo.log'),
             'level' => 'debug',
+            'days' => 7,
         ],
+
+        'Connections' => [
+            'driver' => 'daily',
+            'path' => storage_path('logs/Connections/Connections.log'),
+            'level' => 'debug',
+            'days' => 1204,
+        ],
+
+        'Performance' => [
+            'driver' => 'daily',
+            'path' => storage_path('logs/Performance/Performance.log'),
+            'level' => 'debug',
+            'days' => 90,
+        ],
+
+        'Operations' => [
+            'driver' => 'daily',
+            'path' => storage_path('logs/Operations/Operations.log'),
+            'level' => 'debug',
+            'days' => 3,
+        ],
+
+        'Console' => [
+            'driver' => 'daily',
+            'path' => storage_path('logs/Console/Console.log'),
+            'level' => 'debug',
+            'days' => 1204,
+        ],
+
     ],
 
 ];

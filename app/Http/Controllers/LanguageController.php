@@ -3,60 +3,68 @@
 namespace PICOExplorer\Http\Controllers;
 
 use Config;
-use Illuminate\Support\Facades\Redirect;
+use Exception;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Http\Request;
-use Psr\Http\Message\ServerRequestInterface;
+use PICOExplorer\Http\Traits\AdvancedLoggerTrait;
 
 class LanguageController extends Controller
 {
+    use AdvancedLoggerTrait;
 
-    //PUBLIC METHODS
-
-    public function switchLang($lang)
+    public function switchLang(string $lang)
     {
-        $this->throttleMiddleware('switchLang');
         $this->UpdateLocale($lang);
-        if(Session::has('PreviousData')){
-            $PreviousData=Session::get('PreviousData');
-            Session::pull('PreviousData');
-        }else{
-            $PreviousData=array();
+        $data = [];
+        if (Session::has('PreviousData')) {
+            try {
+                $PreviousData = Session::get('PreviousData');
+                Session::pull('PreviousData');
+                $data = json_decode($PreviousData, true)['olddata'];
+            } catch (Exception $ex) {
+                $info = [
+                    'title' => 'Server Error',
+                    'code' => 500,
+                    'message' => 'The data sent could not be decoded',
+                ];
+                return view('vendor.laravel-log-viewer.errortxt')->with(['data' => $info]);
+            }
         }
         Session::save();
-        return view('main')->with(['PreviousData' => $PreviousData]);
+        $info = 'ip: ' . request()->getClientIp() . PHP_EOL.'new locale: ' . $lang;
+        $this->AdvancedLog('Operations', 'info', 'Changing locale', $info, $data, null);
+        return view('main')->with(['PreviousData' =>$data]);
     }
 
 
-    public function savePreviousInfo($lang,ServerRequestInterface $request)
+    public function savePreviousInfo(string $lang, Request $request)
     {
-        $this->ValidatePreviousData($lang,$request);
-        Session::put('PreviousData', $request->getParsedBody());
+        $this->ValidatePreviousData($lang);
+        $data = $request->getContent();
+        $info = 'ip: ' . request()->getClientIp() .PHP_EOL. 'new locale: ' . $lang.PHP_EOL.'data: '.$data;
+        $this->AdvancedLog('Operations', 'info', 'Preparing locale change', $info, null, null);
+        Session::put('PreviousData', $data);
         Session::save();
         return response('ok')->setStatusCode(200, 'Ok!');
     }
 
     //PRIVATE METHODS
 
-    private function ValidatePreviousData($lang,&$request){
+    private function ValidatePreviousData(string $lang)
+    {
         if (!(array_key_exists($lang, Config::get('languages')))) {
             return abort(404);
         }
     }
 
-    private function UpdateLocale($lang){
+    private function UpdateLocale(string $lang)
+    {
         if (array_key_exists($lang, Config::get('languages'))) {
             app()->setLocale($lang);
             Session::put('locale', $lang);
-        }else{
+        } else {
             return abort(404);
         }
-    }
-
-    private function throttleMiddleware($caller){
-        $this->middleware('loggedIn', ['only' => [
-            'update' // Could add bunch of more methods too
-        ]]);
     }
 
 }

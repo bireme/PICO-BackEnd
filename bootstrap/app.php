@@ -1,5 +1,6 @@
 <?php
 
+
 /*
 |--------------------------------------------------------------------------
 | Create The Application
@@ -27,6 +28,12 @@ $app = new Illuminate\Foundation\Application(
 */
 
 $app->singleton(
+    Illuminate\Contracts\Debug\ExceptionHandler::class,
+    PICOExplorer\Exceptions\Handler::class
+//Illuminate\Foundation\Exceptions\Handler::class
+);
+
+$app->singleton(
     Illuminate\Contracts\Http\Kernel::class,
     PICOExplorer\Http\Kernel::class
 );
@@ -36,10 +43,7 @@ $app->singleton(
     PICOExplorer\Console\Kernel::class
 );
 
-$app->singleton(
-    Illuminate\Contracts\Debug\ExceptionHandler::class,
-    PICOExplorer\Exceptions\Handler::class
-);
+
 
 /*
 |--------------------------------------------------------------------------

@@ -8,7 +8,7 @@
             <li class="d-none"><input type="checkbox" class="languageCheckbox d-none" name="Languages[]" value="pt" ><?php echo e(__('lang.langpt')); ?></input>  </li>
         </div>
 
-        <?php echo $__env->make('partials.PICO',['PreviousData'=>$PreviousData], \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
+        <?php echo $__env->make('partials.PICOelements.PICO',['PreviousData'=>$PreviousData??array()], \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
 
         <div>
             <h3 class="result text-center">
