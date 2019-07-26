@@ -13908,7 +13908,7 @@ function showDeCSMenu() {
 }
 
 function eventDeCSSearch(query, langs, PICOnum) {
-  var url = "API/DeCSExplore";
+  var url = "PICO/DeCSExplore";
   console.log('PreviousData');
   console.log(Object(_commonsdecs_js__WEBPACK_IMPORTED_MODULE_0__["getPreviousResults"])());
   var data = {
@@ -14512,33 +14512,49 @@ function POSTrequest(url, data, callback) {
   var sendData = {
     data: JSON.stringify(data)
   };
-  currentrequest = $.post(url, sendData, function (obtainedData) {
-    try {
-      var outerData = JSON.parse(obtainedData);
-      var Err = outerData.Error;
-      var War = outerData.Warning;
+  $.ajax({
+    url: url,
+    type: 'post',
+    data: sendData,
+    headers: {
+      'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+    },
+    dataType: 'json',
+    success: function success(obtainedData) {
+      try {
+        var outerData = JSON.parse(obtainedData);
+        var Err = outerData.Error;
+        var War = outerData.Warning;
 
-      if (Err) {
-        hideLoading();
-        setTimeout(function () {
-          ConsoleErr(data, obtainedData);
-          Object(_infomessage_js__WEBPACK_IMPORTED_MODULE_0__["showInfoMessage"])('Error', Err, false);
-        }, 300);
-        return;
-      }
+        if (Err) {
+          hideLoading();
+          setTimeout(function () {
+            ConsoleErr(data, obtainedData);
+            Object(_infomessage_js__WEBPACK_IMPORTED_MODULE_0__["showInfoMessage"])('Error', Err, false);
+          }, 300);
+          return;
+        }
 
-      if (War) {
-        hideLoading();
-        setTimeout(function () {
-          ConsoleErr(data, obtainedData);
-          Object(_infomessage_js__WEBPACK_IMPORTED_MODULE_0__["showInfoMessage"])('Warning', War, false);
-        }, 300);
-        return;
-      }
+        if (War) {
+          hideLoading();
+          setTimeout(function () {
+            ConsoleErr(data, obtainedData);
+            Object(_infomessage_js__WEBPACK_IMPORTED_MODULE_0__["showInfoMessage"])('Warning', War, false);
+          }, 300);
+          return;
+        }
 
-      var _Data = outerData.Data;
+        var _Data = outerData.Data;
 
-      if (!_Data) {
+        if (!_Data) {
+          hideLoading();
+          setTimeout(function () {
+            ConsoleErr(data, obtainedData);
+            Object(_infomessage_js__WEBPACK_IMPORTED_MODULE_0__["showInfoMessage"])('Error', Object(_translator_js__WEBPACK_IMPORTED_MODULE_2__["translate"])('popallow'), false);
+          }, 300);
+          return;
+        }
+      } catch (Exception) {
         hideLoading();
         setTimeout(function () {
           ConsoleErr(data, obtainedData);
@@ -14546,26 +14562,20 @@ function POSTrequest(url, data, callback) {
         }, 300);
         return;
       }
-    } catch (Exception) {
+
       hideLoading();
       setTimeout(function () {
-        ConsoleErr(data, obtainedData);
-        Object(_infomessage_js__WEBPACK_IMPORTED_MODULE_0__["showInfoMessage"])('Error', Object(_translator_js__WEBPACK_IMPORTED_MODULE_2__["translate"])('popallow'), false);
+        callback(Data);
       }, 300);
-      return;
-    }
+    },
+    fail: function fail(xhr, status, error) {
+      hideLoading();
 
-    hideLoading();
-    setTimeout(function () {
-      callback(Data);
-    }, 300);
-  }).fail(function (xhr, status, error) {
-    hideLoading();
-
-    if (xhr.statusText !== 'abort') {
-      setTimeout(function () {
-        Object(_infomessage_js__WEBPACK_IMPORTED_MODULE_0__["showInfoMessage"])('Error', Object(_translator_js__WEBPACK_IMPORTED_MODULE_2__["translate"])('errunknown'), false);
-      }, 300);
+      if (xhr.statusText !== 'abort') {
+        setTimeout(function () {
+          Object(_infomessage_js__WEBPACK_IMPORTED_MODULE_0__["showInfoMessage"])('Error', Object(_translator_js__WEBPACK_IMPORTED_MODULE_2__["translate"])('errunknown'), false);
+        }, 300);
+      }
     }
   });
 } ////PRIVATE FUNCTIONS
@@ -14754,7 +14764,7 @@ function getSelectedDescriptors() {
 }
 
 function eventQueryBuild(PICOnum, ImproveSearchQuery) {
-  var url = "API/QueryBuild";
+  var url = "PICO/QueryBuild";
   var data = {
     PICOnum: PICOnum,
     QuerySplit: getTmpQuerySplit(PICOnum),
@@ -14903,7 +14913,7 @@ function setResultsNumber(data, PICOnum) {
 }
 
 function eventResultsNumber(PICOnum, queryobject) {
-  var url = "API/ResultsNumber";
+  var url = "PICO/ResultsNumber";
   var data = {
     PICOnum: PICOnum,
     queryobject: queryobject

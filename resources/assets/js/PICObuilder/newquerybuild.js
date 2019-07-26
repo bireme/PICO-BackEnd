@@ -35,7 +35,7 @@ function getSelectedDescriptors() {
 }
 
 function eventQueryBuild(PICOnum, ImproveSearchQuery) {
-    let url = "API/QueryBuild";
+    let url = "PICO/QueryBuild";
     let data = {
         PICOnum: PICOnum,
         QuerySplit: getTmpQuerySplit(PICOnum),

@@ -2,35 +2,36 @@
 
 namespace PICOExplorer\Services\ResultsNumber;
 
-use PICOExplorer\Exceptions\InternalErrors\ErrorWhileUpdatingTheModel;
-use PICOExplorer\Exceptions\InternalErrors\IncongruentDataObtainedFromResultsNumberIntegration;
+use PICOExplorer\Services\ServiceModels\PICOServiceEntryPoint;
 
-class ResultsNumberProcess extends ResultsNumberIntegrationHandler
+class ResultsNumberProcess extends ResultsNumberInternalConnector implements PICOServiceEntryPoint
 {
 
     /**
      * @var array
      */
-    private $fields = array('', 'ti', 'tw', 'mh');
+    protected $fields = ['', 'ti', 'tw', 'mh'];
 
 
     final public function Process()
     {
+        $ResultsClusters = $this->buildGlobalAndLocalArrays();
+        $ProcessedQueries = [];
+        foreach ($ResultsClusters as $key => $ResultsCluster) {
+            $ProcessedQueries[$key] = $this->BuildQuery($ResultsCluster);
+        }
+        $ruleArr = [
+            'ProcessedQueries' => 'required|array|min:1',
+            'ProcessedQueries.*' => 'required|string|distinct|min:1',
+            'ProcessedQueries.*.*' => 'required|string|distinct|min:1',
+        ];
+        $this->UpdateModel(__METHOD__ . '@' . get_class($this), ['ProcessedQueries' => $ProcessedQueries], $ruleArr);
+        $results = $this->ConnectToIntegration($ProcessedQueries);
+        $this->setResults(__METHOD__ . '@' . get_class($this), $results);
     }
 
     protected function Explore(array $arguments = null)
     {
-        $ResultsClusters = $this->buildGlobalAndLocalArrays();
-        $ProcessedQueries=[];
-        foreach ($ResultsClusters as $key => $ResultsCluster) {
-            $ProcessedQueries[$key] = $this->BuildQuery($ResultsCluster);
-        }
-        $ex=$this->UpdateModel(['ProcessedQueries'=>$ProcessedQueries],true);
-        if($ex){
-            throw new ErrorWhileUpdatingTheModel(null,$ex);
-        }
-        $IntegrationResults = $this->ProxyIntegrationResultsNumber($ProcessedQueries);
-        $this->IntegrationResultsToObject($IntegrationResults);
     }
 
     ///////////////////////////////////////////////////////////////////
@@ -41,12 +42,12 @@ class ResultsNumberProcess extends ResultsNumberIntegrationHandler
     {
         $local = [];
         $global = [];
-        $EqNum = $this->model->PICOnum;
-        $EqNumCopy = ($EqNum==6)?5:$EqNum;
+        $EqNum = $this->model->InitialData['PICOnum'];
+        $EqNumCopy = ($EqNum == 6) ? 5 : $EqNum;
         $i = 1;
         while ($i <= $EqNumCopy) {
             $PICOEquationId = 'PICO' . $i;
-            $PICOEquationArray = $this->model->Initialdata[$PICOEquationId];
+            $PICOEquationArray = $this->model->InitialData['queryobject'][$PICOEquationId];
             if ($i == $EqNumCopy && $EqNum != 6) {
                 $local[$PICOEquationId] = $PICOEquationArray;
             }
@@ -59,18 +60,12 @@ class ResultsNumberProcess extends ResultsNumberIntegrationHandler
     private function BuildQuery(array $ResultsCluster)
     {
         $query = '';
-        $msg='';
-        $count = 0;
         foreach ($ResultsCluster as $PICOEquationId => $PICOEquationData) {
-            if($count == 0){
-                $msg='';
-            }else{
-                $msg=$msg . ' AND ';
-            }
             if (strlen($PICOEquationData['query']) > 0) {
-                $msg = $msg . $this->SetSearchField($PICOEquationData);
-                $query = $query . $msg;
-                $count++;
+                if (strlen($query)) {
+                    $query = $query . ' AND ';
+                }
+                $query = $query . $this->SetSearchField($PICOEquationData);
             }
         }
         return $query;
@@ -78,24 +73,13 @@ class ResultsNumberProcess extends ResultsNumberIntegrationHandler
 
     private function SetSearchField(array $PICOEquationData)
     {
+        $txt = $PICOEquationData['query'];
         $fieldnum = $PICOEquationData['field'];
-        $field = ($fieldnum == -1)?null:$this->fields[$fieldnum];
-        return ($field)?$PICOEquationData['query']:$field . ':(' . $PICOEquationData['query'] . ')';
-    }
-
-    private function IntegrationResultsToObject(array $data)
-    {
-        $keysdata = array_keys($data);
-        $keysResultList = array_keys($this->model->ProcessedQueries);
-        $inter = array_intersect($keysdata, $keysResultList);
-        if ((count($inter) < count($keysdata)) || (count($inter) < count($keysResultList))) {
-            throw new IncongruentDataObtainedFromResultsNumberIntegration(['DataFromIntegration'=>$keysdata,'DataFromBusinessLogic'=>$keysResultList],null);
+        $field = ($fieldnum == -1) ? '' : $this->fields[$fieldnum];
+        if ($field) {
+            $txt = $field . ':(' . $txt . ')';
         }
-
-        $ex=$this->UpdateModel($data, false);
-        if($ex){
-            throw new ErrorWhileUpdatingTheModel(null,$ex);
-        }
+        return $txt;
     }
 
 }

@@ -2,30 +2,49 @@
 
 namespace PICOExplorer\Services\ServiceModels;
 
-use PICOExplorer\Http\Traits\ControllerPerformanceTrait;
-use PICOExplorer\Http\Traits\ValidationTrait;
+use PICOExplorer\Exceptions\Exceptions\AppError\ServiceResultsIsNull;
+use PICOExplorer\Http\Controllers\CustomController;
 use PICOExplorer\Models\MainModels\MainModelsModel;
-use PICOExplorer\Services\TimerService\Timer;
+use PICOExplorer\Services\AdvancedLogger\Exceptions\DontCatchException;
 
-abstract class PICOServiceModel implements SubControllerInterface
+abstract class PICOServiceModel extends CustomController
 {
 
-    use ControllerPerformanceTrait;
-    use ValidationTrait;
-
+    /**
+     * @var MainModelsModel
+     */
     protected $model;
+    protected $responseRules;
 
-    final public function get(MainModelsModel $model, Timer $ParentTimer=null)
+    public function Process(){}
+
+    final public function get(MainModelsModel $model, array $responseRules, $ParentTimer = null)
     {
-        $this->ControllerPerformanceStart($ParentTimer);
+        $this->responseRules=$responseRules;
+        $this->ControllerPerformanceStart($model->InitialData,$ParentTimer);
         $this->model = $model;
-        $this->Process();
-        $this->ControllerSummary();
+        $wasSucess=false;
+        try {
+            $this->Process();
+            $wasSucess=true;
+        } catch (DontCatchException $ex) {
+        } finally {
+            $this->ControllerSummary($model->results,$wasSucess);
+        }
     }
 
-    protected function UpdateModel(array $data,bool $replace)
+    protected function setResults(string $referer, array $data)
     {
-        $this->model->UpdateModel($data,$replace);
+        if (!($data)) {
+            throw new ServiceResultsIsNull(['referer'=>$referer]);
+        }
+
+        $this->model->setResults(get_class($this) . ':' . $referer, $data, $this->responseRules);
+    }
+
+    protected function UpdateModel(string $referer, array $data, array $rules)
+    {
+        $this->model->UpdateModel(get_class($this) . ':' . $referer, $data, $rules);
     }
 
 }

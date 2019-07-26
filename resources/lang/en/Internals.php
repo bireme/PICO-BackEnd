@@ -6,7 +6,7 @@ return [
     'ResultsNumberDataBadFormat' => 'The validation of the ResultsNumber data failed',
     'AsyncConnectionError' => 'Error while performing async connection request to resource',
     'CantFetchRouteThrottleConfig' => 'Error configuring RouteThrottle',
-    'ConnectionError' => 'Error while performing connection request to resource',
+    'SpecialValidationException' => 'Error while performing connection request to resource',
     'ErrorInDeCSLoopXMLExtraction' => 'Error while extracting DeCS from the downloaded XML template',
     'ErrorInExploredTrees' => 'Error in the format of Explored Trees',
     'ErrorInHttpRequestAttributes' => 'Error in the format of HTTP request attributes',
