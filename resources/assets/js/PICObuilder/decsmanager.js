@@ -43,7 +43,7 @@ function showDeCSMenu() {
 }
 
 function eventDeCSSearch(query, langs, PICOnum) {
-    let url = "API/DeCSExplore";
+    let url = "PICO/DeCSExplore";
     console.log('PreviousData');
     console.log(getPreviousResults());
     let data = {

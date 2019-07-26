@@ -99,7 +99,7 @@ function setResultsNumber(data, PICOnum) {
 }
 
 function eventResultsNumber(PICOnum, queryobject) {
-    let url = "API/ResultsNumber";
+    let url = "PICO/ResultsNumber";
     let data = {
         PICOnum: PICOnum,
         queryobject: queryobject

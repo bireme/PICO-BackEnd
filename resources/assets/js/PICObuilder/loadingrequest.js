@@ -19,43 +19,42 @@ export function CancelLoading() {
 
 export function POSTrequest(url, data, callback) {
     showLoading();
-    data.mainLanguage= getMainLanguage();
+    data.mainLanguage = getMainLanguage();
     url = getBaseURL() + url;
     let sendData = {
         data: JSON.stringify(data)
     };
-    currentrequest = $.post(url, sendData,
-            function (obtainedData) {
-                try {
-                    let outerData = JSON.parse(obtainedData);
-                    let Err = outerData.Error;
-                    let War = outerData.Warning;
-                    if (Err) {
-                        hideLoading();
-                        setTimeout(function () {
-                            ConsoleErr(data, obtainedData);
-                            showInfoMessage('Error', Err, false);
-                        }, 300);
-                        return;
-                    }
-                    if (War) {
-                        hideLoading();
-                        setTimeout(function () {
-                            ConsoleErr(data, obtainedData);
-                            showInfoMessage('Warning', War, false);
-                        }, 300);
-                        return;
-                    }
-                    let Data = outerData.Data;
-                    if (!(Data)) {
-                        hideLoading();
-                        setTimeout(function () {
-                            ConsoleErr(data, obtainedData);
-                            showInfoMessage('Error', translate('popallow'), false);
-                        }, 300);
-                        return;
-                    }
-                } catch (Exception) {
+    $.ajax({
+        url: url,
+        type: 'post',
+        data: sendData,
+        headers: {
+            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content'),
+        },
+        dataType: 'json',
+        success: function (obtainedData) {
+            try {
+                let outerData = JSON.parse(obtainedData);
+                let Err = outerData.Error;
+                let War = outerData.Warning;
+                if (Err) {
+                    hideLoading();
+                    setTimeout(function () {
+                        ConsoleErr(data, obtainedData);
+                        showInfoMessage('Error', Err, false);
+                    }, 300);
+                    return;
+                }
+                if (War) {
+                    hideLoading();
+                    setTimeout(function () {
+                        ConsoleErr(data, obtainedData);
+                        showInfoMessage('Warning', War, false);
+                    }, 300);
+                    return;
+                }
+                let Data = outerData.Data;
+                if (!(Data)) {
                     hideLoading();
                     setTimeout(function () {
                         ConsoleErr(data, obtainedData);
@@ -63,20 +62,29 @@ export function POSTrequest(url, data, callback) {
                     }, 300);
                     return;
                 }
+            } catch (Exception) {
                 hideLoading();
                 setTimeout(function () {
-                    callback(Data);
+                    ConsoleErr(data, obtainedData);
+                    showInfoMessage('Error', translate('popallow'), false);
                 }, 300);
-            }).fail(function (xhr, status, error) {
-        hideLoading();
-        if (xhr.statusText !== 'abort') {
+                return;
+            }
+            hideLoading();
             setTimeout(function () {
-                showInfoMessage('Error', translate('errunknown'), false);
+                callback(Data);
             }, 300);
-        }
+        },
+        fail: function (xhr, status, error) {
+            hideLoading();
+            if (xhr.statusText !== 'abort') {
+                setTimeout(function () {
+                    showInfoMessage('Error', translate('errunknown'), false);
+                }, 300);
+            }
+        },
     });
 }
-
 ////PRIVATE FUNCTIONS
 
 let currentrequest;

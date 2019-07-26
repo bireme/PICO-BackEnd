@@ -6,11 +6,10 @@ use Config;
 use Exception;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Http\Request;
-use PICOExplorer\Http\Traits\AdvancedLoggerTrait;
+use AdvancedLoggerFacade;
 
 class LanguageController extends Controller
 {
-    use AdvancedLoggerTrait;
 
     public function switchLang(string $lang)
     {
@@ -32,7 +31,8 @@ class LanguageController extends Controller
         }
         Session::save();
         $info = 'ip: ' . request()->getClientIp() . PHP_EOL.'new locale: ' . $lang;
-        $this->AdvancedLog('Operations', 'info', 'Changing locale', $info, $data, null);
+
+        AdvancedLoggerFacade::SimpleLog('Operations', 'info', 'Changing locale', $info, $data, null);
         return view('main')->with(['PreviousData' =>$data]);
     }
 
@@ -42,7 +42,7 @@ class LanguageController extends Controller
         $this->ValidatePreviousData($lang);
         $data = $request->getContent();
         $info = 'ip: ' . request()->getClientIp() .PHP_EOL. 'new locale: ' . $lang.PHP_EOL.'data: '.$data;
-        $this->AdvancedLog('Operations', 'info', 'Preparing locale change', $info, null, null);
+        AdvancedLoggerFacade::SimpleLog('Operations', 'info', 'Preparing locale change', $info, null, null);
         Session::put('PreviousData', $data);
         Session::save();
         return response('ok')->setStatusCode(200, 'Ok!');

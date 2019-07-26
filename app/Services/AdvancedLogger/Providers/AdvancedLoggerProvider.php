@@ -1,0 +1,39 @@
+<?php
+
+namespace PICOExplorer\Providers;
+
+use Illuminate\Support\ServiceProvider;
+use PICOExplorer\Services\AdvancedLogger\AdvancedLogger;
+use PICOExplorer\Services\AdvancedLogger\Exceptions\Handlers\WarningsHandler;
+use PICOExplorer\Services\AdvancedLogger\Services\TimerService;
+
+class AdvancedLoggerProvider extends ServiceProvider
+{
+    /**
+     * Register any application services.
+     *
+     * @return void
+     */
+    public function register()
+    {
+        $this->app->singleton('advancedlogger', function () {
+            return new AdvancedLogger();
+        });
+        $this->app->singleton('warningshandler', function () {
+            return new WarningsHandler();
+        });
+        $this->app->bind('timerservice', function () {
+            return new TimerService();
+        });
+    }
+
+    /**
+     * Bootstrap any application services.
+     *
+     * @return void
+     */
+    public function boot()
+    {
+        //
+    }
+}

@@ -5,25 +5,11 @@ namespace PICOExplorer\Models\MainModels;
 class IntegrationDeCSModel extends MainModelsModel
 {
 
-    protected $casts = [ //atr casted to native
-        'PreviousData' => 'array',
-        'query' => 'string',
-        'langs' => 'array',
-        'PICOnum' => 'int',
-        'mainLanguage' => 'string',
-    ];
+    protected static final function FillableAttributes()
+    {
+        return [
+            'ProcessedQueries',
+        ];
+    }
 
-    protected $fillable = [
-        'PreviousData',
-        'query',
-        'langs',
-        'PICOnum',
-        'mainLanguage',
-    ];
-
-    protected $resultsArr = [
-    ];
-
-    protected $visible = [
-    ];
 }
