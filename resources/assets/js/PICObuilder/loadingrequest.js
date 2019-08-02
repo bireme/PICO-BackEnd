@@ -17,66 +17,83 @@ export function CancelLoading() {
     abortrequest();
 }
 
-export function POSTrequest(url, data, callback) {
+export function POSTrequest(url, inidata, callback) {
     showLoading();
-    data.mainLanguage= getMainLanguage();
+    inidata.mainLanguage = getMainLanguage();
     url = getBaseURL() + url;
-    let sendData = {
-        data: JSON.stringify(data)
-    };
-    currentrequest = $.post(url, sendData,
-            function (obtainedData) {
-                try {
-                    let outerData = JSON.parse(obtainedData);
-                    let Err = outerData.Error;
-                    let War = outerData.Warning;
-                    if (Err) {
-                        hideLoading();
-                        setTimeout(function () {
-                            ConsoleErr(data, obtainedData);
-                            showInfoMessage('Error', Err, false);
-                        }, 300);
-                        return;
-                    }
-                    if (War) {
-                        hideLoading();
-                        setTimeout(function () {
-                            ConsoleErr(data, obtainedData);
-                            showInfoMessage('Warning', War, false);
-                        }, 300);
-                        return;
-                    }
-                    let Data = outerData.Data;
-                    if (!(Data)) {
-                        hideLoading();
-                        setTimeout(function () {
-                            ConsoleErr(data, obtainedData);
-                            showInfoMessage('Error', translate('popallow'), false);
-                        }, 300);
-                        return;
-                    }
-                } catch (Exception) {
+    let sentData=JSON.stringify(inidata);
+    console.log('Sending');
+    console.log(sentData);
+    currentrequest = $.ajax({
+        url: url,
+        type: 'post',
+        data: sentData,
+        tryCount : 0,
+        retryLimit : 3,
+        headers: {
+            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content'),
+        },
+        dataType: 'json',
+        success: function (content) {
+            let result=null;
+            try {
+                let Err = content.Error;
+                let War = content.Warning;
+                if (Err) {
                     hideLoading();
                     setTimeout(function () {
-                        ConsoleErr(data, obtainedData);
+                        showInfoMessage('Error', Err, false);
+                    }, 300);
+                    return;
+                }
+                if (War) {
+                    hideLoading();
+                    setTimeout(function () {
+                        showInfoMessage('Warning', War, false);
+                    }, 300);
+                    return;
+                }
+                result = content.Data;
+                if (!(result)) {
+                    hideLoading();
+                    setTimeout(function () {
+                        ConsoleErr(sentData, content);
                         showInfoMessage('Error', translate('popallow'), false);
                     }, 300);
                     return;
                 }
                 hideLoading();
                 setTimeout(function () {
-                    callback(Data);
+                    callback(result);
                 }, 300);
-            }).fail(function (xhr, status, error) {
-        hideLoading();
-        if (xhr.statusText !== 'abort') {
-            setTimeout(function () {
-                showInfoMessage('Error', translate('errunknown'), false);
-            }, 300);
-        }
+            } catch (Exception) {
+                hideLoading();
+                let errtxt = Exception.toString();
+                setTimeout(function (content) {
+                    ConsoleErr(sentData, (errtxt+': '+content));
+                    showInfoMessage('Error', translate('popallow'), false);
+                }, 300);
+            }
+        },
+        error: function (jqXHR, textStatus ) {
+            hideLoading();
+            if (textStatus === 'timeout') {
+                this.tryCount++;
+                if (this.tryCount <= this.retryLimit) {
+                    //try again
+                    $.ajax(this);
+                    return;
+                }
+                return;
+            }
+            if (textStatus !== 'abort') {
+                setTimeout(function () {
+                    showInfoMessage('Error', translate('errunknown'), false);
+                }, 300);
+            }
+        },
     });
 }
-
 ////PRIVATE FUNCTIONS
 
 let currentrequest;

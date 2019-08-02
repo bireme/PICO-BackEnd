@@ -29,8 +29,8 @@ $app = new Illuminate\Foundation\Application(
 
 $app->singleton(
     Illuminate\Contracts\Debug\ExceptionHandler::class,
-    PICOExplorer\Exceptions\Handler::class
-//Illuminate\Foundation\Exceptions\Handler::class
+    PICOExplorer\Services\AdvancedLogger\Exceptions\Handlers\ExceptionsHandler::class
+    //\Illuminate\Foundation\Exceptions\Handler::class
 );
 
 $app->singleton(

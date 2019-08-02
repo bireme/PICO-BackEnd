@@ -16,7 +16,7 @@ class Kernel extends HttpKernel
      */
     protected $middleware = [
         \PICOExplorer\Http\Middleware\CheckForMaintenanceMode::class,
-        \PICOExplorer\Http\Middleware\ConnectionsLogger::class,
+        \PICOExplorer\Services\AdvancedLogger\Middleware\ConnectionsLogger::class,
         \Illuminate\Foundation\Http\Middleware\ValidatePostSize::class,
         \PICOExplorer\Http\Middleware\TrimStrings::class,
         \Illuminate\Foundation\Http\Middleware\ConvertEmptyStringsToNull::class,

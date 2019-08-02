@@ -1,5 +1,3 @@
-<input type="hidden" id="cachetmp" class="d-none" value="<?php echo e($cachetmp); ?>">
-<input type="hidden" id="TmpCookieElement" class="d-none" value="<?php echo e($TmpCookieElement); ?>">
 <input type="hidden" id="datainput<?php echo e($PICOiterative); ?>" data-query-split="<?php echo e((!!($olddata) ? $olddata['querysplit'] : '')); ?>" data-oldVal="<?php echo e((!!($olddata) ? $olddata['oldval'] : '')); ?>" class="form-control" value="<?php echo e((!!($olddata) ? $olddata['query'] : '')); ?>">
 <div class="card-body">
     <div class="row">

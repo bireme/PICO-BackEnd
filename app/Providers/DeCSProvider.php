@@ -17,7 +17,6 @@ class DeCSProvider extends ServiceProvider
         $this->app->singleton('decsprocess', function () {
             return new DeCSProcess();
         });
-        $this->app->bind('DeCSQueryProcessor', 'App\Services\DeCS\ControllerDeCSQueryProcessor');
     }
 
 

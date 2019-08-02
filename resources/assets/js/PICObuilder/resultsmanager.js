@@ -49,37 +49,54 @@ function getAllInputFields() {
 }
 
 function setResultsNumber(data, PICOnum) {
+    console.log('initialdata in resultsnumber');
+    console.log(data);
+
     let spanObj;
     hideBootstrapObj($('#CalcRes' + PICOnum));
     setCalcResAsSyncAlt(PICOnum);
     let ResNumLocalObj = $('#ResNumLocal' + PICOnum);
     let ResNumGlobalObj = $('#ResNumGlobal' + PICOnum);
+
+    let localresultsnumber = data.local.ResultsNumber;
+    let localresultsurl = data.local.ResultsURL;
+    let globalresultsnumber = data.global.ResultsNumber;
+    let globalresultsurl = data.global.ResultsURL;
+
+    console.log('localresultsnumber');
+    console.log(localresultsnumber);
+    console.log('localresultsurl');
+    console.log(localresultsurl);
+    console.log('globalresultsnumber');
+    console.log(globalresultsnumber);
+    console.log('globalresultsurl');
+    console.log(globalresultsurl);
     if (PICOnum < 5) {
         spanObj = ResNumLocalObj.find('span').first();
         showBootstrapObj(spanObj.parent());
         RemoveReDoButton(spanObj);
-        if (data.local.resultsNumber === 0) {
+        if (localresultsnumber === 0) {
             addIconZeroResults(spanObj);
         } else {
-            $(spanObj).text(data.local.resultsNumber);
+            $(spanObj).text(localresultsnumber);
         }
-        $(spanObj).attr('data-oldval', data.local.resultsNumber);
-        ResNumLocalObj.attr("href", data.local.resultsURL);
+        $(spanObj).attr('data-oldval', localresultsnumber);
+        ResNumLocalObj.attr("href", localresultsurl);
     }
     if (PICOnum > 1 && PICOnum !== 5) {
         spanObj = ResNumGlobalObj.find('span').first();
         showBootstrapObj(spanObj.parent());
         RemoveReDoButton(spanObj);
-        if (data.global.resultsNumber === 0) {
+        if (globalresultsnumber === 0) {
             addIconZeroResults(spanObj);
         } else {
-            $(spanObj).text(data.global.resultsNumber);
+            $(spanObj).text(globalresultsnumber);
             if (PICOnum === 6) {
                 showBootstrapObj(spanObj);
             }
         }
-        $(spanObj).attr('data-oldval', data.global.resultsNumber);
-        ResNumGlobalObj.attr("href", data.global.resultsURL);
+        $(spanObj).attr('data-oldval', globalresultsnumber);
+        ResNumGlobalObj.attr("href", globalresultsurl);
     }
     if (PICOnum === 6) {
         let FinalSearchDetailsObj = $('#FinalSearchDetails');
@@ -99,7 +116,7 @@ function setResultsNumber(data, PICOnum) {
 }
 
 function eventResultsNumber(PICOnum, queryobject) {
-    let url = "API/ResultsNumber";
+    let url = "PICO/ResultsNumber";
     let data = {
         PICOnum: PICOnum,
         queryobject: queryobject

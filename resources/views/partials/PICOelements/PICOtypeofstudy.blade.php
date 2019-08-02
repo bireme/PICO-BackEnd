@@ -1,5 +1,3 @@
-<input type="hidden" id="cachetmp" class="d-none" value="{{ $cachetmp }}">
-<input type="hidden" id="TmpCookieElement" class="d-none" value="{{ $TmpCookieElement }}">
 <input type="hidden" id="datainput{{ $PICOiterative }}" data-query-split="{{ (!!($olddata) ? $olddata['querysplit'] : '') }}" data-oldVal="{{ (!!($olddata) ? $olddata['oldval'] : '')  }}" class="form-control" value="{{ (!!($olddata) ? $olddata['query'] : '')  }}">
 <div class="card-body">
     <div class="row">

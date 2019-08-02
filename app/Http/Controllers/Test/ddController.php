@@ -4,23 +4,28 @@ namespace PICOExplorer\Http\Controllers\Test;
 
 use Illuminate\Support\Facades\Session;
 use Illuminate\Http\Request;
+use PICOExplorer\Facades\AdvancedLoggerFacade;
 use PICOExplorer\Http\Controllers\Controller;
 use Exception;
-use PICOExplorer\Http\Traits\AdvancedLoggerTrait;
 
 class ddController extends Controller
 {
-    use AdvancedLoggerTrait;
 
     public function index()
     {
         if (Session::has('ddinfo')) {
-            $ddinfo=null;
+            $ddinfo = null;
             try {
                 $data = Session::get('ddinfo');
                 Session::pull('ddinfo');
                 Session::save();
-                $this->AdvancedLog('Operations', 'info', 'Ready to show dd data', $data, null, null);
+                $MainData = [
+                    'title' => 'Ready to show dd data',
+                    'data' => ['dddata' => $data],
+                    'infomsg' => null,
+                    'trace' => null,
+                ];
+                AdvancedLoggerFacade::SimpleLog('Operations', 'info', $MainData['title'], $MainData['infomsg'], $MainData['data'], $MainData['trace']);
                 $ddinfo = json_decode($data, true);
             } catch (Exception $ex) {
                 $info = [
@@ -35,13 +40,13 @@ class ddController extends Controller
                     $value = json_decode($value, true);
                 }
                 return dd($ddinfo);
-            }catch(Exception $ex){
+            } catch (Exception $ex) {
                 $data = [
                     'title' => 'Server Error',
                     'code' => 500,
-                    'message' => 'Key: '.$key.' could not be decoded',
+                    'message' => 'Key: ' . $key . ' could not be decoded',
                 ];
-                return view('errortxt')->with(['data'=>$data]);
+                return view('errortxt')->with(['data' => $data]);
             }
         } else {
             $info = [
@@ -56,7 +61,13 @@ class ddController extends Controller
     public function savePreviousInfo(Request $request)
     {
         $data = $request->getContent();
-        $this->AdvancedLog('Operations', 'info', 'Preparing data for dd view', $data, null, null);
+        $MainData = [
+            'title' => 'Preparing data for dd view',
+            'data' => ['dddata' => $data],
+            'infomsg' => null,
+            'trace' => null,
+        ];
+        AdvancedLoggerFacade::SimpleLog('Operations', 'info', $MainData['title'], $MainData['infomsg'], $MainData['data'], $MainData['trace']);
         Session::put('ddinfo', $data);
         Session::save();
         return response('ok')->setStatusCode(200, 'Ok!');

@@ -1,8 +1,8 @@
 
 ////PUBLIC FUNCTIONS
 
-export function getPreviousResults() {
-    return $('#TmpCookieElement').attr('data-previous-decs');
+export function getPreviousResults(PICOnum) {
+    return $('#datainput'+PICOnum).attr('data-previous-decs');
 }
 
 export function getLanguages() {

@@ -8,7 +8,6 @@
     $FieldNames = (new SearchFieldsRepositoryController())->SearchFields() ?? array();
     $globaloldpicodata = $PreviousData['PICOData'] ?? array();
     $oldTOS = $PreviousData['TOS'] ?? array();
-    $cachetmp = $PreviousData['cachetmp'] ?? '';
     $TmpCookieElement = $PreviousData['TmpCookieElement'] ?? '';
     ?>
 
@@ -20,7 +19,7 @@
         @if($PICOiterative<5)
             @include('layout.PICOelementlayout',['PICOiterative' => $PICOiterative,'FieldsNames'=>$FieldNames,'olddata'=>$olddata])
         @else
-            @include('layout.PICOelementlayout',['PICOiterative' => $PICOiterative,'TOS'=>$TOS,'olddata'=>$olddata,'oldTOS' => $oldTOS, 'cachetmp' => $cachetmp, 'TmpCookieElement' => $TmpCookieElement])
+            @include('layout.PICOelementlayout',['PICOiterative' => $PICOiterative,'TOS'=>$TOS,'olddata'=>$olddata,'oldTOS' => $oldTOS, 'TmpCookieElement' => $TmpCookieElement])
         @endif
     @endfor
 

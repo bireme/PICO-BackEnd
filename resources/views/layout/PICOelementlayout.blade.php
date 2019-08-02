@@ -26,7 +26,7 @@
             @if($PICOiterative<5)
                 @include('partials.PICOelements.PICOelement',['PICOiterative'=>$PICOiterative,'FieldNames'=>$FieldNames,'olddata'=>$olddata])
             @else
-                @include('partials.PICOelements.PICOtypeofstudy',['PICOiterative'=>$PICOiterative,'TOS'=>$TOS,'olddata'=>$olddata,'cachetmp'=>$cachetmp, 'TmpCookieElement'=>$TmpCookieElement,'oldTOS'=>$oldTOS])
+                @include('partials.PICOelements.PICOtypeofstudy',['PICOiterative'=>$PICOiterative,'TOS'=>$TOS,'olddata'=>$olddata, 'TmpCookieElement'=>$TmpCookieElement,'oldTOS'=>$oldTOS])
             @endif
         </div>
 </div>

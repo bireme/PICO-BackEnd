@@ -2,111 +2,55 @@
 
 namespace PICOExplorer\Services\QueryBuild;
 
-use PICOExplorer\Services\ServiceModels\SubControllerModel;
+use PICOExplorer\Exceptions\Exceptions\ClientError\QueryResultsCouldNotBeDecoded;
+use PICOExplorer\Exceptions\Exceptions\ClientError\QueryResultsDoesNotExist;
+use PICOExplorer\Exceptions\Exceptions\ClientError\QuerySplitCouldNotBeDecoded;
+use PICOExplorer\Exceptions\Exceptions\ClientError\QuerySplitDoesNotExist;
+use PICOExplorer\Services\ServiceModels\PICOQueryProcessorTrait;
+use PICOExplorer\Services\ServiceModels\PICOServiceEntryPoint;
+use Throwable;
 
-class QueryBuildProcess extends SubControllerModel{
+class QueryBuildProcess extends QueryBuildBase implements PICOServiceEntryPoint
+{
 
-    private $ObjectQuery;
-    private $SimpleLifeMessage;
-    private $DeCSqueryProcessor;
+    use PICOQueryProcessorTrait;
 
-    public function __construct($ObjectQuery, $DeCSqueryProcessor) {
-        $this->ObjectQuery = $ObjectQuery;
-        $this->DeCSqueryProcessor = $DeCSqueryProcessor;
-    }
-
-    ///////////////////////////////////////////////////////////////////
-    //PUBLIC FUNCTIONS
-    ///////////////////////////////////////////////////////////////////
-
-    public function BuildnewQuery() {
-        $results = $this->ObjectQuery->getPreviousResults();
-        $QuerySplit = $this->ObjectQuery->getQuerySplit();
-        $SelectedDescriptors = $this->ObjectQuery->getSelectedDescriptors();
-        return $this->BuildEquationNoImprovement($results, $SelectedDescriptors, $QuerySplit);
-    }
-
-    public function ImproveSearch() {
-        $EquationNoImprovement = $this->ObjectQuery->getEquationNoImprovement();
-        $ImproveSearchQuery = $this->ObjectQuery->getImproveSearchQuery();
-        $QueryProcessed=NULL;
-        $this->DeCSqueryProcessor->ProcessQuery($ImproveSearchQuery,$QueryProcessed);
-        $this->ImproveBasicEquation($EquationNoImprovement, $ImproveSearchQuery, $QueryProcessed);
-    }
-
-    ///////////////////////////////////////////////////////////////////
-    //INNER FUNCTIONS
-    /////////////////////////////////////////////////////////////////// 
-
-    private function ImproveBasicEquation($EquationNoImprovement, $ImproveSearchQuery, $ImproveSearchArrAnalyzed) {
-        $this->ObjectQuery->setQuery($EquationNoImprovement);
-    }
-
-    private function BuildEquationNoImprovement($results, $SelectedDescriptors, $QuerySplit) {
-        $EquationNoImprovement = '';
-        $Ops = array('or', 'and', 'not');
-        $Seps = array('(', ')', ' ', ':');
-        foreach ($QuerySplit as $QuerySplitItem) {
-            $type = $QuerySplitItem['type'];
-            $value = $QuerySplitItem['value'];
-            if ($type == 'key' || $type == 'keyrep' || $type == 'keyexplored') {
-                $EquationNoImprovement = $EquationNoImprovement . $this->BuildKeyWordEquation($value, $SelectedDescriptors);
-            } else {
-                if (in_array($value, $Ops)) {
-                    $value = strtoupper($value);
-                } else {
-                    if (!(in_array($value, $Seps))) {
-                        $value = ucfirst($value);
-                        if (strpos($value, ' ') !== false) {
-                            $value = '"' . $value . '"';
-                        }
-                    }
-                }
-                $EquationNoImprovement = $EquationNoImprovement . $value;
+    final public function Process()
+    {
+        $InitialData = $this->model->InitialData;
+        if ($InitialData['QuerySplit'] ?? null) {
+            try {
+                $decodedPrevious = json_decode($InitialData['QuerySplit'], true);
+                $InitialData['QuerySplit'] = $decodedPrevious;
+                $this->model->setAttribute('InitialData', $InitialData);
+            } catch (Throwable $ex) {
+                throw new QuerySplitCouldNotBeDecoded(['QuerySplit' => json_encode($InitialData['QuerySplit'])], $ex);
             }
+        } else {
+            throw new QuerySplitDoesNotExist(['QuerySplit' => null]);
         }
-        if (strlen($EquationNoImprovement) != 0) {
-            $EquationNoImprovement = '(' . $EquationNoImprovement . ')';
+
+        if ($InitialData['DeCSResults'] ?? null) {
+            try {
+                $decodedPrevious = json_decode($InitialData['DeCSResults'], true);
+                $InitialData['DeCSResults'] = $decodedPrevious;
+                $this->model->setAttribute('InitialData', $InitialData);
+            } catch (Throwable $ex) {
+                throw new QueryResultsCouldNotBeDecoded(['DeCSResults' => json_encode($InitialData['DeCSResults'])], $ex);
+            }
+        } else {
+            throw new QueryResultsDoesNotExist(['DeCSResults' => null]);
         }
-        $this->ObjectQuery->setEquationNoImprovement($EquationNoImprovement);
+        $this->Explore();
+
     }
 
-    private function BuildKeyWordEquation($keyword, $SelectedDescriptors) {
-        $keywordEquation = ucfirst($keyword);
-        if (!(array_key_exists($keyword, $SelectedDescriptors))) {
-            throw new SimpleLifeException(new \SimpleLife\KeywordNotExistsInSelected($keyword, $SelectedDescriptors));
-        }
-        $KeywordObj = $SelectedDescriptors[$keyword];
-        foreach ($KeywordObj as $termObj) {
-
-            if (strlen($keywordEquation) != 0) {
-                $keywordEquation = $keywordEquation . ' OR ';
-            }
-            $keywordEquation = $keywordEquation . $this->BuildTermEquation($termObj);
-        }
-        if (strlen($keywordEquation) != 0) {
-            $keywordEquation = '(' . $keywordEquation . ')';
-        }
-        return $keywordEquation;
-    }
-
-    private function BuildTermEquation($termObj) {
-        $TermEquation = '';
-        foreach ($termObj as $DeCS) {
-            if (strpos($DeCS, ' ') !== false) {
-                $DeCS = '"' . $DeCS . '"';
-            }
-            if (strlen($TermEquation) > 0) {
-                $TermEquation = $TermEquation . ' OR ';
-            }
-            $TermEquation = $TermEquation . ucfirst($DeCS);
-        }
-        if (strlen($TermEquation) > 0) {
-            $TermEquation = '(' . $TermEquation . ')';
-        }
-        return $TermEquation;
+    protected function Explore()
+    {
+        $baseEquation = $this->buildBaseEquation();
+        $ProcessedImprovedSearchQuery = $this->ProcessQuery($this->model->InitialData['ImproveSearchQuery']);
+        $ImprovedEquation = $this->ImproveBasicEquation($baseEquation, $ProcessedImprovedSearchQuery);
+        $this->setResults(__METHOD__ . '@' . get_class($this), ['newQuery'=>$ImprovedEquation]);
     }
 
 }
-
-?>

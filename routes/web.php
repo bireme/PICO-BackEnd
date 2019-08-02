@@ -18,25 +18,25 @@ Route::get('/', function () {
 
 Route::middleware(['throttle:60,1'])->prefix('PICO')->group(function () {
 
-    Route::post('DeCSExplore', 'MainControllers\DeCSController@index');
+    Route::post('DeCSExplore', 'PICO\DeCSController@index');
 
-    Route::post('ResultsNumber', 'MainControllers\ResultsNumberController@index');
+    Route::post('ResultsNumber', 'PICO\ResultsNumberController@index');
 
-    Route::post('QueryBuild', 'MainControllers\QueryBuildController@index');
+    Route::post('QueryBuild', 'PICO\QueryBuildController@index');
 
-    Route::post('DeCSIntegration', 'MainControllers\IntegrationDeCSController@index');
+    Route::post('DeCSIntegration', 'PICO\IntegrationDeCSController@index');
 
-    Route::post('ResultsNumberIntegration', 'MainControllers\IntegrationResultsNumberController@index');
+    Route::post('ResultsNumberIntegration', 'PICO\IntegrationResultsNumberController@index');
 
-    Route::get('DeCSExplore', 'MainControllers\DeCSController@info');
+    Route::get('DeCSExplore', 'PICO\DeCSController@info');
 
-    Route::get('ResultsNumber', 'MainControllers\ResultsNumberController@info');
+    Route::get('ResultsNumber', 'PICO\ResultsNumberController@info');
 
-    Route::get('QueryBuild', 'MainControllers\QueryBuildController@info');
+    Route::get('QueryBuild', 'PICO\QueryBuildController@info');
 
-    Route::get('DeCSIntegration', 'MainControllers\IntegrationDeCSController@info');
+    Route::get('DeCSIntegration', 'PICO\IntegrationDeCSController@info');
 
-    Route::get('ResultsNumberIntegration', 'MainControllers\IntegrationResultsNumberController@info');
+    Route::get('ResultsNumberIntegration', 'PICO\IntegrationResultsNumberController@info');
 });
 
 Route::get('{lang}', ['uses'=>'LanguageController@switchLang']);

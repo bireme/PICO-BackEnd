@@ -85,7 +85,7 @@ export function HideUnselectedDeCS() {
     let DeCSModalTitlePrefix = 'opcao';
     let DeCSModalTitlePostfix = '-tab';
     let num = 0;
-    $('#modal').find('input.DescriptorCheckbox').each(function () {
+    $('#modal1').find('input.DescriptorCheckbox').each(function () {
         let identifier = ($(this).attr('id')).substring(10);
         let titleid = '#' + DeCSModalTitlePrefix + identifier + DeCSModalTitlePostfix;
         let contentid = '#' + DeCSModalTitlePrefix + identifier;

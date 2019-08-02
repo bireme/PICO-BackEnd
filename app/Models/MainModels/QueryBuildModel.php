@@ -4,27 +4,31 @@ namespace PICOExplorer\Models\MainModels;
 
 class QueryBuildModel extends MainModelsModel
 {
+    protected static final function FillableAttributes()
+    {
+        return [
+            'ProcessedQueries',
+            'QuerySplit',
+            'results',
+            'SelectedDescriptors',
+            'ImproveSearchQuery',
+            'newQuery',
+        ];
+    }
 
-    protected $casts = [ //atr casted to native
-        'PreviousData' => 'array',
-        'query' => 'string',
-        'langs' => 'array',
-        'PICOnum' => 'int',
-        'mainLanguage' => 'string',
-    ];
+    public function getAttributequerySplit($value)
+    {
+        return $value;
+    }
 
-    protected $fillable = [
-        'PreviousData',
-        'query',
-        'langs',
-        'PICOnum',
-        'mainLanguage',
-    ];
+    public function getAttributeSelectedDescriptors($value)
+    {
+        return $value;
+    }
 
-    protected $resultsArr = [
-    ];
-
-    protected $visible = [
-    ];
+    public function getAttributeImproveSearchQuery($value)
+    {
+        return $value;
+    }
 
 }

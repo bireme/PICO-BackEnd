@@ -14,7 +14,7 @@ class QueryBuildServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        $this->app->singleton('querybuildprocess', function () {
+        $this->app->singleton('querybuild', function () {
             return new QueryBuildProcess();
         });
     }

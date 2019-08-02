@@ -5,26 +5,34 @@ namespace PICOExplorer\Models\MainModels;
 class DeCSModel extends MainModelsModel
 {
 
-    protected $casts = [ //atr casted to native
-        'PreviousData' => 'array',
-        'query' => 'string',
-        'langs' => 'array',
-        'PICOnum' => 'int',
-        'mainLanguage' => 'string',
-    ];
+    protected static final function FillableAttributes()
+    {
+        return [
+            'KeywordList',
+            'DeCSDescriptorsHTML',
+            'SavedData',
+            'DeCSHTML',
+            'QuerySplit',
+        ];
+    }
 
-    protected $fillable = [
-        'PreviousData',
-        'query',
-        'langs',
-        'PICOnum',
-        'mainLanguage',
-    ];
+    public function getAttributeKeywordList($value)
+    {
+        return $value;
+    }
 
-    protected $resultsArr = [
-    ];
+    public function getAttributeDeCSDescriptorsHTML($value)
+    {
+        return $value;
+    }
 
-    protected $visible = [
-    ];
+    public function getAttributeDeCSHTML($value)
+    {
+        return $value;
+    }
 
+    public function getAttributeQuerySplit($value)
+    {
+        return $value;
+    }
 }

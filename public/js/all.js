@@ -13765,8 +13765,8 @@ __webpack_require__.r(__webpack_exports__);
 /* WEBPACK VAR INJECTION */(function($) {/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "getPreviousResults", function() { return getPreviousResults; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "getLanguages", function() { return getLanguages; });
 ////PUBLIC FUNCTIONS
-function getPreviousResults() {
-  return $('#TmpCookieElement').attr('data-previous-decs');
+function getPreviousResults(PICOnum) {
+  return $('#datainput' + PICOnum).attr('data-previous-decs');
 }
 function getLanguages() {
   var langs = [];
@@ -13879,28 +13879,27 @@ function OnExpandDeCS(ExpandButton) {
 } ////PRIVATE FUNCTIONS
 
 function createDeCSMenu(data, PICOnum) {
-  var results = data.results;
-  var HTMLDescriptors = data.HTMLDescriptors;
-  var HTMLDeCS = data.HTMLDeCS;
+  var SavedData = data.SavedData;
+  var DescriptorsHTML = data.DescriptorsHTML;
+  var DeCSHTML = data.DeCSHTML;
   var QuerySplit = data.QuerySplit;
-  console.log('querysplit');
-  console.log(QuerySplit);
   setTmpQuerySplit(QuerySplit, PICOnum);
-  setPreviousResults(results);
-  $('#modal').find('.modal-body').first().html(HTMLDescriptors);
-  $('#modal2').find('.modal-body').first().html(HTMLDeCS);
+  setPreviousResults(SavedData, PICOnum);
+  $('#modal1').find('.modal-body').first().html(DescriptorsHTML);
+  $('#modal2').find('.modal-body').first().html(DeCSHTML);
 }
 
 function setTmpQuerySplit(QuerySplit, PICOnum) {
   $('#datainput' + PICOnum).attr('data-query-split', QuerySplit);
 }
 
-function setPreviousResults(results) {
-  $('#TmpCookieElement').attr('data-previous-decs', results);
+function setPreviousResults(results, PICOnum) {
+  $('#datainput' + PICOnum).attr('data-previous-decs', results);
 }
 
 function showDeCSMenu() {
-  $('#modal').modal({
+  console.log('showing modal');
+  $('#modal1').modal({
     show: true,
     keyboard: false,
     backdrop: 'static'
@@ -13908,14 +13907,13 @@ function showDeCSMenu() {
 }
 
 function eventDeCSSearch(query, langs, PICOnum) {
-  var url = "API/DeCSExplore";
-  console.log('PreviousData');
-  console.log(Object(_commonsdecs_js__WEBPACK_IMPORTED_MODULE_0__["getPreviousResults"])());
+  var url = "PICO/DeCSExplore";
+  var SavedData = Object(_commonsdecs_js__WEBPACK_IMPORTED_MODULE_0__["getPreviousResults"])(PICOnum);
   var data = {
-    PreviousData: Object(_commonsdecs_js__WEBPACK_IMPORTED_MODULE_0__["getPreviousResults"])(),
+    SavedData: SavedData,
     query: query,
     langs: langs,
-    PICOnum: PICOnum
+    PICOnum: parseInt(PICOnum)
   };
   Object(_loadingrequest_js__WEBPACK_IMPORTED_MODULE_1__["POSTrequest"])(url, data, function (Data) {
     createDeCSMenu(Data, PICOnum);
@@ -14135,14 +14133,23 @@ function initEvents() {
     Object(_decsmanager_js__WEBPACK_IMPORTED_MODULE_4__["OnExpandDeCS"])($(this));
     Object(_initfunctions_js__WEBPACK_IMPORTED_MODULE_0__["UnBlockButton"])($(this));
   });
-  $('#modal').find('.btn-primary').click(function () {
+  $('#modal1').find('.btn-primary').click(function () {
     Object(_initfunctions_js__WEBPACK_IMPORTED_MODULE_0__["BlockButton"])($(this));
     Object(_initfunctions_js__WEBPACK_IMPORTED_MODULE_0__["HideUnselectedDeCS"])();
+    $('#closemodal1').click();
+    $('#modal2').modal('show');
+    Object(_initfunctions_js__WEBPACK_IMPORTED_MODULE_0__["UnBlockButton"])($(this));
+  });
+  $('#modal2').find('.btn-primary').click(function () {
+    Object(_initfunctions_js__WEBPACK_IMPORTED_MODULE_0__["BlockButton"])($(this));
+    $('#closemodal2').click();
+    $('#modal3').modal('show');
     Object(_initfunctions_js__WEBPACK_IMPORTED_MODULE_0__["UnBlockButton"])($(this));
   });
   $('#modal3').find('.btn-primary').click(function () {
     Object(_initfunctions_js__WEBPACK_IMPORTED_MODULE_0__["BlockButton"])($(this));
     Object(_newquerybuild_js__WEBPACK_IMPORTED_MODULE_2__["ProcessResults"])();
+    $('#closemodal3').click();
     Object(_initfunctions_js__WEBPACK_IMPORTED_MODULE_0__["UnBlockButton"])($(this));
   });
   $(document).find('button[id^=CalcRes]').click(function () {
@@ -14334,7 +14341,7 @@ function HideUnselectedDeCS() {
   var DeCSModalTitlePrefix = 'opcao';
   var DeCSModalTitlePostfix = '-tab';
   var num = 0;
-  $('#modal').find('input.DescriptorCheckbox').each(function () {
+  $('#modal1').find('input.DescriptorCheckbox').each(function () {
     var identifier = $(this).attr('id').substring(10);
     var titleid = '#' + DeCSModalTitlePrefix + identifier + DeCSModalTitlePostfix;
     var contentid = '#' + DeCSModalTitlePrefix + identifier;
@@ -14505,67 +14512,90 @@ function CancelLoading() {
   setAsNotLoading();
   abortrequest();
 }
-function POSTrequest(url, data, callback) {
+function POSTrequest(url, inidata, callback) {
   showLoading();
-  data.mainLanguage = getMainLanguage();
+  inidata.mainLanguage = getMainLanguage();
   url = Object(_baseurl_js__WEBPACK_IMPORTED_MODULE_1__["getBaseURL"])() + url;
-  var sendData = {
-    data: JSON.stringify(data)
-  };
-  currentrequest = $.post(url, sendData, function (obtainedData) {
-    try {
-      var outerData = JSON.parse(obtainedData);
-      var Err = outerData.Error;
-      var War = outerData.Warning;
+  var sentData = JSON.stringify(inidata);
+  console.log('Sending');
+  console.log(sentData);
+  currentrequest = $.ajax({
+    url: url,
+    type: 'post',
+    data: sentData,
+    tryCount: 0,
+    retryLimit: 3,
+    headers: {
+      'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+    },
+    dataType: 'json',
+    success: function success(content) {
+      var result = null;
 
-      if (Err) {
+      try {
+        var Err = content.Error;
+        var War = content.Warning;
+
+        if (Err) {
+          hideLoading();
+          setTimeout(function () {
+            Object(_infomessage_js__WEBPACK_IMPORTED_MODULE_0__["showInfoMessage"])('Error', Err, false);
+          }, 300);
+          return;
+        }
+
+        if (War) {
+          hideLoading();
+          setTimeout(function () {
+            Object(_infomessage_js__WEBPACK_IMPORTED_MODULE_0__["showInfoMessage"])('Warning', War, false);
+          }, 300);
+          return;
+        }
+
+        result = content.Data;
+
+        if (!result) {
+          hideLoading();
+          setTimeout(function () {
+            ConsoleErr(sentData, content);
+            Object(_infomessage_js__WEBPACK_IMPORTED_MODULE_0__["showInfoMessage"])('Error', Object(_translator_js__WEBPACK_IMPORTED_MODULE_2__["translate"])('popallow'), false);
+          }, 300);
+          return;
+        }
+
         hideLoading();
         setTimeout(function () {
-          ConsoleErr(data, obtainedData);
-          Object(_infomessage_js__WEBPACK_IMPORTED_MODULE_0__["showInfoMessage"])('Error', Err, false);
+          callback(result);
         }, 300);
-        return;
-      }
-
-      if (War) {
+      } catch (Exception) {
         hideLoading();
-        setTimeout(function () {
-          ConsoleErr(data, obtainedData);
-          Object(_infomessage_js__WEBPACK_IMPORTED_MODULE_0__["showInfoMessage"])('Warning', War, false);
-        }, 300);
-        return;
-      }
-
-      var _Data = outerData.Data;
-
-      if (!_Data) {
-        hideLoading();
-        setTimeout(function () {
-          ConsoleErr(data, obtainedData);
+        var errtxt = Exception.toString();
+        setTimeout(function (content) {
+          ConsoleErr(sentData, errtxt + ': ' + content);
           Object(_infomessage_js__WEBPACK_IMPORTED_MODULE_0__["showInfoMessage"])('Error', Object(_translator_js__WEBPACK_IMPORTED_MODULE_2__["translate"])('popallow'), false);
         }, 300);
+      }
+    },
+    error: function error(jqXHR, textStatus) {
+      hideLoading();
+
+      if (textStatus === 'timeout') {
+        this.tryCount++;
+
+        if (this.tryCount <= this.retryLimit) {
+          //try again
+          $.ajax(this);
+          return;
+        }
+
         return;
       }
-    } catch (Exception) {
-      hideLoading();
-      setTimeout(function () {
-        ConsoleErr(data, obtainedData);
-        Object(_infomessage_js__WEBPACK_IMPORTED_MODULE_0__["showInfoMessage"])('Error', Object(_translator_js__WEBPACK_IMPORTED_MODULE_2__["translate"])('popallow'), false);
-      }, 300);
-      return;
-    }
 
-    hideLoading();
-    setTimeout(function () {
-      callback(Data);
-    }, 300);
-  }).fail(function (xhr, status, error) {
-    hideLoading();
-
-    if (xhr.statusText !== 'abort') {
-      setTimeout(function () {
-        Object(_infomessage_js__WEBPACK_IMPORTED_MODULE_0__["showInfoMessage"])('Error', Object(_translator_js__WEBPACK_IMPORTED_MODULE_2__["translate"])('errunknown'), false);
-      }, 300);
+      if (textStatus !== 'abort') {
+        setTimeout(function () {
+          Object(_infomessage_js__WEBPACK_IMPORTED_MODULE_0__["showInfoMessage"])('Error', Object(_translator_js__WEBPACK_IMPORTED_MODULE_2__["translate"])('errunknown'), false);
+        }, 300);
+      }
     }
   });
 } ////PRIVATE FUNCTIONS
@@ -14674,6 +14704,7 @@ function ObtainOldData() {
   $(document).find('input[id^=datainput]').each(function () {
     var oldval = $(this).attr('data-oldVal');
     var query = $(this).val();
+    var previousdata = $(this).attr('data-previous-decs');
     var querysplit = $(this).attr('data-query-split');
     var PICOnum = $(this).attr('id').substr(-1);
     var fieldoldval = $('#FieldList' + PICOnum).attr('data-oldVal');
@@ -14681,13 +14712,13 @@ function ObtainOldData() {
     PICOData[PICOnum] = {
       'oldval': oldval,
       'query': query,
+      'previousdata': previousdata,
       'querysplit': querysplit,
       'fieldoldval': fieldoldval,
       'fieldselection': fieldselection
     };
   });
   var TmpCookieElement = $('#TmpCookieElement').val();
-  var cachetmp = $('#cachetmp').val();
   var TOSdata = [];
   $('#collapse5').find('.form-group').each(function () {
     if ($(this).find('input').first().is(':checked')) {
@@ -14698,7 +14729,6 @@ function ObtainOldData() {
   var RequestData = {
     PICOData: PICOData,
     TmpCookieElement: TmpCookieElement,
-    cachetmp: cachetmp,
     TOS: TOSdata
   };
   return RequestData;
@@ -14723,7 +14753,7 @@ __webpack_require__.r(__webpack_exports__);
  ////PUBLIC FUNCTIONS
 
 function ProcessResults() {
-  var PICOnum = $('#modal').find('#PICONumTag').val();
+  var PICOnum = $('#modal1').find('#PICONumTag').val();
   var ImproveSearchQuery = $('#modal3').find('textarea').val();
   eventQueryBuild(PICOnum, ImproveSearchQuery);
 } ////PRIVATE FUNCTIONS
@@ -14754,11 +14784,11 @@ function getSelectedDescriptors() {
 }
 
 function eventQueryBuild(PICOnum, ImproveSearchQuery) {
-  var url = "API/QueryBuild";
+  var url = "PICO/QueryBuild";
   var data = {
-    PICOnum: PICOnum,
+    PICOnum: parseInt(PICOnum),
     QuerySplit: getTmpQuerySplit(PICOnum),
-    results: Object(_commonsdecs_js__WEBPACK_IMPORTED_MODULE_0__["getPreviousResults"])(PICOnum),
+    DeCSResults: Object(_commonsdecs_js__WEBPACK_IMPORTED_MODULE_0__["getPreviousResults"])(PICOnum),
     SelectedDescriptors: getSelectedDescriptors(),
     ImproveSearchQuery: ImproveSearchQuery
   };
@@ -14844,25 +14874,39 @@ function getAllInputFields() {
 }
 
 function setResultsNumber(data, PICOnum) {
+  console.log('initialdata in resultsnumber');
+  console.log(data);
   var spanObj;
   Object(_hideshow_js__WEBPACK_IMPORTED_MODULE_6__["hideBootstrapObj"])($('#CalcRes' + PICOnum));
   Object(_changeseeker_js__WEBPACK_IMPORTED_MODULE_0__["setCalcResAsSyncAlt"])(PICOnum);
   var ResNumLocalObj = $('#ResNumLocal' + PICOnum);
   var ResNumGlobalObj = $('#ResNumGlobal' + PICOnum);
+  var localresultsnumber = data.local.ResultsNumber;
+  var localresultsurl = data.local.ResultsURL;
+  var globalresultsnumber = data.global.ResultsNumber;
+  var globalresultsurl = data.global.ResultsURL;
+  console.log('localresultsnumber');
+  console.log(localresultsnumber);
+  console.log('localresultsurl');
+  console.log(localresultsurl);
+  console.log('globalresultsnumber');
+  console.log(globalresultsnumber);
+  console.log('globalresultsurl');
+  console.log(globalresultsurl);
 
   if (PICOnum < 5) {
     spanObj = ResNumLocalObj.find('span').first();
     Object(_hideshow_js__WEBPACK_IMPORTED_MODULE_6__["showBootstrapObj"])(spanObj.parent());
     Object(_commonschange_js__WEBPACK_IMPORTED_MODULE_1__["RemoveReDoButton"])(spanObj);
 
-    if (data.local.resultsNumber === 0) {
+    if (localresultsnumber === 0) {
       addIconZeroResults(spanObj);
     } else {
-      $(spanObj).text(data.local.resultsNumber);
+      $(spanObj).text(localresultsnumber);
     }
 
-    $(spanObj).attr('data-oldval', data.local.resultsNumber);
-    ResNumLocalObj.attr("href", data.local.resultsURL);
+    $(spanObj).attr('data-oldval', localresultsnumber);
+    ResNumLocalObj.attr("href", localresultsurl);
   }
 
   if (PICOnum > 1 && PICOnum !== 5) {
@@ -14870,18 +14914,18 @@ function setResultsNumber(data, PICOnum) {
     Object(_hideshow_js__WEBPACK_IMPORTED_MODULE_6__["showBootstrapObj"])(spanObj.parent());
     Object(_commonschange_js__WEBPACK_IMPORTED_MODULE_1__["RemoveReDoButton"])(spanObj);
 
-    if (data.global.resultsNumber === 0) {
+    if (globalresultsnumber === 0) {
       addIconZeroResults(spanObj);
     } else {
-      $(spanObj).text(data.global.resultsNumber);
+      $(spanObj).text(globalresultsnumber);
 
       if (PICOnum === 6) {
         Object(_hideshow_js__WEBPACK_IMPORTED_MODULE_6__["showBootstrapObj"])(spanObj);
       }
     }
 
-    $(spanObj).attr('data-oldval', data.global.resultsNumber);
-    ResNumGlobalObj.attr("href", data.global.resultsURL);
+    $(spanObj).attr('data-oldval', globalresultsnumber);
+    ResNumGlobalObj.attr("href", globalresultsurl);
   }
 
   if (PICOnum === 6) {
@@ -14903,7 +14947,7 @@ function setResultsNumber(data, PICOnum) {
 }
 
 function eventResultsNumber(PICOnum, queryobject) {
-  var url = "API/ResultsNumber";
+  var url = "PICO/ResultsNumber";
   var data = {
     PICOnum: PICOnum,
     queryobject: queryobject

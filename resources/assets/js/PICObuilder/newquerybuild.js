@@ -4,7 +4,7 @@ import {POSTrequest} from "./loadingrequest.js";
 ////PUBLIC FUNCTIONS
 
 export function ProcessResults() {
-    let PICOnum = $('#modal').find('#PICONumTag').val();
+    let PICOnum = $('#modal1').find('#PICONumTag').val();
     let ImproveSearchQuery = $('#modal3').find('textarea').val();
     eventQueryBuild(PICOnum, ImproveSearchQuery);
 }
@@ -35,11 +35,11 @@ function getSelectedDescriptors() {
 }
 
 function eventQueryBuild(PICOnum, ImproveSearchQuery) {
-    let url = "API/QueryBuild";
+    let url = "PICO/QueryBuild";
     let data = {
-        PICOnum: PICOnum,
+        PICOnum:  parseInt(PICOnum),
         QuerySplit: getTmpQuerySplit(PICOnum),
-        results: getPreviousResults(PICOnum),
+        DeCSResults: getPreviousResults(PICOnum),
         SelectedDescriptors: getSelectedDescriptors(),
         ImproveSearchQuery: ImproveSearchQuery
     };

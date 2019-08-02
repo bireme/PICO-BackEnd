@@ -171,14 +171,16 @@ return [
         /*
          * Application Service Providers...
          */
+
+        PICOExplorer\Providers\AdvancedLoggerProvider::class,
         PICOExplorer\Providers\AppServiceProvider::class,
         PICOExplorer\Providers\AuthServiceProvider::class,
         // PICOExplorer\Providers\BroadcastServiceProvider::class,
         PICOExplorer\Providers\EventServiceProvider::class,
         PICOExplorer\Providers\RouteServiceProvider::class,
         Rap2hpoutre\LaravelLogViewer\LaravelLogViewerServiceProvider::class,
-        PICOExplorer\Providers\PICOServiceProvider::class,
         PICOExplorer\Providers\ResultsNumberIntegrationProvider::class,
+        PICOExplorer\Providers\QueryBuildServiceProvider::class,
         PICOExplorer\Providers\DeCSIntegrationProvider::class,
         PICOExplorer\Providers\ResultsNumberProvider::class,
         PICOExplorer\Providers\DeCSProvider::class,
@@ -236,15 +238,15 @@ return [
         'Throttle' => GrahamCampbell\Throttle\Facades\Throttle::class,
 
         //PICO Facades
-        'Timer' => PICOExplorer\Facades\Timer::class,
-        'ResultsNumberBIREME' => PICOExplorer\Facades\ResultsNumberBIREME::class,
-        'DeCSBIREME' => PICOExplorer\Facades\DeCSBIREME::class,
-        'ResultsNumberProcess' => PICOExplorer\Facades\ResultsNumberProcess::class,
-        'DeCSProcess' => PICOExplorer\Facades\DeCSProcess::class,
-        'QueryProcess' => PICOExplorer\Facades\QueryProcess::class,
-
-        //PICO Services
-        'DeCSQueryProcessor' => PICOExplorer\Services\DeCS\ControllerDeCSQueryProcessor::class,
+        'TimerServiceFacade' => PICOExplorer\Facades\TimerServiceFacade::class,
+        'ResultsNumberBIREMEFacade' => PICOExplorer\Facades\ResultsNumberBIREMEFacade::class,
+        'DeCSBIREMEFacade' => PICOExplorer\Facades\DeCSBIREMEFacade::class,
+        'ResultsNumberProcessFacade' => PICOExplorer\Facades\ResultsNumberProcessFacade::class,
+        'DeCSProcessFacade' => PICOExplorer\Facades\DeCSProcessFacade::class,
+        'QueryBuildFacade' => PICOExplorer\Facades\QueryBuildFacade::class,
+        'AdvancedLoggerFacade' => PICOExplorer\Facades\AdvancedLoggerFacade::class,
+        'WarningsHandlerFacade' => PICOExplorer\Facades\WarningsHandlerFacade::class,
+        'ExceptionLoggerFacade' => PICOExplorer\Facades\ExceptionLoggerFacade::class,
     ],
 
 ];

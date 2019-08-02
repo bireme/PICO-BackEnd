@@ -2,44 +2,28 @@
 
 namespace PICOExplorer\Services\ResultsNumberIntegration;
 
-use PICOExplorer\Exceptions\InternalErrors\ResultsItemDoesNotContainQueryURLAndNumber;
-use PICOExplorer\Exceptions\InternalErrors\ErrorWhileUpdatingTheModel;
+use PICOExplorer\Services\ServiceModels\PICOServiceEntryPoint;
 
-class ResultsNumberBIREME extends ExtractResultsNumberFromXML
+class ResultsNumberBIREME extends ResultsNumberImporter implements PICOServiceEntryPoint
 {
 
     final public function Process()
     {
         $results = array();
-        foreach ($this->model->ProcessedQueries as $key => $query) {
+        foreach ($this->model->InitialData as $key => $query) {
             $results[$key] = $this->Explore($query);
         }
-        $ex=$this->UpdateModel($results,false);
-        if($ex){
-            throw new ErrorWhileUpdatingTheModel(null,$ex);
-        }
-        parent::Process();
+        $this->setResults(__METHOD__ . '@' . get_class($this),$results);
     }
 
-    protected function Explore(string $queryString)
+    final public function Explore(string $queryString)
     {
-        $tmp = $this->ProxyResultsNumber($queryString);
-        $ResultsURL = $tmp['ResultsURL'];
-        $XML = $tmp['XML'];
-        $rules = [
-            'ResultsURL' => 'string|required|min:1',
-            'XML' => 'required',
+        $data = [
+            'output' => 'xml',
+            'count' => 20,
+            'q' => $queryString
         ];
-        $ex = $this->ValidateData($tmp, $rules);
-        if ($ex) {
-            throw new ResultsItemDoesNotContainQueryURLAndNumber(null, $ex);
-        }
-        $this->LoadXML($XML);
-        $resultsNumber = $this->getXMLResults(null);
-        return [
-            'query' => $queryString,
-            'ResultsNumber' => $resultsNumber,
-            'ResultsURL' => $ResultsURL,
-        ];
+        return $this->ImportResultsNumber($data);
     }
+
 }
