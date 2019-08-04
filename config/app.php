@@ -180,7 +180,6 @@ return [
         PICOExplorer\Providers\RouteServiceProvider::class,
         Rap2hpoutre\LaravelLogViewer\LaravelLogViewerServiceProvider::class,
         PICOExplorer\Providers\ResultsNumberIntegrationProvider::class,
-        PICOExplorer\Providers\QueryProcessorServiceProvider::class,
         PICOExplorer\Providers\QueryBuildServiceProvider::class,
         PICOExplorer\Providers\DeCSIntegrationProvider::class,
         PICOExplorer\Providers\ResultsNumberProvider::class,
@@ -245,9 +244,9 @@ return [
         'ResultsNumberProcessFacade' => PICOExplorer\Facades\ResultsNumberProcessFacade::class,
         'DeCSProcessFacade' => PICOExplorer\Facades\DeCSProcessFacade::class,
         'QueryBuildFacade' => PICOExplorer\Facades\QueryBuildFacade::class,
-        'QueryProcessFacade' => PICOExplorer\Facades\QueryProcessFacade::class,
         'AdvancedLoggerFacade' => PICOExplorer\Facades\AdvancedLoggerFacade::class,
         'WarningsHandlerFacade' => PICOExplorer\Facades\WarningsHandlerFacade::class,
+        'ExceptionLoggerFacade' => PICOExplorer\Facades\ExceptionLoggerFacade::class,
     ],
 
 ];

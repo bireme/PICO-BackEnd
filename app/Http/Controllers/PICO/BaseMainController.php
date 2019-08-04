@@ -11,6 +11,8 @@ use PICOExplorer\Exceptions\Exceptions\AppError\TheModelIsNull;
 use PICOExplorer\Exceptions\Exceptions\AppError\TheServiceIsNull;
 use PICOExplorer\Exceptions\Exceptions\AppError\TheServicelIsNotInstanceOfPICOServiceFacade;
 use PICOExplorer\Exceptions\Exceptions\ClientError\TheDataSentWasNotJSONEncoded;
+use PICOExplorer\Facades\AdvancedLoggerFacade;
+use PICOExplorer\Facades\ExceptionLoggerFacade;
 use PICOExplorer\Facades\PICOServiceFacade;
 use PICOExplorer\Http\Controllers\CustomController;
 use PICOExplorer\Models\MainModels\MainModelsModel;
@@ -30,7 +32,7 @@ abstract class BaseMainController extends CustomController
 
     public function index(Request $request)
     {
-        return $this->OperationHandler('index', $request);
+        return $this->OperationHandler('index', $request::getContent());
     }
 
     public function Info()
@@ -54,14 +56,11 @@ abstract class BaseMainController extends CustomController
         $res = null;
         $status = 500;
         try {
-            if ($operation !== 'Info') {
-                $data = $data->getContent();
-            }
             $res = $this->core($data);
             $status = 200;
             return $this->ResponseHandler($operation, $res, $status);
         } catch (Throwable $ex) {
-            return $this->HandleFinalException($ex, $operation, $res, $status);
+            return $this->HandleFinalException($ex, $operation, $res);
         }
     }
 
@@ -90,25 +89,30 @@ abstract class BaseMainController extends CustomController
         }
     }
 
+    protected function RenderFinalException(Throwable $ex, $data){
+        ExceptionLoggerFacade::ReportException($ex);
+    }
+
     protected function HandleFinalException(Throwable $ex, string $operation, $data)
     {
         $code = $ex->getCode();
         if ($code < 100) {
             $code = 500;
         }
+        $this->RenderFinalException($ex,$data);
         if ($operation !== 'Info') {
-            if ($code < 499) {
+            if ($code === 500) {
+                $title = 'Server Error';
+                $message = 'Internal Server Error';
+            } else {
                 $message = get_class($ex);
                 $title = 'Client Error';
                 $dbtext = $this->getTranslatedMessage($message, $ex instanceof CustomException);
                 if ($dbtext) {
                     $message = $message . PHP_EOL . $dbtext;
                 }
-            } else {
-                $title = 'Server Error';
-                $message = 'Internal Server Error';
             }
-            return Response::json(['Error' => ['title' => $title, 'message' => $message], 'Data' => $data], $code);
+            return Response::json(['Error' => $title.PHP_EOL.PHP_EOL.$message, 'Data' => $data], 200);
         } else {
             if ($code < 499) {
                 $title = 'Client Error';
@@ -120,7 +124,8 @@ abstract class BaseMainController extends CustomController
                 $title = 'Server Error';
                 $message = 'Internal Server Error';
             }
-            return $this->ErrorViewMaker($code, $title, $message);
+            $view = $this->ErrorViewMaker($code, $title, $message);
+            return $view;
         }
     }
 

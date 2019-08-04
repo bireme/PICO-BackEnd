@@ -3,6 +3,7 @@
 namespace PICOExplorer\Models\MainModels;
 
 use Jenssegers\Model\Model;
+use PICOExplorer\Facades\AdvancedLoggerFacade;
 use PICOExplorer\Services\AdvancedLogger\Traits\SpecialValidator;
 
 abstract class MainModelsModel extends Model
@@ -16,7 +17,9 @@ abstract class MainModelsModel extends Model
 
     protected $casts = [];
 
-    protected $attributes = [];
+    protected $attributes = [
+        'InitialData',
+    ];
 
     protected $guarded = ['*'];
 
@@ -30,12 +33,13 @@ abstract class MainModelsModel extends Model
 
     public function __construct()
     {
-        $this->AddToFillable($this->FillableVariables);
+        $this->AddToFillable($this->FillableAttributes());
         parent::__construct();
     }
 
     protected function AddToFillable(array $variables)
     {
+        $this->attributes = array_unique(array_merge($this->attributes, $variables));
         $this->fillable = array_unique(array_merge($this->fillable, $variables));
     }
 
@@ -70,7 +74,9 @@ abstract class MainModelsModel extends Model
 
     final public function UpdateModel(string $referer, array $data, array $ruleArr)
     {
+        AdvancedLoggerFacade::LogTest('UPDATE'.get_class($this).json_encode($data));
         $this->SpecialValidate($data,$ruleArr,$referer,get_class($this));
+        AdvancedLoggerFacade::LogTest('SUCESS'.get_class($this));
         $this->forceFill($data);
     }
 

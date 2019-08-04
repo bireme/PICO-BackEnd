@@ -16,12 +16,13 @@ abstract class PICOServiceModel extends CustomController
     protected $model;
     protected $responseRules;
 
-    public function Process(){}
+    abstract public function Process();
 
     final public function get(MainModelsModel $model, array $responseRules, $ParentTimer = null)
     {
         $this->responseRules=$responseRules;
-        $this->ControllerPerformanceStart($model->InitialData,$ParentTimer);
+        $InitialData = ['InitialData' =>$model->InitialData??null];
+        $this->ControllerPerformanceStart($InitialData,$ParentTimer);
         $this->model = $model;
         $wasSucess=false;
         try {

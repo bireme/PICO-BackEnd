@@ -27,7 +27,7 @@
             <?php if($PICOiterative<5): ?>
                 <?php echo $__env->make('partials.PICOelements.PICOelement',['PICOiterative'=>$PICOiterative,'FieldNames'=>$FieldNames,'olddata'=>$olddata], \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
             <?php else: ?>
-                <?php echo $__env->make('partials.PICOelements.PICOtypeofstudy',['PICOiterative'=>$PICOiterative,'TOS'=>$TOS,'olddata'=>$olddata,'cachetmp'=>$cachetmp, 'TmpCookieElement'=>$TmpCookieElement,'oldTOS'=>$oldTOS], \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
+                <?php echo $__env->make('partials.PICOelements.PICOtypeofstudy',['PICOiterative'=>$PICOiterative,'TOS'=>$TOS,'olddata'=>$olddata, 'TmpCookieElement'=>$TmpCookieElement,'oldTOS'=>$oldTOS], \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
             <?php endif; ?>
         </div>
 </div>

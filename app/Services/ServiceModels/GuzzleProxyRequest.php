@@ -37,13 +37,14 @@ abstract class GuzzleProxyRequest extends PICOServiceModel
         if ($options) {
             $settings = array_replace($options, $settings);
         }
-
+        $settings['baseURL']=$url;
         $result = null;
         try {
             $this->ConnectionTimer = $this->CreateConnectionTimer();
             $result = null;
             $client = new Client();
             $response = $client->request($RequestMethod, $url, $settings);
+            $settings['baseURL']=$url;
             $result = (string)$response->getBody();
             $this->ProxySummary($settings, $result);
         } catch (Exception $ex) {

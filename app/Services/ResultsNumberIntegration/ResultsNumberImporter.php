@@ -8,6 +8,7 @@ use PICOExplorer\Exceptions\Exceptions\AppError\DOMObjectNotFound;
 use PICOExplorer\Exceptions\Exceptions\AppError\XMLImportantElementNotFound;
 use PICOExplorer\Services\AdvancedLogger\Traits\SpecialValidator;
 use PICOExplorer\Services\ServiceModels\PICOServiceExternalImporter;
+use PICOExplorer\Services\ServiceModels\ExternalImporter;
 use Exception;
 
 abstract class ResultsNumberImporter extends ExternalImporter implements PICOServiceExternalImporter
@@ -21,7 +22,7 @@ abstract class ResultsNumberImporter extends ExternalImporter implements PICOSer
         $results = [];
         $results['ResultsNumber'] = $this->ImportData('POST', $data, $url, null, null, false, false);
         $results['query'] = $data['q'];
-        $results['ResultsURL'] = $url . http_build_query($data);
+        $results['ResultsURL'] = 'http://pesquisa.bvsalud.org/portal/?count=20&q='.$results['query'];
         $ImportedDataRules = [
             'ResultsURL' => 'string|required|min:1',
             'query' => 'string|required|min:1',

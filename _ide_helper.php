@@ -3,7 +3,7 @@
 
 /**
  * A helper file for Laravel 5, to provide autocomplete information to your IDE
- * Generated for Laravel 5.8.27 on 2019-07-25 23:45:25.
+ * Generated for Laravel 5.8.27 on 2019-07-31 15:58:32.
  *
  * This file should not be included in your code, only analyzed by your IDE!
  *
@@ -14622,8 +14622,6 @@ namespace PICOExplorer\Facades {
         /**
          * 
          *
-         * @param \PICOExplorer\Services\AdvancedLogger\Services\Timer|null $ParentTimer
-         * @return \PICOExplorer\Services\AdvancedLogger\Services\TimerService 
          * @static 
          */ 
         public static function build($controllername, $InitialData, $ParentTimer = null)
@@ -14751,11 +14749,11 @@ namespace PICOExplorer\Facades {
          *
          * @static 
          */ 
-        public static function getXMLResults($DOM)
+        public static function getXMLResults($DOMXpath, $XMLText)
         {
             //Method inherited from \PICOExplorer\Services\ResultsNumberIntegration\ResultsNumberImporter            
                         /** @var \PICOExplorer\Services\ResultsNumberIntegration\ResultsNumberBIREME $instance */
-                        return $instance->getXMLResults($DOM);
+                        return $instance->getXMLResults($DOMXpath, $XMLText);
         }
         
         /**
@@ -14765,7 +14763,7 @@ namespace PICOExplorer\Facades {
          */ 
         public static function ImportData($RequestMethod, $data, $url, $headers = null, $options = null, $sendAsJson = false, $ParseJSONReceived = false)
         {
-            //Method inherited from \PICOExplorer\Services\ResultsNumberIntegration\ExternalImporter            
+            //Method inherited from \PICOExplorer\Services\ServiceModels\ExternalImporter            
                         /** @var \PICOExplorer\Services\ResultsNumberIntegration\ResultsNumberBIREME $instance */
                         return $instance->ImportData($RequestMethod, $data, $url, $headers, $options, $sendAsJson, $ParseJSONReceived);
         }
@@ -14861,6 +14859,54 @@ namespace PICOExplorer\Facades {
         {
                         /** @var \PICOExplorer\Services\DeCSIntegration\DeCSBireme $instance */
                         return $instance->Process();
+        }
+        
+        /**
+         * 
+         *
+         * @static 
+         */ 
+        public static function ExploreTreeId($key, $IsMainTree, $langs = null)
+        {
+            //Method inherited from \PICOExplorer\Services\DeCSIntegration\DeCSExplorer            
+                        /** @var \PICOExplorer\Services\DeCSIntegration\DeCSBireme $instance */
+                        return $instance->ExploreTreeId($key, $IsMainTree, $langs);
+        }
+        
+        /**
+         * 
+         *
+         * @static 
+         */ 
+        public static function ImportDeCS($data)
+        {
+            //Method inherited from \PICOExplorer\Services\DeCSIntegration\DeCSImporter            
+                        /** @var \PICOExplorer\Services\DeCSIntegration\DeCSBireme $instance */
+                        return $instance->ImportDeCS($data);
+        }
+        
+        /**
+         * 
+         *
+         * @static 
+         */ 
+        public static function getXMLResults($DOMXpath, $XMLText)
+        {
+            //Method inherited from \PICOExplorer\Services\DeCSIntegration\DeCSImporter            
+                        /** @var \PICOExplorer\Services\DeCSIntegration\DeCSBireme $instance */
+                        return $instance->getXMLResults($DOMXpath, $XMLText);
+        }
+        
+        /**
+         * 
+         *
+         * @static 
+         */ 
+        public static function ImportData($RequestMethod, $data, $url, $headers = null, $options = null, $sendAsJson = false, $ParseJSONReceived = false)
+        {
+            //Method inherited from \PICOExplorer\Services\ServiceModels\ExternalImporter            
+                        /** @var \PICOExplorer\Services\DeCSIntegration\DeCSBireme $instance */
+                        return $instance->ImportData($RequestMethod, $data, $url, $headers, $options, $sendAsJson, $ParseJSONReceived);
         }
         
         /**
@@ -14975,7 +15021,7 @@ namespace PICOExplorer\Facades {
          */ 
         public static function PICOIntegration($data, $IntegrationController)
         {
-            //Method inherited from \PICOExplorer\Services\ResultsNumber\PICOIntegrationModel            
+            //Method inherited from \PICOExplorer\Services\ServiceModels\PICOIntegrationModel            
                         /** @var \PICOExplorer\Services\ResultsNumber\ResultsNumberProcess $instance */
                         return $instance->PICOIntegration($data, $IntegrationController);
         }
@@ -15078,6 +15124,30 @@ namespace PICOExplorer\Facades {
          *
          * @static 
          */ 
+        public static function ConnectToIntegration($UntitledData)
+        {
+            //Method inherited from \PICOExplorer\Services\DeCS\DeCSInternalConnector            
+                        /** @var \PICOExplorer\Services\DeCS\DeCSProcess $instance */
+                        return $instance->ConnectToIntegration($UntitledData);
+        }
+        
+        /**
+         * 
+         *
+         * @static 
+         */ 
+        public static function PICOIntegration($data, $IntegrationController)
+        {
+            //Method inherited from \PICOExplorer\Services\ServiceModels\PICOIntegrationModel            
+                        /** @var \PICOExplorer\Services\DeCS\DeCSProcess $instance */
+                        return $instance->PICOIntegration($data, $IntegrationController);
+        }
+        
+        /**
+         * 
+         *
+         * @static 
+         */ 
         public static function get($model, $responseRules, $ParentTimer = null)
         {
             //Method inherited from \PICOExplorer\Services\ServiceModels\PICOServiceModel            
@@ -15144,6 +15214,17 @@ namespace PICOExplorer\Facades {
             //Method inherited from \PICOExplorer\Http\Controllers\CustomController            
                         /** @var \PICOExplorer\Services\DeCS\DeCSProcess $instance */
                         return $instance->getGlobalTimer();
+        }
+        
+        /**
+         * 
+         *
+         * @static 
+         */ 
+        public static function FixEquation($Equation)
+        {
+                        /** @var \PICOExplorer\Services\DeCS\DeCSProcess $instance */
+                        return $instance->FixEquation($Equation);
         }
          
     }
@@ -15236,99 +15317,6 @@ namespace PICOExplorer\Facades {
         {
             //Method inherited from \PICOExplorer\Http\Controllers\CustomController            
                         /** @var \PICOExplorer\Services\QueryBuild\QueryBuildProcess $instance */
-                        return $instance->getGlobalTimer();
-        }
-         
-    }
-
-    /**
-     * Class ResultsNumberBIREMEFacade
-     *
-     * @package PICOExplorer\Services\BIREMEImporter
-     */ 
-    class QueryProcessFacade {
-        
-        /**
-         * 
-         *
-         * @static 
-         */ 
-        public static function Process()
-        {
-                        /** @var \PICOExplorer\Services\QueryProcessor\QueryProcess $instance */
-                        return $instance->Process();
-        }
-        
-        /**
-         * 
-         *
-         * @static 
-         */ 
-        public static function get($model, $responseRules, $ParentTimer = null)
-        {
-            //Method inherited from \PICOExplorer\Services\ServiceModels\PICOServiceModel            
-                        /** @var \PICOExplorer\Services\QueryProcessor\QueryProcess $instance */
-                        return $instance->get($model, $responseRules, $ParentTimer);
-        }
-        
-        /**
-         * 
-         *
-         * @static 
-         */ 
-        public static function ControllerPerformanceStart($InitialData, $ParentTimer = null)
-        {
-            //Method inherited from \PICOExplorer\Http\Controllers\CustomController            
-                        /** @var \PICOExplorer\Services\QueryProcessor\QueryProcess $instance */
-                        return $instance->ControllerPerformanceStart($InitialData, $ParentTimer);
-        }
-        
-        /**
-         * 
-         *
-         * @static 
-         */ 
-        public static function CreateConnectionTimer()
-        {
-            //Method inherited from \PICOExplorer\Http\Controllers\CustomController            
-                        /** @var \PICOExplorer\Services\QueryProcessor\QueryProcess $instance */
-                        return $instance->CreateConnectionTimer();
-        }
-        
-        /**
-         * 
-         *
-         * @static 
-         */ 
-        public static function AddParentTimerService($timer)
-        {
-            //Method inherited from \PICOExplorer\Http\Controllers\CustomController            
-                        /** @var \PICOExplorer\Services\QueryProcessor\QueryProcess $instance */
-                        return $instance->AddParentTimerService($timer);
-        }
-        
-        /**
-         * 
-         *
-         * @static 
-         */ 
-        public static function ControllerSummary($results, $wasSucess)
-        {
-            //Method inherited from \PICOExplorer\Http\Controllers\CustomController            
-                        /** @var \PICOExplorer\Services\QueryProcessor\QueryProcess $instance */
-                        return $instance->ControllerSummary($results, $wasSucess);
-        }
-        
-        /**
-         * 
-         *
-         * @return \PICOExplorer\Http\Controllers\Timer 
-         * @static 
-         */ 
-        public static function getGlobalTimer()
-        {
-            //Method inherited from \PICOExplorer\Http\Controllers\CustomController            
-                        /** @var \PICOExplorer\Services\QueryProcessor\QueryProcess $instance */
                         return $instance->getGlobalTimer();
         }
          
@@ -15543,6 +15531,121 @@ namespace PICOExplorer\Facades {
             //Method inherited from \PICOExplorer\Services\AdvancedLogger\Processors\BaseLoggers            
                         /** @var \PICOExplorer\Services\AdvancedLogger\Exceptions\Handlers\WarningsHandler $instance */
                         return $instance->SimpleLog($channel, $level, $title, $info, $data, $StackTrace);
+        }
+         
+    }
+
+    /**
+     * Class ResultsNumberBIREMEFacade
+     *
+     * @package PICOExplorer\Services\BIREMEImporter
+     */ 
+    class ExceptionLoggerFacade {
+        
+        /**
+         * 
+         *
+         * @static 
+         */ 
+        public static function ClientData()
+        {
+            //Method inherited from \PICOExplorer\Services\AdvancedLogger\AdvancedLogger            
+                        /** @var \PICOExplorer\Services\AdvancedLogger\Services\ExceptionLogger $instance */
+                        return $instance->ClientData();
+        }
+        
+        /**
+         * 
+         *
+         * @static 
+         */ 
+        public static function DataTester($title, $data)
+        {
+            //Method inherited from \PICOExplorer\Services\AdvancedLogger\AdvancedLogger            
+                        /** @var \PICOExplorer\Services\AdvancedLogger\Services\ExceptionLogger $instance */
+                        return $instance->DataTester($title, $data);
+        }
+        
+        /**
+         * 
+         *
+         * @static 
+         */ 
+        public static function LogConnectionInfo()
+        {
+            //Method inherited from \PICOExplorer\Services\AdvancedLogger\AdvancedLogger            
+                        /** @var \PICOExplorer\Services\AdvancedLogger\Services\ExceptionLogger $instance */
+                        return $instance->LogConnectionInfo();
+        }
+        
+        /**
+         * 
+         *
+         * @static 
+         */ 
+        public static function LogTest($info)
+        {
+            //Method inherited from \PICOExplorer\Services\AdvancedLogger\AdvancedLogger            
+                        /** @var \PICOExplorer\Services\AdvancedLogger\Services\ExceptionLogger $instance */
+                        return $instance->LogTest($info);
+        }
+        
+        /**
+         * 
+         *
+         * @static 
+         */ 
+        public static function AdvancedLog($channel, $level, $MainData)
+        {
+            //Method inherited from \PICOExplorer\Services\AdvancedLogger\AdvancedLogger            
+                        /** @var \PICOExplorer\Services\AdvancedLogger\Services\ExceptionLogger $instance */
+                        return $instance->AdvancedLog($channel, $level, $MainData);
+        }
+        
+        /**
+         * 
+         *
+         * @static 
+         */ 
+        public static function AuxiliarLog($exception, $channel, $level, $isLogException, $MainData = null)
+        {
+            //Method inherited from \PICOExplorer\Services\AdvancedLogger\AdvancedLogger            
+                        /** @var \PICOExplorer\Services\AdvancedLogger\Services\ExceptionLogger $instance */
+                        return $instance->AuxiliarLog($exception, $channel, $level, $isLogException, $MainData);
+        }
+        
+        /**
+         * 
+         *
+         * @static 
+         */ 
+        public static function SimpleLog($channel, $level, $title, $info = null, $data = null, $StackTrace = null)
+        {
+            //Method inherited from \PICOExplorer\Services\AdvancedLogger\Processors\BaseLoggers            
+                        /** @var \PICOExplorer\Services\AdvancedLogger\Services\ExceptionLogger $instance */
+                        return $instance->SimpleLog($channel, $level, $title, $info, $data, $StackTrace);
+        }
+        
+        /**
+         * 
+         *
+         * @static 
+         */ 
+        public static function ReportException($ex)
+        {
+                        /** @var \PICOExplorer\Services\AdvancedLogger\Services\ExceptionLogger $instance */
+                        return $instance->ReportException($ex);
+        }
+        
+        /**
+         * 
+         *
+         * @static 
+         */ 
+        public static function ExceptionLogBuilder($exception, $channel, $level)
+        {
+                        /** @var \PICOExplorer\Services\AdvancedLogger\Services\ExceptionLogger $instance */
+                        return $instance->ExceptionLogBuilder($exception, $channel, $level);
         }
          
     }
@@ -18344,11 +18447,11 @@ namespace  {
 
     class QueryBuildFacade extends \PICOExplorer\Facades\QueryBuildFacade {}
 
-    class QueryProcessFacade extends \PICOExplorer\Facades\QueryProcessFacade {}
-
     class AdvancedLoggerFacade extends \PICOExplorer\Facades\AdvancedLoggerFacade {}
 
     class WarningsHandlerFacade extends \PICOExplorer\Facades\WarningsHandlerFacade {}
+
+    class ExceptionLoggerFacade extends \PICOExplorer\Facades\ExceptionLoggerFacade {}
  
 }
 

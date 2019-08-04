@@ -39,6 +39,7 @@ function ObtainOldData() {
     $(document).find('input[id^=datainput]').each(function () {
         let oldval = $(this).attr('data-oldVal');
         let query = $(this).val();
+        let previousdata = $(this).attr('data-previous-decs');
         let querysplit = $(this).attr('data-query-split');
         let PICOnum = ($(this).attr('id')).substr(-1);
         let fieldoldval = $('#FieldList'+PICOnum).attr('data-oldVal');
@@ -46,6 +47,7 @@ function ObtainOldData() {
         PICOData[PICOnum] = {
             'oldval': oldval,
             'query': query,
+            'previousdata':previousdata,
             'querysplit': querysplit,
             'fieldoldval': fieldoldval,
             'fieldselection': fieldselection
@@ -53,7 +55,6 @@ function ObtainOldData() {
     });
 
     let TmpCookieElement = $('#TmpCookieElement').val();
-    let cachetmp = $('#cachetmp').val();
     let TOSdata = [];
     $('#collapse5').find('.form-group').each(function () {
         if ($(this).find('input').first().is(':checked')) {
@@ -64,7 +65,6 @@ function ObtainOldData() {
     let RequestData = {
         PICOData: PICOData,
         TmpCookieElement: TmpCookieElement,
-        cachetmp: cachetmp,
         TOS: TOSdata
     };
     return RequestData;

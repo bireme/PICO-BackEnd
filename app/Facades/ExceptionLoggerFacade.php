@@ -2,15 +2,17 @@
 
 namespace PICOExplorer\Facades;
 
+use Illuminate\Support\Facades\Facade;
+
 /**
  * Class ResultsNumberBIREMEFacade
  * @package PICOExplorer\Services\BIREMEImporter
  */
-class QueryProcessFacade extends PICOServiceFacade
+class ExceptionLoggerFacade extends Facade
 {
     protected static function getFacadeAccessor()
     {
-        return 'queryprocess'; // the IoC binding.
+        return 'exceptionlogger'; // the IoC binding.
     }
 
 }

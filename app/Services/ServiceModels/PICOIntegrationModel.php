@@ -1,6 +1,6 @@
 <?php
 
-namespace PICOExplorer\Services\ResultsNumber;
+namespace PICOExplorer\Services\ServiceModels;
 
 use PICOExplorer\Exceptions\Exceptions\AppError\PICOIntegrationReturnedNull;
 use PICOExplorer\Http\Controllers\PICO\MainControllerInterface;

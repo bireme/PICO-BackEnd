@@ -27,14 +27,23 @@ export function initEvents() {
         OnExpandDeCS($(this));
         UnBlockButton($(this));
     });
-    $('#modal').find('.btn-primary').click(function () {
+    $('#modal1').find('.btn-primary').click(function () {
         BlockButton($(this));
         HideUnselectedDeCS();
+        $('#closemodal1').click();
+        $('#modal2').modal('show');
+        UnBlockButton($(this));
+    });
+    $('#modal2').find('.btn-primary').click(function () {
+        BlockButton($(this));
+        $('#closemodal2').click();
+        $('#modal3').modal('show');
         UnBlockButton($(this));
     });
     $('#modal3').find('.btn-primary').click(function () {
         BlockButton($(this));
         ProcessResults();
+        $('#closemodal3').click();
         UnBlockButton($(this));
     });
     $(document).find('button[id^=CalcRes]').click(function () {

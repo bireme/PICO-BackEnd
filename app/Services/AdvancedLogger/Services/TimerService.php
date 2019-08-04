@@ -6,8 +6,6 @@ use PICOExplorer\Facades\AdvancedLoggerFacade;
 
 class TimerService
 {
-
-
     /**
      * @var Timer
      */
@@ -33,24 +31,18 @@ class TimerService
     protected $finished;
 
 
-    /**
-     * @param Timer|null $ParentTimer
-     * @return $this
-     */
+
     public function build(string $controllername,array $InitialData,Timer $ParentTimer = null)
     {
-        AdvancedLoggerFacade::LogTest('starttimerservice1');
         $title = 'Starting '.$controllername;
         $MainData = ['title' => $title,
             'info' => null,
             'data' => $InitialData,
             'stack' => null,
         ];
-        AdvancedLoggerFacade::LogTest('starttimerservice2');
         AdvancedLoggerFacade::AdvancedLog('Operations', 'info', $MainData);
         $this->ParentTimer = $ParentTimer;
         $this->OperationTimer = new Timer();
-        AdvancedLoggerFacade::LogTest('starttimerservice3');
         return $this;
     }
 

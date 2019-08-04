@@ -5,6 +5,7 @@ namespace PICOExplorer\Providers;
 use Illuminate\Support\ServiceProvider;
 use PICOExplorer\Services\AdvancedLogger\AdvancedLogger;
 use PICOExplorer\Services\AdvancedLogger\Exceptions\Handlers\WarningsHandler;
+use PICOExplorer\Services\AdvancedLogger\Services\ExceptionLogger;
 use PICOExplorer\Services\AdvancedLogger\Services\TimerService;
 
 class AdvancedLoggerProvider extends ServiceProvider
@@ -24,6 +25,9 @@ class AdvancedLoggerProvider extends ServiceProvider
         });
         $this->app->bind('timerservice', function () {
             return new TimerService();
+        });
+        $this->app->bind('exceptionlogger', function () {
+            return new ExceptionLogger();
         });
     }
 

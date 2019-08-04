@@ -8,7 +8,27 @@ class QueryBuildModel extends MainModelsModel
     {
         return [
             'ProcessedQueries',
+            'QuerySplit',
+            'results',
+            'SelectedDescriptors',
+            'ImproveSearchQuery',
+            'newQuery',
         ];
+    }
+
+    public function getAttributequerySplit($value)
+    {
+        return $value;
+    }
+
+    public function getAttributeSelectedDescriptors($value)
+    {
+        return $value;
+    }
+
+    public function getAttributeImproveSearchQuery($value)
+    {
+        return $value;
     }
 
 }

@@ -1,6 +1,6 @@
 <?php
 
-namespace PICOExplorer\Services\ResultsNumberIntegration;
+namespace PICOExplorer\Services\ServiceModels;
 
 use DOMDocument;
 use Exception;
@@ -8,7 +8,6 @@ use DOMXPath;
 use PICOExplorer\Exceptions\Exceptions\AppError\XMLDOMLoadingError;
 use PICOExplorer\Exceptions\Exceptions\AppError\XMLDOMXPathError;
 use PICOExplorer\Exceptions\Exceptions\AppError\XMLProcessingError;
-use PICOExplorer\Services\ServiceModels\GuzzleProxyRequest;
 
 abstract class ExternalImporter extends GuzzleProxyRequest
 {

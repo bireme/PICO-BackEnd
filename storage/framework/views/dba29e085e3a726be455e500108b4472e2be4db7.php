@@ -1,7 +1,7 @@
 <div class="card-body">
     <div class="row">
         <div class="col-md-8 margin2M">
-            <input type="text" id="datainput<?php echo e($PICOiterative); ?>" data-query-split="<?php echo e((!!($olddata) ? $olddata['querysplit'] : '')); ?>"
+            <input type="text" id="datainput<?php echo e($PICOiterative); ?>" data-previous-decs="<?php echo e((!!($olddata) ? $olddata['previousdata'] : '')); ?>" data-query-split="<?php echo e((!!($olddata) ? $olddata['querysplit'] : '')); ?>"
                    data-oldVal="<?php echo e((!!($olddata) ? $olddata['oldval'] : '')); ?>"
                    class="form-control" placeholder="<?php echo e(__('lang.pico_ex'.$PICOiterative)); ?>"
                    value="<?php echo e((!!($olddata) ? $olddata['query'] : '')); ?>" />
