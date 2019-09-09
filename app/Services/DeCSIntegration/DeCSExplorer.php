@@ -28,7 +28,7 @@ abstract class DeCSExplorer extends DeCSImporter
     private function ExploreTreeIdByLang(string $key, array $langs = NULL)
     {
         if (!(isset($langs))) {
-            $langs = $this->model->InitialData['langs'];
+            $langs = $this->DTO->getInitialData()['langs'];
         }
         foreach ($langs as $lang) {
             $this->Explore($key, $lang, false);

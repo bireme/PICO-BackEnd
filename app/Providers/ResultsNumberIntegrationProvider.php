@@ -14,7 +14,7 @@ class ResultsNumberIntegrationProvider extends ServiceProvider
      */
     public function register()
     {
-        $this->app->singleton('resultsnumberbireme', function () {
+        $this->app->bind('resultsnumberbireme', function () {
             return new ResultsNumberBIREME();
         });
     }

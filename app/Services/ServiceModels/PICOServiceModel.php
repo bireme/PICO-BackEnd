@@ -3,34 +3,35 @@
 namespace PICOExplorer\Services\ServiceModels;
 
 use PICOExplorer\Exceptions\Exceptions\AppError\ServiceResultsIsNull;
-use PICOExplorer\Http\Controllers\CustomController;
-use PICOExplorer\Models\MainModels\MainModelsModel;
+use SVPerformance;
+use PICOExplorer\Models\DataTransferObject;
 use PICOExplorer\Services\AdvancedLogger\Exceptions\DontCatchException;
 
-abstract class PICOServiceModel extends CustomController
+abstract class PICOServiceModel
 {
 
     /**
-     * @var MainModelsModel
+     * @var DataTransferObject
      */
-    protected $model;
-    protected $responseRules;
+    protected $DTO;
 
-    abstract public function Process();
+    protected $ServicePerformance;
 
-    final public function get(MainModelsModel $model, array $responseRules, $ParentTimer = null)
+    abstract protected function Process();
+
+    final public function get(DataTransferObject $DTO)
     {
-        $this->responseRules=$responseRules;
-        $InitialData = ['InitialData' =>$model->InitialData??null];
-        $this->ControllerPerformanceStart($InitialData,$ParentTimer);
-        $this->model = $model;
-        $wasSucess=false;
+        $this->DTO = $DTO;
+        $this->ServicePerformance = new SVPerformance();
+        $this->ServicePerformance->ServicePerformanceStart($this->DTO,get_class($this));
+        $wasSuccess=false;
         try {
-            $this->Process();
-            $wasSucess=true;
+            $results = $this->Process();
+            $this->setResults(get_class($this),$results);
+            $wasSuccess=true;
         } catch (DontCatchException $ex) {
         } finally {
-            $this->ControllerSummary($model->results,$wasSucess);
+            $this->ServicePerformance->ServicePerformanceSummary($wasSuccess);
         }
     }
 
@@ -39,13 +40,7 @@ abstract class PICOServiceModel extends CustomController
         if (!($data)) {
             throw new ServiceResultsIsNull(['referer'=>$referer]);
         }
-
-        $this->model->setResults(get_class($this) . ':' . $referer, $data, $this->responseRules);
-    }
-
-    protected function UpdateModel(string $referer, array $data, array $rules)
-    {
-        $this->model->UpdateModel(get_class($this) . ':' . $referer, $data, $rules);
+        $this->DTO->setResults(get_class($this),$data,'main');
     }
 
 }

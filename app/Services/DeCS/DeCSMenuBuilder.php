@@ -154,7 +154,7 @@ abstract class DeCSMenuBuilder extends DeCSInfoProcessor
     private function BuildDescriptorsHTML(array $results)
     {
         $this->HTMLaddLine(0, '<form action="">');
-        $PICOnum=$this->model->InitialData['PICOnum'];
+        $PICOnum=$this->DTO->getInitialData()['PICOnum'];
         $this->BuildDescriptorsHTMLTabs($results, $PICOnum);
         $this->BuildDescriptorsHTMLContent($results);
         $this->HTMLaddLine(0, '</form>');

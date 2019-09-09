@@ -17,12 +17,12 @@ class QueryBuildProcess extends QueryBuildBase implements PICOServiceEntryPoint
 
     final public function Process()
     {
-        $InitialData = $this->model->InitialData;
+        $InitialData = $this->DTO->getInitialData();
         if ($InitialData['QuerySplit'] ?? null) {
             try {
                 $decodedPrevious = json_decode($InitialData['QuerySplit'], true);
                 $InitialData['QuerySplit'] = $decodedPrevious;
-                $this->model->setAttribute('InitialData', $InitialData);
+                $this->DTO->SaveToModel(get_class($this),['InitialData', $InitialData]);
             } catch (Throwable $ex) {
                 throw new QuerySplitCouldNotBeDecoded(['QuerySplit' => json_encode($InitialData['QuerySplit'])], $ex);
             }
@@ -34,7 +34,7 @@ class QueryBuildProcess extends QueryBuildBase implements PICOServiceEntryPoint
             try {
                 $decodedPrevious = json_decode($InitialData['DeCSResults'], true);
                 $InitialData['DeCSResults'] = $decodedPrevious;
-                $this->model->setAttribute('InitialData', $InitialData);
+                $this->DTO->SaveToModel(get_class($this),['InitialData', $InitialData]);
             } catch (Throwable $ex) {
                 throw new QueryResultsCouldNotBeDecoded(['DeCSResults' => json_encode($InitialData['DeCSResults'])], $ex);
             }
@@ -48,9 +48,9 @@ class QueryBuildProcess extends QueryBuildBase implements PICOServiceEntryPoint
     protected function Explore()
     {
         $baseEquation = $this->buildBaseEquation();
-        $ProcessedImprovedSearchQuery = $this->ProcessQuery($this->model->InitialData['ImproveSearchQuery']);
+        $ProcessedImprovedSearchQuery = $this->ProcessQuery($this->DTO->getInitialData()['ImproveSearchQuery']);
         $ImprovedEquation = $this->ImproveBasicEquation($baseEquation, $ProcessedImprovedSearchQuery);
-        $this->setResults(__METHOD__ . '@' . get_class($this), ['newQuery'=>$ImprovedEquation]);
+        $this->setResults(['newQuery'=>$ImprovedEquation]);
     }
 
 }

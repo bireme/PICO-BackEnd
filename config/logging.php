@@ -45,7 +45,18 @@ return [
             'level' => 'debug',
             'days' => 1204,
         ],
-
+        'Performance' => [
+            'driver' => 'daily',
+            'path' => storage_path('logs/Performance/Performance.log'),
+            'level' => 'info',
+            'days' => 1204,
+        ],
+        'DTO' => [
+            'driver' => 'daily',
+            'path' => storage_path('logs/DTO/DTO.log'),
+            'level' => 'info',
+            'days' => 1204,
+        ],
         'AppDebug' => [
             'driver' => 'daily',
             'path' => storage_path('logs/AppDebug/AppDebug.log'),
@@ -67,25 +78,18 @@ return [
             'days' => 7,
         ],
 
-        'Connections' => [
+        'Connections-In' => [
             'driver' => 'daily',
-            'path' => storage_path('logs/Connections/Connections.log'),
+            'path' => storage_path('logs/Connections-In/Connections-In.log'),
             'level' => 'debug',
             'days' => 1204,
         ],
 
-        'Performance' => [
+        'Connections-Out' => [
             'driver' => 'daily',
-            'path' => storage_path('logs/Performance/Performance.log'),
+            'path' => storage_path('logs/Connections-Out/Connections-Out.log'),
             'level' => 'debug',
-            'days' => 90,
-        ],
-
-        'Operations' => [
-            'driver' => 'daily',
-            'path' => storage_path('logs/Operations/Operations.log'),
-            'level' => 'debug',
-            'days' => 3,
+            'days' => 1204,
         ],
 
         'Console' => [

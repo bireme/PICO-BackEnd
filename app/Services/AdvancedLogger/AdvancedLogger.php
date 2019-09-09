@@ -23,26 +23,41 @@ class AdvancedLogger extends BaseLoggers
         return $data;
     }
 
-    public function DataTester($title,$data){
-        $this->SimpleLog('Operations', 'warning', $title, null, ['TestData' => $data], null);
+    public function DataTester($title, $data)
+    {
+        $this->SimpleLog('Emergency', 'info', $title, null, ['TestData' => $data], null);
     }
 
     public function LogConnectionInfo()
     {
         $ClientInfo = $this->ClientData();
+        $Conntitle = $ClientInfo['ip'] .' - '. $ClientInfo['url'];
+        $this->SimpleLog('Connections-In', 'info', $Conntitle, null, $ClientInfo, null);
+    }
 
-        $Conntitle = $ClientInfo['ip'];
-        $Coninfo = 'url: ' . $ClientInfo['url'];
-        $dataArray = [
-            'Request' => [
-                'ip' => $ClientInfo['ip'],
-                'headers' => $ClientInfo['headers'],
-            ],
-            'content' => $ClientInfo['content'],
+    public function ExternalConnectionInfo(bool $wasSuccess,string $url, int $attempts,int $time,array $settings,string $log)
+    {
+        $Conntitle = '['.$time.' ms]';
+        if($wasSuccess){
+            $Conntitle=$Conntitle.' - Success ['.$attempts.' tries] - ';
+            $level='info';
+            if($attempts>1 || $time>300){
+                $level='warning';
+            }
+        }else{
+            $Conntitle=$Conntitle.' - Failure ['.$attempts.' tries] - ';
+            $level='error';
+        }
+        $Conntitle=$Conntitle.$url;
+        $connectionData=[
+            'success'=>$wasSuccess,
+            'url'=>$url,
+            'time'=>$time,
+            'log'=>$log,
+            'settings'=>$settings,
+            'attempts'=>$attempts,
         ];
-
-        $this->SimpleLog('Connections', 'info', $Conntitle, $Coninfo, null, null);
-        $this->SimpleLog('Operations', 'info', $ClientInfo['url'], null, $dataArray, null);
+        $this->SimpleLog('Connections-Out', $level, $Conntitle, null, $connectionData, null);
     }
 
     public function LogTest($info)

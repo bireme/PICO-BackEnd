@@ -3,31 +3,27 @@
 
 namespace PICOExplorer\Http\Controllers\PICO;
 
-use PICOExplorer\Models\MainModels\MainModelsModel;
+use PICOExplorer\Facades\PICOServiceFacade;
+use PICOExplorer\Models\MainModelsModel;
+use Request;
 
 interface MainControllerInterface
 {
 
     /**
-     * @return array
+     * @return PICOServiceFacade
      */
-    public static function requestRules();
+    public function ServiceBind();
+
+    public function index(Request $request);
+
+    public function outerBind(array $data);
+
+    public function info();
 
     /**
      * @return MainModelsModel
      */
-    public static function responseRules();
-
-    /**
-     * @return MainModelsModel
-     */
-    public function create();
-
-    public function core(string $JSONEncodedData);
-
-    /**
-     * @return array
-     */
-    public function TestData();
+    public function getMainModel();
 
 }

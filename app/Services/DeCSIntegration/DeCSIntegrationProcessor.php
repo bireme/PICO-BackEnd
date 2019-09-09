@@ -2,15 +2,12 @@
 
 namespace PICOExplorer\Services\DeCSIntegration;
 
-use PICOExplorer\Services\AdvancedLogger\Traits\SpecialValidator;
 use PICOExplorer\Services\ServiceModels\ExternalImporter;
 
 abstract class DeCSIntegrationProcessor extends ExternalImporter
 {
 
     protected $attributes = [];
-
-    use SpecialValidator;
 
     protected function ProcessImportResults(array $TmpResults, string $lang, bool $IsMainTree, string $referer)
     {
@@ -25,10 +22,10 @@ abstract class DeCSIntegrationProcessor extends ExternalImporter
             $descendants = $TmpResultsData['descendants'] ?? [];
             $decs = $this->RemoveCommasFromDeCS($TmpResultsData['decs']);
 
-            if ($IsMainTree === true && (count($this->model->MainTreeList) >= $this->attributes['MaxTreesPerKeyword'])) {
+            if ($IsMainTree === true && (count($this->DTO->getAttr('MainTreeList')) >= $this->attributes['MaxTreesPerKeyword'])) {
                 continue;
             }
-            $this->model->TreeManager($tree_id, $lang, $term, $decs, $referer, $IsMainTree);
+            $this->DTO->innerfun('TreeManager',[$tree_id, $lang, $term, $decs, $referer, $IsMainTree]);
             array_push($ExploredTreeIds, $tree_id);
             array_push($ExploredTreeIds, $tree_id);
             $this->ProcessDescendants($tree_id, $descendants, $IsMainTree, $finaldescendants);
@@ -51,21 +48,21 @@ abstract class DeCSIntegrationProcessor extends ExternalImporter
         $descendants = array_slice($descendants, 0, $this->attributes['MaxDirectDescendantsPerTrees'], true);
         $finaldescendants = array_unique(array_merge($finaldescendants, $descendants));
         if (count($descendants) > 0) {
-            $this->model->TreeDescendants($tree_id, $descendants);
+            $this->DTO->innerfun('TreeDescendants',[$tree_id, $descendants]);
         }
     }
 
     private function getTreeIdLevelIntoTreesArray($tree_id)
     {
         $result = 999;
-        $this->model->FindTreeIdLevelIntoTreesArray($this->model->MainTreeList, $tree_id, 0, $result);
+        $this->DTO->innerfun('FindTreeIdLevelIntoTreesArray',[$this->DTO->innerfun('MainTreeList', [$tree_id, 0, $result])]);
         return $result;
     }
 
     private function updateTreesToExplore(array $relatedtrees, array $ExploredTreeIds, array $descendants)
     {
         $this->processExplored($ExploredTreeIds);
-        $oldTrees = array_merge($this->model->ExploredTrees, $this->model->PendingDescendants, $this->model->PendingMainTrees);
+        $oldTrees = array_merge($this->DTO->getAttr('ExploredTrees'), $this->DTO->getAttr('PendingDescendants'), $this->DTO->getAttr('PendingMainTrees'));
 
         $relatedtrees = array_unique($relatedtrees);
         $relatedtrees = array_diff($relatedtrees, $oldTrees);
@@ -73,23 +70,23 @@ abstract class DeCSIntegrationProcessor extends ExternalImporter
         $descendants = array_diff($descendants, $oldTrees);
 
         if (count($relatedtrees) > 0) {
-            $AbleToAdd = $this->attributes['MaxTreesPerKeyword'] - count(array_keys($this->model->MainTreeList));
+            $AbleToAdd = $this->attributes['MaxTreesPerKeyword'] - count(array_keys($this->DTO->getAttr('MainTreeList')));
             if ($AbleToAdd > 0) {
                 $relatedtrees = array_slice($relatedtrees, 0, $AbleToAdd, true);
-                $relatedtrees = array_merge($this->model->PendingMainTrees, $relatedtrees);
-                $this->model->setAttribute('PendingMainTrees', $relatedtrees);
+                $relatedtrees = array_merge($this->DTO->getAttr('PendingMainTrees'), $relatedtrees);
+                $this->DTO->SaveToModel(get_class($this),['PendingMainTrees', $relatedtrees]);
             }
         }
         if (count($descendants) > 0) {
-            $this->model->setAttribute('PendingDescendants', $descendants);
+            $this->DTO->SaveToModel(get_class($this),['PendingDescendants', $descendants]);
         }
     }
 
     private function processExplored(array $ExploredTreeIds)
     {
-        $this->model->setAttribute('ExploredTrees', array_unique(array_merge($this->model->ExploredTrees, $ExploredTreeIds)));
-        $this->model->setAttribute('PendingDescendants', array_diff($this->model->PendingDescendants, $ExploredTreeIds));
-        $this->model->setAttribute('PendingMainTrees', array_diff($this->model->PendingMainTrees, $ExploredTreeIds));
+        $this->DTO->SaveToModel(get_class($this),['ExploredTrees', array_unique(array_merge($this->DTO->getAttr('ExploredTrees'), $ExploredTreeIds))]);
+        $this->DTO->SaveToModel(get_class($this),['PendingDescendants', array_diff($this->DTO->getAttr('PendingDescendants'), $ExploredTreeIds)]);
+        $this->DTO->SaveToModel(get_class($this),['PendingMainTrees', array_diff($this->DTO->getAttr('PendingMainTrees'), $ExploredTreeIds)]);
     }
 
     private function RemoveCommasFromDeCS(array $DeCSarray)

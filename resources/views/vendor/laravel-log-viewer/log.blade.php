@@ -1,4 +1,4 @@
-@extends('vendor.laravel-log-viewer.layout.log-layout')
+@extends('vendor.laravel-log-viewer.layout.logger-layout')
 @section('contentone')
     @foreach($folders as $folder)
         <div class="list-group-item">

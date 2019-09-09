@@ -2,26 +2,58 @@
 
 namespace PICOExplorer\Services\ServiceModels;
 
+use Illuminate\Http\JsonResponse;
+use PICOExplorer\Exceptions\Exceptions\AppError\ContactedComponentReturnedNull;
+use PICOExplorer\Exceptions\Exceptions\AppError\ContactedComponentReturningJSONResponseInsteadData;
+use PICOExplorer\Exceptions\Exceptions\AppError\ErrorContactingAnotherComponent;
+use PICOExplorer\Exceptions\Exceptions\AppError\ErrorInsideAnotherComponent;
 use PICOExplorer\Exceptions\Exceptions\AppError\PICOIntegrationReturnedNull;
+use PICOExplorer\Facades\ExceptionLoggerFacade;
 use PICOExplorer\Http\Controllers\PICO\MainControllerInterface;
-use PICOExplorer\Services\AdvancedLogger\Traits\SpecialValidator;
-use PICOExplorer\Services\ServiceModels\PICOServiceIntegration;
-use PICOExplorer\Services\ServiceModels\PICOServiceModel;
+use Throwable;
 
 abstract class PICOIntegrationModel Extends PICOServiceModel implements PICOServiceIntegration
 {
 
-    use SpecialValidator;
-
     public final function PICOIntegration(array $data, MainControllerInterface $IntegrationController)
     {
-        $ruleArr = $IntegrationController::responseRules();
-        $results = $IntegrationController->core(json_encode($data));
-        if (!($results)) {
-            throw new PICOIntegrationReturnedNull(['referer' => __METHOD__ . '@' . get_class($this), 'Controller' => get_class($IntegrationController)]);
+        $timer = $this->ServicePerformance->newConnectionTimer('integrationtimer-' . get_class($this) . '-to-' . get_class($IntegrationController));
+        $results = null;
+        $wasSuccessful = false;
+        $previousErr = null;
+        try {
+            $results = $IntegrationController->outerBind($data);
+            if (!($results)) {
+                throw new ContactedComponentReturnedNull(['caller' => get_class($this), 'target' => get_class($IntegrationController)]);
+            } elseif ($results instanceof JsonResponse) {
+                throw new ContactedComponentReturningJSONResponseInsteadData(['caller' => get_class($this), 'target' => get_class($IntegrationController),'response'=>$results]);
+            } elseif (array_key_exists('Error', $results)) {
+                $previousErr = $results['Error'];
+                throw new ErrorContactingAnotherComponent(['caller' => get_class($this), 'target' => get_class($IntegrationController), 'ErrorInTarget' => $previousErr]);
+            } else {
+                $wasSuccessful = true;
+            }
+        } catch (Throwable $ex) {
+            ExceptionLoggerFacade::ReportException($ex);
+            throw new ErrorInsideAnotherComponent(['caller' => get_class($this), 'target' => get_class($IntegrationController), 'ErrorInTarget' => $ex->getMessage()],$ex);
+        } finally {
+            $info = 'Connection Failed';
+            if ($wasSuccessful) {
+                $info = 'Connection Success. result.size=' . strlen($results);
+            } else {
+                if ($previousErr) {
+                    $info = $info . ': ' . $previousErr;
+                }
+            }
+            $timer->Stop($info);
+            if ($wasSuccessful) {
+                if (!($results)) {
+                    throw new PICOIntegrationReturnedNull(['referer' => __METHOD__ . '@' . get_class($this), 'Controller' => get_class($IntegrationController)]);
+                } else {
+                    return $results;
+                }
+            }
         }
-        $this->SpecialValidate($results, $ruleArr, __METHOD__ . '@' . get_class($this), get_class($this));
-        return $results;
     }
 
 }

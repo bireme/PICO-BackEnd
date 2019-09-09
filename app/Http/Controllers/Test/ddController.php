@@ -19,13 +19,6 @@ class ddController extends Controller
                 $data = Session::get('ddinfo');
                 Session::pull('ddinfo');
                 Session::save();
-                $MainData = [
-                    'title' => 'Ready to show dd data',
-                    'data' => ['dddata' => $data],
-                    'infomsg' => null,
-                    'trace' => null,
-                ];
-                AdvancedLoggerFacade::SimpleLog('Operations', 'info', $MainData['title'], $MainData['infomsg'], $MainData['data'], $MainData['trace']);
                 $ddinfo = json_decode($data, true);
             } catch (Exception $ex) {
                 $info = [
@@ -61,13 +54,6 @@ class ddController extends Controller
     public function savePreviousInfo(Request $request)
     {
         $data = $request->getContent();
-        $MainData = [
-            'title' => 'Preparing data for dd view',
-            'data' => ['dddata' => $data],
-            'infomsg' => null,
-            'trace' => null,
-        ];
-        AdvancedLoggerFacade::SimpleLog('Operations', 'info', $MainData['title'], $MainData['infomsg'], $MainData['data'], $MainData['trace']);
         Session::put('ddinfo', $data);
         Session::save();
         return response('ok')->setStatusCode(200, 'Ok!');

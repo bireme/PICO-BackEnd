@@ -14,7 +14,7 @@ class DeCSProvider extends ServiceProvider
      */
     public function register()
     {
-        $this->app->singleton('decsprocess', function () {
+        $this->app->bind('decsprocess', function () {
             return new DeCSProcess();
         });
     }

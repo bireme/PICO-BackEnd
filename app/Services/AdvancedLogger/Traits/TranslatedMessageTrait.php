@@ -18,7 +18,7 @@ trait TranslatedMessageTrait
             return $Internals[$ErrorKey];
         }
         if ($isCustomException) {
-            return '[LANGTRANS KEY NOT EXIS FIX THIS] - ' . $ErrorKey;
+            return $ErrorKey;
         } else {
             return false;
         }

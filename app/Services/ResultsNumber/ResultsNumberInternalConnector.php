@@ -8,10 +8,10 @@ use PICOExplorer\Services\ServiceModels\PICOIntegrationModel;
 abstract class ResultsNumberInternalConnector extends PICOIntegrationModel
 {
 
-    public final function ConnectToIntegration($UntitledData)
+    public final function ConnectToIntegration($data)
     {
         $IntegrationController = new IntegrationResultsNumberController();
-        return $this->PICOIntegration($UntitledData, $IntegrationController);
+        return $this->PICOIntegration($data, $IntegrationController);
     }
 
 }

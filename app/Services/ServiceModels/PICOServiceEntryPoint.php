@@ -2,13 +2,11 @@
 
 namespace PICOExplorer\Services\ServiceModels;
 
-use PICOExplorer\Models\MainModels\MainModelsModel;
+use PICOExplorer\Models\DataTransferObject;
 
 interface PICOServiceEntryPoint
 {
 
-    public function Process();
-
-    public function get(MainModelsModel $model, array $responseRules, $ParentTimer = null);
+    public function get(DataTransferObject $DTO);
 
 }

@@ -20,14 +20,9 @@ class ResultsNumberProcess extends ResultsNumberInternalConnector implements PIC
         foreach ($ResultsClusters as $key => $ResultsCluster) {
             $ProcessedQueries[$key] = $this->BuildQuery($ResultsCluster);
         }
-        $ruleArr = [
-            'ProcessedQueries' => 'required|array|min:1',
-            'ProcessedQueries.*' => 'required|string|distinct|min:1',
-            'ProcessedQueries.*.*' => 'required|string|distinct|min:1',
-        ];
-        $this->UpdateModel(__METHOD__ . '@' . get_class($this), ['ProcessedQueries' => $ProcessedQueries], $ruleArr);
+        $this->DTO->SaveToModel(get_class($this),['ProcessedQueries' => $ProcessedQueries]);
         $results = $this->ConnectToIntegration($ProcessedQueries);
-        $this->setResults(__METHOD__ . '@' . get_class($this), $results);
+        return $results;
     }
 
     protected function Explore(array $arguments = null)
@@ -42,12 +37,12 @@ class ResultsNumberProcess extends ResultsNumberInternalConnector implements PIC
     {
         $local = [];
         $global = [];
-        $EqNum = $this->model->InitialData['PICOnum'];
+        $EqNum = $this->DTO->getInitialData()['PICOnum'];
         $EqNumCopy = ($EqNum == 6) ? 5 : $EqNum;
         $i = 1;
         while ($i <= $EqNumCopy) {
             $PICOEquationId = 'PICO' . $i;
-            $PICOEquationArray = $this->model->InitialData['queryobject'][$PICOEquationId];
+            $PICOEquationArray = $this->DTO->getInitialData()['queryobject'][$PICOEquationId];
             if ($i == $EqNumCopy && $EqNum != 6) {
                 $local[$PICOEquationId] = $PICOEquationArray;
             }

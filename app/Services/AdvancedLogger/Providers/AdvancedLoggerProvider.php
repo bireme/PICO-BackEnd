@@ -6,6 +6,8 @@ use Illuminate\Support\ServiceProvider;
 use PICOExplorer\Services\AdvancedLogger\AdvancedLogger;
 use PICOExplorer\Services\AdvancedLogger\Exceptions\Handlers\WarningsHandler;
 use PICOExplorer\Services\AdvancedLogger\Services\ExceptionLogger;
+use PICOExplorer\Services\AdvancedLogger\Services\ServicePerformance;
+use PICOExplorer\Services\AdvancedLogger\Services\SpecialValidator;
 use PICOExplorer\Services\AdvancedLogger\Services\TimerService;
 
 class AdvancedLoggerProvider extends ServiceProvider
@@ -17,10 +19,10 @@ class AdvancedLoggerProvider extends ServiceProvider
      */
     public function register()
     {
-        $this->app->singleton('advancedlogger', function () {
+        $this->app->bind('advancedlogger', function () {
             return new AdvancedLogger();
         });
-        $this->app->singleton('warningshandler', function () {
+        $this->app->bind('warningshandler', function () {
             return new WarningsHandler();
         });
         $this->app->bind('timerservice', function () {
@@ -28,6 +30,12 @@ class AdvancedLoggerProvider extends ServiceProvider
         });
         $this->app->bind('exceptionlogger', function () {
             return new ExceptionLogger();
+        });
+        $this->app->bind('specialvalidator', function () {
+            return new SpecialValidator();
+        });
+        $this->app->bind('serviceperformance', function () {
+            return new ServicePerformance();
         });
     }
 
