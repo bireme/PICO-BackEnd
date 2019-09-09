@@ -30,9 +30,6 @@ class LanguageController extends Controller
             }
         }
         Session::save();
-        $info = 'ip: ' . request()->getClientIp() . PHP_EOL.'new locale: ' . $lang;
-
-        AdvancedLoggerFacade::SimpleLog('Operations', 'info', 'Changing locale', $info, $data, null);
         return view('main')->with(['PreviousData' =>$data]);
     }
 
@@ -41,8 +38,6 @@ class LanguageController extends Controller
     {
         $this->ValidatePreviousData($lang);
         $data = $request->getContent();
-        $info = 'ip: ' . request()->getClientIp() .PHP_EOL. 'new locale: ' . $lang.PHP_EOL.'data: '.$data;
-        AdvancedLoggerFacade::SimpleLog('Operations', 'info', 'Preparing locale change', $info, null, null);
         Session::put('PreviousData', $data);
         Session::save();
         return response('ok')->setStatusCode(200, 'Ok!');
@@ -62,6 +57,7 @@ class LanguageController extends Controller
         if (array_key_exists($lang, Config::get('languages'))) {
             app()->setLocale($lang);
             Session::put('locale', $lang);
+            Session::save();
         } else {
             return abort(404);
         }

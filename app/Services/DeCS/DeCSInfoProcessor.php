@@ -9,7 +9,7 @@ abstract class DeCSInfoProcessor extends DeCSInternalConnector
 
     protected function ProcessIntegrationResults($IntegrationData)
     {
-        $lang = $this->getCompLang($this->model->InitialData['mainLanguage'], $this->model->InitialData['langs']);
+        $lang = $this->getCompLang($this->DTO->getInitialData()['mainLanguage'], $this->DTO->getInitialData()['langs']);
         $ProcessedData=[];
         foreach ($IntegrationData as $keyword => $KeywordObj) {
             $UsedTrees = [];
@@ -35,7 +35,7 @@ abstract class DeCSInfoProcessor extends DeCSInternalConnector
     }
 
     protected function IntegrationResultsToSavedData(array $IntegrationResults, string $keyword){
-        $SavedData = $this->model->SavedData??[];
+        $SavedData = $this->DTO->getAttr('SavedData');
         if(!(in_array($keyword,$SavedData))){
             $SavedData[$keyword]=$IntegrationResults;
         }else{
@@ -44,7 +44,7 @@ abstract class DeCSInfoProcessor extends DeCSInternalConnector
                 $SavedData[$keyword][$lang]=$Data;
             }
         }
-        $this->UpdateModel(__METHOD__ . '@' . get_class($this),['SavedData'=>$SavedData],[]);
+        $this->DTO->SaveToModel(get_class($this),['SavedData'=>$SavedData]);
     }
 
 ///////////////////////////////////////////////////////////////////
@@ -80,7 +80,7 @@ abstract class DeCSInfoProcessor extends DeCSInternalConnector
         }
         $DeCSArr=[];
         foreach($TreeObject as $lang => $content){
-            if(!(in_array($lang,$this->model->InitialData['langs']))){
+            if(!(in_array($lang,$this->DTO->getInitialData()['langs']))){
                 continue;
             }
             $term = $content['term'];

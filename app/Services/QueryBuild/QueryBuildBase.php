@@ -12,7 +12,7 @@ abstract class QueryBuildBase extends PICOServiceModel
         $baseEquation = '';
         $Ops = array('or', 'and', 'not');
         $Seps = array('(', ')', ' ', ':');
-        foreach ($this->model->InitialData['QuerySplit'] as $QuerySplitItem) {
+        foreach ($this->DTO->getInitialData()['QuerySplit'] as $QuerySplitItem) {
             $type = $QuerySplitItem['type'];
             $value = $QuerySplitItem['value'];
             if ($type == 'key' || $type == 'keyrep' || $type == 'keyexplored') {
@@ -45,10 +45,10 @@ abstract class QueryBuildBase extends PICOServiceModel
     protected function BuildKeyWordEquation(string $keyword)
     {
         $keywordEquation = ucfirst($keyword);
-        if (!(array_key_exists($keyword, $this->model->InitialData['SelectedDescriptors']))) {
-            throw new KeywordDoesNotExistInSelectedDescriptors(['keyword' => $keyword, 'SelectedDescriptors' => $this->model->InitialData['SelectedDescriptors']]);
+        if (!(array_key_exists($keyword, $this->DTO->getInitialData()['SelectedDescriptors']))) {
+            throw new KeywordDoesNotExistInSelectedDescriptors(['keyword' => $keyword, 'SelectedDescriptors' => $this->DTO->getInitialData()['SelectedDescriptors']]);
         }
-        $KeywordObj = $this->model->InitialData['SelectedDescriptors'][$keyword];
+        $KeywordObj = $this->DTO->getInitialData()['SelectedDescriptors'][$keyword];
         foreach ($KeywordObj as $termObj) {
 
             if (strlen($keywordEquation) != 0) {

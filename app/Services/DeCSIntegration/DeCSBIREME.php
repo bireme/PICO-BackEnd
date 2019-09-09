@@ -18,7 +18,7 @@ class DeCSBireme extends DeCSExplorer implements PICOServiceEntryPoint
     final public function Process()
     {
         $this->setModelVars();
-        $keyword = $this->model->InitialData['keyword'];
+        $keyword = $this->DTO->getInitialData()['keyword'];
         $keyword=str_replace('  ',' ',$keyword);
         $keyword=trim($keyword);
         $keyword=str_replace(' ','+',$keyword);
@@ -40,8 +40,8 @@ class DeCSBireme extends DeCSExplorer implements PICOServiceEntryPoint
             $this->ExploreTreeId($ExploreInfo, false); //Antes esto terminaba en false
             $countx++;
         }
-        $ResultsByTerm = $this->model->getResults();
-        $this->setResults(__METHOD__ . '@' . get_class($this), $ResultsByTerm);
+        $ResultsByTerm = $this->DTO->getResults();
+        $this->setResults($ResultsByTerm);
     }
 
     ///////////////////////////////////////////////////////////////////
@@ -50,17 +50,17 @@ class DeCSBireme extends DeCSExplorer implements PICOServiceEntryPoint
 
     private function setModelVars()
     {
-        $this->model->setAttribute('AllTrees', []);
-        $this->model->setAttribute('ExploredTrees', []);
-        $this->model->setAttribute('PendingMainTrees', []);
-        $this->model->setAttribute('PendingDescendants', []);
-        $this->model->setAttribute('MainTreeList', []);
+        $this->DTO->SaveToModel(get_class($this),['AllTrees', []]);
+        $this->DTO->SaveToModel(get_class($this),['ExploredTrees', []]);
+        $this->DTO->SaveToModel(get_class($this),['PendingMainTrees', []]);
+        $this->DTO->SaveToModel(get_class($this),['PendingDescendants', []]);
+        $this->DTO->SaveToModel(get_class($this),['MainTreeList', []]);
     }
 
     private function getTreesToExplore()
     {
-        $PriorityArr = array_intersect($this->model->PendingDescendants, $this->model->PendingMainTrees);
-        $OrderedOperationArr = array_merge($this->model->PendingDescendants, $this->model->PendingMainTrees);
+        $PriorityArr = array_intersect($this->DTO->getAttr('PendingDescendants'), $this->DTO->getAttr('PendingMainTrees'));
+        $OrderedOperationArr = array_merge($this->DTO->getAttr('PendingDescendants'), $this->DTO->getAttr('PendingMainTrees'));
         $RefinedOperationrArr = array_unique(array_merge($PriorityArr, $OrderedOperationArr));
         $TreesToExplore = array();
         foreach ($RefinedOperationrArr as $tree_id) {
@@ -72,10 +72,10 @@ class DeCSBireme extends DeCSExplorer implements PICOServiceEntryPoint
     private function CheckLangsOfEachResultsTreeId()
     {
         $ToExplore = [];
-        $MainTrees = $this->model->MainTreeList;
+        $MainTrees = $this->DTO->getAttr('MainTreeList');
         foreach ($MainTrees as $tree_id => $TreeObject) {
             $ExploredLanguages = $TreeObject->getExploredLanguages();
-            $RemainingLanguages = array_diff($this->model->InitialData['langs'], $ExploredLanguages);
+            $RemainingLanguages = array_diff($this->DTO->getInitialData()['langs'], $ExploredLanguages);
             $ToExplore[$tree_id] = $RemainingLanguages;
         }
         return $ToExplore;

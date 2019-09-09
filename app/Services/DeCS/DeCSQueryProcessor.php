@@ -13,7 +13,7 @@ abstract class DeCSQueryProcessor extends DeCSMenuBuilder
 
     protected function BuildKeywordList()
     {
-        $QueryProcessed = $this->ProcessQuery($this->model->InitialData['query']);
+        $QueryProcessed = $this->ProcessQuery($this->DTO->getInitialData()['query']);
         $this->setArrayItemType($QueryProcessed);
     }
 
@@ -77,19 +77,18 @@ abstract class DeCSQueryProcessor extends DeCSMenuBuilder
             }
             array_push($QuerySplit, ['type' => $type, 'value' => $value]);
         }
-        $this->UpdateModel(__METHOD__ . '@' . get_class($this), ['QuerySplit' => $QuerySplit], []);
-        $this->UpdateModel(__METHOD__ . '@' . get_class($this), ['KeywordList' => $KeywordList], []);
+        $this->DTO->SaveToModel(get_class($this),['QuerySplit' => $QuerySplit,'KeywordList' => $KeywordList]);
     }
 
     private function getKeywordType($value, array $UsedKeyWords, array $keywordsArr)
     {
         $data = null;
         $results = [];
-        $SavedData = $this->model->SavedData;
+        $SavedData = $this->DTO->getAttr('SavedData');
         $isDeCS = $this->isDeCS($value, $keywordsArr, $SavedData);
         $isRepeated = in_array($value, $UsedKeyWords);
 
-        $langs = $this->model->InitialData['langs'];
+        $langs = $this->DTO->getInitialData()['langs'];
         if ($SavedData !== null && array_key_exists($value, $SavedData)) {
             if ($isDeCS) {
                 $results['type'] = 'DeCS';

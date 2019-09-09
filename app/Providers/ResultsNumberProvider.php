@@ -14,7 +14,7 @@ class ResultsNumberProvider extends ServiceProvider
      */
     public function register()
     {
-        $this->app->singleton('resultsnumberprocess', function () {
+        $this->app->bind('resultsnumberprocess', function () {
             return new ResultsNumberProcess();
         });
     }

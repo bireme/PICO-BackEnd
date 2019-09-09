@@ -3,7 +3,7 @@
 
 /**
  * A helper file for Laravel 5, to provide autocomplete information to your IDE
- * Generated for Laravel 5.8.27 on 2019-07-31 15:58:32.
+ * Generated for Laravel 5.8.34 on 2019-09-09 18:53:40.
  *
  * This file should not be included in your code, only analyzed by your IDE!
  *
@@ -1387,7 +1387,7 @@ namespace Illuminate\Support\Facades {
         }
         
         /**
-         * Set the globally available instance of the container.
+         * Get the globally available instance of the container.
          *
          * @return static 
          * @static 
@@ -9048,10 +9048,14 @@ namespace Illuminate\Support\Facades {
          * header value is a comma+space separated list of IP addresses, the left-most
          * being the original client, and each successive proxy that passed the request
          * adding the IP address where it received the request from.
+         * 
+         * If your reverse proxy uses a different header name than "X-Forwarded-For",
+         * ("Client-Ip" for instance), configure it via the $trustedHeaderSet
+         * argument of the Request::setTrustedProxies() method instead.
          *
          * @return string|null The client IP address
          * @see getClientIps()
-         * @see http://en.wikipedia.org/wiki/X-Forwarded-For
+         * @see https://wikipedia.org/wiki/X-Forwarded-For
          * @static 
          */ 
         public static function getClientIp()
@@ -9745,7 +9749,7 @@ namespace Illuminate\Support\Facades {
          * It works if your JavaScript library sets an X-Requested-With HTTP header.
          * It is known to work with common JavaScript frameworks:
          *
-         * @see http://en.wikipedia.org/wiki/List_of_Ajax_frameworks#JavaScript
+         * @see https://wikipedia.org/wiki/List_of_Ajax_frameworks#JavaScript
          * @return bool true if the request is an XMLHttpRequest, false otherwise
          * @static 
          */ 
@@ -11901,6 +11905,19 @@ namespace Illuminate\Support\Facades {
         {
                         /** @var \Illuminate\Session\Store $instance */
                         return $instance->all();
+        }
+        
+        /**
+         * Get a subset of the session data.
+         *
+         * @param array $keys
+         * @return array 
+         * @static 
+         */ 
+        public static function only($keys)
+        {
+                        /** @var \Illuminate\Session\Store $instance */
+                        return $instance->only($keys);
         }
         
         /**
@@ -14624,46 +14641,10 @@ namespace PICOExplorer\Facades {
          *
          * @static 
          */ 
-        public static function build($controllername, $InitialData, $ParentTimer = null)
+        public static function Start($name)
         {
                         /** @var \PICOExplorer\Services\AdvancedLogger\Services\TimerService $instance */
-                        return $instance->build($controllername, $InitialData, $ParentTimer);
-        }
-        
-        /**
-         * 
-         *
-         * @param $instance
-         * @static 
-         */ 
-        public static function Summary($instance, $results, $wasSucess)
-        {
-                        /** @var \PICOExplorer\Services\AdvancedLogger\Services\TimerService $instance */
-                        return $instance->Summary($instance, $results, $wasSucess);
-        }
-        
-        /**
-         * 
-         *
-         * @return \PICOExplorer\Services\AdvancedLogger\Services\Timer 
-         * @static 
-         */ 
-        public static function AddConnectionTimer()
-        {
-                        /** @var \PICOExplorer\Services\AdvancedLogger\Services\TimerService $instance */
-                        return $instance->AddConnectionTimer();
-        }
-        
-        /**
-         * 
-         *
-         * @param \PICOExplorer\Services\AdvancedLogger\Services\TimerService $timer
-         * @static 
-         */ 
-        public static function AddParentTimerService($timer)
-        {
-                        /** @var \PICOExplorer\Services\AdvancedLogger\Services\TimerService $instance */
-                        return $instance->AddParentTimerService($timer);
+                        return $instance->Start($name);
         }
         
         /**
@@ -14672,10 +14653,10 @@ namespace PICOExplorer\Facades {
          * @return int 
          * @static 
          */ 
-        public static function getTimeSpentInConnections()
+        public static function Stop()
         {
                         /** @var \PICOExplorer\Services\AdvancedLogger\Services\TimerService $instance */
-                        return $instance->getTimeSpentInConnections();
+                        return $instance->Stop();
         }
         
         /**
@@ -14683,22 +14664,21 @@ namespace PICOExplorer\Facades {
          *
          * @static 
          */ 
-        public static function AddTimeSpentInConnections($time)
+        public static function get()
         {
                         /** @var \PICOExplorer\Services\AdvancedLogger\Services\TimerService $instance */
-                        return $instance->AddTimeSpentInConnections($time);
+                        return $instance->get();
         }
         
         /**
          * 
          *
-         * @return \PICOExplorer\Services\AdvancedLogger\Services\Timer 
          * @static 
          */ 
-        public static function getGlobalTimer()
+        public static function name()
         {
                         /** @var \PICOExplorer\Services\AdvancedLogger\Services\TimerService $instance */
-                        return $instance->getGlobalTimer();
+                        return $instance->name();
         }
          
     }
@@ -14761,11 +14741,11 @@ namespace PICOExplorer\Facades {
          *
          * @static 
          */ 
-        public static function ImportData($RequestMethod, $data, $url, $headers = null, $options = null, $sendAsJson = false, $ParseJSONReceived = false)
+        public static function ImportData($RequestMethod, $data, $url, $headers = null, $settings = array(), $timeout = 500, $maxAttempts = 3, $sendAsJson = false, $ParseJSONReceived = false)
         {
             //Method inherited from \PICOExplorer\Services\ServiceModels\ExternalImporter            
                         /** @var \PICOExplorer\Services\ResultsNumberIntegration\ResultsNumberBIREME $instance */
-                        return $instance->ImportData($RequestMethod, $data, $url, $headers, $options, $sendAsJson, $ParseJSONReceived);
+                        return $instance->ImportData($RequestMethod, $data, $url, $headers, $settings, $timeout, $maxAttempts, $sendAsJson, $ParseJSONReceived);
         }
         
         /**
@@ -14773,72 +14753,11 @@ namespace PICOExplorer\Facades {
          *
          * @static 
          */ 
-        public static function get($model, $responseRules, $ParentTimer = null)
+        public static function get($DTO)
         {
             //Method inherited from \PICOExplorer\Services\ServiceModels\PICOServiceModel            
                         /** @var \PICOExplorer\Services\ResultsNumberIntegration\ResultsNumberBIREME $instance */
-                        return $instance->get($model, $responseRules, $ParentTimer);
-        }
-        
-        /**
-         * 
-         *
-         * @static 
-         */ 
-        public static function ControllerPerformanceStart($InitialData, $ParentTimer = null)
-        {
-            //Method inherited from \PICOExplorer\Http\Controllers\CustomController            
-                        /** @var \PICOExplorer\Services\ResultsNumberIntegration\ResultsNumberBIREME $instance */
-                        return $instance->ControllerPerformanceStart($InitialData, $ParentTimer);
-        }
-        
-        /**
-         * 
-         *
-         * @static 
-         */ 
-        public static function CreateConnectionTimer()
-        {
-            //Method inherited from \PICOExplorer\Http\Controllers\CustomController            
-                        /** @var \PICOExplorer\Services\ResultsNumberIntegration\ResultsNumberBIREME $instance */
-                        return $instance->CreateConnectionTimer();
-        }
-        
-        /**
-         * 
-         *
-         * @static 
-         */ 
-        public static function AddParentTimerService($timer)
-        {
-            //Method inherited from \PICOExplorer\Http\Controllers\CustomController            
-                        /** @var \PICOExplorer\Services\ResultsNumberIntegration\ResultsNumberBIREME $instance */
-                        return $instance->AddParentTimerService($timer);
-        }
-        
-        /**
-         * 
-         *
-         * @static 
-         */ 
-        public static function ControllerSummary($results, $wasSucess)
-        {
-            //Method inherited from \PICOExplorer\Http\Controllers\CustomController            
-                        /** @var \PICOExplorer\Services\ResultsNumberIntegration\ResultsNumberBIREME $instance */
-                        return $instance->ControllerSummary($results, $wasSucess);
-        }
-        
-        /**
-         * 
-         *
-         * @return \PICOExplorer\Http\Controllers\Timer 
-         * @static 
-         */ 
-        public static function getGlobalTimer()
-        {
-            //Method inherited from \PICOExplorer\Http\Controllers\CustomController            
-                        /** @var \PICOExplorer\Services\ResultsNumberIntegration\ResultsNumberBIREME $instance */
-                        return $instance->getGlobalTimer();
+                        return $instance->get($DTO);
         }
          
     }
@@ -14902,11 +14821,11 @@ namespace PICOExplorer\Facades {
          *
          * @static 
          */ 
-        public static function ImportData($RequestMethod, $data, $url, $headers = null, $options = null, $sendAsJson = false, $ParseJSONReceived = false)
+        public static function ImportData($RequestMethod, $data, $url, $headers = null, $settings = array(), $timeout = 500, $maxAttempts = 3, $sendAsJson = false, $ParseJSONReceived = false)
         {
             //Method inherited from \PICOExplorer\Services\ServiceModels\ExternalImporter            
                         /** @var \PICOExplorer\Services\DeCSIntegration\DeCSBireme $instance */
-                        return $instance->ImportData($RequestMethod, $data, $url, $headers, $options, $sendAsJson, $ParseJSONReceived);
+                        return $instance->ImportData($RequestMethod, $data, $url, $headers, $settings, $timeout, $maxAttempts, $sendAsJson, $ParseJSONReceived);
         }
         
         /**
@@ -14914,72 +14833,11 @@ namespace PICOExplorer\Facades {
          *
          * @static 
          */ 
-        public static function get($model, $responseRules, $ParentTimer = null)
+        public static function get($DTO)
         {
             //Method inherited from \PICOExplorer\Services\ServiceModels\PICOServiceModel            
                         /** @var \PICOExplorer\Services\DeCSIntegration\DeCSBireme $instance */
-                        return $instance->get($model, $responseRules, $ParentTimer);
-        }
-        
-        /**
-         * 
-         *
-         * @static 
-         */ 
-        public static function ControllerPerformanceStart($InitialData, $ParentTimer = null)
-        {
-            //Method inherited from \PICOExplorer\Http\Controllers\CustomController            
-                        /** @var \PICOExplorer\Services\DeCSIntegration\DeCSBireme $instance */
-                        return $instance->ControllerPerformanceStart($InitialData, $ParentTimer);
-        }
-        
-        /**
-         * 
-         *
-         * @static 
-         */ 
-        public static function CreateConnectionTimer()
-        {
-            //Method inherited from \PICOExplorer\Http\Controllers\CustomController            
-                        /** @var \PICOExplorer\Services\DeCSIntegration\DeCSBireme $instance */
-                        return $instance->CreateConnectionTimer();
-        }
-        
-        /**
-         * 
-         *
-         * @static 
-         */ 
-        public static function AddParentTimerService($timer)
-        {
-            //Method inherited from \PICOExplorer\Http\Controllers\CustomController            
-                        /** @var \PICOExplorer\Services\DeCSIntegration\DeCSBireme $instance */
-                        return $instance->AddParentTimerService($timer);
-        }
-        
-        /**
-         * 
-         *
-         * @static 
-         */ 
-        public static function ControllerSummary($results, $wasSucess)
-        {
-            //Method inherited from \PICOExplorer\Http\Controllers\CustomController            
-                        /** @var \PICOExplorer\Services\DeCSIntegration\DeCSBireme $instance */
-                        return $instance->ControllerSummary($results, $wasSucess);
-        }
-        
-        /**
-         * 
-         *
-         * @return \PICOExplorer\Http\Controllers\Timer 
-         * @static 
-         */ 
-        public static function getGlobalTimer()
-        {
-            //Method inherited from \PICOExplorer\Http\Controllers\CustomController            
-                        /** @var \PICOExplorer\Services\DeCSIntegration\DeCSBireme $instance */
-                        return $instance->getGlobalTimer();
+                        return $instance->get($DTO);
         }
          
     }
@@ -15007,11 +14865,11 @@ namespace PICOExplorer\Facades {
          *
          * @static 
          */ 
-        public static function ConnectToIntegration($UntitledData)
+        public static function ConnectToIntegration($data)
         {
             //Method inherited from \PICOExplorer\Services\ResultsNumber\ResultsNumberInternalConnector            
                         /** @var \PICOExplorer\Services\ResultsNumber\ResultsNumberProcess $instance */
-                        return $instance->ConnectToIntegration($UntitledData);
+                        return $instance->ConnectToIntegration($data);
         }
         
         /**
@@ -15031,72 +14889,11 @@ namespace PICOExplorer\Facades {
          *
          * @static 
          */ 
-        public static function get($model, $responseRules, $ParentTimer = null)
+        public static function get($DTO)
         {
             //Method inherited from \PICOExplorer\Services\ServiceModels\PICOServiceModel            
                         /** @var \PICOExplorer\Services\ResultsNumber\ResultsNumberProcess $instance */
-                        return $instance->get($model, $responseRules, $ParentTimer);
-        }
-        
-        /**
-         * 
-         *
-         * @static 
-         */ 
-        public static function ControllerPerformanceStart($InitialData, $ParentTimer = null)
-        {
-            //Method inherited from \PICOExplorer\Http\Controllers\CustomController            
-                        /** @var \PICOExplorer\Services\ResultsNumber\ResultsNumberProcess $instance */
-                        return $instance->ControllerPerformanceStart($InitialData, $ParentTimer);
-        }
-        
-        /**
-         * 
-         *
-         * @static 
-         */ 
-        public static function CreateConnectionTimer()
-        {
-            //Method inherited from \PICOExplorer\Http\Controllers\CustomController            
-                        /** @var \PICOExplorer\Services\ResultsNumber\ResultsNumberProcess $instance */
-                        return $instance->CreateConnectionTimer();
-        }
-        
-        /**
-         * 
-         *
-         * @static 
-         */ 
-        public static function AddParentTimerService($timer)
-        {
-            //Method inherited from \PICOExplorer\Http\Controllers\CustomController            
-                        /** @var \PICOExplorer\Services\ResultsNumber\ResultsNumberProcess $instance */
-                        return $instance->AddParentTimerService($timer);
-        }
-        
-        /**
-         * 
-         *
-         * @static 
-         */ 
-        public static function ControllerSummary($results, $wasSucess)
-        {
-            //Method inherited from \PICOExplorer\Http\Controllers\CustomController            
-                        /** @var \PICOExplorer\Services\ResultsNumber\ResultsNumberProcess $instance */
-                        return $instance->ControllerSummary($results, $wasSucess);
-        }
-        
-        /**
-         * 
-         *
-         * @return \PICOExplorer\Http\Controllers\Timer 
-         * @static 
-         */ 
-        public static function getGlobalTimer()
-        {
-            //Method inherited from \PICOExplorer\Http\Controllers\CustomController            
-                        /** @var \PICOExplorer\Services\ResultsNumber\ResultsNumberProcess $instance */
-                        return $instance->getGlobalTimer();
+                        return $instance->get($DTO);
         }
          
     }
@@ -15148,72 +14945,11 @@ namespace PICOExplorer\Facades {
          *
          * @static 
          */ 
-        public static function get($model, $responseRules, $ParentTimer = null)
+        public static function get($DTO)
         {
             //Method inherited from \PICOExplorer\Services\ServiceModels\PICOServiceModel            
                         /** @var \PICOExplorer\Services\DeCS\DeCSProcess $instance */
-                        return $instance->get($model, $responseRules, $ParentTimer);
-        }
-        
-        /**
-         * 
-         *
-         * @static 
-         */ 
-        public static function ControllerPerformanceStart($InitialData, $ParentTimer = null)
-        {
-            //Method inherited from \PICOExplorer\Http\Controllers\CustomController            
-                        /** @var \PICOExplorer\Services\DeCS\DeCSProcess $instance */
-                        return $instance->ControllerPerformanceStart($InitialData, $ParentTimer);
-        }
-        
-        /**
-         * 
-         *
-         * @static 
-         */ 
-        public static function CreateConnectionTimer()
-        {
-            //Method inherited from \PICOExplorer\Http\Controllers\CustomController            
-                        /** @var \PICOExplorer\Services\DeCS\DeCSProcess $instance */
-                        return $instance->CreateConnectionTimer();
-        }
-        
-        /**
-         * 
-         *
-         * @static 
-         */ 
-        public static function AddParentTimerService($timer)
-        {
-            //Method inherited from \PICOExplorer\Http\Controllers\CustomController            
-                        /** @var \PICOExplorer\Services\DeCS\DeCSProcess $instance */
-                        return $instance->AddParentTimerService($timer);
-        }
-        
-        /**
-         * 
-         *
-         * @static 
-         */ 
-        public static function ControllerSummary($results, $wasSucess)
-        {
-            //Method inherited from \PICOExplorer\Http\Controllers\CustomController            
-                        /** @var \PICOExplorer\Services\DeCS\DeCSProcess $instance */
-                        return $instance->ControllerSummary($results, $wasSucess);
-        }
-        
-        /**
-         * 
-         *
-         * @return \PICOExplorer\Http\Controllers\Timer 
-         * @static 
-         */ 
-        public static function getGlobalTimer()
-        {
-            //Method inherited from \PICOExplorer\Http\Controllers\CustomController            
-                        /** @var \PICOExplorer\Services\DeCS\DeCSProcess $instance */
-                        return $instance->getGlobalTimer();
+                        return $instance->get($DTO);
         }
         
         /**
@@ -15252,72 +14988,11 @@ namespace PICOExplorer\Facades {
          *
          * @static 
          */ 
-        public static function get($model, $responseRules, $ParentTimer = null)
+        public static function get($DTO)
         {
             //Method inherited from \PICOExplorer\Services\ServiceModels\PICOServiceModel            
                         /** @var \PICOExplorer\Services\QueryBuild\QueryBuildProcess $instance */
-                        return $instance->get($model, $responseRules, $ParentTimer);
-        }
-        
-        /**
-         * 
-         *
-         * @static 
-         */ 
-        public static function ControllerPerformanceStart($InitialData, $ParentTimer = null)
-        {
-            //Method inherited from \PICOExplorer\Http\Controllers\CustomController            
-                        /** @var \PICOExplorer\Services\QueryBuild\QueryBuildProcess $instance */
-                        return $instance->ControllerPerformanceStart($InitialData, $ParentTimer);
-        }
-        
-        /**
-         * 
-         *
-         * @static 
-         */ 
-        public static function CreateConnectionTimer()
-        {
-            //Method inherited from \PICOExplorer\Http\Controllers\CustomController            
-                        /** @var \PICOExplorer\Services\QueryBuild\QueryBuildProcess $instance */
-                        return $instance->CreateConnectionTimer();
-        }
-        
-        /**
-         * 
-         *
-         * @static 
-         */ 
-        public static function AddParentTimerService($timer)
-        {
-            //Method inherited from \PICOExplorer\Http\Controllers\CustomController            
-                        /** @var \PICOExplorer\Services\QueryBuild\QueryBuildProcess $instance */
-                        return $instance->AddParentTimerService($timer);
-        }
-        
-        /**
-         * 
-         *
-         * @static 
-         */ 
-        public static function ControllerSummary($results, $wasSucess)
-        {
-            //Method inherited from \PICOExplorer\Http\Controllers\CustomController            
-                        /** @var \PICOExplorer\Services\QueryBuild\QueryBuildProcess $instance */
-                        return $instance->ControllerSummary($results, $wasSucess);
-        }
-        
-        /**
-         * 
-         *
-         * @return \PICOExplorer\Http\Controllers\Timer 
-         * @static 
-         */ 
-        public static function getGlobalTimer()
-        {
-            //Method inherited from \PICOExplorer\Http\Controllers\CustomController            
-                        /** @var \PICOExplorer\Services\QueryBuild\QueryBuildProcess $instance */
-                        return $instance->getGlobalTimer();
+                        return $instance->get($DTO);
         }
          
     }
@@ -15359,6 +15034,17 @@ namespace PICOExplorer\Facades {
         {
                         /** @var \PICOExplorer\Services\AdvancedLogger\AdvancedLogger $instance */
                         return $instance->LogConnectionInfo();
+        }
+        
+        /**
+         * 
+         *
+         * @static 
+         */ 
+        public static function ExternalConnectionInfo($wasSuccess, $url, $attempts, $time, $settings, $log)
+        {
+                        /** @var \PICOExplorer\Services\AdvancedLogger\AdvancedLogger $instance */
+                        return $instance->ExternalConnectionInfo($wasSuccess, $url, $attempts, $time, $settings, $log);
         }
         
         /**
@@ -15490,6 +15176,18 @@ namespace PICOExplorer\Facades {
          *
          * @static 
          */ 
+        public static function ExternalConnectionInfo($wasSuccess, $url, $attempts, $time, $settings, $log)
+        {
+            //Method inherited from \PICOExplorer\Services\AdvancedLogger\AdvancedLogger            
+                        /** @var \PICOExplorer\Services\AdvancedLogger\Exceptions\Handlers\WarningsHandler $instance */
+                        return $instance->ExternalConnectionInfo($wasSuccess, $url, $attempts, $time, $settings, $log);
+        }
+        
+        /**
+         * 
+         *
+         * @static 
+         */ 
         public static function LogTest($info)
         {
             //Method inherited from \PICOExplorer\Services\AdvancedLogger\AdvancedLogger            
@@ -15583,6 +15281,18 @@ namespace PICOExplorer\Facades {
          *
          * @static 
          */ 
+        public static function ExternalConnectionInfo($wasSuccess, $url, $attempts, $time, $settings, $log)
+        {
+            //Method inherited from \PICOExplorer\Services\AdvancedLogger\AdvancedLogger            
+                        /** @var \PICOExplorer\Services\AdvancedLogger\Services\ExceptionLogger $instance */
+                        return $instance->ExternalConnectionInfo($wasSuccess, $url, $attempts, $time, $settings, $log);
+        }
+        
+        /**
+         * 
+         *
+         * @static 
+         */ 
         public static function LogTest($info)
         {
             //Method inherited from \PICOExplorer\Services\AdvancedLogger\AdvancedLogger            
@@ -15646,6 +15356,1355 @@ namespace PICOExplorer\Facades {
         {
                         /** @var \PICOExplorer\Services\AdvancedLogger\Services\ExceptionLogger $instance */
                         return $instance->ExceptionLogBuilder($exception, $channel, $level);
+        }
+         
+    }
+
+    /**
+     * 
+     *
+     */ 
+    class SpecialValidatorFacade {
+        
+        /**
+         * 
+         *
+         * @static 
+         */ 
+        public static function SpecialValidate($data, $ruleCasts, $ThrowerInfo = null, $ModelName = null)
+        {
+                        /** @var \PICOExplorer\Services\AdvancedLogger\Services\SpecialValidator $instance */
+                        return $instance->SpecialValidate($data, $ruleCasts, $ThrowerInfo, $ModelName);
+        }
+         
+    }
+
+    /**
+     * Class ResultsNumberBIREMEFacade
+     *
+     * @package PICOExplorer\Services\BIREMEImporter
+     */ 
+    class AuthHandlerFacade {
+        
+        /**
+         * 
+         *
+         * @static 
+         */ 
+        public static function isAdmin()
+        {
+                        /** @var \PICOExplorer\Services\AuthHandler\AuthHandler $instance */
+                        return $instance->isAdmin();
+        }
+        
+        /**
+         * 
+         *
+         * @static 
+         */ 
+        public static function UserData()
+        {
+                        /** @var \PICOExplorer\Services\AuthHandler\AuthHandler $instance */
+                        return $instance->UserData();
+        }
+        
+        /**
+         * 
+         *
+         * @static 
+         */ 
+        public static function Logout()
+        {
+                        /** @var \PICOExplorer\Services\AuthHandler\AuthHandler $instance */
+                        return $instance->Logout();
+        }
+        
+        /**
+         * 
+         *
+         * @static 
+         */ 
+        public static function Login($userData)
+        {
+                        /** @var \PICOExplorer\Services\AuthHandler\AuthHandler $instance */
+                        return $instance->Login($userData);
+        }
+         
+    }
+ 
+}
+
+namespace PICOExplorer\Services\AdvancedLogger\Services { 
+
+    /**
+     * 
+     *
+     */ 
+    class ServicePerformance {
+         
+    }
+ 
+}
+
+namespace Collective\Html { 
+
+    /**
+     * 
+     *
+     * @see \Collective\Html\FormBuilder
+     */ 
+    class FormFacade {
+        
+        /**
+         * Open up a new HTML form.
+         *
+         * @param array $options
+         * @return \Illuminate\Support\HtmlString 
+         * @static 
+         */ 
+        public static function open($options = array())
+        {
+                        /** @var \Collective\Html\FormBuilder $instance */
+                        return $instance->open($options);
+        }
+        
+        /**
+         * Create a new model based form builder.
+         *
+         * @param mixed $model
+         * @param array $options
+         * @return \Illuminate\Support\HtmlString 
+         * @static 
+         */ 
+        public static function model($model, $options = array())
+        {
+                        /** @var \Collective\Html\FormBuilder $instance */
+                        return $instance->model($model, $options);
+        }
+        
+        /**
+         * Set the model instance on the form builder.
+         *
+         * @param mixed $model
+         * @return void 
+         * @static 
+         */ 
+        public static function setModel($model)
+        {
+                        /** @var \Collective\Html\FormBuilder $instance */
+                        $instance->setModel($model);
+        }
+        
+        /**
+         * Get the current model instance on the form builder.
+         *
+         * @return mixed $model
+         * @static 
+         */ 
+        public static function getModel()
+        {
+                        /** @var \Collective\Html\FormBuilder $instance */
+                        return $instance->getModel();
+        }
+        
+        /**
+         * Close the current form.
+         *
+         * @return string 
+         * @static 
+         */ 
+        public static function close()
+        {
+                        /** @var \Collective\Html\FormBuilder $instance */
+                        return $instance->close();
+        }
+        
+        /**
+         * Generate a hidden field with the current CSRF token.
+         *
+         * @return string 
+         * @static 
+         */ 
+        public static function token()
+        {
+                        /** @var \Collective\Html\FormBuilder $instance */
+                        return $instance->token();
+        }
+        
+        /**
+         * Create a form label element.
+         *
+         * @param string $name
+         * @param string $value
+         * @param array $options
+         * @param bool $escape_html
+         * @return \Illuminate\Support\HtmlString 
+         * @static 
+         */ 
+        public static function label($name, $value = null, $options = array(), $escape_html = true)
+        {
+                        /** @var \Collective\Html\FormBuilder $instance */
+                        return $instance->label($name, $value, $options, $escape_html);
+        }
+        
+        /**
+         * Create a form input field.
+         *
+         * @param string $type
+         * @param string $name
+         * @param string $value
+         * @param array $options
+         * @return \Illuminate\Support\HtmlString 
+         * @static 
+         */ 
+        public static function input($type, $name, $value = null, $options = array())
+        {
+                        /** @var \Collective\Html\FormBuilder $instance */
+                        return $instance->input($type, $name, $value, $options);
+        }
+        
+        /**
+         * Create a text input field.
+         *
+         * @param string $name
+         * @param string $value
+         * @param array $options
+         * @return \Illuminate\Support\HtmlString 
+         * @static 
+         */ 
+        public static function text($name, $value = null, $options = array())
+        {
+                        /** @var \Collective\Html\FormBuilder $instance */
+                        return $instance->text($name, $value, $options);
+        }
+        
+        /**
+         * Create a password input field.
+         *
+         * @param string $name
+         * @param array $options
+         * @return \Illuminate\Support\HtmlString 
+         * @static 
+         */ 
+        public static function password($name, $options = array())
+        {
+                        /** @var \Collective\Html\FormBuilder $instance */
+                        return $instance->password($name, $options);
+        }
+        
+        /**
+         * Create a range input field.
+         *
+         * @param string $name
+         * @param string $value
+         * @param array $options
+         * @return \Illuminate\Support\HtmlString 
+         * @static 
+         */ 
+        public static function range($name, $value = null, $options = array())
+        {
+                        /** @var \Collective\Html\FormBuilder $instance */
+                        return $instance->range($name, $value, $options);
+        }
+        
+        /**
+         * Create a hidden input field.
+         *
+         * @param string $name
+         * @param string $value
+         * @param array $options
+         * @return \Illuminate\Support\HtmlString 
+         * @static 
+         */ 
+        public static function hidden($name, $value = null, $options = array())
+        {
+                        /** @var \Collective\Html\FormBuilder $instance */
+                        return $instance->hidden($name, $value, $options);
+        }
+        
+        /**
+         * Create a search input field.
+         *
+         * @param string $name
+         * @param string $value
+         * @param array $options
+         * @return \Illuminate\Support\HtmlString 
+         * @static 
+         */ 
+        public static function search($name, $value = null, $options = array())
+        {
+                        /** @var \Collective\Html\FormBuilder $instance */
+                        return $instance->search($name, $value, $options);
+        }
+        
+        /**
+         * Create an e-mail input field.
+         *
+         * @param string $name
+         * @param string $value
+         * @param array $options
+         * @return \Illuminate\Support\HtmlString 
+         * @static 
+         */ 
+        public static function email($name, $value = null, $options = array())
+        {
+                        /** @var \Collective\Html\FormBuilder $instance */
+                        return $instance->email($name, $value, $options);
+        }
+        
+        /**
+         * Create a tel input field.
+         *
+         * @param string $name
+         * @param string $value
+         * @param array $options
+         * @return \Illuminate\Support\HtmlString 
+         * @static 
+         */ 
+        public static function tel($name, $value = null, $options = array())
+        {
+                        /** @var \Collective\Html\FormBuilder $instance */
+                        return $instance->tel($name, $value, $options);
+        }
+        
+        /**
+         * Create a number input field.
+         *
+         * @param string $name
+         * @param string $value
+         * @param array $options
+         * @return \Illuminate\Support\HtmlString 
+         * @static 
+         */ 
+        public static function number($name, $value = null, $options = array())
+        {
+                        /** @var \Collective\Html\FormBuilder $instance */
+                        return $instance->number($name, $value, $options);
+        }
+        
+        /**
+         * Create a date input field.
+         *
+         * @param string $name
+         * @param string $value
+         * @param array $options
+         * @return \Illuminate\Support\HtmlString 
+         * @static 
+         */ 
+        public static function date($name, $value = null, $options = array())
+        {
+                        /** @var \Collective\Html\FormBuilder $instance */
+                        return $instance->date($name, $value, $options);
+        }
+        
+        /**
+         * Create a datetime input field.
+         *
+         * @param string $name
+         * @param string $value
+         * @param array $options
+         * @return \Illuminate\Support\HtmlString 
+         * @static 
+         */ 
+        public static function datetime($name, $value = null, $options = array())
+        {
+                        /** @var \Collective\Html\FormBuilder $instance */
+                        return $instance->datetime($name, $value, $options);
+        }
+        
+        /**
+         * Create a datetime-local input field.
+         *
+         * @param string $name
+         * @param string $value
+         * @param array $options
+         * @return \Illuminate\Support\HtmlString 
+         * @static 
+         */ 
+        public static function datetimeLocal($name, $value = null, $options = array())
+        {
+                        /** @var \Collective\Html\FormBuilder $instance */
+                        return $instance->datetimeLocal($name, $value, $options);
+        }
+        
+        /**
+         * Create a time input field.
+         *
+         * @param string $name
+         * @param string $value
+         * @param array $options
+         * @return \Illuminate\Support\HtmlString 
+         * @static 
+         */ 
+        public static function time($name, $value = null, $options = array())
+        {
+                        /** @var \Collective\Html\FormBuilder $instance */
+                        return $instance->time($name, $value, $options);
+        }
+        
+        /**
+         * Create a url input field.
+         *
+         * @param string $name
+         * @param string $value
+         * @param array $options
+         * @return \Illuminate\Support\HtmlString 
+         * @static 
+         */ 
+        public static function url($name, $value = null, $options = array())
+        {
+                        /** @var \Collective\Html\FormBuilder $instance */
+                        return $instance->url($name, $value, $options);
+        }
+        
+        /**
+         * Create a week input field.
+         *
+         * @param string $name
+         * @param string $value
+         * @param array $options
+         * @return \Illuminate\Support\HtmlString 
+         * @static 
+         */ 
+        public static function week($name, $value = null, $options = array())
+        {
+                        /** @var \Collective\Html\FormBuilder $instance */
+                        return $instance->week($name, $value, $options);
+        }
+        
+        /**
+         * Create a file input field.
+         *
+         * @param string $name
+         * @param array $options
+         * @return \Illuminate\Support\HtmlString 
+         * @static 
+         */ 
+        public static function file($name, $options = array())
+        {
+                        /** @var \Collective\Html\FormBuilder $instance */
+                        return $instance->file($name, $options);
+        }
+        
+        /**
+         * Create a textarea input field.
+         *
+         * @param string $name
+         * @param string $value
+         * @param array $options
+         * @return \Illuminate\Support\HtmlString 
+         * @static 
+         */ 
+        public static function textarea($name, $value = null, $options = array())
+        {
+                        /** @var \Collective\Html\FormBuilder $instance */
+                        return $instance->textarea($name, $value, $options);
+        }
+        
+        /**
+         * Create a select box field.
+         *
+         * @param string $name
+         * @param array $list
+         * @param string|bool $selected
+         * @param array $selectAttributes
+         * @param array $optionsAttributes
+         * @param array $optgroupsAttributes
+         * @return \Illuminate\Support\HtmlString 
+         * @static 
+         */ 
+        public static function select($name, $list = array(), $selected = null, $selectAttributes = array(), $optionsAttributes = array(), $optgroupsAttributes = array())
+        {
+                        /** @var \Collective\Html\FormBuilder $instance */
+                        return $instance->select($name, $list, $selected, $selectAttributes, $optionsAttributes, $optgroupsAttributes);
+        }
+        
+        /**
+         * Create a select range field.
+         *
+         * @param string $name
+         * @param string $begin
+         * @param string $end
+         * @param string $selected
+         * @param array $options
+         * @return \Illuminate\Support\HtmlString 
+         * @static 
+         */ 
+        public static function selectRange($name, $begin, $end, $selected = null, $options = array())
+        {
+                        /** @var \Collective\Html\FormBuilder $instance */
+                        return $instance->selectRange($name, $begin, $end, $selected, $options);
+        }
+        
+        /**
+         * Create a select year field.
+         *
+         * @param string $name
+         * @param string $begin
+         * @param string $end
+         * @param string $selected
+         * @param array $options
+         * @return mixed 
+         * @static 
+         */ 
+        public static function selectYear()
+        {
+                        /** @var \Collective\Html\FormBuilder $instance */
+                        return $instance->selectYear();
+        }
+        
+        /**
+         * Create a select month field.
+         *
+         * @param string $name
+         * @param string $selected
+         * @param array $options
+         * @param string $format
+         * @return \Illuminate\Support\HtmlString 
+         * @static 
+         */ 
+        public static function selectMonth($name, $selected = null, $options = array(), $format = '%B')
+        {
+                        /** @var \Collective\Html\FormBuilder $instance */
+                        return $instance->selectMonth($name, $selected, $options, $format);
+        }
+        
+        /**
+         * Get the select option for the given value.
+         *
+         * @param string $display
+         * @param string $value
+         * @param string $selected
+         * @param array $attributes
+         * @param array $optgroupAttributes
+         * @return \Illuminate\Support\HtmlString 
+         * @static 
+         */ 
+        public static function getSelectOption($display, $value, $selected, $attributes = array(), $optgroupAttributes = array())
+        {
+                        /** @var \Collective\Html\FormBuilder $instance */
+                        return $instance->getSelectOption($display, $value, $selected, $attributes, $optgroupAttributes);
+        }
+        
+        /**
+         * Create a checkbox input field.
+         *
+         * @param string $name
+         * @param mixed $value
+         * @param bool $checked
+         * @param array $options
+         * @return \Illuminate\Support\HtmlString 
+         * @static 
+         */ 
+        public static function checkbox($name, $value = 1, $checked = null, $options = array())
+        {
+                        /** @var \Collective\Html\FormBuilder $instance */
+                        return $instance->checkbox($name, $value, $checked, $options);
+        }
+        
+        /**
+         * Create a radio button input field.
+         *
+         * @param string $name
+         * @param mixed $value
+         * @param bool $checked
+         * @param array $options
+         * @return \Illuminate\Support\HtmlString 
+         * @static 
+         */ 
+        public static function radio($name, $value = null, $checked = null, $options = array())
+        {
+                        /** @var \Collective\Html\FormBuilder $instance */
+                        return $instance->radio($name, $value, $checked, $options);
+        }
+        
+        /**
+         * Create a HTML reset input element.
+         *
+         * @param string $value
+         * @param array $attributes
+         * @return \Illuminate\Support\HtmlString 
+         * @static 
+         */ 
+        public static function reset($value, $attributes = array())
+        {
+                        /** @var \Collective\Html\FormBuilder $instance */
+                        return $instance->reset($value, $attributes);
+        }
+        
+        /**
+         * Create a HTML image input element.
+         *
+         * @param string $url
+         * @param string $name
+         * @param array $attributes
+         * @return \Illuminate\Support\HtmlString 
+         * @static 
+         */ 
+        public static function image($url, $name = null, $attributes = array())
+        {
+                        /** @var \Collective\Html\FormBuilder $instance */
+                        return $instance->image($url, $name, $attributes);
+        }
+        
+        /**
+         * Create a month input field.
+         *
+         * @param string $name
+         * @param string $value
+         * @param array $options
+         * @return \Illuminate\Support\HtmlString 
+         * @static 
+         */ 
+        public static function month($name, $value = null, $options = array())
+        {
+                        /** @var \Collective\Html\FormBuilder $instance */
+                        return $instance->month($name, $value, $options);
+        }
+        
+        /**
+         * Create a color input field.
+         *
+         * @param string $name
+         * @param string $value
+         * @param array $options
+         * @return \Illuminate\Support\HtmlString 
+         * @static 
+         */ 
+        public static function color($name, $value = null, $options = array())
+        {
+                        /** @var \Collective\Html\FormBuilder $instance */
+                        return $instance->color($name, $value, $options);
+        }
+        
+        /**
+         * Create a submit button element.
+         *
+         * @param string $value
+         * @param array $options
+         * @return \Illuminate\Support\HtmlString 
+         * @static 
+         */ 
+        public static function submit($value = null, $options = array())
+        {
+                        /** @var \Collective\Html\FormBuilder $instance */
+                        return $instance->submit($value, $options);
+        }
+        
+        /**
+         * Create a button element.
+         *
+         * @param string $value
+         * @param array $options
+         * @return \Illuminate\Support\HtmlString 
+         * @static 
+         */ 
+        public static function button($value = null, $options = array())
+        {
+                        /** @var \Collective\Html\FormBuilder $instance */
+                        return $instance->button($value, $options);
+        }
+        
+        /**
+         * Create a datalist box field.
+         *
+         * @param string $id
+         * @param array $list
+         * @return \Illuminate\Support\HtmlString 
+         * @static 
+         */ 
+        public static function datalist($id, $list = array())
+        {
+                        /** @var \Collective\Html\FormBuilder $instance */
+                        return $instance->datalist($id, $list);
+        }
+        
+        /**
+         * Get the ID attribute for a field name.
+         *
+         * @param string $name
+         * @param array $attributes
+         * @return string 
+         * @static 
+         */ 
+        public static function getIdAttribute($name, $attributes)
+        {
+                        /** @var \Collective\Html\FormBuilder $instance */
+                        return $instance->getIdAttribute($name, $attributes);
+        }
+        
+        /**
+         * Get the value that should be assigned to the field.
+         *
+         * @param string $name
+         * @param string $value
+         * @return mixed 
+         * @static 
+         */ 
+        public static function getValueAttribute($name, $value = null)
+        {
+                        /** @var \Collective\Html\FormBuilder $instance */
+                        return $instance->getValueAttribute($name, $value);
+        }
+        
+        /**
+         * Take Request in fill process
+         *
+         * @param bool $consider
+         * @static 
+         */ 
+        public static function considerRequest($consider = true)
+        {
+                        /** @var \Collective\Html\FormBuilder $instance */
+                        return $instance->considerRequest($consider);
+        }
+        
+        /**
+         * Get a value from the session's old input.
+         *
+         * @param string $name
+         * @return mixed 
+         * @static 
+         */ 
+        public static function old($name)
+        {
+                        /** @var \Collective\Html\FormBuilder $instance */
+                        return $instance->old($name);
+        }
+        
+        /**
+         * Determine if the old input is empty.
+         *
+         * @return bool 
+         * @static 
+         */ 
+        public static function oldInputIsEmpty()
+        {
+                        /** @var \Collective\Html\FormBuilder $instance */
+                        return $instance->oldInputIsEmpty();
+        }
+        
+        /**
+         * Get the session store implementation.
+         *
+         * @return \Illuminate\Contracts\Session\Session $session
+         * @static 
+         */ 
+        public static function getSessionStore()
+        {
+                        /** @var \Collective\Html\FormBuilder $instance */
+                        return $instance->getSessionStore();
+        }
+        
+        /**
+         * Set the session store implementation.
+         *
+         * @param \Illuminate\Contracts\Session\Session $session
+         * @return \Collective\Html\FormBuilder 
+         * @static 
+         */ 
+        public static function setSessionStore($session)
+        {
+                        /** @var \Collective\Html\FormBuilder $instance */
+                        return $instance->setSessionStore($session);
+        }
+        
+        /**
+         * Register a custom macro.
+         *
+         * @param string $name
+         * @param object|callable $macro
+         * @return void 
+         * @static 
+         */ 
+        public static function macro($name, $macro)
+        {
+                        \Collective\Html\FormBuilder::macro($name, $macro);
+        }
+        
+        /**
+         * Mix another object into the class.
+         *
+         * @param object $mixin
+         * @param bool $replace
+         * @return void 
+         * @throws \ReflectionException
+         * @static 
+         */ 
+        public static function mixin($mixin, $replace = true)
+        {
+                        \Collective\Html\FormBuilder::mixin($mixin, $replace);
+        }
+        
+        /**
+         * Checks if macro is registered.
+         *
+         * @param string $name
+         * @return bool 
+         * @static 
+         */ 
+        public static function hasMacro($name)
+        {
+                        return \Collective\Html\FormBuilder::hasMacro($name);
+        }
+        
+        /**
+         * Dynamically handle calls to the class.
+         *
+         * @param string $method
+         * @param array $parameters
+         * @return mixed 
+         * @throws \BadMethodCallException
+         * @static 
+         */ 
+        public static function macroCall($method, $parameters)
+        {
+                        /** @var \Collective\Html\FormBuilder $instance */
+                        return $instance->macroCall($method, $parameters);
+        }
+        
+        /**
+         * Register a custom component.
+         *
+         * @param $name
+         * @param $view
+         * @param array $signature
+         * @return void 
+         * @static 
+         */ 
+        public static function component($name, $view, $signature)
+        {
+                        \Collective\Html\FormBuilder::component($name, $view, $signature);
+        }
+        
+        /**
+         * Check if a component is registered.
+         *
+         * @param $name
+         * @return bool 
+         * @static 
+         */ 
+        public static function hasComponent($name)
+        {
+                        return \Collective\Html\FormBuilder::hasComponent($name);
+        }
+        
+        /**
+         * Dynamically handle calls to the class.
+         *
+         * @param string $method
+         * @param array $parameters
+         * @return \Illuminate\Contracts\View\View|mixed 
+         * @throws \BadMethodCallException
+         * @static 
+         */ 
+        public static function componentCall($method, $parameters)
+        {
+                        /** @var \Collective\Html\FormBuilder $instance */
+                        return $instance->componentCall($method, $parameters);
+        }
+         
+    }
+
+    /**
+     * 
+     *
+     * @see \Collective\Html\HtmlBuilder
+     */ 
+    class HtmlFacade {
+        
+        /**
+         * Convert an HTML string to entities.
+         *
+         * @param string $value
+         * @return string 
+         * @static 
+         */ 
+        public static function entities($value)
+        {
+                        /** @var \Collective\Html\HtmlBuilder $instance */
+                        return $instance->entities($value);
+        }
+        
+        /**
+         * Convert entities to HTML characters.
+         *
+         * @param string $value
+         * @return string 
+         * @static 
+         */ 
+        public static function decode($value)
+        {
+                        /** @var \Collective\Html\HtmlBuilder $instance */
+                        return $instance->decode($value);
+        }
+        
+        /**
+         * Generate a link to a JavaScript file.
+         *
+         * @param string $url
+         * @param array $attributes
+         * @param bool $secure
+         * @return \Illuminate\Support\HtmlString 
+         * @static 
+         */ 
+        public static function script($url, $attributes = array(), $secure = null)
+        {
+                        /** @var \Collective\Html\HtmlBuilder $instance */
+                        return $instance->script($url, $attributes, $secure);
+        }
+        
+        /**
+         * Generate a link to a CSS file.
+         *
+         * @param string $url
+         * @param array $attributes
+         * @param bool $secure
+         * @return \Illuminate\Support\HtmlString 
+         * @static 
+         */ 
+        public static function style($url, $attributes = array(), $secure = null)
+        {
+                        /** @var \Collective\Html\HtmlBuilder $instance */
+                        return $instance->style($url, $attributes, $secure);
+        }
+        
+        /**
+         * Generate an HTML image element.
+         *
+         * @param string $url
+         * @param string $alt
+         * @param array $attributes
+         * @param bool $secure
+         * @return \Illuminate\Support\HtmlString 
+         * @static 
+         */ 
+        public static function image($url, $alt = null, $attributes = array(), $secure = null)
+        {
+                        /** @var \Collective\Html\HtmlBuilder $instance */
+                        return $instance->image($url, $alt, $attributes, $secure);
+        }
+        
+        /**
+         * Generate a link to a Favicon file.
+         *
+         * @param string $url
+         * @param array $attributes
+         * @param bool $secure
+         * @return \Illuminate\Support\HtmlString 
+         * @static 
+         */ 
+        public static function favicon($url, $attributes = array(), $secure = null)
+        {
+                        /** @var \Collective\Html\HtmlBuilder $instance */
+                        return $instance->favicon($url, $attributes, $secure);
+        }
+        
+        /**
+         * Generate a HTML link.
+         *
+         * @param string $url
+         * @param string $title
+         * @param array $attributes
+         * @param bool $secure
+         * @param bool $escape
+         * @return \Illuminate\Support\HtmlString 
+         * @static 
+         */ 
+        public static function link($url, $title = null, $attributes = array(), $secure = null, $escape = true)
+        {
+                        /** @var \Collective\Html\HtmlBuilder $instance */
+                        return $instance->link($url, $title, $attributes, $secure, $escape);
+        }
+        
+        /**
+         * Generate a HTTPS HTML link.
+         *
+         * @param string $url
+         * @param string $title
+         * @param array $attributes
+         * @return \Illuminate\Support\HtmlString 
+         * @static 
+         */ 
+        public static function secureLink($url, $title = null, $attributes = array())
+        {
+                        /** @var \Collective\Html\HtmlBuilder $instance */
+                        return $instance->secureLink($url, $title, $attributes);
+        }
+        
+        /**
+         * Generate a HTML link to an asset.
+         *
+         * @param string $url
+         * @param string $title
+         * @param array $attributes
+         * @param bool $secure
+         * @return \Illuminate\Support\HtmlString 
+         * @static 
+         */ 
+        public static function linkAsset($url, $title = null, $attributes = array(), $secure = null)
+        {
+                        /** @var \Collective\Html\HtmlBuilder $instance */
+                        return $instance->linkAsset($url, $title, $attributes, $secure);
+        }
+        
+        /**
+         * Generate a HTTPS HTML link to an asset.
+         *
+         * @param string $url
+         * @param string $title
+         * @param array $attributes
+         * @return \Illuminate\Support\HtmlString 
+         * @static 
+         */ 
+        public static function linkSecureAsset($url, $title = null, $attributes = array())
+        {
+                        /** @var \Collective\Html\HtmlBuilder $instance */
+                        return $instance->linkSecureAsset($url, $title, $attributes);
+        }
+        
+        /**
+         * Generate a HTML link to a named route.
+         *
+         * @param string $name
+         * @param string $title
+         * @param array $parameters
+         * @param array $attributes
+         * @return \Illuminate\Support\HtmlString 
+         * @static 
+         */ 
+        public static function linkRoute($name, $title = null, $parameters = array(), $attributes = array())
+        {
+                        /** @var \Collective\Html\HtmlBuilder $instance */
+                        return $instance->linkRoute($name, $title, $parameters, $attributes);
+        }
+        
+        /**
+         * Generate a HTML link to a controller action.
+         *
+         * @param string $action
+         * @param string $title
+         * @param array $parameters
+         * @param array $attributes
+         * @return \Illuminate\Support\HtmlString 
+         * @static 
+         */ 
+        public static function linkAction($action, $title = null, $parameters = array(), $attributes = array())
+        {
+                        /** @var \Collective\Html\HtmlBuilder $instance */
+                        return $instance->linkAction($action, $title, $parameters, $attributes);
+        }
+        
+        /**
+         * Generate a HTML link to an email address.
+         *
+         * @param string $email
+         * @param string $title
+         * @param array $attributes
+         * @param bool $escape
+         * @return \Illuminate\Support\HtmlString 
+         * @static 
+         */ 
+        public static function mailto($email, $title = null, $attributes = array(), $escape = true)
+        {
+                        /** @var \Collective\Html\HtmlBuilder $instance */
+                        return $instance->mailto($email, $title, $attributes, $escape);
+        }
+        
+        /**
+         * Obfuscate an e-mail address to prevent spam-bots from sniffing it.
+         *
+         * @param string $email
+         * @return string 
+         * @static 
+         */ 
+        public static function email($email)
+        {
+                        /** @var \Collective\Html\HtmlBuilder $instance */
+                        return $instance->email($email);
+        }
+        
+        /**
+         * Generates non-breaking space entities based on number supplied.
+         *
+         * @param int $num
+         * @return string 
+         * @static 
+         */ 
+        public static function nbsp($num = 1)
+        {
+                        /** @var \Collective\Html\HtmlBuilder $instance */
+                        return $instance->nbsp($num);
+        }
+        
+        /**
+         * Generate an ordered list of items.
+         *
+         * @param array $list
+         * @param array $attributes
+         * @return \Illuminate\Support\HtmlString|string 
+         * @static 
+         */ 
+        public static function ol($list, $attributes = array())
+        {
+                        /** @var \Collective\Html\HtmlBuilder $instance */
+                        return $instance->ol($list, $attributes);
+        }
+        
+        /**
+         * Generate an un-ordered list of items.
+         *
+         * @param array $list
+         * @param array $attributes
+         * @return \Illuminate\Support\HtmlString|string 
+         * @static 
+         */ 
+        public static function ul($list, $attributes = array())
+        {
+                        /** @var \Collective\Html\HtmlBuilder $instance */
+                        return $instance->ul($list, $attributes);
+        }
+        
+        /**
+         * Generate a description list of items.
+         *
+         * @param array $list
+         * @param array $attributes
+         * @return \Illuminate\Support\HtmlString 
+         * @static 
+         */ 
+        public static function dl($list, $attributes = array())
+        {
+                        /** @var \Collective\Html\HtmlBuilder $instance */
+                        return $instance->dl($list, $attributes);
+        }
+        
+        /**
+         * Build an HTML attribute string from an array.
+         *
+         * @param array $attributes
+         * @return string 
+         * @static 
+         */ 
+        public static function attributes($attributes)
+        {
+                        /** @var \Collective\Html\HtmlBuilder $instance */
+                        return $instance->attributes($attributes);
+        }
+        
+        /**
+         * Obfuscate a string to prevent spam-bots from sniffing it.
+         *
+         * @param string $value
+         * @return string 
+         * @static 
+         */ 
+        public static function obfuscate($value)
+        {
+                        /** @var \Collective\Html\HtmlBuilder $instance */
+                        return $instance->obfuscate($value);
+        }
+        
+        /**
+         * Generate a meta tag.
+         *
+         * @param string $name
+         * @param string $content
+         * @param array $attributes
+         * @return \Illuminate\Support\HtmlString 
+         * @static 
+         */ 
+        public static function meta($name, $content, $attributes = array())
+        {
+                        /** @var \Collective\Html\HtmlBuilder $instance */
+                        return $instance->meta($name, $content, $attributes);
+        }
+        
+        /**
+         * Generate an html tag.
+         *
+         * @param string $tag
+         * @param mixed $content
+         * @param array $attributes
+         * @return \Illuminate\Support\HtmlString 
+         * @static 
+         */ 
+        public static function tag($tag, $content, $attributes = array())
+        {
+                        /** @var \Collective\Html\HtmlBuilder $instance */
+                        return $instance->tag($tag, $content, $attributes);
+        }
+        
+        /**
+         * Register a custom macro.
+         *
+         * @param string $name
+         * @param object|callable $macro
+         * @return void 
+         * @static 
+         */ 
+        public static function macro($name, $macro)
+        {
+                        \Collective\Html\HtmlBuilder::macro($name, $macro);
+        }
+        
+        /**
+         * Mix another object into the class.
+         *
+         * @param object $mixin
+         * @param bool $replace
+         * @return void 
+         * @throws \ReflectionException
+         * @static 
+         */ 
+        public static function mixin($mixin, $replace = true)
+        {
+                        \Collective\Html\HtmlBuilder::mixin($mixin, $replace);
+        }
+        
+        /**
+         * Checks if macro is registered.
+         *
+         * @param string $name
+         * @return bool 
+         * @static 
+         */ 
+        public static function hasMacro($name)
+        {
+                        return \Collective\Html\HtmlBuilder::hasMacro($name);
+        }
+        
+        /**
+         * Dynamically handle calls to the class.
+         *
+         * @param string $method
+         * @param array $parameters
+         * @return mixed 
+         * @throws \BadMethodCallException
+         * @static 
+         */ 
+        public static function macroCall($method, $parameters)
+        {
+                        /** @var \Collective\Html\HtmlBuilder $instance */
+                        return $instance->macroCall($method, $parameters);
+        }
+        
+        /**
+         * Register a custom component.
+         *
+         * @param $name
+         * @param $view
+         * @param array $signature
+         * @return void 
+         * @static 
+         */ 
+        public static function component($name, $view, $signature)
+        {
+                        \Collective\Html\HtmlBuilder::component($name, $view, $signature);
+        }
+        
+        /**
+         * Check if a component is registered.
+         *
+         * @param $name
+         * @return bool 
+         * @static 
+         */ 
+        public static function hasComponent($name)
+        {
+                        return \Collective\Html\HtmlBuilder::hasComponent($name);
+        }
+        
+        /**
+         * Dynamically handle calls to the class.
+         *
+         * @param string $method
+         * @param array $parameters
+         * @return \Illuminate\Contracts\View\View|mixed 
+         * @throws \BadMethodCallException
+         * @static 
+         */ 
+        public static function componentCall($method, $parameters)
+        {
+                        /** @var \Collective\Html\HtmlBuilder $instance */
+                        return $instance->componentCall($method, $parameters);
+        }
+         
+    }
+ 
+}
+
+namespace PragmaRX\Yaml\Package { 
+
+    /**
+     * 
+     *
+     */ 
+    class Facade {
+        
+        /**
+         * Load yaml files from directory and add to Laravel config.
+         *
+         * @param string $path
+         * @param string $configKey
+         * @return \PragmaRX\Yaml\Package\Collection 
+         * @static 
+         */ 
+        public static function loadToConfig($path, $configKey)
+        {
+                        /** @var \PragmaRX\Yaml\Package\Yaml $instance */
+                        return $instance->loadToConfig($path, $configKey);
+        }
+        
+        /**
+         * Load all yaml files from a directory.
+         *
+         * @param $path
+         * @return \Illuminate\Support\Collection 
+         * @static 
+         */ 
+        public static function loadFromDirectory($path)
+        {
+                        /** @var \PragmaRX\Yaml\Package\Yaml $instance */
+                        return $instance->loadFromDirectory($path);
+        }
+        
+        /**
+         * Load yaml file.
+         *
+         * @param $file
+         * @return mixed|string 
+         * @static 
+         */ 
+        public static function loadFile($file)
+        {
+                        /** @var \PragmaRX\Yaml\Package\Yaml $instance */
+                        return $instance->loadFile($file);
+        }
+        
+        /**
+         * Remove extension from file name.
+         *
+         * @param $dirty
+         * @return \Illuminate\Support\Collection|mixed 
+         * @static 
+         */ 
+        public static function cleanArrayKeysRecursive($dirty)
+        {
+                        /** @var \PragmaRX\Yaml\Package\Yaml $instance */
+                        return $instance->cleanArrayKeysRecursive($dirty);
+        }
+        
+        /**
+         * Get this object instance.
+         *
+         * @return \PragmaRX\Yaml\Package\Yaml 
+         * @static 
+         */ 
+        public static function instance()
+        {
+                        /** @var \PragmaRX\Yaml\Package\Yaml $instance */
+                        return $instance->instance();
         }
          
     }
@@ -17118,16 +18177,16 @@ namespace  {
             /**
              * Add a "where null" clause to the query.
              *
-             * @param string $column
+             * @param string|array $columns
              * @param string $boolean
              * @param bool $not
              * @return \Illuminate\Database\Query\Builder 
              * @static 
              */ 
-            public static function whereNull($column, $boolean = 'and', $not = false)
+            public static function whereNull($columns, $boolean = 'and', $not = false)
             {
                                 /** @var \Illuminate\Database\Query\Builder $instance */
-                                return $instance->whereNull($column, $boolean, $not);
+                                return $instance->whereNull($columns, $boolean, $not);
             }
          
             /**
@@ -18117,6 +19176,19 @@ namespace  {
             }
          
             /**
+             * Insert a new record into the database while ignoring errors.
+             *
+             * @param array $values
+             * @return int 
+             * @static 
+             */ 
+            public static function insertOrIgnore($values)
+            {
+                                /** @var \Illuminate\Database\Query\Builder $instance */
+                                return $instance->insertOrIgnore($values);
+            }
+         
+            /**
              * Insert a new record and get the value of the primary key.
              *
              * @param array $values
@@ -18315,13 +19387,13 @@ namespace  {
             /**
              * Dump the current SQL and bindings.
              *
-             * @return void 
+             * @return \Illuminate\Database\Query\Builder 
              * @static 
              */ 
             public static function dump()
             {
                                 /** @var \Illuminate\Database\Query\Builder $instance */
-                                $instance->dump();
+                                return $instance->dump();
             }
          
             /**
@@ -18452,6 +19524,18 @@ namespace  {
     class WarningsHandlerFacade extends \PICOExplorer\Facades\WarningsHandlerFacade {}
 
     class ExceptionLoggerFacade extends \PICOExplorer\Facades\ExceptionLoggerFacade {}
+
+    class SpecialValidatorFacade extends \PICOExplorer\Facades\SpecialValidatorFacade {}
+
+    class AuthHandlerFacade extends \PICOExplorer\Facades\AuthHandlerFacade {}
+
+    class SVPerformance extends \PICOExplorer\Services\AdvancedLogger\Services\ServicePerformance {}
+
+    class Form extends \Collective\Html\FormFacade {}
+
+    class Html extends \Collective\Html\HtmlFacade {}
+
+    class Yaml extends \PragmaRX\Yaml\Package\Facade {}
  
 }
 

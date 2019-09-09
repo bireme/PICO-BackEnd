@@ -10,10 +10,11 @@ class ResultsNumberBIREME extends ResultsNumberImporter implements PICOServiceEn
     final public function Process()
     {
         $results = array();
-        foreach ($this->model->InitialData as $key => $query) {
+        foreach ($this->DTO->getInitialData() as $key => $query) {
             $results[$key] = $this->Explore($query);
         }
-        $this->setResults(__METHOD__ . '@' . get_class($this),$results);
+        dd('xxx');
+        return $results;
     }
 
     final public function Explore(string $queryString)

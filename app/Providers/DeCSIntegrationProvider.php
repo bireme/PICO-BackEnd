@@ -14,7 +14,7 @@ class DeCSIntegrationProvider extends ServiceProvider
      */
     public function register()
     {
-        $this->app->singleton('decsbireme', function () {
+        $this->app->bind('decsbireme', function () {
             return new DeCSBIREME();
         });
     }
