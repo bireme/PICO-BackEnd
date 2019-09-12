@@ -53,22 +53,22 @@ php artisan key:generate
 ```
 3. Modificar .env
 
-**Mostrar errores usando el logger de laravel
+**Mostrar errores usando el logger de laravel**
 ```
 APP_DEBUG=false
 ```
 
-**Ambiente de ejecución (alternativa, debug)
+**Ambiente de ejecución (alternativa, debug)**
 ```
 APP_ENV=production
 ```
 
-**Usuarios de admins maestros
+**Usuarios de admins maestros**
 ```
 MASTER_ADMIN_DATA=MasterAdminEmail@server.com:MasterAdminPass
 ```
 
-**Usuarios de admins
+**Usuarios de admins**
 ```
 ADMIN_DATA=AdminEmail1@server.com:AdminPass,AdminEmail2@server.com:AdminPass2
 ```
@@ -80,19 +80,19 @@ ADMIN_DATA=AdminEmail1@server.com:AdminPass,AdminEmail2@server.com:AdminPass2
 #### 6. Comandos de utilidad
 Abriendo una instancia de la consola de la VM, se establece como directorio la carpeta base de la app 
 
-**Borrar logs previos
+**Borrar logs previos**
 ```
 php artisan logs:clear
 ```
 
-**Actualizar vínculos para IDE
+**Actualizar vínculos para IDE**
 ```
 php artisan config:cache
 composer dump-autoload
 php artisan ide-helper:generate
 ```
 
-**Desplegar app temporalmente usando server built-in (No usará VM)
+**Desplegar app temporalmente usando server built-in (No usará VM)**
 ```
 php artisan serve
 ```
