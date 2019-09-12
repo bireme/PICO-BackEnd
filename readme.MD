@@ -33,7 +33,7 @@ Ubicar en la carpeta deseada de la Virtual Machine
 ```
 /storage/* -> Contiene logs, sesiones y otros datos que se modifican
 ```
-* ** NOTA IMPORTANTE**
+* NOTA IMPORTANTE
 **UNA VEZ INSTALADA, ES INDISPENSABLE VERIFICAR QUE .ENV Y .ENV.EXAMPLE QUEDEN OCULTOS AL ACCESO DE LOS USUARIOS DESDE LA WEB**
 
 ##### Instalación e integración
@@ -132,7 +132,7 @@ La app debe ser capaz de:
 
 ### Requerimientos no funcionales
 
-####Funcionalidad
+#### Funcionalidad
 
 ```
 Adecuación ++
@@ -141,7 +141,7 @@ Interoperabilidad ++
 Seguridad
 ```
 
-####Fiabilidad
+#### Fiabilidad
 
 ```
 Madurez
@@ -149,7 +149,7 @@ Recuperabilidad
 Tolerancia a fallos +
 ```
 
-####Usabilidad
+#### Usabilidad
 
 ```
 Aprendizaje ++
@@ -158,14 +158,14 @@ Operatividad ++
 Atractividad +
 ```
 
-####Eficiencia
+#### Eficiencia
 
 ```
 Comportamiento en el tiempo
 Comportamiento de recursos +
 ```
 	
-####Mantenibilidad
+#### Mantenibilidad
 
 ```
 Estabilidad +
@@ -174,7 +174,7 @@ Facilidad de cambio
 Facilidad de pruebas +
 ```
 
-####Portabilidad
+#### Portabilidad
 
 ```
 Capacidad de instalación
