@@ -66,10 +66,9 @@ CustomLog "logs/PICOSearch.localhost-access.log" common
 **Instalación e integración**
 
 * No debe existir en el root un server.php, sino un index.php. Si existe, cambiarle el nombre a index.php
-* Se debe verificar que el htaccess esté en el root de la app y no en public
-* Se deberá modificar el .htaccess segun lo necesario
-* La carpeta /public/ quedará inaccesible y el su contenido será desplegado en picosearch.localhost/
-* Para personalizar la adaptación, abrir .htacces en el folder root
+* Se debe verificar que el .htaccess esté en el root de la app y no en public
+* La carpeta /public/ quedará inaccesible y el su contenido será desplegado en picosearch.localhost/, si se busca picosearch.localhost/ lanzará error 404
+* Para personalizar la integración entre la app y la VM, es necesario reconfigurar el .htaccess en el folder root de la app
 
 #### 4. Primera instalación
 
