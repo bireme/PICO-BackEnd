@@ -297,6 +297,6 @@ Agradezco a la profesora Lyda Osorio por animarme a continuar en la investigaci�
 
 ## Autor
 
-**Daniel Nieto-González** - [GitHub Profile](https://github.com/nietodaniel)
+**Daniel Nieto-González** - [GitHub Profile](https://github.com/nietodaniel) - [Send email](mailto:nieto.daniel221@gmail.com)
 * Consultor Bireme | PAHO | OMS (2019)
 * CEO - [Digital MedTools](Http://digitalmedtools.blogspot.com) 
