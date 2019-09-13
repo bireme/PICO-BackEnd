@@ -105,7 +105,6 @@ MASTER_ADMIN_DATA=MasterAdminEmail@server.com:MasterAdminPass
 ADMIN_DATA=AdminEmail1@server.com:AdminPass,AdminEmail2@server.com:AdminPass2
 ```
 
-<<<<<<< HEAD
 #### 5. Borrar datos de logeo de los comónentes
 
 * Realizar este paso cada vez que se instale la app
