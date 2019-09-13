@@ -1,4 +1,4 @@
-﻿# PICO Searcher
+﻿# PICOSearcher
 
 Versión 0.2
 
@@ -23,20 +23,30 @@ Ubicar en la carpeta deseada de la Virtual Machine
 
 #### 3. Instalación en la VM e integración
 
-##### Información previa
-* Se asume que existen múltiples apps en la VM y que todas tienen sus archivos ocultos al acceso de los usuarios desde la web, con un grupo de folders o archivos expuestos
-* El único folder que debe quedar visible a los clientes web en esta app es:
+**Se asume que:**
+* Existen múltiples apps en la VM
+* Todos los archivos de la VM están ocultos al público
+* Todos los archivos de la VM están protegido en modo lectura
+* Los archivos y folders visibles de cada app se asignan mediante un .htaccess
+* Los archivos y folders modificables de cada app se asignan mediante un .htaccess
+ 
+**Folders especiales de PICOSearch**
+* El único folder que debe quedar visible es:
 ```
 /public/* 
 ```
-* Las carpetas que contienen archivos que se modifican en tiempo real (No están visibles) durante la ejecución de la app son:
+* El único folder que debe permitir escritura y modificación es:
 ```
 /storage/* -> Contiene logs, sesiones y otros datos que se modifican
 ```
-* NOTA IMPORTANTE
-**UNA VEZ INSTALADA, ES INDISPENSABLE VERIFICAR QUE .ENV Y .ENV.EXAMPLE QUEDEN OCULTOS AL ACCESO DE LOS USUARIOS DESDE LA WEB**
 
-##### Instalación e integración
+
+***NOTA IMPORTANTE***
+
+UNA VEZ INSTALADA, ES INDISPENSABLE VERIFICAR QUE .ENV Y .ENV.EXAMPLE QUEDEN OCULTOS AL ACCESO DE LOS USUARIOS DESDE LA WEB
+
+**Instalación e integración**
+
 Modificar el archivo /public/.htaccess, de modo que solo quede visible la carpeta /public/:
 ```
 
@@ -44,40 +54,56 @@ Modificar el archivo /public/.htaccess, de modo que solo quede visible la carpet
 
 #### 4. Primera instalación
 
-1. Crear el archivo base de configuración
+**1. Crear el archivo base de configuración**
+
 Copiar el archivo .env.example como .env, si no existe
 
-2. Se debe generar una nueva clave que proteja a la aplicación de amenazas externas. Para eso se debe ejecutar el comando:
+**2. Clave de seguridad nueva**
+
+Se debe generar una nueva clave que proteja a la aplicación de amenazas externas. Para eso se debe ejecutar el comando:
 ```
 php artisan key:generate
 ```
-3. Modificar .env
+**3. Modificar .env**
 
-**Mostrar errores usando el logger de laravel**
+* Mostrar errores usando el logger de laravel
 ```
 APP_DEBUG=false
 ```
 
-**Ambiente de ejecución (alternativa, debug)**
+* Ambiente de ejecución (alternativa, debug)
 ```
 APP_ENV=production
 ```
 
-**Usuarios de admins maestros**
+* Usuarios de admins maestros
 ```
 MASTER_ADMIN_DATA=MasterAdminEmail@server.com:MasterAdminPass
 ```
 
-**Usuarios de admins**
+* Usuarios de admins
 ```
 ADMIN_DATA=AdminEmail1@server.com:AdminPass,AdminEmail2@server.com:AdminPass2
 ```
 
-#### 5. Configuración
+#### 5. Archivos de Configuración
 
+Se encuentran en la carpeta /config/ como archivos .php
 
+* **analytics.php =>** Config de google analytics
+* **languages.php =>** Lista de locales
+* **logging.php =>** Drivers, ubicación, nivel y duración de los archivos de log  
+* **Demás configs =>** Ver referencia en laravel
 
-#### 6. Comandos de utilidad
+#### 6. Archivos de locale
+
+Se encuentran en /resources/lang/ e incluye locales para cuatro idiomas, que se pueden modificar
+* **en =>** Inglés
+* **es =>** Español
+* **fr =>** Francés
+* **pt =>** Portugués
+
+#### 7. Comandos de utilidad
 Abriendo una instancia de la consola de la VM, se establece como directorio la carpeta base de la app 
 
 **Borrar logs previos**
@@ -261,6 +287,10 @@ Se seleccionó una arquitectura en capas con MVC y microservicios unidos mediant
 * "thepinecode/i18n": "dev-master"
 ```
 
+## Copyright
+
+PICOSearcher © Pan American Health Organization, 2019.
+
 ## Agradecimientos
 
 Agradezco a la profesora Lyda Osorio por animarme a continuar en la investigación biomédica, tras casi retirarme por ciertos eventos
@@ -270,4 +300,3 @@ Agradezco a la profesora Lyda Osorio por animarme a continuar en la investigaci�
 **Daniel Nieto-González** 
 * Consultor Bireme | PAHO | OMS (2019)
 * CEO - [Digital MedTools](Http://digitalmedtools.blogspot.com) 
-
