@@ -2,87 +2,108 @@
 
 Versión 0.2
 
-## &nbsp;&nbsp; Instalación
+## Instalación
 
-### &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Pre Requisitos
+### Pre Requisitos
 
 ```
 PHP ^7.2
 Composer ^1.6
 ```
 
-### &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Pasos de instalación
+### Pasos de instalación
 
-#### &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 1. Prerequisitos
+#### 1. Prerequisitos
 
 Instalar PHP y composer en la Virtual Machine
 
-#### &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 2. Adaptación
+#### 2. Adaptación
 
 Ubicar en la carpeta deseada de la Virtual Machine
 
-#### &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 3. Instalación en la VM e integración
+#### 3. Instalación en la VM e integración
 
-**Información previa**
-* Se asume que existen múltiples apps en la VM y que todas tienen sus archivos ocultos al acceso de los usuarios desde la web, con un grupo de folders o archivos expuestos
-* El único folder que debe quedar visible a los clientes web en esta app es:
+**Se asume que:**
+* Existen múltiples apps en la VM
+* Todos los archivos de la VM están ocultos al público
+* Todos los archivos de la VM están protegido en modo lectura
+* Los archivos y folders visibles de cada app se asignan mediante un .htaccess
+* Los archivos y folders modificables de cada app se asignan mediante un .htaccess
+ 
+**Folders especiales de PICOSearch**
+* El único folder que debe quedar visible es:
 ```
 /public/* 
 ```
-* Las carpetas que contienen archivos que se modifican en tiempo real (No están visibles) durante la ejecución de la app son:
+* El único folder que debe permitir escritura y modificación es:
 ```
 /storage/* -> Contiene logs, sesiones y otros datos que se modifican
 ```
-* NOTA IMPORTANTE
-**UNA VEZ INSTALADA, ES INDISPENSABLE VERIFICAR QUE .ENV Y .ENV.EXAMPLE QUEDEN OCULTOS AL ACCESO DE LOS USUARIOS DESDE LA WEB**
+
+
+***NOTA IMPORTANTE***
+
+UNA VEZ INSTALADA, ES INDISPENSABLE VERIFICAR QUE .ENV Y .ENV.EXAMPLE QUEDEN OCULTOS AL ACCESO DE LOS USUARIOS DESDE LA WEB
 
 **Instalación e integración**
+
 Modificar el archivo /public/.htaccess, de modo que solo quede visible la carpeta /public/:
 ```
 
 ```
 
-#### &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 4. Primera instalación
+#### 4. Primera instalación
 
-1. Crear el archivo base de configuración
+**1. Crear el archivo base de configuración**
+
 Copiar el archivo .env.example como .env, si no existe
 
-2. Se debe generar una nueva clave que proteja a la aplicación de amenazas externas. Para eso se debe ejecutar el comando:
+**2. Clave de seguridad nueva**
+
+Se debe generar una nueva clave que proteja a la aplicación de amenazas externas. Para eso se debe ejecutar el comando:
 ```
 php artisan key:generate
 ```
-3. Modificar .env
+**3. Modificar .env**
 
-**Mostrar errores usando el logger de laravel**
+* Mostrar errores usando el logger de laravel
 ```
 APP_DEBUG=false
 ```
 
-**Ambiente de ejecución (alternativa, debug)**
+* Ambiente de ejecución (alternativa, debug)
 ```
 APP_ENV=production
 ```
 
-**Usuarios de admins maestros**
+* Usuarios de admins maestros
 ```
 MASTER_ADMIN_DATA=MasterAdminEmail@server.com:MasterAdminPass
 ```
 
-**Usuarios de admins**
+* Usuarios de admins
 ```
 ADMIN_DATA=AdminEmail1@server.com:AdminPass,AdminEmail2@server.com:AdminPass2
 ```
 
-#### &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 5. Archivos de Configuración
+#### 5. Archivos de Configuración
 
 Se encuentran en la carpeta /config/ como archivos .php
 
-**analytics.php**  
+* **analytics.php =>** Config de google analytics
+* **languages.php =>** Lista de locales
+* **logging.php =>** Drivers, ubicación, nivel y duración de los archivos de log  
+* **Demás configs =>** Ver referencia en laravel
 
-#### &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 6. Archivos de locale
+#### 6. Archivos de locale
 
+Se encuentran en /resources/lang/ e incluye locales para cuatro idiomas, que se pueden modificar
+* **en =>** Inglés
+* **es =>** Español
+* **fr =>** Francés
+* **pt =>** Portugués
 
-#### &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 7. Comandos de utilidad
+#### 7. Comandos de utilidad
 Abriendo una instancia de la consola de la VM, se establece como directorio la carpeta base de la app 
 
 **Borrar logs previos**
@@ -102,15 +123,15 @@ php artisan ide-helper:generate
 php artisan serve
 ```
 
-## &nbsp;&nbsp; Proyecto
+## Proyecto
 
-### &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Misión y visión
+### Misión y visión
 
 PICOSearcher busca proponer una solución digital que facilite el proceso de búsqueda de artículos científicos a través de la metodología PICO (Paciente, Intervención, Comparación, Outcomes) de una manera interactiva orientada a la experiencia de usuario y a la precisión de los datos entregados por la aplicación
 
 PICOSearcher se alínea con la misión y visión de BIREME, y busca ser el buscador PICO de uso gratuito más usado y de mayor utilidad para los investigadores biomédicos
 
-### &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Objetivos y metas
+### Objetivos y metas
 
 1. Ofrecer datos y resultados de utilidad para los investigadores biomédicos
 *Los datos deben ser claros y concisos
@@ -122,7 +143,7 @@ PICOSearcher se alínea con la misión y visión de BIREME, y busca ser el busca
 *Deben existir mensajes claros de error
 *La interfaz debe ser atractiva
 
-### &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Requerimientos funcionales
+### Requerimientos funcionales
 
 La app debe ser capaz de:
 * Brindar ayudas de usuario y mensajes de error útiles y comprendibles
@@ -135,9 +156,9 @@ La app debe ser capaz de:
 * El sistema de obtención de DeCS y generación de ecuaciones tiene que estar a prueba de fallos
 * El sistema de obtención de DeCS deberá tener validez técnica y científica, comprobada y certificada por un stakeholder diferente al autor de la app.
 
-### &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Requerimientos no funcionales
+### Requerimientos no funcionales
 
-#### &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Funcionalidad
+#### Funcionalidad
 
 ```
 Adecuación ++
@@ -146,7 +167,7 @@ Interoperabilidad ++
 Seguridad
 ```
 
-#### &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Fiabilidad
+#### Fiabilidad
 
 ```
 Madurez
@@ -154,7 +175,7 @@ Recuperabilidad
 Tolerancia a fallos +
 ```
 
-#### &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Usabilidad
+#### Usabilidad
 
 ```
 Aprendizaje ++
@@ -163,14 +184,14 @@ Operatividad ++
 Atractividad +
 ```
 
-#### &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Eficiencia
+#### Eficiencia
 
 ```
 Comportamiento en el tiempo
 Comportamiento de recursos +
 ```
 	
-#### &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Mantenibilidad
+#### Mantenibilidad
 
 ```
 Estabilidad +
@@ -179,7 +200,7 @@ Facilidad de cambio
 Facilidad de pruebas +
 ```
 
-#### &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Portabilidad
+#### Portabilidad
 
 ```
 Capacidad de instalación
@@ -188,18 +209,18 @@ Coexistencia
 Remplazabilidad
 ```
 
-#### &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Resumen
+#### Resumen
 
 La arquitectura estará orientada a:
 **1. Usabilidad**
 **2. Funcionalidad**
 **3. Mantenibilidad**
 
-### &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Arquitectura de software
+### Arquitectura de software
 
 Se seleccionó una arquitectura en capas con MVC y microservicios unidos mediante singleton (Facades) y bind.
 
-#### &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Caracteristicas
+#### Caracteristicas
 
 * Se dividió la arquitectura en las capas de presentación, negocio, integración y DTO. Todo desplegado en un único nodo, por petición de los stakeholders
 * La presentación estará orientada a los NFR de usabilidad: atractibilidad, entendibilidad, aprendizaje
@@ -208,14 +229,14 @@ Se seleccionó una arquitectura en capas con MVC y microservicios unidos mediant
 * El patrón de consumo de web-service, presente en la capa de integración, y que enlaza con los web-service de BIREME, está orientado a la interoperabilidad, disponibilidad y tolerancia a fallos. El sistema de manejo de errores permite continuar la operación si los datos no se extran o no son correctos y además posee un algoritmo de Retry y loggeo
 
 
-#### &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Lenguajes, frameworks y protocolos
+#### Lenguajes, frameworks y protocolos
 
 * Se escogió Bootstrap para el Front-End por petición de los stakeholders, lo cual permitiría una mejor experiencia de usuario
 * Se escogió PHP por petición de los stakeholders, para las demás capas
 * Se escogió Laravel por ser el framework más conocido de MVC en PHP, lo cual permitiría incluir muchas dependecias que agilizar el proceso de construcción
 * Se uso protocolo HTTP para la transferencia de datos
 
-### &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Rutas relevantes
+### Rutas relevantes
 
 ```
 **/admin/login ->** Portal de login de admin
@@ -229,9 +250,9 @@ Se seleccionó una arquitectura en capas con MVC y microservicios unidos mediant
 **/health/panel ->**  Modulo de testeo de componentes (En progreso)
 ```
 
-### &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Paquetes Requeridos
+### Paquetes Requeridos
 
-#### &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Nodev
+#### Nodev
 
 ```
 * "php": "^7.1.3",
@@ -253,7 +274,7 @@ Se seleccionó una arquitectura en capas con MVC y microservicios unidos mediant
 * "zendframework/zend-diactoros": "^2.1"
 ```
 		
-#### &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Dev
+#### Dev
 
 ```
 * "barryvdh/laravel-ide-helper": "dev-master",
@@ -266,15 +287,15 @@ Se seleccionó una arquitectura en capas con MVC y microservicios unidos mediant
 * "thepinecode/i18n": "dev-master"
 ```
 
-## &nbsp;&nbsp; Copyright
+## Copyright
 
 PICOSearcher © Pan American Health Organization, 2019.
 
-## &nbsp;&nbsp; Agradecimientos
+## Agradecimientos
 
 Agradezco a la profesora Lyda Osorio por animarme a continuar en la investigación biomédica, tras casi retirarme por ciertos eventos
 
-## &nbsp;&nbsp; Autor
+## Autor
 
 **Daniel Nieto-González** 
 * Consultor Bireme | PAHO | OMS (2019)
