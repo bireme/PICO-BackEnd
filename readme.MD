@@ -1,4 +1,4 @@
-﻿# PICO Searcher
+﻿# PICOSearcher
 
 Versión 0.2
 
@@ -23,61 +23,115 @@ Ubicar en la carpeta deseada de la Virtual Machine
 
 #### 3. Instalación en la VM e integración
 
-##### Información previa
-* Se asume que existen múltiples apps en la VM y que todas tienen sus archivos ocultos al acceso de los usuarios desde la web, con un grupo de folders o archivos expuestos
-* El único folder que debe quedar visible a los clientes web en esta app es:
+**Se asume que:**
+* Existen múltiples apps en la VM
+* Todos los archivos de la VM están ocultos al público
+* Todos los archivos de la VM están protegido en modo lectura
+* Los archivos y folders visibles de cada app se asignan mediante un .htaccess
+* Los archivos y folders modificables de cada app se asignan mediante un .htaccess
+ 
+**Folders especiales de PICOSearch**
+* El único folder que debe quedar visible es:
 ```
 /public/* 
 ```
-* Las carpetas que contienen archivos que se modifican en tiempo real (No están visibles) durante la ejecución de la app son:
+* El único folder que debe permitir escritura y modificación es:
 ```
 /storage/* -> Contiene logs, sesiones y otros datos que se modifican
 ```
-* NOTA IMPORTANTE
-**UNA VEZ INSTALADA, ES INDISPENSABLE VERIFICAR QUE .ENV Y .ENV.EXAMPLE QUEDEN OCULTOS AL ACCESO DE LOS USUARIOS DESDE LA WEB**
 
-##### Instalación e integración
-Modificar el archivo /public/.htaccess, de modo que solo quede visible la carpeta /public/:
+
+***NOTA IMPORTANTE***
+
+UNA VEZ INSTALADA, ES INDISPENSABLE VERIFICAR QUE .ENV Y .ENV.EXAMPLE QUEDEN OCULTOS AL ACCESO DE LOS USUARIOS DESDE LA WEB
+
+**Creación de un Virtual Host**
+
+* Añadir en system32/drivers/etc/host/ unas líneas similares a estas
+```
+127.0.0.1      PICOSearch.localhost/
 ```
 
+* Añadir en httpd-vhost.conf en la configuración de apache de la VM unas líneas similares a estas
 ```
+<VirtualHost *:80>
+ServerAdmin webmaster@localhost.com
+DocumentRoot "C:\xampp\htdocs\home\apps\bvsalud.org\pesquisa\htdocs\pico\PICO-BackEnd"
+ServerName PICOSearch.localhost
+ErrorLog "logs/PICOSearch.localhost-error.log"
+CustomLog "logs/PICOSearch.localhost-access.log" common
+</VirtualHost>
+```
+
+**Instalación e integración**
+
+* No debe existir en el root un server.php, sino un index.php. Si existe, cambiarle el nombre a index.php
+* Se debe verificar que el htaccess esté en el root de la app y no en public
+* Se deberá modificar el .htaccess segun lo necesario
+* La carpeta /public/ quedará inaccesible y el su contenido será desplegado en picosearch.localhost/
+* Para personalizar la adaptación, abrir .htacces en el folder root
 
 #### 4. Primera instalación
 
-1. Crear el archivo base de configuración
+**1. Crear el archivo base de configuración**
+
 Copiar el archivo .env.example como .env, si no existe
 
-2. Se debe generar una nueva clave que proteja a la aplicación de amenazas externas. Para eso se debe ejecutar el comando:
+**2. Clave de seguridad nueva**
+
+Se debe generar una nueva clave que proteja a la aplicación de amenazas externas. Para eso se debe ejecutar el comando:
 ```
 php artisan key:generate
 ```
-3. Modificar .env
+**3. Modificar .env**
 
-**Mostrar errores usando el logger de laravel**
+* Mostrar errores usando el logger de laravel
 ```
 APP_DEBUG=false
 ```
 
-**Ambiente de ejecución (alternativa, debug)**
+* Ambiente de ejecución (alternativa, debug)
 ```
 APP_ENV=production
 ```
 
-**Usuarios de admins maestros**
+* Usuarios de admins maestros
 ```
 MASTER_ADMIN_DATA=MasterAdminEmail@server.com:MasterAdminPass
 ```
 
-**Usuarios de admins**
+* Usuarios de admins
 ```
 ADMIN_DATA=AdminEmail1@server.com:AdminPass,AdminEmail2@server.com:AdminPass2
 ```
 
-#### 5. Configuración
+#### 5. Borrar datos de logeo de los comónentes
 
+* Realizar este paso cada vez que se instale la app
+* Realizar este paso si ocurren errores inexplicables
+* Borrar el contenido de la siguiente carpeta con toodos sus contenidos
+```
+/bootstrap/cache/*
+```
 
+#### 6. Archivos de Configuración
 
-#### 6. Comandos de utilidad
+Se encuentran en la carpeta /config/ como archivos .php
+
+* **analytics.php =>** Config de google analytics
+* **languages.php =>** Lista de locales
+* **logging.php =>** Drivers, ubicación, nivel y duración de los archivos de log  
+* **Demás configs =>** Ver referencia en laravel
+
+#### 7. Archivos de locale
+
+Se encuentran en /resources/lang/ e incluye locales para cuatro idiomas, que se pueden modificar
+* **en =>** Inglés
+* **es =>** Español
+* **fr =>** Francés
+* **pt =>** Portugués
+
+#### 8. Comandos de utilidad
 Abriendo una instancia de la consola de la VM, se establece como directorio la carpeta base de la app 
 
 **Borrar logs previos**
@@ -212,16 +266,37 @@ Se seleccionó una arquitectura en capas con MVC y microservicios unidos mediant
 
 ### Rutas relevantes
 
+**Características de la app**
+
+El folder root donde están contenidas las imagenes css y demás es el folder
 ```
-**/admin/login ->** Portal de login de admin
-**/admin/logout ->** logout de admin
-**/admin/home ->** Portal de admin
-**/PICO/ResultsNumber ->** Test de API de Número de resultados de búsqueda
-**/PICO/ResultsNumberIntegration ->** Test de API de Integración a número de resultados de búsqueda con BIREME
-**/PICO/DeCS ->** Test de API que entrega DeCS procesados
-**/PICO/DeCSIntegration ->** Test de API de Integración que obtiene DeCS de BIREME
-**/PICO/QueryBuild ->** Test de API que procesa resultado en ecuaciones de búsqueda
-**/health/panel ->**  Modulo de testeo de componentes (En progreso)
+/public/
+```
+
+**Folders de la app
+
+* .htaccess está ubicado en el folder root por encima de /public/ 
+* Todos los folders estará ocultos excepto /public/ que se expondrá mediante .htaccess
+* La carpeta /storage/ debe ser reescribible en tiempo real
+* /root/public/ generará error 404. Ya que la /public/ se redireccionó al estado anterior
+* Se debe tener especial cuidado con NO EXPONER el folder root, donde se encuentran los .env
+
+#### Rutas relevantes
+```
+/admin/dd/ -> Presentación viual de datos de logeo
+/en/ -> Portal de login de admin
+/es/ -> Link que regirige a los controladores de locales, que almacenan info previa y la transcriben
+/{locale}/ -> Otros locales
+/admin/home -> Portal de admin
+/admin/login -> Portal de login de admin
+/admin/logout -> logout de admin
+/admin/home -> Portal de admin
+/PICO/ResultsNumber -> Test de API de Número de resultados de búsqueda
+/PICO/ResultsNumberIntegration -> Test de API de Integración a número de resultados de búsqueda con BIREME
+/PICO/DeCS -> Test de API que entrega DeCS procesados
+/PICO/DeCSIntegration -> Test de API de Integración que obtiene DeCS de BIREME
+/PICO/QueryBuild -> Test de API que procesa resultado en ecuaciones de búsqueda
+/health/panel ->  Modulo de testeo de componentes (En progreso)
 ```
 
 ### Paquetes Requeridos
@@ -229,37 +304,41 @@ Se seleccionó una arquitectura en capas con MVC y microservicios unidos mediant
 #### Nodev
 
 ```
-* "php": "^7.1.3",
-* "ext-dom": "*",
-* "ext-json": "*",
-* "ext-pdo": "*",
-* "appzcoder/laravel-admin": "^3.1",
-* "doctrine/dbal": "^2.9",
-* "fideloper/proxy": "^4.0",
-* "graham-campbell/throttle": "^7.3",
-* "guzzlehttp/guzzle": "^6.3",
-* "hedronium/spaceless-blade": "^2.0",
-* "jenssegers/model": "^1.2",
-* "laravel/framework": "5.8.*",
-* "laravel/tinker": "^1.0",
-* "pragmarx/health": "^0.9.17",
-* "rap2hpoutre/laravel-log-viewer": "^1.2",
-* "symfony/psr-http-message-bridge": "^1.2",
-* "zendframework/zend-diactoros": "^2.1"
+"php": "^7.1.3",
+"ext-dom": "*",
+"ext-json": "*",
+"ext-pdo": "*",
+"appzcoder/laravel-admin": "^3.1",
+"doctrine/dbal": "^2.9",
+"fideloper/proxy": "^4.0",
+"graham-campbell/throttle": "^7.3",
+"guzzlehttp/guzzle": "^6.3",
+"hedronium/spaceless-blade": "^2.0",
+"jenssegers/model": "^1.2",
+"laravel/framework": "5.8.*",
+"laravel/tinker": "^1.0",
+"pragmarx/health": "^0.9.17",
+"rap2hpoutre/laravel-log-viewer": "^1.2",
+"symfony/psr-http-message-bridge": "^1.2",
+"zendframework/zend-diactoros": "^2.1"
 ```
 		
 #### Dev
 
 ```
-* "barryvdh/laravel-ide-helper": "dev-master",
-* "beyondcode/laravel-dump-server": "^1.0",
-* "filp/whoops": "^2.0",
-* "fzaninotto/faker": "^1.4",
-* "mockery/mockery": "^1.0",
-* "nunomaduro/collision": "^3.0",
-* "spatie/laravel-analytics": "dev-master",
-* "thepinecode/i18n": "dev-master"
+"barryvdh/laravel-ide-helper": "dev-master",
+"beyondcode/laravel-dump-server": "^1.0",
+"filp/whoops": "^2.0",
+"fzaninotto/faker": "^1.4",
+"mockery/mockery": "^1.0",
+"nunomaduro/collision": "^3.0",
+"spatie/laravel-analytics": "dev-master",
+"thepinecode/i18n": "dev-master"
 ```
+
+## Copyright
+
+PICOSearcher © Pan American Health Organization, 2019.
 
 ## Agradecimientos
 
@@ -267,7 +346,6 @@ Agradezco a la profesora Lyda Osorio por animarme a continuar en la investigaci�
 
 ## Autor
 
-**Daniel Nieto-González** 
+**Daniel Nieto-González** - [GitHub Profile](https://github.com/nietodaniel) - [Send email](mailto:nieto.daniel221@gmail.com)
 * Consultor Bireme | PAHO | OMS (2019)
 * CEO - [Digital MedTools](Http://digitalmedtools.blogspot.com) 
-
