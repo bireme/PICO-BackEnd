@@ -5,7 +5,6 @@ namespace PICOExplorer\Services\AdvancedLogger\Services;
 use PICOExplorer\Facades\AdvancedLoggerFacade;
 use PICOExplorer\Facades\SpecialValidatorFacade;
 use PICOExplorer\Models\DataTransferObject;
-use TimerServiceSV;
 
 class ServicePerformance
 {
@@ -15,27 +14,30 @@ class ServicePerformance
      */
 
     protected $DTO;
-    protected $timers = [];
     protected $conTimers = [];
+
+    /**
+     * @var AdvancedTimer
+     */
     protected $operationTimer;
     protected $monitoredObject;
 
 
     /**
-     * @return TimerServiceSV
+     * @return AdvancedTimer
      */
     public function newConnectionTimer(string $name)
     {
-        $timer = $this->Timer('connection-' . count($this->conTimers) . ':' . $name);
+        $timer = $this->Timer('connection-' . (count($this->conTimers)+1) . ':' . $name);
         array_push($this->conTimers, $timer);
         return $timer;
     }
 
     public function ServicePerformanceStart(DataTransferObject $DTO, string $monitoredObject)
     {
+        $this->operationTimer = $this->Timer(get_class($this) . ':Operation');
         $this->DTO = $DTO;
         $this->monitoredObject = $monitoredObject;
-        $this->BuildOperationTimer();
         return $this;
     }
 
@@ -52,8 +54,9 @@ class ServicePerformance
             'Input' => $this->DTO->getInitialData(null, true),
             'Output' => $this->DTO->getResults(null, true),
         ];
-        $Timers = $this->getTimers();
         $Adecuability = $this->ValidateInterfaces($InputOutput);
+        $this->operationTimer->Stop();
+        $Timers = $this->getTimers();
         $data = [
             'Success' => $wasSuccess,
             'Timers' => $Timers,
@@ -62,7 +65,6 @@ class ServicePerformance
         ];
         $title = $info . ': ' . $this->monitoredObject;
         $this->LogMessage('Performance', $level, $title, $info, $data, null);
-        $this->ClearTimers();
     }
 
     ///////////////////////////////////////////////////////////
@@ -71,15 +73,19 @@ class ServicePerformance
 
     private function getTimers()
     {
-        $OpTime = $this->operationTimer->get();
+        $total = $this->operationTimer->get();
+        unset($this->operationTimer);
         $ConsTime = 0;
         $PerConTime = [];
         foreach ($this->conTimers as $timer) {
             $time = $timer->get();
-            $ConsTime += $time;
             $PerConTime[$timer->name()] = $time;
+            unset($timer);
+            $ConsTime += $time;
         }
+        $OpTime = $total - $ConsTime;
         return [
+            'Total' => $total,
             'Operational' => $OpTime,
             'Connections' => $ConsTime,
             'PerConnection' => $PerConTime,
@@ -126,27 +132,13 @@ class ServicePerformance
 
 
     /**
-     * @return TimerServiceSV
+     * @return AdvancedTimer
      */
     private function Timer($TimerName)
     {
-        $tmp = new TimerServiceSV();
-        $Timer = $tmp->Start($TimerName);
-        array_push($this->timers, $Timer);
-        return $Timer;
-    }
-
-    private function BuildOperationTimer()
-    {
-        $timer = $this->Timer(get_class($this) . ':Operation');
-        $this->operationTimer = $timer;
-    }
-
-    private function ClearTimers()
-    {
-        foreach ($this->timers as $timer) {
-            unset($timer);
-        }
+        $timer = new AdvancedTimer();
+        $timer->Start($TimerName);
+        return $timer;
     }
 
 }

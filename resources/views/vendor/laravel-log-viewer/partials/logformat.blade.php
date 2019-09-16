@@ -6,6 +6,9 @@
             @continue
         @endif
         @if($item==='stack' || $item==='info')
+            @if(!($value))
+                @continue
+            @endif
             @if(!(is_string($value)))
                 @include('vendor.laravel-log-viewer.partials.unformatted',['id'=>$item.$key.'1','error'=>'Content must be string:','content'=>json_encode($value)])
             @else

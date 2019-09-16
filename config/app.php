@@ -175,17 +175,11 @@ return [
         PICOExplorer\Providers\AdvancedLoggerProvider::class,
         PICOExplorer\Providers\AppServiceProvider::class,
         PICOExplorer\Providers\AuthServiceProvider::class,
-        // PICOExplorer\Providers\BroadcastServiceProvider::class,
         PICOExplorer\Providers\EventServiceProvider::class,
         PICOExplorer\Providers\RouteServiceProvider::class,
         Rap2hpoutre\LaravelLogViewer\LaravelLogViewerServiceProvider::class,
+        PragmaRX\Health\ServiceProvider::class,
         Ixudra\Curl\CurlServiceProvider::class,
-        PICOExplorer\Providers\ResultsNumberIntegrationProvider::class,
-        PICOExplorer\Providers\QueryBuildServiceProvider::class,
-        PICOExplorer\Providers\DeCSIntegrationProvider::class,
-        PICOExplorer\Providers\ResultsNumberProvider::class,
-        PICOExplorer\Providers\DeCSProvider::class,
-
     ],
 
     /*
@@ -246,7 +240,6 @@ return [
         'AuthHandlerFacade' => PICOExplorer\Facades\AuthHandlerFacade::class,
 
 //Binds
-        'TimerServiceSV' => PICOExplorer\Services\AdvancedLogger\Services\TimerService::class,
         'ResultsNumberBIREMESV' => PICOExplorer\Services\ResultsNumberIntegration\ResultsNumberBIREME::class,
         'DeCSBIREMESV' => PICOExplorer\Services\DeCSIntegration\DeCSBireme::class,
         'ResultsNumberProcessSV' => PICOExplorer\Services\ResultsNumber\ResultsNumberProcess::class,
