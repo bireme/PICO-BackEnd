@@ -15,7 +15,7 @@
                  data-parent="#AccordionError{{$id}}">
                 <div class="card-body container" style="padding:0;">
                     <div class="datacontent container-fluid">
-                        <div class="row" style="padding-top:0px;padding-bottom:15px;">
+                        <div class="row" style="padding-top:0;padding-bottom:15px;">
                             <div class="col-md-12" style="background-color:rgba(45, 62, 80,0.50);color:#000000;padding:0;">Error: {{$error}}</div>
                         </div>
                         @if($content)
@@ -26,7 +26,6 @@
                     </div>
                 </div>
             </div>
-
         </div>
     </div>
 </div>

@@ -1,7 +1,9 @@
-<div class="col-md-4" style="display:flex;justify-content:center;align-items: center;flex-flow: column;margin-bottom:15px">
-    @if((!($data)))
-        <button class="btn btn-secondary btn-disabled btn-block">{{$title}} = null;</button>
+@if(!($value))
+    <span>-</span>
+@else
+    @if(is_string($value))
+        <button class="btn btn-primary exploredd btn-block" name="data" data-content="{{json_encode(['UnnamedString' =>$value])}}">Data</button>
     @else
-        <button class="btn btn-primary exploredd btn-block" name="{{$title}}" data-content="{{json_encode($data)}}">Click to see {{$title}}</button>
+        <button class="btn btn-primary exploredd btn-block" name="data" data-content="{{json_encode($value)}}">Data</button>
     @endif
-</div>
+@endif

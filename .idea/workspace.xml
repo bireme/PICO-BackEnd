@@ -5,13 +5,22 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="15bff79e-9e15-436c-adbb-4cea1e543e67" name="Default Changelist" comment="">
+      <change afterPath="$PROJECT_DIR$/app/Services/ServiceModels/cURLRequest.php" afterDir="false" />
       <change afterPath="$PROJECT_DIR$/resources/views/vendor/laravel-log-viewer/partials/logcontent.blade.php" afterDir="false" />
       <change afterPath="$PROJECT_DIR$/resources/views/vendor/laravel-log-viewer/partials/logformat.blade.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/storage/logs/Connections-Out/Connections-Out-2019-09-16.log" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/storage/logs/DTO/DTO-2019-09-16.log" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/storage/logs/Performance/Performance-2019-09-16.log" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/Laravel-BIREME.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/Laravel-BIREME.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/laravel-plugin.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/laravel-plugin.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/modules.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/modules.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/php.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/php.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/vcs.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/_ide_helper.php" beforeDir="false" afterPath="$PROJECT_DIR$/_ide_helper.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/Exceptions/Exceptions/AppError/TheServicelIsNotInstanceOfPICOServiceFacade.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Exceptions/Exceptions/AppError/TheServicelIsNotInstanceOfPICOServiceModel.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Exceptions/Models/AppError.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Exceptions/Models/AppError.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/Facades/AuthHandlerFacade.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Facades/AuthHandlerFacade.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/Facades/DeCSBIREMEFacade.php" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/app/Facades/DeCSProcessFacade.php" beforeDir="false" />
@@ -21,8 +30,8 @@
       <change beforePath="$PROJECT_DIR$/app/Facades/ResultsNumberBIREMEFacade.php" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/app/Facades/ResultsNumberProcessFacade.php" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/app/Facades/ServicePerfomanceFacade.php" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/Facades/SpecialValidatorFacade.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Facades/SpecialValidatorFacade.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/Facades/TimerServiceFacade.php" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Http/Controllers/Admin/CustomLogController.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Controllers/Admin/CustomLogController.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/Http/Controllers/PICO/ControllerModel.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Controllers/PICO/ControllerModel.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/Http/Controllers/PICO/DeCSController.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Controllers/PICO/DeCSController.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/Http/Controllers/PICO/IntegrationDeCSController.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Controllers/PICO/IntegrationDeCSController.php" afterDir="false" />
@@ -33,26 +42,86 @@
       <change beforePath="$PROJECT_DIR$/app/Models/DataModels/IntegrationResultsNumberModel.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Models/DataModels/IntegrationResultsNumberModel.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/Providers/AppServiceProvider.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Providers/AppServiceProvider.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/Services/AdvancedLogger/Exceptions/Handlers/ExceptionsHandler.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Services/AdvancedLogger/Exceptions/Handlers/ExceptionsHandler.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/Services/AdvancedLogger/Exceptions/Models/AppError.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Services/AdvancedLogger/Exceptions/Models/AppError.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/Services/AdvancedLogger/Providers/AdvancedLoggerProvider.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Services/AdvancedLogger/Providers/AdvancedLoggerProvider.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/Services/AdvancedLogger/Services/ServicePerformance.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Services/AdvancedLogger/Services/ServicePerformance.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/Services/ResultsNumberIntegration/ResultsNumberBIREME.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Services/ResultsNumberIntegration/ResultsNumberBIREME.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/Services/ResultsNumberIntegration/ResultsNumberImporter.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Services/ResultsNumberIntegration/ResultsNumberImporter.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/Services/ServiceModels/ExternalImporter.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Services/ServiceModels/ExternalImporter.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/Services/ServiceModels/GuzzleProxyRequest.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Services/ServiceModels/cURLRequest.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Services/ServiceModels/GuzzleProxyRequest.php" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/app/Services/ServiceModels/PICOIntegrationModel.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Services/ServiceModels/PICOIntegrationModel.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/Services/ServiceModels/PICOServiceExternalImporter.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Services/ServiceModels/PICOServiceExternalImporter.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/Services/ServiceModels/PICOServiceModel.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Services/ServiceModels/PICOServiceModel.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/bootstrap/cache/packages.php" beforeDir="false" afterPath="$PROJECT_DIR$/bootstrap/cache/packages.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/bootstrap/cache/services.php" beforeDir="false" afterPath="$PROJECT_DIR$/bootstrap/cache/services.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/bootstrap/cache/packages.php" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/bootstrap/cache/services.php" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/bootstrap/cacheold/.gitignore" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/composer.json" beforeDir="false" afterPath="$PROJECT_DIR$/composer.json" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/composer.lock" beforeDir="false" afterPath="$PROJECT_DIR$/composer.lock" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/config/app.php" beforeDir="false" afterPath="$PROJECT_DIR$/config/app.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/nbproject/private/private.properties" beforeDir="false" afterPath="$PROJECT_DIR$/nbproject/private/private.properties" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/nbproject/private/private.xml" beforeDir="false" afterPath="$PROJECT_DIR$/nbproject/private/private.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/nbproject/project.properties" beforeDir="false" afterPath="$PROJECT_DIR$/nbproject/project.properties" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/nbproject/project.xml" beforeDir="false" afterPath="$PROJECT_DIR$/nbproject/project.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/resources/views/vendor/laravel-log-viewer/log.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/vendor/laravel-log-viewer/log.blade.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/resources/views/vendor/laravel-log-viewer/partials/content.blade.php" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/resources/views/vendor/laravel-log-viewer/partials/databutton.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/vendor/laravel-log-viewer/partials/databutton.blade.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/resources/views/vendor/laravel-log-viewer/partials/logpresentation.blade.php" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/resources/views/vendor/laravel-log-viewer/partials/unformatted.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/vendor/laravel-log-viewer/partials/unformatted.blade.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/storage/app/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/storage/app/.gitignore" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/storage/app/public/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/storage/app/public/.gitignore" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/storage/framework/views/0043060e709ad4609900260bb2bd3c6485d72aba.php" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/storage/framework/views/0279ba4f9ed4d758818dd20ffa6e14a46efcdc25.php" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/storage/framework/views/047f2d0dc546f475e64b8a1234adcf614c695f0a.php" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/storage/framework/views/092143591fee43c417b97066ed3721fc5c981a94.php" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/storage/framework/views/0a928693c4365b6a0ea60322bf605f7b1f1534d9.php" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/storage/framework/views/0bd33088ce40c9b2d2f7592c199d8fdf6ff46da0.php" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/storage/framework/views/1109def30c97cc791d94e8576277e76783c62f0f.php" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/storage/framework/views/11101dfa91d2baf438d02f2233f541a656001130.php" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/storage/framework/views/1415aa0dc93c11637f520449643feec9e08dc761.php" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/storage/framework/views/1aeb81310839b6b8eaf905d1278af7b91398ad7a.php" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/storage/framework/views/1b95b7880b6a6fab9cdeaa1e02e44df289019b9b.php" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/storage/framework/views/1d4d9b42f2996ac6d38b44ff7848c1b0c7e77354.php" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/storage/framework/views/1d62de7e02c24f13fd5837518e3dde58600bc243.php" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/storage/framework/views/1ec8a3145e7fbee73f23fedd6529c9b72f8a9d84.php" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/storage/framework/views/1f62632baaad1ad36490a148c852c12a1b65b631.php" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/storage/framework/views/21f9b049250c58f630040ebfdd8c5b6bee983efb.php" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/storage/framework/views/232bbd74a4c891814cb0ff5de5818330f53c4bd9.php" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/storage/framework/views/2e9387a2a5ed869199f82c5fbbc1a43f61332389.php" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/storage/framework/views/2ed432dc1ac7eb85779502f19af13ab39712502e.php" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/storage/framework/views/3bb90a94eb4e702e3dbfb8fcd5b672204f256610.php" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/storage/framework/views/3d1d0da182dd703307c9574264fb31ac75b58dc4.php" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/storage/framework/views/405cd63feb16dfa35183e77b210559ff801a51fe.php" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/storage/framework/views/44697207e7b94e8dd58c91bb545e19bb050e7451.php" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/storage/framework/views/44d17fd77af6d7251fa29bde040eab5f9c32a8b8.php" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/storage/framework/views/50d2580125216eb7831d3364035835f17c8b2781.php" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/storage/framework/views/58ad6eb832cd541639beced45bc6c723e9a08087.php" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/storage/framework/views/59b1850887e36bfd967ef46eedc97cd13f2e9204.php" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/storage/framework/views/6129e7ec991d5fb342f3c8f38ec7385c4da13587.php" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/storage/framework/views/97cb1b205ef948165cdf0cbe690ee816b621ce1a.php" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/storage/framework/views/9a9bbd73c99c05a773bc2f508e0def5e3edff9c4.php" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/storage/framework/views/a76e069303861105b0cc61eb4c5beed46edbe447.php" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/storage/framework/views/aaf0b67cecd793c481803bd9e489c082f161d166.php" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/storage/framework/views/af0393507be8fe84847a96a76518d4e9da181c82.php" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/storage/framework/views/b1d9f23ed35186de744bb45a91cec197e36e0776.php" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/storage/framework/views/b50b8e9b393ee37036c1b0d8ef2a1d48fc029cbd.php" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/storage/framework/views/b52845482c5411ed9c9d0b71eec2e04c42f3308b.php" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/storage/framework/views/b56dac41c6cac91d005b8e3d644f3098ee916e73.php" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/storage/framework/views/bfe1bea23c3dfd82a6da9b9792143f0eca56d922.php" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/storage/framework/views/c5da09903dbf3fde7ba8317956f564807696fc36.php" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/storage/framework/views/c8443c705c990114ebe5a8b05746fa676f45d121.php" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/storage/framework/views/cac4eaff65a2a8c0a09e2c4d823db9fca0bde4e2.php" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/storage/framework/views/ce3ac7bb83d4f06cfab989e3ae136ecd130cbcdc.php" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/storage/framework/views/d167064763ba4e5773dda74edee72f9bde1beed5.php" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/storage/framework/views/d430b8b70cd1e04d3e88ad5464ded69b7a2907a1.php" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/storage/framework/views/dba29e085e3a726be455e500108b4472e2be4db7.php" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/storage/framework/views/e4ef1b82519f775e5d142ecca3676ffda01e779b.php" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/storage/framework/views/e676ab94cd027e57026c5652401c1e8105efcead.php" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/storage/framework/views/f3721e1445a1283135f010cb5e6bdf90a0d02b0d.php" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/storage/framework/views/f6ae8f238aed0cd3b2571c00273c0d2cfd1a9cdd.php" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/storage/framework/views/fb42e22f6205ad23a7a1ca55f8d31bddb75d76ba.php" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/storage/framework/views/fb4da6605000c8e8c551c4d01273f1bfbc86f9d6.php" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/storage/framework/views/fb72d3046b20c0c31cd944dbf890f5f4b6cd5977.php" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/storage/logs/Connections-In/Connections-In-2019-09-16.log" beforeDir="false" afterPath="$PROJECT_DIR$/storage/logs/Connections-In/Connections-In-2019-09-16.log" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/storage/logs/InternalErrors/InternalErrors-2019-09-16.log" beforeDir="false" afterPath="$PROJECT_DIR$/storage/logs/InternalErrors/InternalErrors-2019-09-16.log" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -83,34 +152,67 @@
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
       <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/app/Services/ServiceModels/PICOServiceModel.php">
+        <entry file="file://$PROJECT_DIR$/app/Services/AdvancedLogger/Providers/AdvancedLoggerProvider.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="132">
-              <caret line="32" column="10" selection-start-line="32" selection-start-column="10" selection-end-line="32" selection-end-column="10" />
-              <folding>
-                <element signature="e#55#124#0#PHP" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/app/Services/AdvancedLogger/Services/ServicePerformance.php">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="263">
-              <caret line="31" column="5" lean-forward="true" selection-start-line="31" selection-start-column="5" selection-end-line="31" selection-end-column="5" />
-              <folding>
-                <element signature="e#65#111#0#PHP" expanded="true" />
-              </folding>
+            <state relative-caret-position="302">
+              <caret line="33" column="5" selection-start-line="33" selection-start-column="5" selection-end-line="33" selection-end-column="5" />
             </state>
           </provider>
         </entry>
       </file>
       <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/app/Services/AdvancedLogger/Services/TimerService.php">
+        <entry file="file://$PROJECT_DIR$/resources/views/vendor/laravel-log-viewer/log.blade.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="68">
-              <caret line="4" column="6" selection-start-line="4" selection-start-column="6" selection-end-line="4" selection-end-column="6" />
+            <state relative-caret-position="34">
+              <caret line="2" column="21" selection-start-line="2" selection-start-column="13" selection-end-line="2" selection-end-column="21" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/routes/web.php">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="107">
+              <caret line="53" column="59" selection-start-line="53" selection-start-column="54" selection-end-line="53" selection-end-column="59" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/app/Http/Controllers/Admin/CustomLogController.php">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="119">
+              <caret line="7" column="45" selection-start-line="7" selection-start-column="45" selection-end-line="7" selection-end-column="45" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/vendor/rap2hpoutre/laravel-log-viewer/src/controllers/LogViewerController.php">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="229">
+              <caret line="32" column="7" selection-start-line="32" selection-start-column="7" selection-end-line="32" selection-end-column="7" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/config/app.php">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="2346">
+              <caret line="138" column="10" lean-forward="true" selection-start-line="138" selection-start-column="10" selection-end-line="138" selection-end-column="10" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/app/Http/Controllers/Admin/CustomHealthController.php">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="187">
+              <caret line="11" selection-start-line="11" selection-end-line="13" selection-end-column="5" />
+              <folding>
+                <element signature="e#56#100#0#PHP" expanded="true" />
+              </folding>
             </state>
           </provider>
         </entry>
@@ -119,23 +221,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>resultsnumberprocess</find>
-      <find>getService</find>
-      <find>connectToService</find>
-      <find>Int</find>
-      <find>InternalError</find>
-      <find>$Service</find>
-      <find>LANGTRANS KEY NOT EXIS FIX THIS</find>
-      <find>TranslatedMessageTrait</find>
-      <find>HandleFinalException</find>
-      <find>'connections'</find>
-      <find>CoreFunction</find>
-      <find>PerformConnection</find>
-      <find>\n####</find>
-      <find>\n##</find>
-      <find>\n###</find>
-      <find>\n```</find>
-      <find>&amp;nbsp;</find>
       <find>previa</find>
       <find>max_execution_time</find>
       <find>$settings</find>
@@ -146,9 +231,26 @@
       <find>Facade</find>
       <find>TimerServiceFacade</find>
       <find>AuthHandlerFacade</find>
-      <find>TimerServiceSV</find>
       <find>$this-&gt;Service::</find>
       <find>finally</find>
+      <find>DontCatch</find>
+      <find>conTimers</find>
+      <find>ClearTimers</find>
+      <find>getTimers</find>
+      <find>operationTimer</find>
+      <find>TimerServiceSV</find>
+      <find>AdvancedTimerSV</find>
+      <find>AdvancedTimer</find>
+      <find>QueryBuildSV</find>
+      <find>Timer</find>
+      <find>advancedtimer</find>
+      <find>middle</find>
+      <find>logformat</find>
+      <find>logpresent</find>
+      <find>logpresentation</find>
+      <find>present</find>
+      <find>folder</find>
+      <find>view_log</find>
     </findStrings>
     <replaceStrings>
       <replace>$channel</replace>
@@ -183,10 +285,6 @@
       <replace>$log['stack]</replace>
     </replaceStrings>
     <dirStrings>
-      <dir>C:\xampp\htdocs\PICO-BackEnd\app\Http\Traits</dir>
-      <dir>C:\xampp\htdocs\PICO-BackEnd\app\Services\AdvancedLogger</dir>
-      <dir>C:\xampp\htdocs\PICO-BackEnd\app\Http\Controllers\PICO</dir>
-      <dir>C:\xampp\htdocs\PICO-BackEnd\resources\assets\js</dir>
       <dir>C:\xampp\htdocs\PICO-BackEnd\app\Models\MainModels</dir>
       <dir>C:\xampp\htdocs\PICO-BackEnd\resources\views\partials</dir>
       <dir>C:\xampp\htdocs\PICO-BackEnd\resources\assets\js\PICObuilder</dir>
@@ -208,11 +306,15 @@
       <dir>C:\xampp\htdocs\PICO-BackEnd\app</dir>
       <dir>C:\xampp\htdocs\home\apps\bvsalud.org\pesquisa\htdocs\pico\PICO-BackEnd\app\Services\ResultsNumberIntegration</dir>
       <dir>C:\xampp\htdocs\home\apps\bvsalud.org\pesquisa\htdocs\pico\PICO-BackEnd\app\Services\ServiceModels</dir>
-      <dir>C:\xampp\htdocs\home\apps\bvsalud.org\pesquisa\htdocs\pico\PICO-BackEnd\app</dir>
-      <dir>C:\xampp\htdocs\home\apps\bvsalud.org\pesquisa\htdocs\pico\PICO-BackEnd</dir>
       <dir>C:\xampp\htdocs\home\apps\bvsalud.org\pesquisa\htdocs\pico\PICO-BackEnd\app\Http</dir>
       <dir>C:\xampp\htdocs\home\apps\bvsalud.org\pesquisa\htdocs\pico\PICO-BackEnd\app\Http\Controllers</dir>
       <dir>C:\xampp\htdocs\home\apps\bvsalud.org\pesquisa\htdocs\pico\PICO-BackEnd\app\Services</dir>
+      <dir>C:\xampp\htdocs\home\apps\bvsalud.org\pesquisa\htdocs\pico\PICO-BackEnd\app</dir>
+      <dir>C:\xampp\htdocs\home\apps\bvsalud.org\pesquisa\htdocs\pico\PICO-BackEnd\app\Services\AdvancedLogger\Services</dir>
+      <dir>C:\xampp\htdocs\home\apps\bvsalud.org\pesquisa\htdocs\pico\PICO-BackEnd\resources\views\vendor\laravel-log-viewer\partials</dir>
+      <dir>C:\xampp\htdocs\home\apps\bvsalud.org\pesquisa\htdocs\pico\PICO-BackEnd\resources\views\vendor\laravel-log-viewer</dir>
+      <dir>C:\xampp\htdocs\home\apps\bvsalud.org\pesquisa\htdocs\pico\PICO-BackEnd\resources\views\vendor</dir>
+      <dir>C:\xampp\htdocs\home\apps\bvsalud.org\pesquisa\htdocs\pico\PICO-BackEnd</dir>
     </dirStrings>
   </component>
   <component name="Git.Settings">
@@ -221,17 +323,6 @@
   <component name="IdeDocumentHistory">
     <option name="CHANGED_PATHS">
       <list>
-        <option value="$PROJECT_DIR$/app/Providers/ResultsNumberIntegrationProvider.php" />
-        <option value="$PROJECT_DIR$/app/Providers/QueryBuildServiceProvider.php" />
-        <option value="$PROJECT_DIR$/app/Providers/DeCSProvider.php" />
-        <option value="$PROJECT_DIR$/app/Providers/DeCSIntegrationProvider.php" />
-        <option value="$PROJECT_DIR$/app/Providers/EventServiceProvider.php" />
-        <option value="$PROJECT_DIR$/app/Exceptions/Exceptions/AppError/ErrorInsideAnotherComponent.php" />
-        <option value="$PROJECT_DIR$/app/Models/DataModels/QueryBuildModel.php" />
-        <option value="$PROJECT_DIR$/app/Models/DataModels/IntegrationDeCSModel.php" />
-        <option value="$PROJECT_DIR$/app/Models/DataModels/DeCSModel.php" />
-        <option value="$PROJECT_DIR$/app/Exceptions/Exceptions/AppError/ExceptionInsideService.php" />
-        <option value="$PROJECT_DIR$/app/Services/AdvancedLogger/Traits/TranslatedMessageTrait.php" />
         <option value="$PROJECT_DIR$/app/Http/Traits/FinalExceptionTrait.php" />
         <option value="$PROJECT_DIR$/config/logging.php" />
         <option value="$PROJECT_DIR$/app/Exceptions/Exceptions/AppError/GuzzleProxyConnectionError.php" />
@@ -257,21 +348,32 @@
         <option value="$PROJECT_DIR$/app/Http/Controllers/PICO/QueryBuildController.php" />
         <option value="$PROJECT_DIR$/app/Http/Controllers/PICO/ResultsNumberController.php" />
         <option value="$PROJECT_DIR$/app/Services/ServiceModels/PICOServiceModel.php" />
-        <option value="$PROJECT_DIR$/app/Services/AdvancedLogger/Providers/AdvancedLoggerProvider.php" />
         <option value="$PROJECT_DIR$/app/Facades/SpecialValidatorFacade.php" />
         <option value="$PROJECT_DIR$/app/Providers/AppServiceProvider.php" />
-        <option value="$PROJECT_DIR$/config/app.php" />
         <option value="$PROJECT_DIR$/app/Facades/ModelUpdateValidatorFacade.php" />
         <option value="$PROJECT_DIR$/app/Facades/AuthHandlerFacade.php" />
         <option value="$PROJECT_DIR$/app/Services/ResultsNumberIntegration/ResultsNumberImporter.php" />
         <option value="$PROJECT_DIR$/app/Services/AuthHandler/AuthHandler.php" />
         <option value="$PROJECT_DIR$/app/Services/ResultsNumberIntegration/ResultsNumberBIREME.php" />
-        <option value="$PROJECT_DIR$/app/Http/Controllers/PICO/ControllerModel.php" />
         <option value="$PROJECT_DIR$/app/Services/ServiceModels/cURLRequest.php" />
         <option value="$PROJECT_DIR$/app/Services/AdvancedLogger/Exceptions/Handlers/ExceptionsHandler.php" />
-        <option value="$PROJECT_DIR$/app/Services/ServiceModels/PICOIntegrationModel.php" />
         <option value="$PROJECT_DIR$/app/Models/DataModels/IntegrationResultsNumberModel.php" />
+        <option value="$PROJECT_DIR$/app/Services/AdvancedLogger/Services/TimerService.php" />
+        <option value="$PROJECT_DIR$/resources/views/vendor/laravel-log-viewer/partials/logformat.blade.php" />
+        <option value="$PROJECT_DIR$/app/Services/AdvancedLogger/Services/Timer.php" />
+        <option value="$PROJECT_DIR$/app/Services/AdvancedLogger/Services/AdvancedTimer.php" />
+        <option value="$PROJECT_DIR$/app/Services/AdvancedLogger/Providers/AdvancedLoggerProvider.php" />
+        <option value="$PROJECT_DIR$/storage/logs/.gitignore" />
+        <option value="$PROJECT_DIR$/app/Services/ServiceModels/PICOIntegrationModel.php" />
+        <option value="$PROJECT_DIR$/app/Http/Controllers/PICO/ControllerModel.php" />
         <option value="$PROJECT_DIR$/app/Services/AdvancedLogger/Services/ServicePerformance.php" />
+        <option value="$PROJECT_DIR$/app/Http/Controllers/Admin/AdminController.php" />
+        <option value="$PROJECT_DIR$/app/Http/Controllers/Admin/CustomHealthController.php" />
+        <option value="$PROJECT_DIR$/config/app.php" />
+        <option value="$PROJECT_DIR$/routes/web.php" />
+        <option value="$PROJECT_DIR$/config/health/config.php" />
+        <option value="$PROJECT_DIR$/resources/views/vendor/laravel-log-viewer/partials/logpresentation.blade.php" />
+        <option value="$PROJECT_DIR$/app/Http/Controllers/Admin/CustomLogController.php" />
       </list>
     </option>
   </component>
@@ -389,7 +491,6 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
-      <pane id="Scope" />
       <pane id="ProjectPane">
         <subPane>
           <expand>
@@ -406,6 +507,160 @@
               <item name="PICO-BackEnd" type="b2602c69:ProjectViewProjectNode" />
               <item name="PICO-BackEnd" type="462c0819:PsiDirectoryNode" />
               <item name="app" type="462c0819:PsiDirectoryNode" />
+              <item name="Console" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="PICO-BackEnd" type="b2602c69:ProjectViewProjectNode" />
+              <item name="PICO-BackEnd" type="462c0819:PsiDirectoryNode" />
+              <item name="app" type="462c0819:PsiDirectoryNode" />
+              <item name="Console" type="462c0819:PsiDirectoryNode" />
+              <item name="Commands" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="PICO-BackEnd" type="b2602c69:ProjectViewProjectNode" />
+              <item name="PICO-BackEnd" type="462c0819:PsiDirectoryNode" />
+              <item name="app" type="462c0819:PsiDirectoryNode" />
+              <item name="Exceptions" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="PICO-BackEnd" type="b2602c69:ProjectViewProjectNode" />
+              <item name="PICO-BackEnd" type="462c0819:PsiDirectoryNode" />
+              <item name="app" type="462c0819:PsiDirectoryNode" />
+              <item name="Exceptions" type="462c0819:PsiDirectoryNode" />
+              <item name="Exceptions" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="PICO-BackEnd" type="b2602c69:ProjectViewProjectNode" />
+              <item name="PICO-BackEnd" type="462c0819:PsiDirectoryNode" />
+              <item name="app" type="462c0819:PsiDirectoryNode" />
+              <item name="Exceptions" type="462c0819:PsiDirectoryNode" />
+              <item name="Exceptions" type="462c0819:PsiDirectoryNode" />
+              <item name="AppError" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="PICO-BackEnd" type="b2602c69:ProjectViewProjectNode" />
+              <item name="PICO-BackEnd" type="462c0819:PsiDirectoryNode" />
+              <item name="app" type="462c0819:PsiDirectoryNode" />
+              <item name="Exceptions" type="462c0819:PsiDirectoryNode" />
+              <item name="Exceptions" type="462c0819:PsiDirectoryNode" />
+              <item name="ClientError" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="PICO-BackEnd" type="b2602c69:ProjectViewProjectNode" />
+              <item name="PICO-BackEnd" type="462c0819:PsiDirectoryNode" />
+              <item name="app" type="462c0819:PsiDirectoryNode" />
+              <item name="Exceptions" type="462c0819:PsiDirectoryNode" />
+              <item name="Models" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="PICO-BackEnd" type="b2602c69:ProjectViewProjectNode" />
+              <item name="PICO-BackEnd" type="462c0819:PsiDirectoryNode" />
+              <item name="app" type="462c0819:PsiDirectoryNode" />
+              <item name="Exceptions" type="462c0819:PsiDirectoryNode" />
+              <item name="Warnings" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="PICO-BackEnd" type="b2602c69:ProjectViewProjectNode" />
+              <item name="PICO-BackEnd" type="462c0819:PsiDirectoryNode" />
+              <item name="app" type="462c0819:PsiDirectoryNode" />
+              <item name="Exceptions" type="462c0819:PsiDirectoryNode" />
+              <item name="Warnings" type="462c0819:PsiDirectoryNode" />
+              <item name="AppWarning" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="PICO-BackEnd" type="b2602c69:ProjectViewProjectNode" />
+              <item name="PICO-BackEnd" type="462c0819:PsiDirectoryNode" />
+              <item name="app" type="462c0819:PsiDirectoryNode" />
+              <item name="Facades" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="PICO-BackEnd" type="b2602c69:ProjectViewProjectNode" />
+              <item name="PICO-BackEnd" type="462c0819:PsiDirectoryNode" />
+              <item name="app" type="462c0819:PsiDirectoryNode" />
+              <item name="Http" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="PICO-BackEnd" type="b2602c69:ProjectViewProjectNode" />
+              <item name="PICO-BackEnd" type="462c0819:PsiDirectoryNode" />
+              <item name="app" type="462c0819:PsiDirectoryNode" />
+              <item name="Http" type="462c0819:PsiDirectoryNode" />
+              <item name="Controllers" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="PICO-BackEnd" type="b2602c69:ProjectViewProjectNode" />
+              <item name="PICO-BackEnd" type="462c0819:PsiDirectoryNode" />
+              <item name="app" type="462c0819:PsiDirectoryNode" />
+              <item name="Http" type="462c0819:PsiDirectoryNode" />
+              <item name="Controllers" type="462c0819:PsiDirectoryNode" />
+              <item name="Admin" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="PICO-BackEnd" type="b2602c69:ProjectViewProjectNode" />
+              <item name="PICO-BackEnd" type="462c0819:PsiDirectoryNode" />
+              <item name="app" type="462c0819:PsiDirectoryNode" />
+              <item name="Http" type="462c0819:PsiDirectoryNode" />
+              <item name="Controllers" type="462c0819:PsiDirectoryNode" />
+              <item name="PICO" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="PICO-BackEnd" type="b2602c69:ProjectViewProjectNode" />
+              <item name="PICO-BackEnd" type="462c0819:PsiDirectoryNode" />
+              <item name="app" type="462c0819:PsiDirectoryNode" />
+              <item name="Http" type="462c0819:PsiDirectoryNode" />
+              <item name="Controllers" type="462c0819:PsiDirectoryNode" />
+              <item name="RepositoriesControllers" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="PICO-BackEnd" type="b2602c69:ProjectViewProjectNode" />
+              <item name="PICO-BackEnd" type="462c0819:PsiDirectoryNode" />
+              <item name="app" type="462c0819:PsiDirectoryNode" />
+              <item name="Http" type="462c0819:PsiDirectoryNode" />
+              <item name="Controllers" type="462c0819:PsiDirectoryNode" />
+              <item name="Test" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="PICO-BackEnd" type="b2602c69:ProjectViewProjectNode" />
+              <item name="PICO-BackEnd" type="462c0819:PsiDirectoryNode" />
+              <item name="app" type="462c0819:PsiDirectoryNode" />
+              <item name="Http" type="462c0819:PsiDirectoryNode" />
+              <item name="Middleware" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="PICO-BackEnd" type="b2602c69:ProjectViewProjectNode" />
+              <item name="PICO-BackEnd" type="462c0819:PsiDirectoryNode" />
+              <item name="app" type="462c0819:PsiDirectoryNode" />
+              <item name="Http" type="462c0819:PsiDirectoryNode" />
+              <item name="Traits" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="PICO-BackEnd" type="b2602c69:ProjectViewProjectNode" />
+              <item name="PICO-BackEnd" type="462c0819:PsiDirectoryNode" />
+              <item name="app" type="462c0819:PsiDirectoryNode" />
+              <item name="Models" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="PICO-BackEnd" type="b2602c69:ProjectViewProjectNode" />
+              <item name="PICO-BackEnd" type="462c0819:PsiDirectoryNode" />
+              <item name="app" type="462c0819:PsiDirectoryNode" />
+              <item name="Models" type="462c0819:PsiDirectoryNode" />
+              <item name="DataModels" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="PICO-BackEnd" type="b2602c69:ProjectViewProjectNode" />
+              <item name="PICO-BackEnd" type="462c0819:PsiDirectoryNode" />
+              <item name="app" type="462c0819:PsiDirectoryNode" />
+              <item name="Providers" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="PICO-BackEnd" type="b2602c69:ProjectViewProjectNode" />
+              <item name="PICO-BackEnd" type="462c0819:PsiDirectoryNode" />
+              <item name="app" type="462c0819:PsiDirectoryNode" />
+              <item name="Repositories" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="PICO-BackEnd" type="b2602c69:ProjectViewProjectNode" />
+              <item name="PICO-BackEnd" type="462c0819:PsiDirectoryNode" />
+              <item name="app" type="462c0819:PsiDirectoryNode" />
               <item name="Services" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
@@ -421,24 +676,547 @@
               <item name="app" type="462c0819:PsiDirectoryNode" />
               <item name="Services" type="462c0819:PsiDirectoryNode" />
               <item name="AdvancedLogger" type="462c0819:PsiDirectoryNode" />
+              <item name="Exceptions" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="PICO-BackEnd" type="b2602c69:ProjectViewProjectNode" />
+              <item name="PICO-BackEnd" type="462c0819:PsiDirectoryNode" />
+              <item name="app" type="462c0819:PsiDirectoryNode" />
               <item name="Services" type="462c0819:PsiDirectoryNode" />
+              <item name="AdvancedLogger" type="462c0819:PsiDirectoryNode" />
+              <item name="Exceptions" type="462c0819:PsiDirectoryNode" />
+              <item name="Handlers" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="PICO-BackEnd" type="b2602c69:ProjectViewProjectNode" />
+              <item name="PICO-BackEnd" type="462c0819:PsiDirectoryNode" />
+              <item name="app" type="462c0819:PsiDirectoryNode" />
+              <item name="Services" type="462c0819:PsiDirectoryNode" />
+              <item name="AdvancedLogger" type="462c0819:PsiDirectoryNode" />
+              <item name="Exceptions" type="462c0819:PsiDirectoryNode" />
+              <item name="Interfaces" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="PICO-BackEnd" type="b2602c69:ProjectViewProjectNode" />
+              <item name="PICO-BackEnd" type="462c0819:PsiDirectoryNode" />
+              <item name="app" type="462c0819:PsiDirectoryNode" />
+              <item name="Services" type="462c0819:PsiDirectoryNode" />
+              <item name="AdvancedLogger" type="462c0819:PsiDirectoryNode" />
+              <item name="Middleware" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="PICO-BackEnd" type="b2602c69:ProjectViewProjectNode" />
+              <item name="PICO-BackEnd" type="462c0819:PsiDirectoryNode" />
+              <item name="app" type="462c0819:PsiDirectoryNode" />
+              <item name="Services" type="462c0819:PsiDirectoryNode" />
+              <item name="AdvancedLogger" type="462c0819:PsiDirectoryNode" />
+              <item name="Processors" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="PICO-BackEnd" type="b2602c69:ProjectViewProjectNode" />
+              <item name="PICO-BackEnd" type="462c0819:PsiDirectoryNode" />
+              <item name="app" type="462c0819:PsiDirectoryNode" />
+              <item name="Services" type="462c0819:PsiDirectoryNode" />
+              <item name="AdvancedLogger" type="462c0819:PsiDirectoryNode" />
+              <item name="Providers" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="PICO-BackEnd" type="b2602c69:ProjectViewProjectNode" />
+              <item name="PICO-BackEnd" type="462c0819:PsiDirectoryNode" />
+              <item name="app" type="462c0819:PsiDirectoryNode" />
+              <item name="Services" type="462c0819:PsiDirectoryNode" />
+              <item name="AdvancedLogger" type="462c0819:PsiDirectoryNode" />
+              <item name="Services" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="PICO-BackEnd" type="b2602c69:ProjectViewProjectNode" />
+              <item name="PICO-BackEnd" type="462c0819:PsiDirectoryNode" />
+              <item name="app" type="462c0819:PsiDirectoryNode" />
+              <item name="Services" type="462c0819:PsiDirectoryNode" />
+              <item name="AdvancedLogger" type="462c0819:PsiDirectoryNode" />
+              <item name="Traits" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="PICO-BackEnd" type="b2602c69:ProjectViewProjectNode" />
+              <item name="PICO-BackEnd" type="462c0819:PsiDirectoryNode" />
+              <item name="app" type="462c0819:PsiDirectoryNode" />
+              <item name="Services" type="462c0819:PsiDirectoryNode" />
+              <item name="AuthHandler" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="PICO-BackEnd" type="b2602c69:ProjectViewProjectNode" />
+              <item name="PICO-BackEnd" type="462c0819:PsiDirectoryNode" />
+              <item name="app" type="462c0819:PsiDirectoryNode" />
+              <item name="Services" type="462c0819:PsiDirectoryNode" />
+              <item name="DeCS" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="PICO-BackEnd" type="b2602c69:ProjectViewProjectNode" />
+              <item name="PICO-BackEnd" type="462c0819:PsiDirectoryNode" />
+              <item name="app" type="462c0819:PsiDirectoryNode" />
+              <item name="Services" type="462c0819:PsiDirectoryNode" />
+              <item name="DeCSIntegration" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="PICO-BackEnd" type="b2602c69:ProjectViewProjectNode" />
+              <item name="PICO-BackEnd" type="462c0819:PsiDirectoryNode" />
+              <item name="app" type="462c0819:PsiDirectoryNode" />
+              <item name="Services" type="462c0819:PsiDirectoryNode" />
+              <item name="QueryBuild" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="PICO-BackEnd" type="b2602c69:ProjectViewProjectNode" />
+              <item name="PICO-BackEnd" type="462c0819:PsiDirectoryNode" />
+              <item name="app" type="462c0819:PsiDirectoryNode" />
+              <item name="Services" type="462c0819:PsiDirectoryNode" />
+              <item name="ResultsNumber" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="PICO-BackEnd" type="b2602c69:ProjectViewProjectNode" />
+              <item name="PICO-BackEnd" type="462c0819:PsiDirectoryNode" />
+              <item name="app" type="462c0819:PsiDirectoryNode" />
+              <item name="Services" type="462c0819:PsiDirectoryNode" />
+              <item name="ResultsNumberIntegration" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="PICO-BackEnd" type="b2602c69:ProjectViewProjectNode" />
+              <item name="PICO-BackEnd" type="462c0819:PsiDirectoryNode" />
+              <item name="app" type="462c0819:PsiDirectoryNode" />
+              <item name="Services" type="462c0819:PsiDirectoryNode" />
+              <item name="ServiceModels" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="PICO-BackEnd" type="b2602c69:ProjectViewProjectNode" />
+              <item name="PICO-BackEnd" type="462c0819:PsiDirectoryNode" />
+              <item name="bootstrap" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="PICO-BackEnd" type="b2602c69:ProjectViewProjectNode" />
+              <item name="PICO-BackEnd" type="462c0819:PsiDirectoryNode" />
+              <item name="config" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="PICO-BackEnd" type="b2602c69:ProjectViewProjectNode" />
+              <item name="PICO-BackEnd" type="462c0819:PsiDirectoryNode" />
+              <item name="config" type="462c0819:PsiDirectoryNode" />
+              <item name="health" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="PICO-BackEnd" type="b2602c69:ProjectViewProjectNode" />
+              <item name="PICO-BackEnd" type="462c0819:PsiDirectoryNode" />
+              <item name="config" type="462c0819:PsiDirectoryNode" />
+              <item name="health" type="462c0819:PsiDirectoryNode" />
+              <item name="resources" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="PICO-BackEnd" type="b2602c69:ProjectViewProjectNode" />
+              <item name="PICO-BackEnd" type="462c0819:PsiDirectoryNode" />
+              <item name="database" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="PICO-BackEnd" type="b2602c69:ProjectViewProjectNode" />
+              <item name="PICO-BackEnd" type="462c0819:PsiDirectoryNode" />
+              <item name="database" type="462c0819:PsiDirectoryNode" />
+              <item name="factories" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="PICO-BackEnd" type="b2602c69:ProjectViewProjectNode" />
+              <item name="PICO-BackEnd" type="462c0819:PsiDirectoryNode" />
+              <item name="database" type="462c0819:PsiDirectoryNode" />
+              <item name="migrations" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="PICO-BackEnd" type="b2602c69:ProjectViewProjectNode" />
+              <item name="PICO-BackEnd" type="462c0819:PsiDirectoryNode" />
+              <item name="database" type="462c0819:PsiDirectoryNode" />
+              <item name="seeds" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="PICO-BackEnd" type="b2602c69:ProjectViewProjectNode" />
+              <item name="PICO-BackEnd" type="462c0819:PsiDirectoryNode" />
+              <item name="img" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="PICO-BackEnd" type="b2602c69:ProjectViewProjectNode" />
+              <item name="PICO-BackEnd" type="462c0819:PsiDirectoryNode" />
+              <item name="nbproject" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="PICO-BackEnd" type="b2602c69:ProjectViewProjectNode" />
+              <item name="PICO-BackEnd" type="462c0819:PsiDirectoryNode" />
+              <item name="public" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="PICO-BackEnd" type="b2602c69:ProjectViewProjectNode" />
+              <item name="PICO-BackEnd" type="462c0819:PsiDirectoryNode" />
+              <item name="public" type="462c0819:PsiDirectoryNode" />
+              <item name="css" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="PICO-BackEnd" type="b2602c69:ProjectViewProjectNode" />
+              <item name="PICO-BackEnd" type="462c0819:PsiDirectoryNode" />
+              <item name="public" type="462c0819:PsiDirectoryNode" />
+              <item name="img" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="PICO-BackEnd" type="b2602c69:ProjectViewProjectNode" />
+              <item name="PICO-BackEnd" type="462c0819:PsiDirectoryNode" />
+              <item name="public" type="462c0819:PsiDirectoryNode" />
+              <item name="js" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
               <item name="PICO-BackEnd" type="b2602c69:ProjectViewProjectNode" />
               <item name="PICO-BackEnd" type="462c0819:PsiDirectoryNode" />
               <item name="resources" type="462c0819:PsiDirectoryNode" />
             </path>
+            <path>
+              <item name="PICO-BackEnd" type="b2602c69:ProjectViewProjectNode" />
+              <item name="PICO-BackEnd" type="462c0819:PsiDirectoryNode" />
+              <item name="resources" type="462c0819:PsiDirectoryNode" />
+              <item name="assets" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="PICO-BackEnd" type="b2602c69:ProjectViewProjectNode" />
+              <item name="PICO-BackEnd" type="462c0819:PsiDirectoryNode" />
+              <item name="resources" type="462c0819:PsiDirectoryNode" />
+              <item name="assets" type="462c0819:PsiDirectoryNode" />
+              <item name="css" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="PICO-BackEnd" type="b2602c69:ProjectViewProjectNode" />
+              <item name="PICO-BackEnd" type="462c0819:PsiDirectoryNode" />
+              <item name="resources" type="462c0819:PsiDirectoryNode" />
+              <item name="assets" type="462c0819:PsiDirectoryNode" />
+              <item name="js" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="PICO-BackEnd" type="b2602c69:ProjectViewProjectNode" />
+              <item name="PICO-BackEnd" type="462c0819:PsiDirectoryNode" />
+              <item name="resources" type="462c0819:PsiDirectoryNode" />
+              <item name="assets" type="462c0819:PsiDirectoryNode" />
+              <item name="js" type="462c0819:PsiDirectoryNode" />
+              <item name="AdvancedLog" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="PICO-BackEnd" type="b2602c69:ProjectViewProjectNode" />
+              <item name="PICO-BackEnd" type="462c0819:PsiDirectoryNode" />
+              <item name="resources" type="462c0819:PsiDirectoryNode" />
+              <item name="assets" type="462c0819:PsiDirectoryNode" />
+              <item name="js" type="462c0819:PsiDirectoryNode" />
+              <item name="PICObuilder" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="PICO-BackEnd" type="b2602c69:ProjectViewProjectNode" />
+              <item name="PICO-BackEnd" type="462c0819:PsiDirectoryNode" />
+              <item name="resources" type="462c0819:PsiDirectoryNode" />
+              <item name="assets" type="462c0819:PsiDirectoryNode" />
+              <item name="Remanents" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="PICO-BackEnd" type="b2602c69:ProjectViewProjectNode" />
+              <item name="PICO-BackEnd" type="462c0819:PsiDirectoryNode" />
+              <item name="resources" type="462c0819:PsiDirectoryNode" />
+              <item name="js" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="PICO-BackEnd" type="b2602c69:ProjectViewProjectNode" />
+              <item name="PICO-BackEnd" type="462c0819:PsiDirectoryNode" />
+              <item name="resources" type="462c0819:PsiDirectoryNode" />
+              <item name="js" type="462c0819:PsiDirectoryNode" />
+              <item name="vendor" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="PICO-BackEnd" type="b2602c69:ProjectViewProjectNode" />
+              <item name="PICO-BackEnd" type="462c0819:PsiDirectoryNode" />
+              <item name="resources" type="462c0819:PsiDirectoryNode" />
+              <item name="lang" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="PICO-BackEnd" type="b2602c69:ProjectViewProjectNode" />
+              <item name="PICO-BackEnd" type="462c0819:PsiDirectoryNode" />
+              <item name="resources" type="462c0819:PsiDirectoryNode" />
+              <item name="lang" type="462c0819:PsiDirectoryNode" />
+              <item name="en" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="PICO-BackEnd" type="b2602c69:ProjectViewProjectNode" />
+              <item name="PICO-BackEnd" type="462c0819:PsiDirectoryNode" />
+              <item name="resources" type="462c0819:PsiDirectoryNode" />
+              <item name="lang" type="462c0819:PsiDirectoryNode" />
+              <item name="es" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="PICO-BackEnd" type="b2602c69:ProjectViewProjectNode" />
+              <item name="PICO-BackEnd" type="462c0819:PsiDirectoryNode" />
+              <item name="resources" type="462c0819:PsiDirectoryNode" />
+              <item name="lang" type="462c0819:PsiDirectoryNode" />
+              <item name="fr" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="PICO-BackEnd" type="b2602c69:ProjectViewProjectNode" />
+              <item name="PICO-BackEnd" type="462c0819:PsiDirectoryNode" />
+              <item name="resources" type="462c0819:PsiDirectoryNode" />
+              <item name="lang" type="462c0819:PsiDirectoryNode" />
+              <item name="pt" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="PICO-BackEnd" type="b2602c69:ProjectViewProjectNode" />
+              <item name="PICO-BackEnd" type="462c0819:PsiDirectoryNode" />
+              <item name="resources" type="462c0819:PsiDirectoryNode" />
+              <item name="sass" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="PICO-BackEnd" type="b2602c69:ProjectViewProjectNode" />
+              <item name="PICO-BackEnd" type="462c0819:PsiDirectoryNode" />
+              <item name="resources" type="462c0819:PsiDirectoryNode" />
+              <item name="temp" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="PICO-BackEnd" type="b2602c69:ProjectViewProjectNode" />
+              <item name="PICO-BackEnd" type="462c0819:PsiDirectoryNode" />
+              <item name="resources" type="462c0819:PsiDirectoryNode" />
+              <item name="temp" type="462c0819:PsiDirectoryNode" />
+              <item name="css" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="PICO-BackEnd" type="b2602c69:ProjectViewProjectNode" />
+              <item name="PICO-BackEnd" type="462c0819:PsiDirectoryNode" />
+              <item name="resources" type="462c0819:PsiDirectoryNode" />
+              <item name="temp" type="462c0819:PsiDirectoryNode" />
+              <item name="css" type="462c0819:PsiDirectoryNode" />
+              <item name="bootstrap.css" type="620a8d5e:NestingTreeNode" />
+            </path>
+            <path>
+              <item name="PICO-BackEnd" type="b2602c69:ProjectViewProjectNode" />
+              <item name="PICO-BackEnd" type="462c0819:PsiDirectoryNode" />
+              <item name="resources" type="462c0819:PsiDirectoryNode" />
+              <item name="temp" type="462c0819:PsiDirectoryNode" />
+              <item name="css" type="462c0819:PsiDirectoryNode" />
+              <item name="bootstrap-grid.css" type="620a8d5e:NestingTreeNode" />
+            </path>
+            <path>
+              <item name="PICO-BackEnd" type="b2602c69:ProjectViewProjectNode" />
+              <item name="PICO-BackEnd" type="462c0819:PsiDirectoryNode" />
+              <item name="resources" type="462c0819:PsiDirectoryNode" />
+              <item name="temp" type="462c0819:PsiDirectoryNode" />
+              <item name="css" type="462c0819:PsiDirectoryNode" />
+              <item name="bootstrap-reboot.css" type="620a8d5e:NestingTreeNode" />
+            </path>
+            <path>
+              <item name="PICO-BackEnd" type="b2602c69:ProjectViewProjectNode" />
+              <item name="PICO-BackEnd" type="462c0819:PsiDirectoryNode" />
+              <item name="resources" type="462c0819:PsiDirectoryNode" />
+              <item name="views" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="PICO-BackEnd" type="b2602c69:ProjectViewProjectNode" />
+              <item name="PICO-BackEnd" type="462c0819:PsiDirectoryNode" />
+              <item name="resources" type="462c0819:PsiDirectoryNode" />
+              <item name="views" type="462c0819:PsiDirectoryNode" />
+              <item name="layout" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="PICO-BackEnd" type="b2602c69:ProjectViewProjectNode" />
+              <item name="PICO-BackEnd" type="462c0819:PsiDirectoryNode" />
+              <item name="resources" type="462c0819:PsiDirectoryNode" />
+              <item name="views" type="462c0819:PsiDirectoryNode" />
+              <item name="partials" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="PICO-BackEnd" type="b2602c69:ProjectViewProjectNode" />
+              <item name="PICO-BackEnd" type="462c0819:PsiDirectoryNode" />
+              <item name="resources" type="462c0819:PsiDirectoryNode" />
+              <item name="views" type="462c0819:PsiDirectoryNode" />
+              <item name="partials" type="462c0819:PsiDirectoryNode" />
+              <item name="modais" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="PICO-BackEnd" type="b2602c69:ProjectViewProjectNode" />
+              <item name="PICO-BackEnd" type="462c0819:PsiDirectoryNode" />
+              <item name="resources" type="462c0819:PsiDirectoryNode" />
+              <item name="views" type="462c0819:PsiDirectoryNode" />
+              <item name="partials" type="462c0819:PsiDirectoryNode" />
+              <item name="PICOelements" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="PICO-BackEnd" type="b2602c69:ProjectViewProjectNode" />
+              <item name="PICO-BackEnd" type="462c0819:PsiDirectoryNode" />
+              <item name="resources" type="462c0819:PsiDirectoryNode" />
+              <item name="views" type="462c0819:PsiDirectoryNode" />
+              <item name="vendor" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="PICO-BackEnd" type="b2602c69:ProjectViewProjectNode" />
+              <item name="PICO-BackEnd" type="462c0819:PsiDirectoryNode" />
+              <item name="resources" type="462c0819:PsiDirectoryNode" />
+              <item name="views" type="462c0819:PsiDirectoryNode" />
+              <item name="vendor" type="462c0819:PsiDirectoryNode" />
+              <item name="laravel-log-viewer" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="PICO-BackEnd" type="b2602c69:ProjectViewProjectNode" />
+              <item name="PICO-BackEnd" type="462c0819:PsiDirectoryNode" />
+              <item name="resources" type="462c0819:PsiDirectoryNode" />
+              <item name="views" type="462c0819:PsiDirectoryNode" />
+              <item name="vendor" type="462c0819:PsiDirectoryNode" />
+              <item name="laravel-log-viewer" type="462c0819:PsiDirectoryNode" />
+              <item name="layout" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="PICO-BackEnd" type="b2602c69:ProjectViewProjectNode" />
+              <item name="PICO-BackEnd" type="462c0819:PsiDirectoryNode" />
+              <item name="resources" type="462c0819:PsiDirectoryNode" />
+              <item name="views" type="462c0819:PsiDirectoryNode" />
+              <item name="vendor" type="462c0819:PsiDirectoryNode" />
+              <item name="laravel-log-viewer" type="462c0819:PsiDirectoryNode" />
+              <item name="partials" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="PICO-BackEnd" type="b2602c69:ProjectViewProjectNode" />
+              <item name="PICO-BackEnd" type="462c0819:PsiDirectoryNode" />
+              <item name="resources" type="462c0819:PsiDirectoryNode" />
+              <item name="views" type="462c0819:PsiDirectoryNode" />
+              <item name="vendor" type="462c0819:PsiDirectoryNode" />
+              <item name="pragmarx" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="PICO-BackEnd" type="b2602c69:ProjectViewProjectNode" />
+              <item name="PICO-BackEnd" type="462c0819:PsiDirectoryNode" />
+              <item name="resources" type="462c0819:PsiDirectoryNode" />
+              <item name="views" type="462c0819:PsiDirectoryNode" />
+              <item name="vendor" type="462c0819:PsiDirectoryNode" />
+              <item name="pragmarx" type="462c0819:PsiDirectoryNode" />
+              <item name="health" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="PICO-BackEnd" type="b2602c69:ProjectViewProjectNode" />
+              <item name="PICO-BackEnd" type="462c0819:PsiDirectoryNode" />
+              <item name="resources" type="462c0819:PsiDirectoryNode" />
+              <item name="views" type="462c0819:PsiDirectoryNode" />
+              <item name="vendor" type="462c0819:PsiDirectoryNode" />
+              <item name="pragmarx" type="462c0819:PsiDirectoryNode" />
+              <item name="health" type="462c0819:PsiDirectoryNode" />
+              <item name="default" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="PICO-BackEnd" type="b2602c69:ProjectViewProjectNode" />
+              <item name="PICO-BackEnd" type="462c0819:PsiDirectoryNode" />
+              <item name="resources" type="462c0819:PsiDirectoryNode" />
+              <item name="views" type="462c0819:PsiDirectoryNode" />
+              <item name="vendor" type="462c0819:PsiDirectoryNode" />
+              <item name="pragmarx" type="462c0819:PsiDirectoryNode" />
+              <item name="health" type="462c0819:PsiDirectoryNode" />
+              <item name="default" type="462c0819:PsiDirectoryNode" />
+              <item name="partials" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="PICO-BackEnd" type="b2602c69:ProjectViewProjectNode" />
+              <item name="PICO-BackEnd" type="462c0819:PsiDirectoryNode" />
+              <item name="routes" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="PICO-BackEnd" type="b2602c69:ProjectViewProjectNode" />
+              <item name="PICO-BackEnd" type="462c0819:PsiDirectoryNode" />
+              <item name="storage" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="PICO-BackEnd" type="b2602c69:ProjectViewProjectNode" />
+              <item name="PICO-BackEnd" type="462c0819:PsiDirectoryNode" />
+              <item name="storage" type="462c0819:PsiDirectoryNode" />
+              <item name="app" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="PICO-BackEnd" type="b2602c69:ProjectViewProjectNode" />
+              <item name="PICO-BackEnd" type="462c0819:PsiDirectoryNode" />
+              <item name="storage" type="462c0819:PsiDirectoryNode" />
+              <item name="app" type="462c0819:PsiDirectoryNode" />
+              <item name="public" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="PICO-BackEnd" type="b2602c69:ProjectViewProjectNode" />
+              <item name="PICO-BackEnd" type="462c0819:PsiDirectoryNode" />
+              <item name="storage" type="462c0819:PsiDirectoryNode" />
+              <item name="framework" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="PICO-BackEnd" type="b2602c69:ProjectViewProjectNode" />
+              <item name="PICO-BackEnd" type="462c0819:PsiDirectoryNode" />
+              <item name="storage" type="462c0819:PsiDirectoryNode" />
+              <item name="framework" type="462c0819:PsiDirectoryNode" />
+              <item name="cache" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="PICO-BackEnd" type="b2602c69:ProjectViewProjectNode" />
+              <item name="PICO-BackEnd" type="462c0819:PsiDirectoryNode" />
+              <item name="storage" type="462c0819:PsiDirectoryNode" />
+              <item name="framework" type="462c0819:PsiDirectoryNode" />
+              <item name="cache" type="462c0819:PsiDirectoryNode" />
+              <item name="data" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="PICO-BackEnd" type="b2602c69:ProjectViewProjectNode" />
+              <item name="PICO-BackEnd" type="462c0819:PsiDirectoryNode" />
+              <item name="storage" type="462c0819:PsiDirectoryNode" />
+              <item name="framework" type="462c0819:PsiDirectoryNode" />
+              <item name="sessions" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="PICO-BackEnd" type="b2602c69:ProjectViewProjectNode" />
+              <item name="PICO-BackEnd" type="462c0819:PsiDirectoryNode" />
+              <item name="storage" type="462c0819:PsiDirectoryNode" />
+              <item name="framework" type="462c0819:PsiDirectoryNode" />
+              <item name="testing" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="PICO-BackEnd" type="b2602c69:ProjectViewProjectNode" />
+              <item name="PICO-BackEnd" type="462c0819:PsiDirectoryNode" />
+              <item name="storage" type="462c0819:PsiDirectoryNode" />
+              <item name="framework" type="462c0819:PsiDirectoryNode" />
+              <item name="testing" type="462c0819:PsiDirectoryNode" />
+              <item name="disks" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="PICO-BackEnd" type="b2602c69:ProjectViewProjectNode" />
+              <item name="PICO-BackEnd" type="462c0819:PsiDirectoryNode" />
+              <item name="storage" type="462c0819:PsiDirectoryNode" />
+              <item name="logs" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="PICO-BackEnd" type="b2602c69:ProjectViewProjectNode" />
+              <item name="PICO-BackEnd" type="462c0819:PsiDirectoryNode" />
+              <item name="storage" type="462c0819:PsiDirectoryNode" />
+              <item name="logs" type="462c0819:PsiDirectoryNode" />
+              <item name="Connections-In" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="PICO-BackEnd" type="b2602c69:ProjectViewProjectNode" />
+              <item name="PICO-BackEnd" type="462c0819:PsiDirectoryNode" />
+              <item name="tests" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="PICO-BackEnd" type="b2602c69:ProjectViewProjectNode" />
+              <item name="PICO-BackEnd" type="462c0819:PsiDirectoryNode" />
+              <item name="tests" type="462c0819:PsiDirectoryNode" />
+              <item name="Feature" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="PICO-BackEnd" type="b2602c69:ProjectViewProjectNode" />
+              <item name="PICO-BackEnd" type="462c0819:PsiDirectoryNode" />
+              <item name="tests" type="462c0819:PsiDirectoryNode" />
+              <item name="Unit" type="462c0819:PsiDirectoryNode" />
+            </path>
           </expand>
           <select />
         </subPane>
       </pane>
+      <pane id="Scope" />
     </panes>
   </component>
   <component name="PropertiesComponent">
     <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
     <property name="WebServerToolWindowFactoryState" value="false" />
     <property name="editor.config.ad.shown" value="true" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/app/Facades" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/app/Http/Controllers/Admin" />
     <property name="node.js.detected.package.eslint" value="true" />
     <property name="node.js.detected.package.tslint" value="true" />
     <property name="node.js.path.for.package.eslint" value="project" />
@@ -452,18 +1230,18 @@
   </component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
+      <recent name="C:\xampp\htdocs\home\apps\bvsalud.org\pesquisa\htdocs\pico\PICO-BackEnd\app\Http\Controllers\Admin" />
       <recent name="C:\xampp\htdocs\home\apps\bvsalud.org\pesquisa\htdocs\pico\PICO-BackEnd\app\Facades" />
       <recent name="C:\xampp\htdocs\home\apps\bvsalud.org\pesquisa\htdocs\pico\PICO-BackEnd\bootstrap" />
       <recent name="C:\xampp\htdocs\PICO-BackEnd\app\Exceptions\Exceptions\AppError" />
       <recent name="C:\xampp\htdocs\PICO-BackEnd\app\Services\AdvancedLogger\Services" />
-      <recent name="C:\xampp\htdocs\PICO-BackEnd\app\Facades" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\xampp\htdocs\home\apps\bvsalud.org\pesquisa\htdocs\pico\PICO-BackEnd\app\Exceptions" />
+      <recent name="C:\xampp\htdocs\home\apps\bvsalud.org\pesquisa\htdocs\pico\PICO-BackEnd\app\Exceptions\Exceptions\AppError" />
       <recent name="C:\xampp\htdocs\home\apps\bvsalud.org\pesquisa\htdocs\pico\PICO-BackEnd" />
       <recent name="C:\xampp\htdocs\PICO-BackEnd\app\Services\DeCSIntegration" />
       <recent name="C:\xampp\htdocs\PICO-BackEnd\app\Models" />
-      <recent name="C:\xampp\htdocs\PICO-BackEnd\app\Http\Controllers" />
-      <recent name="C:\xampp\htdocs\PICO-BackEnd\app\Services\AdvancedLogger\Services" />
     </key>
   </component>
   <component name="RunDashboard">
@@ -585,12 +1363,12 @@
       <workItem from="1568308562790" duration="1273000" />
       <workItem from="1568329932724" duration="12946000" />
       <workItem from="1568355487974" duration="3097000" />
-      <workItem from="1568643369095" duration="4371000" />
+      <workItem from="1568643369095" duration="3984000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="1633354000" />
+    <option name="totallyTimeSpent" value="1638527000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="-8" y="-8" width="1382" height="744" extended-state="6" />
@@ -602,7 +1380,7 @@
       <window_info id="Favorites" order="3" side_tool="true" />
       <window_info anchor="bottom" id="TypeScript" order="0" />
       <window_info anchor="bottom" id="Message" order="1" />
-      <window_info anchor="bottom" id="Find" order="2" sideWeight="0.4978038" visible="true" weight="0.2985782" />
+      <window_info anchor="bottom" id="Find" order="2" sideWeight="0.49707174" visible="true" weight="0.2985782" />
       <window_info anchor="bottom" id="Run" order="3" sideWeight="0.49924356" weight="0.328594" />
       <window_info anchor="bottom" id="Debug" order="4" weight="0.39934534" />
       <window_info anchor="bottom" id="Cvs" order="5" weight="0.25" />
@@ -611,7 +1389,7 @@
       <window_info anchor="bottom" id="Docker" order="8" show_stripe_button="false" />
       <window_info anchor="bottom" id="Version Control" order="9" />
       <window_info anchor="bottom" id="Database Changes" order="10" />
-      <window_info anchor="bottom" id="Event Log" order="11" sideWeight="0.5021962" side_tool="true" weight="0.2985782" />
+      <window_info anchor="bottom" id="Event Log" order="11" sideWeight="0.50292826" side_tool="true" weight="0.2985782" />
       <window_info anchor="bottom" id="Terminal" order="12" />
       <window_info anchor="right" id="Commander" internal_type="SLIDING" order="0" type="SLIDING" weight="0.4" />
       <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
@@ -623,191 +1401,107 @@
     <option name="version" value="1" />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/app/Providers/BroadcastServiceProvider.php">
+    <entry file="file://$PROJECT_DIR$/app/Exceptions/Models/AppWarning.php">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/Exceptions/Models/ClientInfo.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="102">
-          <caret line="7" column="6" selection-start-line="7" selection-start-column="6" selection-end-line="7" selection-end-column="6" />
+        <state relative-caret-position="68">
+          <caret line="4" column="15" selection-start-line="4" selection-start-column="15" selection-end-line="4" selection-end-column="15" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/Providers/DeCSProvider.php">
+    <entry file="file://$PROJECT_DIR$/app/Exceptions/Models/ClientError.php">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/Exceptions/Models/ClientWarning.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="102">
-          <caret line="7" column="6" selection-start-line="7" selection-start-column="6" selection-end-line="7" selection-end-column="6" />
+        <state relative-caret-position="68">
+          <caret line="4" column="15" selection-start-line="4" selection-start-column="15" selection-end-line="4" selection-end-column="15" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/Providers/RouteServiceProvider.php">
+    <entry file="file://$PROJECT_DIR$/app/Exceptions/Models/CustomWarning.php">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/Exceptions/Models/CustomException.php">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/Exceptions/Exceptions/AppError/BadRequestInXML.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="102">
-          <caret line="8" column="6" selection-start-line="8" selection-start-column="6" selection-end-line="8" selection-end-column="6" />
+        <state relative-caret-position="153">
+          <caret line="9" column="1" lean-forward="true" selection-start-line="9" selection-start-column="1" selection-end-line="9" selection-end-column="1" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/Providers/ResultsNumberProvider.php">
+    <entry file="file://$PROJECT_DIR$/app/Exceptions/Exceptions/AppError/SpecialValidationException.php">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="102">
-          <caret line="7" column="6" selection-start-line="7" selection-start-column="6" selection-end-line="7" selection-end-column="6" />
+          <caret line="6" column="6" selection-start-line="6" selection-start-column="6" selection-end-line="6" selection-end-column="6" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/Providers/ResultsNumberIntegrationProvider.php">
+    <entry file="file://$PROJECT_DIR$/app/Exceptions/Exceptions/AppError/SpecialValidationInternalException.php">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="102">
-          <caret line="7" column="6" selection-start-line="7" selection-start-column="6" selection-end-line="7" selection-end-column="6" />
+          <caret line="6" column="6" selection-start-line="6" selection-start-column="6" selection-end-line="6" selection-end-column="6" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/Providers/QueryBuildServiceProvider.php">
+    <entry file="file://$PROJECT_DIR$/app/Exceptions/DontCatchException.php">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="102">
-          <caret line="7" column="6" selection-start-line="7" selection-start-column="6" selection-end-line="7" selection-end-column="6" />
+          <caret line="6" column="6" selection-start-line="6" selection-start-column="6" selection-end-line="6" selection-end-column="6" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/Providers/EventServiceProvider.php">
+    <entry file="file://$PROJECT_DIR$/app/Models/DataTransferObject.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="102">
-          <caret line="9" column="6" selection-start-line="9" selection-start-column="6" selection-end-line="9" selection-end-column="6" />
+        <state relative-caret-position="207">
+          <caret line="215" column="9" lean-forward="true" selection-start-line="215" selection-start-column="9" selection-end-line="215" selection-end-column="9" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/resources/views/vendor/laravel-log-viewer/partials/navbar.blade.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state>
+          <folding>
+            <element signature="n#style#0;n#nav#0;n#!!top" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/resources/views/vendor/laravel-log-viewer/partials/channelpresentation.blade.php">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/resources/views/vendor/laravel-log-viewer/partials/databutton.blade.php">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/_ide_helper.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="362">
+          <caret line="19244" column="10" selection-start-line="19244" selection-start-column="10" selection-end-line="19244" selection-end-column="10" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/storage/logs/.gitignore">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/config/cache.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-1426" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/Services/AdvancedLogger/Services/ServiceComponentExceptionHub.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="187">
+          <caret line="12" selection-start-line="12" selection-end-line="15" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/app/Services/AdvancedLogger/Services/ExceptionLogger.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state>
-          <caret column="5" selection-start-column="2" selection-end-column="5" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/Services/ServiceModels/EquationCheckerTrait.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-78">
-          <caret line="4" column="6" selection-start-line="4" selection-start-column="6" selection-end-line="4" selection-end-column="6" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/Services/ServiceModels/PICOServiceExternalImporter.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="187">
-          <caret line="11" column="71" lean-forward="true" selection-start-line="11" selection-start-column="71" selection-end-line="11" selection-end-column="71" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/Facades/dsasd.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="204">
-          <caret line="12" column="34" selection-start-line="12" selection-start-column="16" selection-end-line="12" selection-end-column="34" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/Facades/ServicePerformanceFacade.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="204">
-          <caret line="12" column="34" selection-start-line="12" selection-start-column="16" selection-end-line="12" selection-end-column="34" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/Facades/PICOServiceFacade.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="170">
-          <caret line="10" column="15" selection-start-line="10" selection-start-column="15" selection-end-line="10" selection-end-column="15" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/Services/AdvancedLogger/Exceptions/Models/AppError.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="153">
-          <caret line="9" lean-forward="true" selection-start-line="9" selection-end-line="9" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/Exceptions/Exceptions/AppError/TheServicelIsNotInstanceOfPICOServiceModel.php">
-      <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="102">
-          <caret line="6" column="61" lean-forward="true" selection-start-line="6" selection-start-column="61" selection-end-line="6" selection-end-column="61" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/Http/Controllers/PICO/IntegrationDeCSController.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="221">
-          <caret line="13" lean-forward="true" selection-start-line="13" selection-end-line="13" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/Http/Controllers/PICO/IntegrationResultsNumberController.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="51">
-          <caret line="3" selection-start-line="3" selection-end-line="3" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/Http/Controllers/PICO/QueryBuildController.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="51">
-          <caret line="3" selection-start-line="3" selection-end-line="3" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/Http/Controllers/PICO/ResultsNumberController.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="170">
-          <caret line="10" column="5" lean-forward="true" selection-start-line="10" selection-start-column="5" selection-end-line="10" selection-end-column="5" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/Http/Controllers/PICO/DeCSController.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="255">
-          <caret line="15" column="5" lean-forward="true" selection-start-line="15" selection-start-column="5" selection-end-line="15" selection-end-column="5" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/Http/Controllers/PICO/MainControllerInterface.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="34">
-          <caret line="14" column="31" selection-start-line="14" selection-start-column="15" selection-end-line="14" selection-end-column="31" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/_ide_helper.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="362">
-          <caret line="19194" column="10" selection-start-line="19194" selection-start-column="10" selection-end-line="19194" selection-end-column="10" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/Services/AdvancedLogger/Services/SpecialValidator.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-420">
-          <caret line="11" column="6" selection-start-line="11" selection-start-column="6" selection-end-line="11" selection-end-column="6" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/bootstrap/cacheold/config.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="139">
-          <caret line="105" column="7" selection-start-line="105" selection-start-column="7" selection-end-line="105" selection-end-column="7" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/Http/Controllers/Admin/AdminLogin.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-825">
-          <caret line="8" column="25" selection-start-line="8" selection-start-column="25" selection-end-line="8" selection-end-column="25" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/Services/AdvancedLogger/Providers/AdvancedLoggerProvider.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="141">
-          <caret line="30" column="47" selection-start-line="30" selection-start-column="31" selection-end-line="30" selection-end-column="47" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/Providers/AuthServiceProvider.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="56">
           <caret line="7" column="6" selection-start-line="7" selection-start-column="6" selection-end-line="7" selection-end-column="6" />
         </state>
       </provider>
@@ -819,114 +1513,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/Facades/SpecialValidatorFacade.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="119">
-          <caret line="7" column="6" selection-start-line="7" selection-start-column="6" selection-end-line="7" selection-end-column="6" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/Facades/ModelUpdateValidatorFacade.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="158">
-          <caret line="10" column="47" selection-start-line="10" selection-start-column="47" selection-end-line="10" selection-end-column="47" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/Facades/ExceptionLoggerFacade.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="170">
-          <caret line="10" column="6" selection-start-line="10" selection-start-column="6" selection-end-line="10" selection-end-column="6" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/config/app.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="92">
-          <caret line="247" column="7" selection-start-line="247" selection-start-column="7" selection-end-line="247" selection-end-column="7" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/Facades/WarningsHandlerFacade.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="119">
-          <caret line="7" column="6" selection-start-line="7" selection-start-column="6" selection-end-line="7" selection-end-column="6" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/Facades/AdvancedLoggerFacade.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="221">
-          <caret line="13" column="1" selection-start-line="13" selection-start-column="1" selection-end-line="13" selection-end-column="1" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/Facades/AuthHandlerFacade.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="158">
-          <caret line="10" column="38" selection-start-line="10" selection-start-column="38" selection-end-line="10" selection-end-column="38" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/Services/ServiceModels/ExternalImporter.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="102">
-          <caret line="11" column="50" selection-start-line="11" selection-start-column="50" selection-end-line="11" selection-end-column="50" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/Services/ResultsNumberIntegration/ResultsNumberImporter.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="102">
-          <caret line="13" column="48" selection-start-line="13" selection-start-column="48" selection-end-line="13" selection-end-column="48" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/Services/AuthHandler/AuthHandler.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-51">
-          <caret line="15" lean-forward="true" selection-start-line="15" selection-end-line="15" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/Services/ResultsNumberIntegration/ResultsNumberBIREME.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="56">
-          <caret line="6" column="41" selection-start-line="6" selection-start-column="41" selection-end-line="6" selection-end-column="41" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/Services/ServiceModels/cURLRequest.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="30">
-          <caret line="48" column="17" selection-start-line="48" selection-start-column="17" selection-end-line="48" selection-end-column="17" />
-          <folding>
-            <element signature="e#55#84#0#PHP" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/Services/ServiceModels/PICOIntegrationModel.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="158">
-          <caret line="41" column="90" selection-start-line="41" selection-start-column="90" selection-end-line="41" selection-end-column="90" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/Models/DataModels/IntegrationResultsNumberModel.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="323">
-          <caret line="43" lean-forward="true" selection-start-line="43" selection-end-line="43" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/Services/AdvancedLogger/Traits/ExceptionLoggerTrait.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="139">
-          <caret line="57" column="10" selection-start-line="57" selection-start-column="10" selection-end-line="57" selection-end-column="10" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/app/Services/AdvancedLogger/Services/WarningLogger.php">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="139">
@@ -934,37 +1520,40 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/Services/AdvancedLogger/Processors/BaseLoggers.php">
+    <entry file="file://$PROJECT_DIR$/app/Services/AdvancedLogger/Services/SpecialValidator.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="139">
-          <caret line="40" column="10" selection-start-line="40" selection-start-column="10" selection-end-line="40" selection-end-column="10" />
+        <state relative-caret-position="102">
+          <caret line="11" column="6" selection-start-line="11" selection-start-column="6" selection-end-line="11" selection-end-column="6" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/Services/AdvancedLogger/Exceptions/Handlers/ExceptionsHandler.php">
+    <entry file="file://$PROJECT_DIR$/app/Services/ServiceModels/PICOQueryProcessorTrait.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="260">
-          <caret line="47" selection-start-line="47" selection-end-line="47" />
+        <state relative-caret-position="-34">
+          <caret line="4" column="6" selection-start-line="4" selection-start-column="6" selection-end-line="4" selection-end-column="6" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/Services/AdvancedLogger/AdvancedLogger.php">
+    <entry file="file://$PROJECT_DIR$/app/Services/ServiceModels/PICOIntegrationModel.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="158">
-          <caret line="82" column="10" selection-start-line="82" selection-start-column="10" selection-end-line="82" selection-end-column="10" />
+        <state relative-caret-position="110">
+          <caret line="37" column="52" lean-forward="true" selection-start-line="37" selection-start-column="52" selection-end-line="37" selection-end-column="52" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/app/Http/Controllers/PICO/ControllerModel.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="319">
-          <caret line="170" selection-start-line="170" selection-end-line="170" />
+        <state relative-caret-position="914">
+          <caret line="78" column="28" selection-start-line="78" selection-start-column="28" selection-end-line="78" selection-end-column="28" />
+          <folding>
+            <element signature="e#54#126#0#PHP" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/app/Services/ServiceModels/PICOServiceModel.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="132">
+        <state relative-caret-position="493">
           <caret line="32" column="10" selection-start-line="32" selection-start-column="10" selection-end-line="32" selection-end-column="10" />
           <folding>
             <element signature="e#55#124#0#PHP" expanded="true" />
@@ -972,20 +1561,165 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/Services/AdvancedLogger/Services/TimerService.php">
+    <entry file="file://$PROJECT_DIR$/app/Services/ServiceModels/cURLRequest.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="68">
-          <caret line="4" column="6" selection-start-line="4" selection-start-column="6" selection-end-line="4" selection-end-column="6" />
+        <state relative-caret-position="200">
+          <caret line="40" column="20" selection-start-line="40" selection-start-column="20" selection-end-line="40" selection-end-column="43" />
+          <folding>
+            <element signature="e#55#84#0#PHP" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/Http/Controllers/Admin/AdminLogin.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-177">
+          <caret line="14" selection-start-line="14" selection-end-line="17" selection-end-column="5" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/app/Services/AdvancedLogger/Services/ServicePerformance.php">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="263">
-          <caret line="31" column="5" lean-forward="true" selection-start-line="31" selection-start-column="5" selection-end-line="31" selection-end-column="5" />
+          <caret line="33" column="5" selection-start-line="33" selection-start-column="5" selection-end-line="33" selection-end-column="5" />
           <folding>
             <element signature="e#65#111#0#PHP" expanded="true" />
           </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/Services/AdvancedLogger/Services/AdvancedTimer.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="204">
+          <caret line="12" selection-start-line="12" selection-end-line="12" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/resources/views/vendor/pragmarx/health/html.blade.php">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/vendor/pragmarx/health/src/Http/Controllers/Health.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="459">
+          <caret line="101" selection-start-line="101" selection-end-line="101" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/config/health/config.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="320">
+          <caret line="271" lean-forward="true" selection-start-line="271" selection-end-line="271" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/Http/Controllers/PICO/IntegrationDeCSController.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="187">
+          <caret line="11" column="35" selection-start-line="11" selection-start-column="35" selection-end-line="11" selection-end-column="35" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/Facades/ServicePerfomanceFacade.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="136">
+          <caret line="8" column="6" selection-start-line="8" selection-start-column="6" selection-end-line="8" selection-end-column="6" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/resources/views/vendor/laravel-log-viewer/partials/content.blade.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="187">
+          <caret line="11" column="9" lean-forward="true" selection-start-line="11" selection-start-column="9" selection-end-line="11" selection-end-column="9" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/resources/views/vendor/laravel-log-viewer/partials/unformatted.blade.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-153" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/Http/Controllers/PICO/DeCSController.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="238">
+          <caret line="14" column="5" selection-start-line="14" selection-start-column="5" selection-end-line="14" selection-end-column="5" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/resources/views/vendor/laravel-log-viewer/partials/filepresentation.blade.php">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/resources/views/vendor/laravel-log-viewer/adminlogin.blade.php">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/resources/views/vendor/laravel-log-viewer/partials/logpresentation.blade.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-604" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/resources/views/vendor/laravel-log-viewer/partials/logcontent.blade.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-145" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/resources/views/vendor/laravel-log-viewer/partials/logformat.blade.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="272">
+          <caret line="16" column="13" selection-start-line="16" selection-start-column="13" selection-end-line="16" selection-end-column="13" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/bootstrap/cache/config.php">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/Services/AdvancedLogger/Providers/AdvancedLoggerProvider.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="302">
+          <caret line="33" column="5" selection-start-line="33" selection-start-column="5" selection-end-line="33" selection-end-column="5" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/routes/web.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="107">
+          <caret line="53" column="59" selection-start-line="53" selection-start-column="54" selection-end-line="53" selection-end-column="59" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/Http/Controllers/Admin/CustomHealthController.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="187">
+          <caret line="11" selection-start-line="11" selection-end-line="13" selection-end-column="5" />
+          <folding>
+            <element signature="e#56#100#0#PHP" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/resources/views/vendor/laravel-log-viewer/log.blade.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="34">
+          <caret line="2" column="21" selection-start-line="2" selection-start-column="13" selection-end-line="2" selection-end-column="21" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/Http/Controllers/Admin/CustomLogController.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="119">
+          <caret line="7" column="45" selection-start-line="7" selection-start-column="45" selection-end-line="7" selection-end-column="45" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/vendor/rap2hpoutre/laravel-log-viewer/src/controllers/LogViewerController.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="229">
+          <caret line="32" column="7" selection-start-line="32" selection-start-column="7" selection-end-line="32" selection-end-column="7" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/config/app.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="2346">
+          <caret line="138" column="10" lean-forward="true" selection-start-line="138" selection-start-column="10" selection-end-line="138" selection-end-column="10" />
         </state>
       </provider>
     </entry>

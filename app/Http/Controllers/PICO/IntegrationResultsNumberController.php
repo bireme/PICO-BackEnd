@@ -2,7 +2,6 @@
 
 namespace PICOExplorer\Http\Controllers\PICO;
 
-use PICOExplorer\Facades\ResultsNumberBIREMEFacade;
 use PICOExplorer\Models\DataTransferObject;
 
 class IntegrationResultsNumberController extends ControllerModel implements MainControllerInterface
@@ -10,7 +9,7 @@ class IntegrationResultsNumberController extends ControllerModel implements Main
 
     public function ServiceBind()
     {
-        return new ResultsNumberBIREMEFacade();
+        return new \ResultsNumberBIREMESV();
     }
 
     public function getMainModel()
