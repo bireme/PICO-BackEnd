@@ -19,10 +19,11 @@
         <table id="table-log" class="table table-striped" data-ordering-index="{{ $standardFormat ? 2 : 0 }}">
             <thead>
             <tr>
-                <th style="width: 9%">Level</th>
+                <th class="text-center" style="width: 8%">Level</th>
                 {{--<th>Context</th>--}}
-                <th style="width: 15%">Date</th>
-                <th style="width: 76%">Content</th>
+                <th class="text-center" style="width: 14%">Date</th>
+                <th class="text-center" style="width: 63%">Content</th>
+                <th class="text-center" style="width: 15%">Data</th>
             </tr>
             </thead>
             <tbody>
@@ -43,9 +44,28 @@
                         <div class="container-fluid logcontent" id="stack{{{$key}}}"
                              style="display: none; white-space: pre-wrap;">
                             <div class="row" style="padding-top:15px;padding-bottom:15px;">
-                                @include('vendor.laravel-log-viewer.partials.logpresentation',['key'=>$key,'logstack'=>$log['stack']])
+                                @spaceless
+                                @if(($decoded = json_decode($log['stack'],true))??null)
+                                @endif
+                                @if(!($log['stack']))
+                                    @include('vendor.laravel-log-viewer.partials.unformatted',['id'=>$key.'1','error'=>'log[stack] is empty. This log item does not have a line break','content'=>json_encode($log['stack'])])
+                                @else
+                                    @if((!(is_string($log['stack']))))
+                                        @include('vendor.laravel-log-viewer.partials.unformatted',['id'=>$key.'2','error'=>'log[stack] must be a string that contains the data encoded in JSON','content'=>json_encode($log['stack'])])
+                                    @else
+                                        @if(($decoded = json_decode($log['stack'],true))??null)
+                                            @include('vendor.laravel-log-viewer.partials.logformat',['value'=>$decoded,'key'=>$key])
+                                        @else
+                                            @include('vendor.laravel-log-viewer.partials.unformatted',['id'=>$key.'1','error'=>'log[stack] must be a string that contains the data encoded in JSON','content'=>json_encode($log['stack'])])
+                                        @endif
+                                    @endif
+                                @endif
+                                @endspaceless
                             </div>
                         </div>
+                    </td>
+                    <td class="text-center">
+                        @include('vendor.laravel-log-viewer.partials.databutton',['value'=>$decoded['data']??null])
                     </td>
                 </tr>
             @endforeach

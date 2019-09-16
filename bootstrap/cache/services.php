@@ -49,7 +49,6 @@
     45 => 'Rap2hpoutre\\LaravelLogViewer\\LaravelLogViewerServiceProvider',
     46 => 'PragmaRX\\Health\\ServiceProvider',
     47 => 'Ixudra\\Curl\\CurlServiceProvider',
-
   ),
   'eager' => 
   array (

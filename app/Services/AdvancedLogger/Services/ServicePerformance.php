@@ -4,7 +4,6 @@ namespace PICOExplorer\Services\AdvancedLogger\Services;
 
 use PICOExplorer\Facades\AdvancedLoggerFacade;
 use PICOExplorer\Facades\SpecialValidatorFacade;
-use PICOExplorer\Facades\TimerServiceFacade;
 use PICOExplorer\Models\DataTransferObject;
 
 class ServicePerformance

@@ -14,7 +14,7 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        $this->app->bind('authhandler', function () {
+        $this->app->singleton('authhandler', function () {
             return new AuthHandler();
         });
     }

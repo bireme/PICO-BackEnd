@@ -2,7 +2,6 @@
 
 namespace PICOExplorer\Http\Controllers\PICO;
 
-use PICOExplorer\Facades\DeCSProcessFacade;
 use PICOExplorer\Models\DataTransferObject;
 
 class DeCSController extends ControllerModel implements MainControllerInterface
@@ -10,7 +9,7 @@ class DeCSController extends ControllerModel implements MainControllerInterface
 
     public function ServiceBind()
     {
-        return new DeCSProcessFacade();
+        return new \DeCSProcessSV();
     }
 
     public function getMainModel()
