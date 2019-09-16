@@ -259,11 +259,16 @@ return [
     ],
 
     'routes' => [
-        'prefix' => $route_prefix = '/health',
+        'prefix' => $route_prefix = '/admin/health',
 
         'namespace' => $namespace = 'PragmaRX\Health\Http\Controllers\Health',
 
         'notification' => 'pragmarx.health.panel',
+
+        'middleware' => [
+            'throttle:60,1',
+            'IsAdmin',
+        ],
 
         'list' => [
             [
@@ -271,7 +276,6 @@ return [
                 'name' => 'pragmarx.health.panel',
                 'action' => "{$namespace}@panel",
                 'middleware' => [
-                    /*'auth.basic'*/
                 ],
             ],
 

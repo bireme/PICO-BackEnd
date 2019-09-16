@@ -175,15 +175,11 @@ return [
         PICOExplorer\Providers\AdvancedLoggerProvider::class,
         PICOExplorer\Providers\AppServiceProvider::class,
         PICOExplorer\Providers\AuthServiceProvider::class,
-        // PICOExplorer\Providers\BroadcastServiceProvider::class,
         PICOExplorer\Providers\EventServiceProvider::class,
         PICOExplorer\Providers\RouteServiceProvider::class,
         Rap2hpoutre\LaravelLogViewer\LaravelLogViewerServiceProvider::class,
-        PICOExplorer\Providers\ResultsNumberIntegrationProvider::class,
-        PICOExplorer\Providers\QueryBuildServiceProvider::class,
-        PICOExplorer\Providers\DeCSIntegrationProvider::class,
-        PICOExplorer\Providers\ResultsNumberProvider::class,
-        PICOExplorer\Providers\DeCSProvider::class,
+        PragmaRX\Health\ServiceProvider::class,
+        Ixudra\Curl\CurlServiceProvider::class,
 
     ],
 
@@ -249,6 +245,7 @@ return [
         'ExceptionLoggerFacade' => PICOExplorer\Facades\ExceptionLoggerFacade::class,
         'SpecialValidatorFacade' => PICOExplorer\Facades\SpecialValidatorFacade::class,
         'AuthHandlerFacade' => PICOExplorer\Facades\AuthHandlerFacade::class,
+
 
         //Binds with multiple instances --> No Facade
         'SVPerformance' => PICOExplorer\Services\AdvancedLogger\Services\ServicePerformance::class,

@@ -3,7 +3,7 @@
 
 /**
  * A helper file for Laravel 5, to provide autocomplete information to your IDE
- * Generated for Laravel 5.8.34 on 2019-09-09 18:53:40.
+ * Generated for Laravel 5.8.34 on 2019-09-16 14:23:57.
  *
  * This file should not be included in your code, only analyzed by your IDE!
  *
@@ -15434,6 +15434,66 @@ namespace PICOExplorer\Facades {
  
 }
 
+namespace PICOExplorer\Services\ResultsNumberIntegration { 
+
+    /**
+     * 
+     *
+     */ 
+    class ResultsNumberBIREME {
+         
+    }
+ 
+}
+
+namespace PICOExplorer\Services\DeCSIntegration { 
+
+    /**
+     * 
+     *
+     */ 
+    class DeCSBireme {
+         
+    }
+ 
+}
+
+namespace PICOExplorer\Services\ResultsNumber { 
+
+    /**
+     * 
+     *
+     */ 
+    class ResultsNumberProcess {
+         
+    }
+ 
+}
+
+namespace PICOExplorer\Services\DeCS { 
+
+    /**
+     * 
+     *
+     */ 
+    class DeCSProcess {
+         
+    }
+ 
+}
+
+namespace PICOExplorer\Services\QueryBuild { 
+
+    /**
+     * 
+     *
+     */ 
+    class QueryBuildProcess {
+         
+    }
+ 
+}
+
 namespace PICOExplorer\Services\AdvancedLogger\Services { 
 
     /**
@@ -15441,6 +15501,31 @@ namespace PICOExplorer\Services\AdvancedLogger\Services {
      *
      */ 
     class ServicePerformance {
+         
+    }
+ 
+}
+
+namespace Ixudra\Curl\Facades { 
+
+    /**
+     * 
+     *
+     */ 
+    class Curl {
+        
+        /**
+         * 
+         *
+         * @param $url string   The URL to which the request is to be sent
+         * @return \Ixudra\Curl\Builder 
+         * @static 
+         */ 
+        public static function to($url)
+        {
+                        /** @var \Ixudra\Curl\CurlService $instance */
+                        return $instance->to($url);
+        }
          
     }
  
@@ -19515,9 +19600,7 @@ namespace  {
 
     class ResultsNumberProcessFacade extends \PICOExplorer\Facades\ResultsNumberProcessFacade {}
 
-    class DeCSProcessFacade extends \PICOExplorer\Facades\DeCSProcessFacade {}
-
-    class QueryBuildFacade extends \PICOExplorer\Facades\QueryBuildFacade {}
+    class ResultsNumberBIREMESV extends \PICOExplorer\Services\ResultsNumberIntegration\ResultsNumberBIREME {}
 
     class AdvancedLoggerFacade extends \PICOExplorer\Facades\AdvancedLoggerFacade {}
 
