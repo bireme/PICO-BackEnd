@@ -47,12 +47,8 @@
     43 => 'PICOExplorer\\Providers\\EventServiceProvider',
     44 => 'PICOExplorer\\Providers\\RouteServiceProvider',
     45 => 'Rap2hpoutre\\LaravelLogViewer\\LaravelLogViewerServiceProvider',
-    46 => 'Ixudra\\Curl\\CurlServiceProvider',
-    47 => 'PICOExplorer\\Providers\\ResultsNumberIntegrationProvider',
-    48 => 'PICOExplorer\\Providers\\QueryBuildServiceProvider',
-    49 => 'PICOExplorer\\Providers\\DeCSIntegrationProvider',
-    50 => 'PICOExplorer\\Providers\\ResultsNumberProvider',
-    51 => 'PICOExplorer\\Providers\\DeCSProvider',
+    46 => 'PragmaRX\\Health\\ServiceProvider',
+    47 => 'Ixudra\\Curl\\CurlServiceProvider',
   ),
   'eager' => 
   array (
@@ -86,12 +82,8 @@
     27 => 'PICOExplorer\\Providers\\EventServiceProvider',
     28 => 'PICOExplorer\\Providers\\RouteServiceProvider',
     29 => 'Rap2hpoutre\\LaravelLogViewer\\LaravelLogViewerServiceProvider',
-    30 => 'Ixudra\\Curl\\CurlServiceProvider',
-    31 => 'PICOExplorer\\Providers\\ResultsNumberIntegrationProvider',
-    32 => 'PICOExplorer\\Providers\\QueryBuildServiceProvider',
-    33 => 'PICOExplorer\\Providers\\DeCSIntegrationProvider',
-    34 => 'PICOExplorer\\Providers\\ResultsNumberProvider',
-    35 => 'PICOExplorer\\Providers\\DeCSProvider',
+    30 => 'PragmaRX\\Health\\ServiceProvider',
+    31 => 'Ixudra\\Curl\\CurlServiceProvider',
   ),
   'deferred' => 
   array (

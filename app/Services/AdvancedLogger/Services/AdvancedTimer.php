@@ -2,17 +2,18 @@
 
 namespace PICOExplorer\Services\AdvancedLogger\Services;
 
-class TimerService
+class AdvancedTimer
 {
 
     protected $time;
     protected $locked = false;
     protected $name;
+    protected $finaltime;
 
-    public function Start($name)
+    public function Start(String $name)
     {
-        $this->name = $name;
         $this->time = microtime(true);
+        $this->name = $name;
         return $this;
     }
 
@@ -22,18 +23,15 @@ class TimerService
     public function Stop()
     {
         if (!($this->locked)) {
-            $this->time = (int)((microtime(true) - $this->time) * 1000);
+            $this->finaltime = (int)((microtime(true) - $this->time) * 1000);
             $this->locked = true;
         }
-        return $this->time;
+        return $this->finaltime;
     }
 
     public function get()
     {
-        if (!($this->locked)) {
-            return $this->Stop();
-        }
-        return $this->time;
+        return $this->finaltime;
     }
 
     public function name()

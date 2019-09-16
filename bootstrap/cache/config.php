@@ -59,12 +59,8 @@
       27 => 'PICOExplorer\\Providers\\EventServiceProvider',
       28 => 'PICOExplorer\\Providers\\RouteServiceProvider',
       29 => 'Rap2hpoutre\\LaravelLogViewer\\LaravelLogViewerServiceProvider',
-      30 => 'Ixudra\\Curl\\CurlServiceProvider',
-      31 => 'PICOExplorer\\Providers\\ResultsNumberIntegrationProvider',
-      32 => 'PICOExplorer\\Providers\\QueryBuildServiceProvider',
-      33 => 'PICOExplorer\\Providers\\DeCSIntegrationProvider',
-      34 => 'PICOExplorer\\Providers\\ResultsNumberProvider',
-      35 => 'PICOExplorer\\Providers\\DeCSProvider',
+      30 => 'PragmaRX\\Health\\ServiceProvider',
+      31 => 'Ixudra\\Curl\\CurlServiceProvider',
     ),
     'aliases' => 
     array (
@@ -109,7 +105,6 @@
       'ExceptionLoggerFacade' => 'PICOExplorer\\Facades\\ExceptionLoggerFacade',
       'SpecialValidatorFacade' => 'PICOExplorer\\Facades\\SpecialValidatorFacade',
       'AuthHandlerFacade' => 'PICOExplorer\\Facades\\AuthHandlerFacade',
-      'TimerServiceSV' => 'PICOExplorer\\Services\\AdvancedLogger\\Services\\TimerService',
       'ResultsNumberBIREMESV' => 'PICOExplorer\\Services\\ResultsNumberIntegration\\ResultsNumberBIREME',
       'DeCSBIREMESV' => 'PICOExplorer\\Services\\DeCSIntegration\\DeCSBireme',
       'ResultsNumberProcessSV' => 'PICOExplorer\\Services\\ResultsNumber\\ResultsNumberProcess',
@@ -347,6 +342,246 @@
   ),
   'health' => 
   array (
+    'title' => 'Laravel Health Check Panel',
+    'resources' => 
+    array (
+      'path' => 'C:\\xampp\\htdocs\\home\\apps\\bvsalud.org\\pesquisa\\htdocs\\pico\\PICO-BackEnd\\config\\health/resources',
+      'enabled' => 
+      array (
+        0 => 'AppKey',
+        1 => 'Cache',
+        2 => 'ConfigurationCached',
+        3 => 'Database',
+        4 => 'DebugMode',
+        5 => 'DirectoryPermissions',
+        6 => 'DiskSpace',
+        7 => 'EnvExists',
+        8 => 'Filesystem',
+        9 => 'Framework',
+        10 => 'Https',
+        11 => 'LaravelServices',
+        12 => 'Latency',
+        13 => 'LocalStorage',
+        14 => 'Mail',
+        15 => 'MigrationsUpToDate',
+        16 => 'MySql',
+        17 => 'MySqlConnectable',
+        18 => 'NginxServer',
+        19 => 'Php',
+        20 => 'Queue',
+        21 => 'QueueWorkers',
+        22 => 'RebootRequired',
+        23 => 'Redis',
+        24 => 'RedisConnectable',
+        25 => 'RedisServer',
+        26 => 'RoutesCached',
+        27 => 'SecurityChecker',
+        28 => 'ServerLoad',
+        29 => 'ServerUptime',
+        30 => 'Supervisor',
+      ),
+    ),
+    'sort_by' => 'slug',
+    'cache' => 
+    array (
+      'key' => 'health-resources',
+      'minutes' => false,
+    ),
+    'database' => 
+    array (
+      'enabled' => false,
+      'graphs' => 
+      array (
+        'enabled' => true,
+        'height' => 90,
+      ),
+      'max_records' => 30,
+      'model' => 'PragmaRX\\Health\\Data\\Models\\HealthCheck',
+    ),
+    'services' => 
+    array (
+      'ping' => 
+      array (
+        'bin' => '/sbin/ping',
+      ),
+      'composer' => 
+      array (
+        'bin' => 'composer',
+      ),
+    ),
+    'assets' => 
+    array (
+      'css' => 'C:\\xampp\\htdocs\\home\\apps\\bvsalud.org\\pesquisa\\htdocs\\pico\\PICO-BackEnd\\vendor/pragmarx/health/src/resources/dist/css/app.css',
+      'js' => 'C:\\xampp\\htdocs\\home\\apps\\bvsalud.org\\pesquisa\\htdocs\\pico\\PICO-BackEnd\\vendor/pragmarx/health/src/resources/dist/js/app.js',
+    ),
+    'cache_files_base_path' => 'app/pragmarx/health',
+    'notifications' => 
+    array (
+      'enabled' => false,
+      'notify_on' => 
+      array (
+        'panel' => false,
+        'check' => true,
+        'string' => true,
+        'resource' => false,
+      ),
+      'action-title' => 'View App Health',
+      'action_message' => 'The \'%s\' service is in trouble and needs attention%s',
+      'from' => 
+      array (
+        'name' => 'Laravel Health Checker',
+        'address' => 'healthchecker@mydomain.com',
+        'icon_emoji' => ':anger:',
+      ),
+      'scheduler' => 
+      array (
+        'enabled' => true,
+        'frequency' => 'everyMinute',
+      ),
+      'users' => 
+      array (
+        'model' => 'App\\User',
+        'emails' => 
+        array (
+          0 => 'admin@mydomain.com',
+        ),
+      ),
+      'channels' => 
+      array (
+        0 => 'mail',
+        1 => 'slack',
+      ),
+      'notifier' => 'PragmaRX\\Health\\Notifications',
+    ),
+    'alert' => 
+    array (
+      'success' => 
+      array (
+        'type' => 'success',
+        'message' => 'Everything is fine with this resource',
+      ),
+      'error' => 
+      array (
+        'type' => 'error',
+        'message' => 'We are having trouble with this resource',
+      ),
+    ),
+    'style' => 
+    array (
+      'columnSize' => 2,
+      'button_lines' => 'multi',
+      'multiplier' => 0.4,
+      'opacity' => 
+      array (
+        'healthy' => '0.4',
+        'failing' => '1',
+      ),
+    ),
+    'views' => 
+    array (
+      'panel' => 'pragmarx/health::default.panel',
+      'empty-panel' => 'pragmarx/health::default.empty-panel',
+      'partials' => 
+      array (
+        'well' => 'pragmarx/health::default.partials.well',
+      ),
+    ),
+    'string' => 
+    array (
+      'glue' => '-',
+      'ok' => 'OK',
+      'fail' => 'FAIL',
+    ),
+    'routes' => 
+    array (
+      'prefix' => '/admin/health',
+      'namespace' => 'PragmaRX\\Health\\Http\\Controllers\\Health',
+      'notification' => 'pragmarx.health.panel',
+      'middleware' => 
+      array (
+        0 => 'throttle:60,1',
+        1 => 'IsAdmin',
+      ),
+      'list' => 
+      array (
+        0 => 
+        array (
+          'uri' => '/admin/health/panel',
+          'name' => 'pragmarx.health.panel',
+          'action' => 'PragmaRX\\Health\\Http\\Controllers\\Health@panel',
+          'middleware' => 
+          array (
+          ),
+        ),
+        1 => 
+        array (
+          'uri' => '/admin/health/check',
+          'name' => 'pragmarx.health.check',
+          'action' => 'PragmaRX\\Health\\Http\\Controllers\\Health@check',
+          'middleware' => 
+          array (
+          ),
+        ),
+        2 => 
+        array (
+          'uri' => '/admin/health/string',
+          'name' => 'pragmarx.health.string',
+          'action' => 'PragmaRX\\Health\\Http\\Controllers\\Health@string',
+          'middleware' => 
+          array (
+          ),
+        ),
+        3 => 
+        array (
+          'uri' => '/admin/health/resources',
+          'name' => 'pragmarx.health.resources.all',
+          'action' => 'PragmaRX\\Health\\Http\\Controllers\\Health@allResources',
+          'middleware' => 
+          array (
+          ),
+        ),
+        4 => 
+        array (
+          'uri' => '/admin/health/resources/{slug}',
+          'name' => 'pragmarx.health.resources.get',
+          'action' => 'PragmaRX\\Health\\Http\\Controllers\\Health@getResource',
+          'middleware' => 
+          array (
+          ),
+        ),
+        5 => 
+        array (
+          'uri' => '/admin/health/assets/css/app.css',
+          'name' => 'pragmarx.health.assets.css',
+          'action' => 'PragmaRX\\Health\\Http\\Controllers\\Health@assetAppCss',
+          'middleware' => 
+          array (
+          ),
+        ),
+        6 => 
+        array (
+          'uri' => '/admin/health/assets/js/app.js',
+          'name' => 'pragmarx.health.assets.js',
+          'action' => 'PragmaRX\\Health\\Http\\Controllers\\Health@assetAppJs',
+          'middleware' => 
+          array (
+          ),
+        ),
+        7 => 
+        array (
+          'uri' => '/admin/health/config',
+          'name' => 'pragmarx.health.config',
+          'action' => 'PragmaRX\\Health\\Http\\Controllers\\Health@config',
+          'middleware' => 
+          array (
+          ),
+        ),
+      ),
+    ),
+    'urls' => 
+    array (
+      'panel' => '/health/panel',
+    ),
     'config' => 
     array (
       'title' => 'Laravel Health Check Panel',
@@ -501,14 +736,19 @@
       ),
       'routes' => 
       array (
-        'prefix' => '/health',
+        'prefix' => '/admin/health',
         'namespace' => 'PragmaRX\\Health\\Http\\Controllers\\Health',
         'notification' => 'pragmarx.health.panel',
+        'middleware' => 
+        array (
+          0 => 'throttle:60,1',
+          1 => 'IsAdmin',
+        ),
         'list' => 
         array (
           0 => 
           array (
-            'uri' => '/health/panel',
+            'uri' => '/admin/health/panel',
             'name' => 'pragmarx.health.panel',
             'action' => 'PragmaRX\\Health\\Http\\Controllers\\Health@panel',
             'middleware' => 
@@ -517,7 +757,7 @@
           ),
           1 => 
           array (
-            'uri' => '/health/check',
+            'uri' => '/admin/health/check',
             'name' => 'pragmarx.health.check',
             'action' => 'PragmaRX\\Health\\Http\\Controllers\\Health@check',
             'middleware' => 
@@ -526,7 +766,7 @@
           ),
           2 => 
           array (
-            'uri' => '/health/string',
+            'uri' => '/admin/health/string',
             'name' => 'pragmarx.health.string',
             'action' => 'PragmaRX\\Health\\Http\\Controllers\\Health@string',
             'middleware' => 
@@ -535,7 +775,7 @@
           ),
           3 => 
           array (
-            'uri' => '/health/resources',
+            'uri' => '/admin/health/resources',
             'name' => 'pragmarx.health.resources.all',
             'action' => 'PragmaRX\\Health\\Http\\Controllers\\Health@allResources',
             'middleware' => 
@@ -544,7 +784,7 @@
           ),
           4 => 
           array (
-            'uri' => '/health/resources/{slug}',
+            'uri' => '/admin/health/resources/{slug}',
             'name' => 'pragmarx.health.resources.get',
             'action' => 'PragmaRX\\Health\\Http\\Controllers\\Health@getResource',
             'middleware' => 
@@ -553,7 +793,7 @@
           ),
           5 => 
           array (
-            'uri' => '/health/assets/css/app.css',
+            'uri' => '/admin/health/assets/css/app.css',
             'name' => 'pragmarx.health.assets.css',
             'action' => 'PragmaRX\\Health\\Http\\Controllers\\Health@assetAppCss',
             'middleware' => 
@@ -562,7 +802,7 @@
           ),
           6 => 
           array (
-            'uri' => '/health/assets/js/app.js',
+            'uri' => '/admin/health/assets/js/app.js',
             'name' => 'pragmarx.health.assets.js',
             'action' => 'PragmaRX\\Health\\Http\\Controllers\\Health@assetAppJs',
             'middleware' => 
@@ -571,7 +811,7 @@
           ),
           7 => 
           array (
-            'uri' => '/health/config',
+            'uri' => '/admin/health/config',
             'name' => 'pragmarx.health.config',
             'action' => 'PragmaRX\\Health\\Http\\Controllers\\Health@config',
             'middleware' => 
@@ -585,6 +825,7 @@
         'panel' => '/health/panel',
       ),
     ),
+    'dist_path' => 'C:\\xampp\\htdocs\\home\\apps\\bvsalud.org\\pesquisa\\htdocs\\pico\\PICO-BackEnd\\vendor\\pragmarx\\health\\src/resources/dist',
   ),
   'languages' => 
   array (

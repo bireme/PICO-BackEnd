@@ -144,31 +144,29 @@ abstract class ControllerModel
     protected function connectToService(array $data, DataTransferObject $DTO, string $referer)
     {
         $DTO->setInitialData(__METHOD__ . '@' . get_class($this), $data, 'main');
-        $connectionTimer = $this->ServicePerformance->newConnectionTimer('service-' . get_class($this) . '-timer');
         $results = null;
         $wasSuccessful = false;
         try {
+            $connectionTimer = $this->ServicePerformance->newConnectionTimer(get_class($this).'toservice-' . get_class($this) . '-timer');
             $this->Service->get($DTO);
             $results = $DTO->getResults('main');
             $wasSuccessful = true;
         } catch (Exception $ex) {
             ExceptionLoggerFacade::ReportException($ex);
             throw new ExceptionInsideService(['caller' => get_class($this), 'target' => get_class($this->Service), 'ErrorInTarget' => $ex->getMessage()], $ex);
-        }
-        $info = 'Connection Failed';
-        if ($wasSuccessful) {
-            $info = 'Connection Success. result.size=' . strlen(json_encode($results));
-        }
-        $connectionTimer->Stop($info);
-        if ($wasSuccessful) {
-            if (!($results)) {
-                throw new ControllerResultsIsNull(['referer' => $referer]);
-            } else {
-                return $results;
+        }finally{
+            $info = 'Connection Failed';
+            if ($wasSuccessful) {
+                $info = 'Connection Success. result.size=' . strlen(json_encode($results));
+            }
+            $connectionTimer->Stop($info);
+            if ($wasSuccessful) {
+                if (!($results)) {
+                    throw new ControllerResultsIsNull(['referer' => $referer]);
+                }
             }
         }
-
-
+        return $results;
     }
 
     protected function getService()

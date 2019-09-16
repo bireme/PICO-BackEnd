@@ -3,7 +3,7 @@
 
 /**
  * A helper file for Laravel 5, to provide autocomplete information to your IDE
- * Generated for Laravel 5.8.34 on 2019-09-16 11:08:50.
+ * Generated for Laravel 5.8.34 on 2019-09-16 14:23:57.
  *
  * This file should not be included in your code, only analyzed by your IDE!
  *
@@ -15066,26 +15066,6 @@ namespace PICOExplorer\Facades {
  
 }
 
-namespace PICOExplorer\Services\AdvancedLogger\Services { 
-
-    /**
-     * 
-     *
-     */ 
-    class TimerService {
-         
-    }
-
-    /**
-     * 
-     *
-     */ 
-    class ServicePerformance {
-         
-    }
- 
-}
-
 namespace PICOExplorer\Services\ResultsNumberIntegration { 
 
     /**
@@ -15141,6 +15121,18 @@ namespace PICOExplorer\Services\QueryBuild {
      *
      */ 
     class QueryBuildProcess {
+         
+    }
+ 
+}
+
+namespace PICOExplorer\Services\AdvancedLogger\Services { 
+
+    /**
+     * 
+     *
+     */ 
+    class ServicePerformance {
          
     }
  
@@ -19241,8 +19233,6 @@ namespace  {
     class SpecialValidatorFacade extends \PICOExplorer\Facades\SpecialValidatorFacade {}
 
     class AuthHandlerFacade extends \PICOExplorer\Facades\AuthHandlerFacade {}
-
-    class TimerServiceSV extends \PICOExplorer\Services\AdvancedLogger\Services\TimerService {}
 
     class ResultsNumberBIREMESV extends \PICOExplorer\Services\ResultsNumberIntegration\ResultsNumberBIREME {}
 
