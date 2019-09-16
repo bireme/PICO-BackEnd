@@ -5,6 +5,7 @@ namespace PICOExplorer\Services\AdvancedLogger\Exceptions\Handlers;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
 use Exception;
 use Illuminate\Contracts\Debug\ExceptionHandler as ExceptionHandlerContract;
+use PICOExplorer\Services\AdvancedLogger\Exceptions\DontCatchException;
 use PICOExplorer\Services\AdvancedLogger\Traits\ExceptionLoggerTrait;
 
 class ExceptionsHandler extends ExceptionHandler implements ExceptionHandlerContract
@@ -37,7 +38,7 @@ class ExceptionsHandler extends ExceptionHandler implements ExceptionHandlerCont
     {
         try {
             $this->ReportException($ex);
-        } catch (Exception $newex) {
+        } catch (DontCatchException $newex) {
             //
         } finally {
             return parent::render($request, $ex);

@@ -3,7 +3,7 @@
 
 /**
  * A helper file for Laravel 5, to provide autocomplete information to your IDE
- * Generated for Laravel 5.8.34 on 2019-09-09 18:53:40.
+ * Generated for Laravel 5.8.34 on 2019-09-16 11:08:50.
  *
  * This file should not be included in your code, only analyzed by your IDE!
  *
@@ -14630,374 +14630,6 @@ namespace GrahamCampbell\Throttle\Facades {
 namespace PICOExplorer\Facades { 
 
     /**
-     * Class ResultsNumberBIREMEFacade
-     *
-     * @package PICOExplorer\Services\BIREMEImporter
-     */ 
-    class TimerServiceFacade {
-        
-        /**
-         * 
-         *
-         * @static 
-         */ 
-        public static function Start($name)
-        {
-                        /** @var \PICOExplorer\Services\AdvancedLogger\Services\TimerService $instance */
-                        return $instance->Start($name);
-        }
-        
-        /**
-         * 
-         *
-         * @return int 
-         * @static 
-         */ 
-        public static function Stop()
-        {
-                        /** @var \PICOExplorer\Services\AdvancedLogger\Services\TimerService $instance */
-                        return $instance->Stop();
-        }
-        
-        /**
-         * 
-         *
-         * @static 
-         */ 
-        public static function get()
-        {
-                        /** @var \PICOExplorer\Services\AdvancedLogger\Services\TimerService $instance */
-                        return $instance->get();
-        }
-        
-        /**
-         * 
-         *
-         * @static 
-         */ 
-        public static function name()
-        {
-                        /** @var \PICOExplorer\Services\AdvancedLogger\Services\TimerService $instance */
-                        return $instance->name();
-        }
-         
-    }
-
-    /**
-     * Class ResultsNumberBIREMEFacade
-     *
-     * @package PICOExplorer\Services\BIREMEImporter
-     */ 
-    class ResultsNumberBIREMEFacade {
-        
-        /**
-         * 
-         *
-         * @static 
-         */ 
-        public static function Process()
-        {
-                        /** @var \PICOExplorer\Services\ResultsNumberIntegration\ResultsNumberBIREME $instance */
-                        return $instance->Process();
-        }
-        
-        /**
-         * 
-         *
-         * @static 
-         */ 
-        public static function Explore($queryString)
-        {
-                        /** @var \PICOExplorer\Services\ResultsNumberIntegration\ResultsNumberBIREME $instance */
-                        return $instance->Explore($queryString);
-        }
-        
-        /**
-         * 
-         *
-         * @static 
-         */ 
-        public static function ImportResultsNumber($data)
-        {
-            //Method inherited from \PICOExplorer\Services\ResultsNumberIntegration\ResultsNumberImporter            
-                        /** @var \PICOExplorer\Services\ResultsNumberIntegration\ResultsNumberBIREME $instance */
-                        return $instance->ImportResultsNumber($data);
-        }
-        
-        /**
-         * 
-         *
-         * @static 
-         */ 
-        public static function getXMLResults($DOMXpath, $XMLText)
-        {
-            //Method inherited from \PICOExplorer\Services\ResultsNumberIntegration\ResultsNumberImporter            
-                        /** @var \PICOExplorer\Services\ResultsNumberIntegration\ResultsNumberBIREME $instance */
-                        return $instance->getXMLResults($DOMXpath, $XMLText);
-        }
-        
-        /**
-         * 
-         *
-         * @static 
-         */ 
-        public static function ImportData($RequestMethod, $data, $url, $headers = null, $settings = array(), $timeout = 500, $maxAttempts = 3, $sendAsJson = false, $ParseJSONReceived = false)
-        {
-            //Method inherited from \PICOExplorer\Services\ServiceModels\ExternalImporter            
-                        /** @var \PICOExplorer\Services\ResultsNumberIntegration\ResultsNumberBIREME $instance */
-                        return $instance->ImportData($RequestMethod, $data, $url, $headers, $settings, $timeout, $maxAttempts, $sendAsJson, $ParseJSONReceived);
-        }
-        
-        /**
-         * 
-         *
-         * @static 
-         */ 
-        public static function get($DTO)
-        {
-            //Method inherited from \PICOExplorer\Services\ServiceModels\PICOServiceModel            
-                        /** @var \PICOExplorer\Services\ResultsNumberIntegration\ResultsNumberBIREME $instance */
-                        return $instance->get($DTO);
-        }
-         
-    }
-
-    /**
-     * Class ResultsNumberBIREMEFacade
-     *
-     * @package PICOExplorer\Services\BIREMEImporter
-     */ 
-    class DeCSBIREMEFacade {
-        
-        /**
-         * 
-         *
-         * @static 
-         */ 
-        public static function Process()
-        {
-                        /** @var \PICOExplorer\Services\DeCSIntegration\DeCSBireme $instance */
-                        return $instance->Process();
-        }
-        
-        /**
-         * 
-         *
-         * @static 
-         */ 
-        public static function ExploreTreeId($key, $IsMainTree, $langs = null)
-        {
-            //Method inherited from \PICOExplorer\Services\DeCSIntegration\DeCSExplorer            
-                        /** @var \PICOExplorer\Services\DeCSIntegration\DeCSBireme $instance */
-                        return $instance->ExploreTreeId($key, $IsMainTree, $langs);
-        }
-        
-        /**
-         * 
-         *
-         * @static 
-         */ 
-        public static function ImportDeCS($data)
-        {
-            //Method inherited from \PICOExplorer\Services\DeCSIntegration\DeCSImporter            
-                        /** @var \PICOExplorer\Services\DeCSIntegration\DeCSBireme $instance */
-                        return $instance->ImportDeCS($data);
-        }
-        
-        /**
-         * 
-         *
-         * @static 
-         */ 
-        public static function getXMLResults($DOMXpath, $XMLText)
-        {
-            //Method inherited from \PICOExplorer\Services\DeCSIntegration\DeCSImporter            
-                        /** @var \PICOExplorer\Services\DeCSIntegration\DeCSBireme $instance */
-                        return $instance->getXMLResults($DOMXpath, $XMLText);
-        }
-        
-        /**
-         * 
-         *
-         * @static 
-         */ 
-        public static function ImportData($RequestMethod, $data, $url, $headers = null, $settings = array(), $timeout = 500, $maxAttempts = 3, $sendAsJson = false, $ParseJSONReceived = false)
-        {
-            //Method inherited from \PICOExplorer\Services\ServiceModels\ExternalImporter            
-                        /** @var \PICOExplorer\Services\DeCSIntegration\DeCSBireme $instance */
-                        return $instance->ImportData($RequestMethod, $data, $url, $headers, $settings, $timeout, $maxAttempts, $sendAsJson, $ParseJSONReceived);
-        }
-        
-        /**
-         * 
-         *
-         * @static 
-         */ 
-        public static function get($DTO)
-        {
-            //Method inherited from \PICOExplorer\Services\ServiceModels\PICOServiceModel            
-                        /** @var \PICOExplorer\Services\DeCSIntegration\DeCSBireme $instance */
-                        return $instance->get($DTO);
-        }
-         
-    }
-
-    /**
-     * Class ResultsNumberBIREMEFacade
-     *
-     * @package PICOExplorer\Services\BIREMEImporter
-     */ 
-    class ResultsNumberProcessFacade {
-        
-        /**
-         * 
-         *
-         * @static 
-         */ 
-        public static function Process()
-        {
-                        /** @var \PICOExplorer\Services\ResultsNumber\ResultsNumberProcess $instance */
-                        return $instance->Process();
-        }
-        
-        /**
-         * 
-         *
-         * @static 
-         */ 
-        public static function ConnectToIntegration($data)
-        {
-            //Method inherited from \PICOExplorer\Services\ResultsNumber\ResultsNumberInternalConnector            
-                        /** @var \PICOExplorer\Services\ResultsNumber\ResultsNumberProcess $instance */
-                        return $instance->ConnectToIntegration($data);
-        }
-        
-        /**
-         * 
-         *
-         * @static 
-         */ 
-        public static function PICOIntegration($data, $IntegrationController)
-        {
-            //Method inherited from \PICOExplorer\Services\ServiceModels\PICOIntegrationModel            
-                        /** @var \PICOExplorer\Services\ResultsNumber\ResultsNumberProcess $instance */
-                        return $instance->PICOIntegration($data, $IntegrationController);
-        }
-        
-        /**
-         * 
-         *
-         * @static 
-         */ 
-        public static function get($DTO)
-        {
-            //Method inherited from \PICOExplorer\Services\ServiceModels\PICOServiceModel            
-                        /** @var \PICOExplorer\Services\ResultsNumber\ResultsNumberProcess $instance */
-                        return $instance->get($DTO);
-        }
-         
-    }
-
-    /**
-     * Class ResultsNumberBIREMEFacade
-     *
-     * @package PICOExplorer\Services\BIREMEImporter
-     */ 
-    class DeCSProcessFacade {
-        
-        /**
-         * 
-         *
-         * @static 
-         */ 
-        public static function Process()
-        {
-                        /** @var \PICOExplorer\Services\DeCS\DeCSProcess $instance */
-                        return $instance->Process();
-        }
-        
-        /**
-         * 
-         *
-         * @static 
-         */ 
-        public static function ConnectToIntegration($UntitledData)
-        {
-            //Method inherited from \PICOExplorer\Services\DeCS\DeCSInternalConnector            
-                        /** @var \PICOExplorer\Services\DeCS\DeCSProcess $instance */
-                        return $instance->ConnectToIntegration($UntitledData);
-        }
-        
-        /**
-         * 
-         *
-         * @static 
-         */ 
-        public static function PICOIntegration($data, $IntegrationController)
-        {
-            //Method inherited from \PICOExplorer\Services\ServiceModels\PICOIntegrationModel            
-                        /** @var \PICOExplorer\Services\DeCS\DeCSProcess $instance */
-                        return $instance->PICOIntegration($data, $IntegrationController);
-        }
-        
-        /**
-         * 
-         *
-         * @static 
-         */ 
-        public static function get($DTO)
-        {
-            //Method inherited from \PICOExplorer\Services\ServiceModels\PICOServiceModel            
-                        /** @var \PICOExplorer\Services\DeCS\DeCSProcess $instance */
-                        return $instance->get($DTO);
-        }
-        
-        /**
-         * 
-         *
-         * @static 
-         */ 
-        public static function FixEquation($Equation)
-        {
-                        /** @var \PICOExplorer\Services\DeCS\DeCSProcess $instance */
-                        return $instance->FixEquation($Equation);
-        }
-         
-    }
-
-    /**
-     * Class ResultsNumberBIREMEFacade
-     *
-     * @package PICOExplorer\Services\BIREMEImporter
-     */ 
-    class QueryBuildFacade {
-        
-        /**
-         * 
-         *
-         * @static 
-         */ 
-        public static function Process()
-        {
-                        /** @var \PICOExplorer\Services\QueryBuild\QueryBuildProcess $instance */
-                        return $instance->Process();
-        }
-        
-        /**
-         * 
-         *
-         * @static 
-         */ 
-        public static function get($DTO)
-        {
-            //Method inherited from \PICOExplorer\Services\ServiceModels\PICOServiceModel            
-                        /** @var \PICOExplorer\Services\QueryBuild\QueryBuildProcess $instance */
-                        return $instance->get($DTO);
-        }
-         
-    }
-
-    /**
      * 
      *
      */ 
@@ -15440,7 +15072,100 @@ namespace PICOExplorer\Services\AdvancedLogger\Services {
      * 
      *
      */ 
+    class TimerService {
+         
+    }
+
+    /**
+     * 
+     *
+     */ 
     class ServicePerformance {
+         
+    }
+ 
+}
+
+namespace PICOExplorer\Services\ResultsNumberIntegration { 
+
+    /**
+     * 
+     *
+     */ 
+    class ResultsNumberBIREME {
+         
+    }
+ 
+}
+
+namespace PICOExplorer\Services\DeCSIntegration { 
+
+    /**
+     * 
+     *
+     */ 
+    class DeCSBireme {
+         
+    }
+ 
+}
+
+namespace PICOExplorer\Services\ResultsNumber { 
+
+    /**
+     * 
+     *
+     */ 
+    class ResultsNumberProcess {
+         
+    }
+ 
+}
+
+namespace PICOExplorer\Services\DeCS { 
+
+    /**
+     * 
+     *
+     */ 
+    class DeCSProcess {
+         
+    }
+ 
+}
+
+namespace PICOExplorer\Services\QueryBuild { 
+
+    /**
+     * 
+     *
+     */ 
+    class QueryBuildProcess {
+         
+    }
+ 
+}
+
+namespace Ixudra\Curl\Facades { 
+
+    /**
+     * 
+     *
+     */ 
+    class Curl {
+        
+        /**
+         * 
+         *
+         * @param $url string   The URL to which the request is to be sent
+         * @return \Ixudra\Curl\Builder 
+         * @static 
+         */ 
+        public static function to($url)
+        {
+                        /** @var \Ixudra\Curl\CurlService $instance */
+                        return $instance->to($url);
+        }
          
     }
  
@@ -19507,18 +19232,6 @@ namespace  {
 
     class Throttle extends \GrahamCampbell\Throttle\Facades\Throttle {}
 
-    class TimerServiceFacade extends \PICOExplorer\Facades\TimerServiceFacade {}
-
-    class ResultsNumberBIREMEFacade extends \PICOExplorer\Facades\ResultsNumberBIREMEFacade {}
-
-    class DeCSBIREMEFacade extends \PICOExplorer\Facades\DeCSBIREMEFacade {}
-
-    class ResultsNumberProcessFacade extends \PICOExplorer\Facades\ResultsNumberProcessFacade {}
-
-    class DeCSProcessFacade extends \PICOExplorer\Facades\DeCSProcessFacade {}
-
-    class QueryBuildFacade extends \PICOExplorer\Facades\QueryBuildFacade {}
-
     class AdvancedLoggerFacade extends \PICOExplorer\Facades\AdvancedLoggerFacade {}
 
     class WarningsHandlerFacade extends \PICOExplorer\Facades\WarningsHandlerFacade {}
@@ -19529,7 +19242,21 @@ namespace  {
 
     class AuthHandlerFacade extends \PICOExplorer\Facades\AuthHandlerFacade {}
 
-    class SVPerformance extends \PICOExplorer\Services\AdvancedLogger\Services\ServicePerformance {}
+    class TimerServiceSV extends \PICOExplorer\Services\AdvancedLogger\Services\TimerService {}
+
+    class ResultsNumberBIREMESV extends \PICOExplorer\Services\ResultsNumberIntegration\ResultsNumberBIREME {}
+
+    class DeCSBIREMESV extends \PICOExplorer\Services\DeCSIntegration\DeCSBireme {}
+
+    class ResultsNumberProcessSV extends \PICOExplorer\Services\ResultsNumber\ResultsNumberProcess {}
+
+    class DeCSProcessSV extends \PICOExplorer\Services\DeCS\DeCSProcess {}
+
+    class QueryBuildSV extends \PICOExplorer\Services\QueryBuild\QueryBuildProcess {}
+
+    class ServicePerformanceSV extends \PICOExplorer\Services\AdvancedLogger\Services\ServicePerformance {}
+
+    class Curl extends \Ixudra\Curl\Facades\Curl {}
 
     class Form extends \Collective\Html\FormFacade {}
 

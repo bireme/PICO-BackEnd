@@ -3,7 +3,7 @@
 namespace PICOExplorer\Services\ServiceModels;
 
 use PICOExplorer\Exceptions\Exceptions\AppError\ServiceResultsIsNull;
-use SVPerformance;
+use PICOExplorer\Facades\ServicePerformanceFacade;
 use PICOExplorer\Models\DataTransferObject;
 use PICOExplorer\Services\AdvancedLogger\Exceptions\DontCatchException;
 
@@ -22,8 +22,8 @@ abstract class PICOServiceModel
     final public function get(DataTransferObject $DTO)
     {
         $this->DTO = $DTO;
-        $this->ServicePerformance = new SVPerformance();
-        $this->ServicePerformance->ServicePerformanceStart($this->DTO,get_class($this));
+        $tmp = new \ServicePerformanceSV();
+        $this->ServicePerformance = $tmp->ServicePerformanceStart($this->DTO, get_class($this));
         $wasSuccess=false;
         try {
             $results = $this->Process();
