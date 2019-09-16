@@ -9,12 +9,12 @@ use PICOExplorer\Exceptions\Exceptions\AppError\XMLDOMLoadingError;
 use PICOExplorer\Exceptions\Exceptions\AppError\XMLDOMXPathError;
 use PICOExplorer\Exceptions\Exceptions\AppError\XMLProcessingError;
 
-abstract class ExternalImporter extends cURLRequest
+abstract class ExternalImporter extends GuzzleProxyRequest
 {
 
-    public function ImportData(string $RequestMethod, array $data, string $fullURL, array $headers, float $timeout=30.0, int $maxAttempts=3,bool $sendAsJson = false, bool $ParseJSONReceived = false)
+    public function ImportData(string $RequestMethod, array $data, string $url, array $headers = [], array $settings = [],int $timeout=500, int $maxAttempts=3,bool $sendAsJson = false, bool $ParseJSONReceived = false)
     {
-        $imported =$this->MakeRequest($RequestMethod, $data, $fullURL, $headers, $timeout, $maxAttempts, $sendAsJson, $ParseJSONReceived);
+        $imported =$this->MakeRequest($RequestMethod, $data, $url, $headers, $settings, $timeout, $maxAttempts, $sendAsJson, $ParseJSONReceived);
         $results = null;
         $XMLText=null;
         $DOM = new DOMDocument();

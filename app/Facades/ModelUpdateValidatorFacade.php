@@ -2,13 +2,11 @@
 
 namespace PICOExplorer\Facades;
 
-use Illuminate\Support\Facades\Facade;
-
 /**
  * Class ResultsNumberBIREMEFacade
  * @package PICOExplorer\Services\BIREMEImporter
  */
-class ModelUpdateValidatorFacade extends Facade
+class ModelUpdateValidatorFacade extends PICOServiceFacade
 {
     protected static function getFacadeAccessor()
     {

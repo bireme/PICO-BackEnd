@@ -19,23 +19,23 @@ class AdvancedLoggerProvider extends ServiceProvider
      */
     public function register()
     {
-        $this->app->singleton('advancedlogger', function () {
+        $this->app->bind('advancedlogger', function () {
             return new AdvancedLogger();
         });
-        $this->app->singleton('warningshandler', function () {
+        $this->app->bind('warningshandler', function () {
             return new WarningsHandler();
         });
-        $this->app->singleton('exceptionlogger', function () {
+        $this->app->bind('timerservice', function () {
+            return new TimerService();
+        });
+        $this->app->bind('exceptionlogger', function () {
             return new ExceptionLogger();
         });
-        $this->app->singleton('specialvalidator', function () {
+        $this->app->bind('specialvalidator', function () {
             return new SpecialValidator();
         });
         $this->app->bind('serviceperformance', function () {
             return new ServicePerformance();
-        });
-        $this->app->bind('timerservice', function () {
-            return new TimerService();
         });
     }
 

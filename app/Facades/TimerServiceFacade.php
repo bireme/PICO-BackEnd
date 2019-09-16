@@ -2,15 +2,17 @@
 
 namespace PICOExplorer\Facades;
 
+use Illuminate\Support\Facades\Facade;
+
 /**
  * Class ResultsNumberBIREMEFacade
  * @package PICOExplorer\Services\BIREMEImporter
  */
-class AuthHandlerFacade extends PICOServiceFacade
+class TimerServiceFacade extends Facade
 {
     protected static function getFacadeAccessor()
     {
-        return 'authhandler'; // the IoC binding.
+        return 'timerservice'; // the IoC binding.
     }
 
 }

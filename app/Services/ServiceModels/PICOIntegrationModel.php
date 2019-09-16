@@ -39,7 +39,7 @@ abstract class PICOIntegrationModel Extends PICOServiceModel implements PICOServ
         } finally {
             $info = 'Connection Failed';
             if ($wasSuccessful) {
-                $info = 'Connection Success. result.size=' . strlen(json_encode($results));
+                $info = 'Connection Success. result.size=' . strlen($results);
             } else {
                 if ($previousErr) {
                     $info = $info . ': ' . $previousErr;
@@ -49,10 +49,11 @@ abstract class PICOIntegrationModel Extends PICOServiceModel implements PICOServ
             if ($wasSuccessful) {
                 if (!($results)) {
                     throw new PICOIntegrationReturnedNull(['referer' => __METHOD__ . '@' . get_class($this), 'Controller' => get_class($IntegrationController)]);
+                } else {
+                    return $results;
                 }
             }
         }
-        return $results;
     }
 
 }

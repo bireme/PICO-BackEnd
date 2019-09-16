@@ -4,8 +4,8 @@ namespace PICOExplorer\Services\AdvancedLogger\Services;
 
 use PICOExplorer\Facades\AdvancedLoggerFacade;
 use PICOExplorer\Facades\SpecialValidatorFacade;
+use PICOExplorer\Facades\TimerServiceFacade;
 use PICOExplorer\Models\DataTransferObject;
-use TimerServiceSV;
 
 class ServicePerformance
 {
@@ -22,7 +22,7 @@ class ServicePerformance
 
 
     /**
-     * @return TimerServiceSV
+     * @return TimerServiceFacade
      */
     public function newConnectionTimer(string $name)
     {
@@ -126,12 +126,11 @@ class ServicePerformance
 
 
     /**
-     * @return TimerServiceSV
+     * @return TimerServiceFacade
      */
     private function Timer($TimerName)
     {
-        $tmp = new TimerServiceSV();
-        $Timer = $tmp->Start($TimerName);
+        $Timer = TimerServiceFacade::Start($TimerName);
         array_push($this->timers, $Timer);
         return $Timer;
     }

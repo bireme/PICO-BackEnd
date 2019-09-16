@@ -16,16 +16,17 @@ abstract class ResultsNumberImporter extends ExternalImporter implements PICOSer
 
     public function ImportResultsNumber(array $data)
     {
+        $url = 'http://pesquisa.bvsalud.org/portal/?';
         $results = [];
-        $headers = ['Content-Type' => 'application/x-www-form-urlencoded'];
-        $sendAsJson=true;
-        $ParseJSONReceived=false;
-        $maxAttempts=3;
-        $timeout=30;
-        $fullURL= 'https://pesquisa.bvsalud.org/portal/?';
-        $results['ResultsNumber'] = $this->ImportData('POST', $data, $fullURL, $headers, $timeout, $maxAttempts, $sendAsJson, $ParseJSONReceived);
+        $results['ResultsNumber'] = $this->ImportData('POST', $data, $url, [], [], 2000,3,false, false);
         $results['query'] = $data['q'];
         $results['ResultsURL'] = 'http://pesquisa.bvsalud.org/portal/?count=20&q='.$results['query'];
+        $ImportedDataRules = [
+            'ResultsURL' => 'string|required|min:1',
+            'query' => 'string|required|min:1',
+            'ResultsNumber' => 'integer|required'
+        ];
+        SpecialValidatorFacade::SpecialValidate($results, $ImportedDataRules, 'ImportResultsNumber@ResultsNumberImporter', 'ResultsNumberImporter');
         return $results;
     }
 

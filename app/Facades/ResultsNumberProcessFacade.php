@@ -6,11 +6,11 @@ namespace PICOExplorer\Facades;
  * Class ResultsNumberBIREMEFacade
  * @package PICOExplorer\Services\BIREMEImporter
  */
-class AuthHandlerFacade extends PICOServiceFacade
+class ResultsNumberProcessFacade extends PICOServiceFacade
 {
     protected static function getFacadeAccessor()
     {
-        return 'authhandler'; // the IoC binding.
+        return 'resultsnumberprocess'; // the IoC binding.
     }
 
 }
