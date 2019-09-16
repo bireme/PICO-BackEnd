@@ -13,7 +13,6 @@ class ResultsNumberBIREME extends ResultsNumberImporter implements PICOServiceEn
         foreach ($this->DTO->getInitialData() as $key => $query) {
             $results[$key] = $this->Explore($query);
         }
-        dd('xxx');
         return $results;
     }
 
