@@ -3,7 +3,7 @@
 
 /**
  * A helper file for Laravel 5, to provide autocomplete information to your IDE
- * Generated for Laravel 5.8.34 on 2019-09-16 19:32:00.
+ * Generated for Laravel 5.8.34 on 2019-09-19 16:16:38.
  *
  * This file should not be included in your code, only analyzed by your IDE!
  *
@@ -14627,6 +14627,31 @@ namespace GrahamCampbell\Throttle\Facades {
  
 }
 
+namespace Ixudra\Curl\Facades { 
+
+    /**
+     * 
+     *
+     */ 
+    class Curl {
+        
+        /**
+         * 
+         *
+         * @param $url string   The URL to which the request is to be sent
+         * @return \Ixudra\Curl\Builder 
+         * @static 
+         */ 
+        public static function to($url)
+        {
+                        /** @var \Ixudra\Curl\CurlService $instance */
+                        return $instance->to($url);
+        }
+         
+    }
+ 
+}
+
 namespace PICOExplorer\Facades { 
 
     /**
@@ -15063,64 +15088,175 @@ namespace PICOExplorer\Facades {
         }
          
     }
- 
-}
-
-namespace PICOExplorer\Services\ResultsNumberIntegration { 
 
     /**
      * 
      *
      */ 
-    class ResultsNumberBIREME {
+    class ResultsNumberFacade {
+        
+        /**
+         * 
+         *
+         * @static 
+         */ 
+        public static function get($DTO)
+        {
+            //Method inherited from \PICOExplorer\Services\ServiceModels\ServiceEntryPoint            
+                        /** @var \PICOExplorer\Services\ResultsNumber\ResultsNumberProcessBridge $instance */
+                        return $instance->get($DTO);
+        }
          
     }
- 
-}
-
-namespace PICOExplorer\Services\DeCSIntegration { 
 
     /**
      * 
      *
      */ 
-    class DeCSBireme {
+    class ResultsNumberIntegrationFacade {
+        
+        /**
+         * 
+         *
+         * @static 
+         */ 
+        public static function get($DTO)
+        {
+            //Method inherited from \PICOExplorer\Services\ServiceModels\ServiceEntryPoint            
+                        /** @var \PICOExplorer\Services\ResultsNumberIntegration\ResultsNumberIntegrationProcess $instance */
+                        return $instance->get($DTO);
+        }
          
     }
- 
-}
-
-namespace PICOExplorer\Services\ResultsNumber { 
 
     /**
      * 
      *
      */ 
-    class ResultsNumberProcess {
+    class ResultsNumberIntegrationLooperFacade {
+        
+        /**
+         * 
+         *
+         * @static 
+         */ 
+        public static function getParallel($ServicePerformance, $InitialData = null)
+        {
+            //Method inherited from \PICOExplorer\Services\ServiceModels\ParallelServiceEntryPoint            
+                        /** @var \PICOExplorer\Services\ResultsNumberIntegration\Looper\ResultsNumberIntegrationLooperImporter $instance */
+                        return $instance->getParallel($ServicePerformance, $InitialData);
+        }
          
     }
- 
-}
-
-namespace PICOExplorer\Services\DeCS { 
 
     /**
      * 
      *
      */ 
-    class DeCSProcess {
+    class DeCSIntegrationFacade {
+        
+        /**
+         * 
+         *
+         * @static 
+         */ 
+        public static function get($DTO)
+        {
+            //Method inherited from \PICOExplorer\Services\ServiceModels\ServiceEntryPoint            
+                        /** @var \PICOExplorer\Services\DeCSIntegration\DeCSIntegrationProcess $instance */
+                        return $instance->get($DTO);
+        }
          
     }
- 
-}
-
-namespace PICOExplorer\Services\QueryBuild { 
 
     /**
      * 
      *
      */ 
-    class QueryBuildProcess {
+    class DeCSIntegrationLooperFacade {
+        
+        /**
+         * 
+         *
+         * @static 
+         */ 
+        public static function processXML($DOMXpath, $XMLText)
+        {
+                        /** @var \PICOExplorer\Services\DeCSIntegration\Looper\DeCSIntegrationLooperImporter $instance */
+                        return $instance->processXML($DOMXpath, $XMLText);
+        }
+        
+        /**
+         * 
+         *
+         * @static 
+         */ 
+        public static function getParallel($ServicePerformance, $InitialData = null)
+        {
+            //Method inherited from \PICOExplorer\Services\ServiceModels\ParallelServiceEntryPoint            
+                        /** @var \PICOExplorer\Services\DeCSIntegration\Looper\DeCSIntegrationLooperImporter $instance */
+                        return $instance->getParallel($ServicePerformance, $InitialData);
+        }
+         
+    }
+
+    /**
+     * 
+     *
+     */ 
+    class DeCSFacade {
+        
+        /**
+         * 
+         *
+         * @static 
+         */ 
+        public static function get($DTO)
+        {
+            //Method inherited from \PICOExplorer\Services\ServiceModels\ServiceEntryPoint            
+                        /** @var \PICOExplorer\Services\DeCS\DeCSProcess $instance */
+                        return $instance->get($DTO);
+        }
+         
+    }
+
+    /**
+     * 
+     *
+     */ 
+    class DeCSLooperFacade {
+        
+        /**
+         * 
+         *
+         * @static 
+         */ 
+        public static function getParallel($ServicePerformance, $InitialData = null)
+        {
+            //Method inherited from \PICOExplorer\Services\ServiceModels\ParallelServiceEntryPoint            
+                        /** @var \PICOExplorer\Services\DeCS\Looper\DeCSLooperBridge $instance */
+                        return $instance->getParallel($ServicePerformance, $InitialData);
+        }
+         
+    }
+
+    /**
+     * 
+     *
+     */ 
+    class QueryBuildFacade {
+        
+        /**
+         * 
+         *
+         * @static 
+         */ 
+        public static function get($DTO)
+        {
+            //Method inherited from \PICOExplorer\Services\ServiceModels\ServiceEntryPoint            
+                        /** @var \PICOExplorer\Services\QueryBuild\QueryBuildProcess $instance */
+                        return $instance->get($DTO);
+        }
          
     }
  
@@ -15133,31 +15269,6 @@ namespace PICOExplorer\Services\AdvancedLogger\Services {
      *
      */ 
     class ServicePerformance {
-         
-    }
- 
-}
-
-namespace Ixudra\Curl\Facades { 
-
-    /**
-     * 
-     *
-     */ 
-    class Curl {
-        
-        /**
-         * 
-         *
-         * @param $url string   The URL to which the request is to be sent
-         * @return \Ixudra\Curl\Builder 
-         * @static 
-         */ 
-        public static function to($url)
-        {
-                        /** @var \Ixudra\Curl\CurlService $instance */
-                        return $instance->to($url);
-        }
          
     }
  
@@ -19224,6 +19335,8 @@ namespace  {
 
     class Throttle extends \GrahamCampbell\Throttle\Facades\Throttle {}
 
+    class Curl extends \Ixudra\Curl\Facades\Curl {}
+
     class AdvancedLoggerFacade extends \PICOExplorer\Facades\AdvancedLoggerFacade {}
 
     class WarningsHandlerFacade extends \PICOExplorer\Facades\WarningsHandlerFacade {}
@@ -19234,19 +19347,23 @@ namespace  {
 
     class AuthHandlerFacade extends \PICOExplorer\Facades\AuthHandlerFacade {}
 
-    class ResultsNumberBIREMESV extends \PICOExplorer\Services\ResultsNumberIntegration\ResultsNumberBIREME {}
-
-    class DeCSBIREMESV extends \PICOExplorer\Services\DeCSIntegration\DeCSBireme {}
-
-    class ResultsNumberProcessSV extends \PICOExplorer\Services\ResultsNumber\ResultsNumberProcess {}
-
-    class DeCSProcessSV extends \PICOExplorer\Services\DeCS\DeCSProcess {}
-
-    class QueryBuildSV extends \PICOExplorer\Services\QueryBuild\QueryBuildProcess {}
-
     class ServicePerformanceSV extends \PICOExplorer\Services\AdvancedLogger\Services\ServicePerformance {}
 
-    class Curl extends \Ixudra\Curl\Facades\Curl {}
+    class ResultsNumberFacade extends \PICOExplorer\Facades\ResultsNumberFacade {}
+
+    class ResultsNumberIntegrationFacade extends \PICOExplorer\Facades\ResultsNumberIntegrationFacade {}
+
+    class ResultsNumberIntegrationLooperFacade extends \PICOExplorer\Facades\ResultsNumberIntegrationLooperFacade {}
+
+    class DeCSIntegrationFacade extends \PICOExplorer\Facades\DeCSIntegrationFacade {}
+
+    class DeCSIntegrationLooperFacade extends \PICOExplorer\Facades\DeCSIntegrationLooperFacade {}
+
+    class DeCSFacade extends \PICOExplorer\Facades\DeCSFacade {}
+
+    class DeCSLooperFacade extends \PICOExplorer\Facades\DeCSLooperFacade {}
+
+    class QueryBuildFacade extends \PICOExplorer\Facades\QueryBuildFacade {}
 
     class Form extends \Collective\Html\FormFacade {}
 

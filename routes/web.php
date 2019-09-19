@@ -29,7 +29,7 @@ Route::middleware(['throttle:60,1'])->prefix('PICO')->group(function () {
 
     Route::get('QueryBuild', 'PICO\QueryBuildController@info');
 
-    Route::get('DeCSIntegration', 'PICO\IntegrationDeCSController@infoPICO\IntegrationDeCSController@info');
+    Route::get('DeCSIntegration', 'PICO\IntegrationDeCSController@info');
 
     Route::get('ResultsNumberIntegration', 'PICO\IntegrationResultsNumberController@info');
 });

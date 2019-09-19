@@ -4,6 +4,7 @@ namespace PICOExplorer\Console;
 
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
+use PICOExplorer\Console\Commands\installPICO;
 use PICOExplorer\Console\Commands\logsClear;
 
 class Kernel extends ConsoleKernel
@@ -16,6 +17,7 @@ class Kernel extends ConsoleKernel
     protected $commands = [
         //
         logsClear::class,
+        installPICO::class,
     ];
 
     /**

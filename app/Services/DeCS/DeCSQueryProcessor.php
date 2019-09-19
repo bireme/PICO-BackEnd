@@ -5,23 +5,47 @@ namespace PICOExplorer\Services\DeCS;
 use PICOExplorer\Exceptions\Exceptions\AppError\CouldntDetectWordType;
 use PICOExplorer\Exceptions\Exceptions\AppError\CouldntIdentifyKeywordType;
 use PICOExplorer\Exceptions\Exceptions\AppError\getKeywordTypeReturnedUnknownType;
+use PICOExplorer\Exceptions\Exceptions\AppError\PreviousDataCouldNotBeDecoded;
+use PICOExplorer\Exceptions\Exceptions\ClientError\NoNewDataToExplore;
+use PICOExplorer\Models\DataTransferObject;
 use PICOExplorer\Services\ServiceModels\PICOQueryProcessorTrait;
+use Throwable;
 
 abstract class DeCSQueryProcessor extends DeCSMenuBuilder
 {
     use PICOQueryProcessorTrait;
 
-    protected function BuildKeywordList()
+    protected function BuildKeywordList(DataTransferObject $DTO, string $query, array $PreviousData, array $langArr)
     {
-        $QueryProcessed = $this->ProcessQuery($this->DTO->getInitialData()['query']);
-        $this->setArrayItemType($QueryProcessed);
+        $QueryProcessed = $this->ProcessQuery($query);
+        $KeywordListAndQuerySplit = $this->setArrayItemType($QueryProcessed, $PreviousData, $langArr);
+        if (count($KeywordListAndQuerySplit['KeywordList'] ?? []) === 0) {
+            throw new NoNewDataToExplore(['TreesToExplore' => null]);
+        }
+        $DTO->SaveToModel(get_class($this), $KeywordListAndQuerySplit);
     }
+
+    protected function DecodePreviousData(DataTransferObject $DTO, string $undecodedPreviousData)
+    {
+        $decodedPrevious = null;
+        if ($undecodedPreviousData) {
+            try {
+                $decodedPrevious = json_decode($undecodedPreviousData, true);
+            } catch (Throwable $ex) {
+                throw new PreviousDataCouldNotBeDecoded(['PreviousData' => json_encode($undecodedPreviousData)], $ex);
+            }
+        } else {
+            $decodedPrevious = [];
+        }
+        $DTO->SaveToModel(get_class($this), ['PreviousData' => $decodedPrevious]);
+    }
+
 
 ///////////////////////////////////////////////////////////////////
 //INNER FUNCTIONS
 ///////////////////////////////////////////////////////////////////
 
-    private function setArrayItemType(array $ItemArray)
+    private function setArrayItemType(array $ItemArray, array $SavedData, array $langArr)
     {
         $ItemArray = array_map('strtolower', $ItemArray);
         $Ops = ['or', 'and', 'not'];
@@ -43,7 +67,7 @@ abstract class DeCSQueryProcessor extends DeCSMenuBuilder
                     $type = 'op';
                 } else {
                     $type = null;
-                    $keywordData = $this->getKeywordType($value, $UsedKeyWords, $ItemArray);
+                    $keywordData = $this->getKeywordType($value, $UsedKeyWords, $ItemArray, $SavedData, $langArr);
                     $type = $keywordData['type'];
                     switch ($keywordData['type']) {
                         case 'key':
@@ -77,18 +101,16 @@ abstract class DeCSQueryProcessor extends DeCSMenuBuilder
             }
             array_push($QuerySplit, ['type' => $type, 'value' => $value]);
         }
-        $this->DTO->SaveToModel(get_class($this),['QuerySplit' => $QuerySplit,'KeywordList' => $KeywordList]);
+        $res = ['QuerySplit' => $QuerySplit, 'KeywordList' => $KeywordList];
+        return $res;
     }
 
-    private function getKeywordType($value, array $UsedKeyWords, array $keywordsArr)
+    private function getKeywordType($value, array $UsedKeyWords, array $keywordsArr, array $SavedData, array $langArr)
     {
         $data = null;
         $results = [];
-        $SavedData = $this->DTO->getAttr('SavedData');
         $isDeCS = $this->isDeCS($value, $keywordsArr, $SavedData);
         $isRepeated = in_array($value, $UsedKeyWords);
-
-        $langs = $this->DTO->getInitialData()['langs'];
         if ($SavedData !== null && array_key_exists($value, $SavedData)) {
             if ($isDeCS) {
                 $results['type'] = 'DeCS';
@@ -97,7 +119,7 @@ abstract class DeCSQueryProcessor extends DeCSMenuBuilder
                     $results['type'] = 'keyrep';
                 } else {
                     $currentLangs = array_keys(current($SavedData[$value]));
-                    $remainingLangs = array_diff($langs, $currentLangs);
+                    $remainingLangs = array_diff($langArr, $currentLangs);
                     if (count($remainingLangs) > 0) {
                         $results['type'] = 'keypartial';
                         $results['langs'] = $remainingLangs;
@@ -114,7 +136,7 @@ abstract class DeCSQueryProcessor extends DeCSMenuBuilder
                     $results['type'] = 'keyrep';
                 } else {
                     $results['type'] = 'key';
-                    $results['langs'] = $langs;
+                    $results['langs'] = $langArr;
                 }
             }
         }

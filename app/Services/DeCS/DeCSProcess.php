@@ -2,64 +2,59 @@
 
 namespace PICOExplorer\Services\DeCS;
 
-use PICOExplorer\Exceptions\Exceptions\AppError\PreviousDataCouldNotBeDecoded;
-use PICOExplorer\Exceptions\Exceptions\ClientError\NoNewDataToExplore;
-use PICOExplorer\Services\ServiceModels\EquationCheckerTrait;
-use PICOExplorer\Services\ServiceModels\PICOServiceEntryPoint;
-use Throwable;
+use PICOExplorer\Facades\DeCSLooperFacade;
+use PICOExplorer\Models\DataTransferObject;
+use PICOExplorer\Services\ServiceModels\ServiceEntryPointInterface;
+use PICOExplorer\Services\ServiceModels\ToParallelServiceIntegrationTrait;
+use ServicePerformanceSV;
 
-class DeCSProcess extends DeCSQueryProcessor implements PICOServiceEntryPoint
+class DeCSProcess extends DeCSInfoProcessor implements ServiceEntryPointInterface
 {
-    use EquationCheckerTrait;
 
-    protected $attributes = [
-        'DescriptorsHTML' => '',
-        'DeCSHTML' => '',
-    ];
+    use ToParallelServiceIntegrationTrait;
 
-    final public function Process()
+    protected final function Process(ServicePerformanceSV $ServicePerformance, DataTransferObject $DTO, $InitialData)
     {
-        $previous = $this->DTO->getInitialData()['SavedData'] ?? null;
-        $decodedPrevious = null;
-        if ($previous) {
-            try {
-                $decodedPrevious = json_decode($previous, true);
-            } catch (Throwable $ex) {
-                throw new PreviousDataCouldNotBeDecoded(['PreviousData' => json_encode($previous)], $ex);
-            }
-        } else {
-            $decodedPrevious = [];
-        }
-        $this->DTO->SaveToModel(get_class($this),['SavedData'=> $decodedPrevious]);
-        $this->BuildKeywordList();
-        $IntegrationResults = [];
-        if (count($this->DTO->getAttr('KeywordList')) === 0) {
-            throw new NoNewDataToExplore(['TreesToExplore' => null]);
-        }
-        foreach ($this->DTO->getAttr('KeywordList') as $keyword => $langs) {
-            $IntegrationResults[$keyword] = $this->Explore($keyword, $langs);
-        }
-        $ProcessedResults = $this->ProcessIntegrationResults($IntegrationResults);
-        $this->BuildHTML($ProcessedResults);
+        $InitialData= $DTO->getInitialData();
+        $this->DecodePreviousData($DTO,$InitialData['SavedData']);
+        $PreviousData = $DTO->getAttr('PreviousData');
+        $this->BuildKeywordList($DTO,$InitialData['query'],$PreviousData,$InitialData['langs']);
+        $this->Explore($ServicePerformance,$DTO,$InitialData['mainLanguage'],$InitialData['langs']);
+        $this->BuildHTML($DTO,$InitialData['PICOnum']);
         $results = [
-            'QuerySplit' => json_encode($this->DTO->getAttr('QuerySplit')),
-            'SavedData' => json_encode($this->DTO->getAttr('SavedData')),
-            'DescriptorsHTML' => $this->attributes['DescriptorsHTML'],
-            'DeCSHTML' => $this->attributes['DeCSHTML'],
-
+            'QuerySplit' => json_encode($DTO->getAttr('QuerySplit')),
+            'SavedData' => json_encode($DTO->getAttr('ProcessedResults')),
+            'DescriptorsHTML' => $DTO->getAttr('DescriptorsHTML'),
+            'DeCSHTML' =>$DTO->getAttr('DeCSHTML'),
         ];
-        $this->setResults($results);
+        return $results;
     }
 
-    protected function Explore(string $keyword, array $langs)
+    protected function Explore(ServicePerformanceSV $ServicePerformance, DataTransferObject $DTO,string $mainLanguage,array $langArr)
     {
-        $Data = array(
+        $IntegrationResults = [];
+        $KeywordList = $DTO->getAttr('KeywordList')??[];
+        foreach ($KeywordList as $keyword => $langs) {
+            $IntegrationResults[$keyword] = $this->Connect($ServicePerformance, $keyword,$langs);
+        }
+        $this->ProcessIntegrationResults($DTO,$IntegrationResults,$mainLanguage,$langArr);
+    }
+
+    ///////////////////////////////////////////////////////////////////
+    //INNER FUNCTIONS
+    ///////////////////////////////////////////////////////////////////
+
+
+    private final function Connect(ServicePerformanceSV $ServicePerformance, string $keyword, array $langs)
+    {
+        $data = [
             'keyword' => $keyword,
             'langs' => $langs,
-        );
-        $IntegrationResults = $this->ConnectToIntegration($Data);
-        $this->IntegrationResultsToSavedData($IntegrationResults, $keyword);
-        return $IntegrationResults;
+        ];
+        $AdvancedFacade = new DeCSLooperFacade();
+        $IntegrationData = $this->ToParallelServiceIntegration($ServicePerformance, $AdvancedFacade, $data);
+        return $IntegrationData;
     }
+
 
 }

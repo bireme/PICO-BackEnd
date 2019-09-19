@@ -5,14 +5,14 @@ namespace PICOExplorer\Http\Controllers\PICO;
 
 use PICOExplorer\Facades\PICOServiceFacade;
 use PICOExplorer\Models\MainModelsModel;
-use PICOExplorer\Services\ServiceModels\PICOServiceModel;
+use PICOExplorer\Services\ServiceModels\ServiceModel;
 use Request;
 
 interface MainControllerInterface
 {
 
     /**
-     * @return PICOServiceModel
+     * @return ServiceModel
      */
     public function ServiceBind();
 
