@@ -173,13 +173,26 @@ return [
          */
 
         PICOExplorer\Providers\AdvancedLoggerProvider::class,
-        PICOExplorer\Providers\AppServiceProvider::class,
         PICOExplorer\Providers\AuthServiceProvider::class,
         PICOExplorer\Providers\EventServiceProvider::class,
         PICOExplorer\Providers\RouteServiceProvider::class,
         Rap2hpoutre\LaravelLogViewer\LaravelLogViewerServiceProvider::class,
         PragmaRX\Health\ServiceProvider::class,
         Ixudra\Curl\CurlServiceProvider::class,
+
+        /*
+         * PICO Service Providers...
+         */
+
+        PICOExplorer\Providers\AdvancedServiceProviders\AuthHandlerServiceProvider::class,
+        PICOExplorer\Providers\AdvancedServiceProviders\ResultsNumberServiceProvider::class,
+        PICOExplorer\Providers\AdvancedServiceProviders\ResultsNumberIntegrationServiceProvider::class,
+        PICOExplorer\Providers\AdvancedServiceProviders\ResultsNumberIntegrationLooperServiceProvider::class,
+        PICOExplorer\Providers\AdvancedServiceProviders\DeCSLooperServiceProvider::class,
+        PICOExplorer\Providers\AdvancedServiceProviders\DeCSIntegrationLooperServiceProvider::class,
+        PICOExplorer\Providers\AdvancedServiceProviders\DeCSServiceProvider::class,
+        PICOExplorer\Providers\AdvancedServiceProviders\DeCSIntegrationServiceProvider::class,
+        PICOExplorer\Providers\AdvancedServiceProviders\QueryBuildServiceProvider::class,
     ],
 
     /*
@@ -232,6 +245,9 @@ return [
         'View' => Illuminate\Support\Facades\View::class,
         'Throttle' => GrahamCampbell\Throttle\Facades\Throttle::class,
 
+
+        'Curl' => Ixudra\Curl\Facades\Curl::class,
+
         //Facades - Use Singleton
         'AdvancedLoggerFacade' => PICOExplorer\Facades\AdvancedLoggerFacade::class,
         'WarningsHandlerFacade' => PICOExplorer\Facades\WarningsHandlerFacade::class,
@@ -239,16 +255,18 @@ return [
         'SpecialValidatorFacade' => PICOExplorer\Facades\SpecialValidatorFacade::class,
         'AuthHandlerFacade' => PICOExplorer\Facades\AuthHandlerFacade::class,
 
-//Binds
-        'ResultsNumberBIREMESV' => PICOExplorer\Services\ResultsNumberIntegration\ResultsNumberBIREME::class,
-        'DeCSBIREMESV' => PICOExplorer\Services\DeCSIntegration\DeCSBireme::class,
-        'ResultsNumberProcessSV' => PICOExplorer\Services\ResultsNumber\ResultsNumberProcess::class,
-        'DeCSProcessSV' => PICOExplorer\Services\DeCS\DeCSProcess::class,
-        'QueryBuildSV' => PICOExplorer\Services\QueryBuild\QueryBuildProcess::class,
+        //Binds with multiple instances --> No Facade
         'ServicePerformanceSV' => PICOExplorer\Services\AdvancedLogger\Services\ServicePerformance::class,
 
-        //Binds with multiple instances --> No Facade
-        'Curl' => Ixudra\Curl\Facades\Curl::class,
+        //PICOFacades - Use Singleton
+        'ResultsNumberFacade' => PICOExplorer\Facades\ResultsNumberFacade::class,
+        'ResultsNumberIntegrationFacade' => PICOExplorer\Facades\ResultsNumberIntegrationFacade::class,
+        'ResultsNumberIntegrationLooperFacade' => PICOExplorer\Facades\ResultsNumberIntegrationLooperFacade::class,
+        'DeCSIntegrationFacade' => PICOExplorer\Facades\DeCSIntegrationFacade::class,
+        'DeCSIntegrationLooperFacade' => PICOExplorer\Facades\DeCSIntegrationLooperFacade::class,
+        'DeCSFacade' => PICOExplorer\Facades\DeCSFacade::class,
+        'DeCSLooperFacade' => PICOExplorer\Facades\DeCSLooperFacade::class,
+        'QueryBuildFacade' => PICOExplorer\Facades\QueryBuildFacade::class,
     ],
 
 ];

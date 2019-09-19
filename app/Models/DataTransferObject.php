@@ -73,7 +73,7 @@ class DataTransferObject
         return $data;
     }
 
-    final public function setResults(string $referer, array $results, string $modelAlias = null)
+    final public function setResults(string $referer, $results, string $modelAlias = null,bool $dontLock=false)
     {
         $this->TmpModelAlias($modelAlias);
         if ($this->currentModel->isLocked()) {
@@ -82,7 +82,9 @@ class DataTransferObject
         $rules = $this->currentModel->responseRules();
         $data = ['results' => $results];
         $this->ValidatedLogAndUpdate($referer, $rules, $data);
-        $this->currentModel->lock();
+        if(!($dontLock)){
+            $this->currentModel->lock();
+        }
     }
 
     final public function setInitialData(string $referer, array $initialData, string $modelAlias = null)

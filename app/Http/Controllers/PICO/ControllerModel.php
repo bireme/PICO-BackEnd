@@ -6,15 +6,15 @@ use PICOExplorer\Exceptions\Exceptions\AppError\ControllerResultsIsNull;
 use PICOExplorer\Exceptions\Exceptions\AppError\DataIntroducedInControllerIsNull;
 use PICOExplorer\Exceptions\Exceptions\AppError\ExceptionInsideService;
 use PICOExplorer\Exceptions\Exceptions\AppError\TheServiceIsNull;
-use PICOExplorer\Exceptions\Exceptions\AppError\TheServicelIsNotInstanceOfPICOServiceModel;
+use PICOExplorer\Exceptions\Exceptions\AppError\TheServicelIsNotInstanceOfAdvancedFacade;
 use PICOExplorer\Exceptions\Exceptions\ClientError\TheDataSentWasNotJSONEncoded;
+use PICOExplorer\Facades\AdvancedFacade;
 use PICOExplorer\Facades\ExceptionLoggerFacade;
 use PICOExplorer\Services\AdvancedLogger\Traits\TranslatedMessageTrait;
 use PICOExplorer\Models\DataTransferObject;
 use PICOExplorer\Models\MainModelsModel;
 use PICOExplorer\Services\AdvancedLogger\Exceptions\DontCatchException;
 use PICOExplorer\Services\AdvancedLogger\Exceptions\Models\CustomException;
-use PICOExplorer\Services\ServiceModels\PICOServiceModel;
 use Response;
 use Throwable;
 use Request;
@@ -148,7 +148,7 @@ abstract class ControllerModel
         $wasSuccessful = false;
         try {
             $connectionTimer = $this->ServicePerformance->newConnectionTimer(get_class($this).'toservice-' . get_class($this) . '-timer');
-            $this->Service->get($DTO);
+            $this->Service::get($DTO,null);
             $results = $DTO->getResults('main');
             $wasSuccessful = true;
         } catch (Exception $ex) {
@@ -175,9 +175,9 @@ abstract class ControllerModel
         if (!($Service)) {
             throw new TheServiceIsNull(['service' => null, 'controller' => $this->referer]);
         }
-        if (!($Service instanceof PICOServiceModel)) {
+        if (!($Service instanceof AdvancedFacade)) {
             $info = get_class($Service) ?? null;
-            throw new TheServicelIsNotInstanceOfPICOServiceModel(['service' => $info, 'controller' => $this->referer]);
+            throw new TheServicelIsNotInstanceOfAdvancedFacade(['service' => $info, 'controller' => $this->referer]);
         }
         $this->Service = $Service;
     }

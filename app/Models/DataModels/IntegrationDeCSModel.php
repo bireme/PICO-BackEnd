@@ -11,9 +11,7 @@ class IntegrationDeCSModel extends MainModelsModel
     {
         return [
             'InitialData' => 'required|array|min:1',
-            'InitialData.query' => 'required|string|min:1',
-            'InitialData.mainLanguage' => 'required|string|min:1',
-            'InitialData.PICOnum' => 'required|string|min:1',
+            'InitialData.keyword' => 'required|string|min:1',
             'InitialData.langs' => 'required|array|min:1',
             'InitialData.langs.*' => 'required|string|in:es.pt.en.fr',
         ];
@@ -23,17 +21,14 @@ class IntegrationDeCSModel extends MainModelsModel
     {
         return [
             'results' => 'required|array|min:1',
-            'results.results' => 'required|string|min:1',
-            'results.HTMLDescriptors' => 'required|string|min:1',
-            'results.HTMLDeCS' => 'required|string|min:1',
-            'results.QuerySplit' => 'required|string|min:1',
+            'results.ResultsByTreeId' => 'array|min:0',
         ];
     }
 
     public final function ControllerTestData()
     {
         return json_encode([
-            'keyword' => 'break bone fever',
+            'keyword' => 'febre amarela',
             'langs' => ['es'],
         ]);
     }
@@ -42,11 +37,15 @@ class IntegrationDeCSModel extends MainModelsModel
     public static final function AttributeRules()
     {
         return [
-            'PendingMainTrees'=>[],
-            'PendingDescendants'=>[],
-            'MainTreeList'=>[],
-            'ExploredTrees'=>[],
-            'AllTrees'=>[]
+            'keyword' => ['string|min:1'],
+            'langs' => ['array|min:1'],
+            'log' => ['string|min:0'],
+            'logcount' => ['array|min:0'],
+            'PendingMainTrees'=>['array|min:0'],
+            'PendingDescendants'=>['array|min:0'],
+            'MainTreeList'=>['array|min:0'],
+            'ExploredTrees'=>['array|min:0'],
+            'TmpResults'=>['array|min:0'],
         ];
     }
 
