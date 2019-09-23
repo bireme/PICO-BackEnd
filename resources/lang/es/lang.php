@@ -57,5 +57,6 @@ return [
     'autor' => 'BIREME - Consultor Daniel Nieto https://github.com/nietodaniel',
     'keywords' => 'PICO, Búsqueda, Paciente, Problema, Población, Intervención, Comparación, Resultados, Tipo de Estudio, PICO, Sistemático, Revisiones, Revisión, Metanálisis, Metanálisis, PRISMA, DeCS, Descriptor, Descriptores, MeSH, Explode, Ecation, Consulta, Clínica, Práctica, Guía, Guías, BVS, BIREME, Lilas, Biblioteca Virtual en Salud',
     'title' => 'Buscador PICO - BIREME',
+    'back' => 'Voltar',
     'description' => 'Buscador PICO. Incluye Población, Intervención, Comparación, Tipo de estudio. Importa los descriptores / tesauros de DeCS, MeSH en inglés, portugués y español para ampliar sus palabras clave y mejorar su búsqueda. Facilita la construcción de ecuaciones y consultas. La herramienta gratuita ideal para su revisión sistemática, metaanálisis o guía de práctica clínica presentada por BIREME - Virtual Health Library (VHL)',
 ];

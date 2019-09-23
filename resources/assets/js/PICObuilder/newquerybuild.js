@@ -1,53 +1,68 @@
-import {getPreviousResults} from "./commonsdecs.js";
 import {POSTrequest} from "./loadingrequest.js";
 
 ////PUBLIC FUNCTIONS
 
 export function ProcessResults() {
-    let PICOnum = $('#modal1').find('#PICONumTag').val();
     let ImproveSearchQuery = $('#modal3').find('textarea').val();
-    eventQueryBuild(PICOnum, ImproveSearchQuery);
+    let PICOnum = $('#modalkw').find('.keywordform-piconum').first().val();
+    eventQueryBuild(ImproveSearchQuery,PICOnum);
 }
 
 ////PRIVATE FUNCTIONS
 
-function BuildImprovedQuery(PICOnum, data) {
+function BuildImprovedQuery(data) {
     let newQuery = data.newQuery;
+    let PICOnum = $('#modalkw').find('.keywordform-piconum').first().val();
+    setOldSelectedDescriptors(data.OldSelectedDescriptors,PICOnum);
     $('#datainput' + PICOnum).val(newQuery);
 }
 
 function getSelectedDescriptors() {
     let SelectedDescriptors = {};
-    $('#modal2').find('input.DeCSCheckBoxElement:checked').each(function () {
-        let DeCS = $(this).attr('name');
-        let keyword = $(this).attr('data-keyword');
-        let term = $(this).attr('data-term');
-
+    $('#modal1').find('.form-tab-cont').each(function () {
+        let keyword = $(this).attr('data-name');
         if (!(keyword in SelectedDescriptors)) {
             SelectedDescriptors[keyword] = {};
         }
-        if (!(term in SelectedDescriptors[keyword])) {
-            SelectedDescriptors[keyword][term] = [];
-        }
-        SelectedDescriptors[keyword][term].push(DeCS);
+        $($(this)).find('.DescriptorCheckbox').each(function () {
+            if ($(this).attr('checked')) {
+                let term = $(this).attr('name');
+                if (!(term in SelectedDescriptors[keyword])) {
+                    SelectedDescriptors[keyword][term] = [];
+                }
+                let num = $(this).attr('id').slice(15);
+                $('#decsform' + num + '-cont').find('.DescriptorCheckbox').each(function () {
+                    if ($(this).attr('checked')) {
+                        SelectedDescriptors[keyword][term].push($(this).attr('name'));
+                    }
+                });
+            }
+        });
     });
     return SelectedDescriptors;
 }
 
-function eventQueryBuild(PICOnum, ImproveSearchQuery) {
+function eventQueryBuild(ImproveSearchQuery,PICOnum) {
     let url = "PICO/QueryBuild";
     let data = {
-        PICOnum:  parseInt(PICOnum),
-        QuerySplit: getTmpQuerySplit(PICOnum),
-        DeCSResults: getPreviousResults(PICOnum),
         SelectedDescriptors: getSelectedDescriptors(),
-        ImproveSearchQuery: ImproveSearchQuery
+        ImproveSearchQuery: ImproveSearchQuery,
+        OldSelectedDescriptors:getOldSelectedDescriptors(PICOnum),
     };
     POSTrequest(url, data, function (Data) {
-        BuildImprovedQuery(PICOnum, Data);
+        BuildImprovedQuery(Data);
     });
 }
 
-function getTmpQuerySplit(PICOnum) {
-    return $('#datainput'+PICOnum).attr('data-query-split');
+function getQuerySplit() {
+    return $('#modalkw').find('.keywordform-querysplit').first().val();
 }
+
+function setOldSelectedDescriptors(OldSelectedDescriptors,PICOnum) {
+    $('#datainput'+PICOnum).attr('data-old-selected-descriptors',OldSelectedDescriptors);
+}
+
+function getOldSelectedDescriptors(PICOnum) {
+    return $('#datainput'+PICOnum).attr('data-old-selected-descriptors');
+}
+

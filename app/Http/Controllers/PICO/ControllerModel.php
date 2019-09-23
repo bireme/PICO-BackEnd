@@ -80,8 +80,8 @@ abstract class ControllerModel
             $response = $this->HandleFinalException($ex, $res);
         } finally {
             $this->ServicePerformance->ServicePerformanceSummary($wasSuccess);
+            return $response;
         }
-        return $response;
     }
 
     protected function HandleFinalException(Throwable $ex, $data)

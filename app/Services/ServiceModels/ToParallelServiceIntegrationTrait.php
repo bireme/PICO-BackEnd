@@ -2,10 +2,6 @@
 
 namespace PICOExplorer\Services\ServiceModels;
 
-use Illuminate\Http\JsonResponse;
-use PICOExplorer\Exceptions\Exceptions\AppError\ContactedComponentReturnedNull;
-use PICOExplorer\Exceptions\Exceptions\AppError\ContactedComponentReturningJSONResponseInsteadData;
-use PICOExplorer\Exceptions\Exceptions\AppError\ErrorContactingAnotherComponent;
 use PICOExplorer\Exceptions\Exceptions\AppError\ErrorInsideAnotherComponent;
 use PICOExplorer\Exceptions\Exceptions\AppError\PICOIntegrationReturnedNull;
 use PICOExplorer\Facades\AdvancedFacade;

@@ -21,7 +21,7 @@ abstract class ParallelServiceEntryPoint
         try {
             $results = $this->Process($ServicePerformance, $InitialData);
             $wasSuccess=true;
-        } catch (DontCatchException $ex) {
+        }  catch (DontCatchException $ex) {
             //
         } finally {
             return $results;

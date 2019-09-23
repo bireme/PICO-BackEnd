@@ -2,7 +2,7 @@ import {BlockButton,UnBlockButton,ShowPICOinfo,setLanguagesFromModal,ReBuildStud
 import {UpdateLanguageInfo} from "./languagetoggler.js";
 import {ProcessResults} from "./newquerybuild.js";
 import {getResultsNumber} from "./resultsmanager.js";
-import {OnExpandDeCS} from "./decsmanager.js";
+import {OnExpandDeCS,OnExploreDeCS} from "./decsmanager.js";
 import {SetAllToReDoButton, ChangeSeeker} from "./changeseeker.js";
 import {IsLoading, CancelLoading} from "./loadingrequest.js";
 import {isHiddenBootstrapObj} from "./hideshow.js";
@@ -27,20 +27,58 @@ export function initEvents() {
         OnExpandDeCS($(this));
         UnBlockButton($(this));
     });
-    $('#modal1').find('.btn-primary').click(function () {
+    $('#modalkw').find('.btn-primary').click(function () {
         BlockButton($(this));
-        HideUnselectedDeCS();
+        if (IsLoading()) {
+            UnBlockButton($(this));
+            return;
+        }
+        $('#closemodalkw').click();
+        OnExploreDeCS($(this));
+        UnBlockButton($(this));
+    });
+    $('#modal1').find('.btn-back').click(function () {
+        BlockButton($(this));
+        if (IsLoading()) {
+            UnBlockButton($(this));
+            return;
+        }
+        let PICOnum = $('#modalkw').find('.keywordform-piconum').first().val();
+        console.log(PICOnum);
         $('#closemodal1').click();
+        OnExpandDeCS($('#Exp'+PICOnum));
+        UnBlockButton($(this));
+    });
+    $('#modal2').find('.btn-back').click(function () {
+        BlockButton($(this));
+        $('#closemodal2').click();
+        $('#modal1').modal('show');
+        UnBlockButton($(this));
+    });
+    $('#modal3').find('.btn-back').click(function () {
+        BlockButton($(this));
+        if (IsLoading()) {
+            UnBlockButton($(this));
+            return;
+        }
+        $('#closemodal3').click();
         $('#modal2').modal('show');
         UnBlockButton($(this));
     });
-    $('#modal2').find('.btn-primary').click(function () {
+    $('#modal1').find('.btn-continue').click(function () {
+        BlockButton($(this));
+        $('#closemodal1').click();
+        $('#modal2').modal('show');
+        HideUnselectedDeCS();
+        UnBlockButton($(this));
+    });
+    $('#modal2').find('.btn-continue').click(function () {
         BlockButton($(this));
         $('#closemodal2').click();
         $('#modal3').modal('show');
         UnBlockButton($(this));
     });
-    $('#modal3').find('.btn-primary').click(function () {
+    $('#modal3').find('.btn-continue').click(function () {
         BlockButton($(this));
         ProcessResults();
         $('#closemodal3').click();

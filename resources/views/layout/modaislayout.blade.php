@@ -7,11 +7,19 @@
                     <span aria-hidden="true">×</span>
                 </button>
             </div>
-
             @yield('modal-body')
-
             <div class="modal-footer">
-                @yield('modal-footer')
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="offset-md-3 col-md-6 text-center">
+                            <div class="container-fluid">
+                                <div class="row">
+                                    @yield('modal-footer')
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
 

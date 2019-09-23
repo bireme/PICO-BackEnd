@@ -18,9 +18,9 @@ use PICOExplorer\Facades\SpecialValidatorFacade;
 use PICOExplorer\Models\DataModels\DeCSModel;
 use PICOExplorer\Models\DataModels\IntegrationDeCSModel;
 use PICOExplorer\Models\DataModels\IntegrationResultsNumberModel;
+use PICOExplorer\Models\DataModels\KeywordManagerModel;
 use PICOExplorer\Models\DataModels\QueryBuildModel;
 use PICOExplorer\Models\DataModels\ResultsNumberModel;
-use PICOExplorer\Models\DataModels\TreeModel;
 use PICOExplorer\Services\AdvancedLogger\Exceptions\DontCatchException;
 
 class DataTransferObject
@@ -44,8 +44,8 @@ class DataTransferObject
                 return new IntegrationResultsNumberModel();
             case 'QueryBuild':
                 return new QueryBuildModel();
-            case 'Tree':
-                return new TreeModel();
+            case 'KeywordManager':
+                return new KeywordManagerModel();
             default:
                 throw new ModelNameDoesNotExistInDTOBinds(['modelName' => $modelName]);
                 break;

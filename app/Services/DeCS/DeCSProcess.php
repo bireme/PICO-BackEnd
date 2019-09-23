@@ -15,29 +15,32 @@ class DeCSProcess extends DeCSInfoProcessor implements ServiceEntryPointInterfac
 
     protected final function Process(ServicePerformanceSV $ServicePerformance, DataTransferObject $DTO, $InitialData)
     {
-        $InitialData= $DTO->getInitialData();
-        $this->DecodePreviousData($DTO,$InitialData['SavedData']);
-        $PreviousData = $DTO->getAttr('PreviousData');
-        $this->BuildKeywordList($DTO,$InitialData['query'],$PreviousData,$InitialData['langs']);
-        $this->Explore($ServicePerformance,$DTO,$InitialData['mainLanguage'],$InitialData['langs']);
-        $this->BuildHTML($DTO,$InitialData['PICOnum']);
+        $InitialData = $DTO->getInitialData();
+        $this->DecodePreviousData($DTO, $InitialData['SavedData'] ?? null);
+        $this->Explore($ServicePerformance, $DTO, $InitialData['mainLanguage'],$InitialData['KeywordList']??[]);
+        $this->BuildDeCSHTML($DTO, $InitialData['PICOnum']);
         $results = [
-            'QuerySplit' => json_encode($DTO->getAttr('QuerySplit')),
-            'SavedData' => json_encode($DTO->getAttr('ProcessedResults')),
+            'SavedData' => json_encode($DTO->getAttr('SavedData')),
             'DescriptorsHTML' => $DTO->getAttr('DescriptorsHTML'),
-            'DeCSHTML' =>$DTO->getAttr('DeCSHTML'),
+            'DeCSHTML' => $DTO->getAttr('DeCSHTML'),
         ];
         return $results;
     }
 
-    protected function Explore(ServicePerformanceSV $ServicePerformance, DataTransferObject $DTO,string $mainLanguage,array $langArr)
+    protected function Explore(ServicePerformanceSV $ServicePerformance, DataTransferObject $DTO, string $mainLanguage,array $KeywordList)
     {
         $IntegrationResults = [];
-        $KeywordList = $DTO->getAttr('KeywordList')??[];
-        foreach ($KeywordList as $keyword => $langs) {
-            $IntegrationResults[$keyword] = $this->Connect($ServicePerformance, $keyword,$langs);
+        foreach ($KeywordList as  $keywordDataEncoded) {
+            $keywordData= json_decode($keywordDataEncoded,true);
+            $langs = $keywordData['langs'];
+            if(count($langs)===0){
+                continue;
+            }
+            $keyword = $keywordData['keyword'];
+            $IntegrationResults[$keyword] = $this->Connect($ServicePerformance, $keywordData['keyword'],$langs );
         }
-        $this->ProcessIntegrationResults($DTO,$IntegrationResults,$mainLanguage,$langArr);
+        $this->MixWithOldData($DTO, $IntegrationResults);
+        $this->BuildAsTerms($DTO, $mainLanguage);
     }
 
     ///////////////////////////////////////////////////////////////////

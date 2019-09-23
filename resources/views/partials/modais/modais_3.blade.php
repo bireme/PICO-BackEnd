@@ -11,5 +11,10 @@
 @overwrite
 
 @section('modal-footer')
-    <button type="button" class="btn btn-block btn-primary" data-dismiss="modal3">{{ __('lang.cont') }}</button>
+    <div class="col-md-4 text-center">
+        <button type="button" class="btn btn-block btn-primary btn-back" data-toggle="modal" data-target="#modal3" data-dismiss="modal">{{ __('lang.back') }}</button>
+    </div>
+    <div class="col-md-4  offset-2 text-center">
+        <button type="button" class="btn btn-block btn-primary btn-continue" data-toggle="modal" data-target="#modal3" data-dismiss="modal">{{ __('lang.cont') }}</button>
+    </div>
 @overwrite

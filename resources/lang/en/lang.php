@@ -57,5 +57,6 @@ return [
     'autor' => 'BIREME - Consultant Daniel Nieto https://github.com/nietodaniel',
     'keywords' => 'PICO, Search, Patient, Problem, Population, Intervention, Comparison, Outcomes, Type of Study, PICOs, Systematic, Reviews, Review, Meta-analysis, Meta-analyses, PRISMA, DeCS, Descriptor, Descriptors, MeSH, Explode, Equation, Query,  Clinical, Practice, Guide, Guides, VHL, BIREME, Lilacs, virtual health library',
     'title' => 'PICO Searcher - BIREME',
+    'back' => 'Back',
     'description' => 'PICO Searcher. Includes Population, Intervention, Comparison, Type of study. Imports the DeCS, MeSH descriptors/thesauri in english, portuguese and spanish to expand your keywords and improve your search. Eases equation and query building. The ideal free tool for your Systematic Review, Meta-analysis or Clinical practice guide research brought to you by BIREME - Virtual Health Library (VHL)',
 ];
