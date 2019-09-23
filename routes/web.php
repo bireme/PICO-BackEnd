@@ -23,6 +23,10 @@ Route::middleware(['throttle:60,1'])->prefix('PICO')->group(function () {
 
     Route::post('ResultsNumberIntegration', 'PICO\IntegrationResultsNumberController@index');
 
+    Route::post('KeywordManager', 'PICO\KeywordManagerController@index');
+
+    Route::get('KeywordManager', 'PICO\KeywordManagerController@info');
+
     Route::get('DeCSExplore', 'PICO\DeCSController@info');
 
     Route::get('ResultsNumber', 'PICO\ResultsNumberController@info');

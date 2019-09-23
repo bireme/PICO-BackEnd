@@ -193,6 +193,7 @@ return [
         PICOExplorer\Providers\AdvancedServiceProviders\DeCSServiceProvider::class,
         PICOExplorer\Providers\AdvancedServiceProviders\DeCSIntegrationServiceProvider::class,
         PICOExplorer\Providers\AdvancedServiceProviders\QueryBuildServiceProvider::class,
+        PICOExplorer\Providers\AdvancedServiceProviders\KeywordManagerServiceProvider::class,
     ],
 
     /*

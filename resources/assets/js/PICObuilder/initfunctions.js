@@ -4,12 +4,14 @@ import {getPICOElements} from "./commons.js";
 import {getLanguages} from "./commonsdecs.js";
 import {translate} from "./translator.js";
 import {showInfoMessage} from "./infomessage.js";
+import {showBootstrapObj, hideBootstrapObj} from "./hideshow.js";
+
 
 ////PUBLIC FUNCTIONS
 
 export function ExpandDeCSConfig() {
     let msg = '<div id="LanguageSection" class="container "><div class="row"><div class="col-md-7 sidebar LanguageContainer"><label class="labelMain">';
-         msg=msg+ translate("langimp") + '</label>\
+    msg = msg + translate("langimp") + '</label>\
         </div>\
         <div class="col-md-5 sidebar LanguageContainer text-left">\
            <div class="LanguageInfoContainer">\
@@ -21,7 +23,7 @@ export function ExpandDeCSConfig() {
     </div>\
     </div>';
     let langs = getLanguages();
-    showInfoMessage('Config', msg, true, 'golanguage', setLanguagesOfModal, langs,true);
+    showInfoMessage('Config', msg, true, 'golanguage', setLanguagesOfModal, langs, true);
 }
 
 export function InfoNoResults() {
@@ -49,7 +51,7 @@ export function ShowPICOinfo(PICOnum) {
     let title = getPICOElements()[PICOnum - 1];
     let msg = getPICOinfo()[PICOnum - 1];
     if (PICOnum < 5) {
-        msg = '<h2>'+ title + '</h2>' + '</br></br><h3>' + msg + '</h3></br></br>' + '<h4>' + getPICOPlaceHolder(PICOnum) + '</h4>';
+        msg = '<h2>' + title + '</h2>' + '</br></br><h3>' + msg + '</h3></br></br>' + '<h4>' + getPICOPlaceHolder(PICOnum) + '</h4>';
     }
     showInfoMessage('Info', msg, true);
 }
@@ -82,25 +84,23 @@ export function setLanguagesFromModal(LangParent) {
 }
 
 export function HideUnselectedDeCS() {
-    let DeCSModalTitlePrefix = 'opcao';
-    let DeCSModalTitlePostfix = '-tab';
-    let num = 0;
-    $('#modal1').find('input.DescriptorCheckbox').each(function () {
-        let identifier = ($(this).attr('id')).substring(10);
-        let titleid = '#' + DeCSModalTitlePrefix + identifier + DeCSModalTitlePostfix;
-        let contentid = '#' + DeCSModalTitlePrefix + identifier;
-        let modal2Obj = $('#modal2');
-        if ($(this).is(':checked')) {
-            modal2Obj.find(contentid).prop('checked', true);
-            if (num === 0) {
-                if (modal2Obj.find(titleid).hasClass('active') === false) {
-                    modal2Obj.find(titleid).toggle('nav-link active');
-                }
-            }
-            num++;
+    $('#modal1').find('.DescriptorCheckbox').each(function () {
+        let tmp = $(this).attr('id').slice(15);
+        let tab = $('#decsform' + tmp + '-tab');
+        let cont = $('#decsform' + tmp + '-cont');
+        let status = $(this).prop("checked");
+        if (status === true) {
+            showBootstrapObj(tab);
+            showBootstrapObj(cont);
+            tab.find('.DescriptorCheckbox').each(function () {
+                $(this).attr("checked", true);
+            });
         } else {
-            modal2Obj.find(titleid).hide();
-            modal2Obj.find(contentid).hide();
+            hideBootstrapObj(tab);
+            hideBootstrapObj(cont);
+            tab.find('.DescriptorCheckbox').each(function () {
+                $(this).attr("checked", false);
+            });
         }
     });
 }
@@ -121,7 +121,7 @@ function setLanguages(langArr) {
 }
 
 function getPICOinfo() {
-    return [translate('pico_info1'),translate('pico_info2'),translate('pico_info3'),translate('pico_info4'),translate('pico_info5')];
+    return [translate('pico_info1'), translate('pico_info2'), translate('pico_info3'), translate('pico_info4'), translate('pico_info5')];
 }
 
 function getPICOPlaceHolder(PICOnum) {

@@ -22,7 +22,7 @@ export function POSTrequest(url, inidata, callback) {
     inidata.mainLanguage = getMainLanguage();
     url = getBaseURL() + url;
     let sentData=JSON.stringify(inidata);
-    console.log('Sending');
+    console.log('Sending...');
     console.log(sentData);
     currentrequest = $.ajax({
         url: url,
@@ -35,6 +35,9 @@ export function POSTrequest(url, inidata, callback) {
         },
         dataType: 'json',
         success: function (content) {
+            console.log('Receiving...');
+            console.log(content);
+
             let result=null;
             try {
                 let Err = content.Error;
