@@ -4,16 +4,21 @@ import {POSTrequest} from "./loadingrequest.js";
 
 export function ProcessResults() {
     let ImproveSearchQuery = $('#modal3').find('textarea').val();
-    let PICOnum = $('#modalkw').find('.keywordform-piconum').first().val();
-    eventQueryBuild(ImproveSearchQuery,PICOnum);
+    let PICOnum = $('#modal1').find('.descriptorsform-piconum').first().val();
+    setImproveSearch(ImproveSearchQuery, PICOnum);
+    eventQueryBuild(ImproveSearchQuery, PICOnum);
+}
+
+function setImproveSearch(improve, PICOnum) {
+    $('#datainput' + PICOnum).attr('data-improve', improve);
 }
 
 ////PRIVATE FUNCTIONS
 
 function BuildImprovedQuery(data) {
     let newQuery = data.newQuery;
-    let PICOnum = $('#modalkw').find('.keywordform-piconum').first().val();
-    setOldSelectedDescriptors(data.OldSelectedDescriptors,PICOnum);
+    let PICOnum = $('#modal1').find('.descriptorsform-piconum').first().val();
+    setOldSelectedDescriptors(data.OldSelectedDescriptors, PICOnum);
     $('#datainput' + PICOnum).val(newQuery);
 }
 
@@ -42,12 +47,13 @@ function getSelectedDescriptors() {
     return SelectedDescriptors;
 }
 
-function eventQueryBuild(ImproveSearchQuery,PICOnum) {
+function eventQueryBuild(ImproveSearchQuery, PICOnum) {
     let url = "PICO/QueryBuild";
     let data = {
         SelectedDescriptors: getSelectedDescriptors(),
         ImproveSearchQuery: ImproveSearchQuery,
-        OldSelectedDescriptors:getOldSelectedDescriptors(PICOnum),
+        OldSelectedDescriptors: getOldSelectedDescriptors(PICOnum),
+        QuerySplit: getQuerySplit(),
     };
     POSTrequest(url, data, function (Data) {
         BuildImprovedQuery(Data);
@@ -55,14 +61,13 @@ function eventQueryBuild(ImproveSearchQuery,PICOnum) {
 }
 
 function getQuerySplit() {
-    return $('#modalkw').find('.keywordform-querysplit').first().val();
+    return $('#modal1').find('.descriptorsform-querysplit').first().val();
 }
 
-function setOldSelectedDescriptors(OldSelectedDescriptors,PICOnum) {
-    $('#datainput'+PICOnum).attr('data-old-selected-descriptors',OldSelectedDescriptors);
+function setOldSelectedDescriptors(OldSelectedDescriptors, PICOnum) {
+    $('#datainput' + PICOnum).attr('data-old-selected-descriptors', OldSelectedDescriptors);
 }
 
 function getOldSelectedDescriptors(PICOnum) {
-    return $('#datainput'+PICOnum).attr('data-old-selected-descriptors');
+    return $('#datainput' + PICOnum).attr('data-old-selected-descriptors');
 }
-

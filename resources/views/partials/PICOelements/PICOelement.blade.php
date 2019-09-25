@@ -1,7 +1,7 @@
 <div class="card-body">
     <div class="row">
         <div class="col-md-8 margin2M">
-            <input type="text" id="datainput{{ $PICOiterative }}" data-previous-decs="{{ (!!($olddata) ? $olddata['previousdata'] : '')  }}" data-old-selected-descriptors="{{ (!!($olddata) ? $olddata['selected-descriptors'] : '')  }}" data-query-split="{{ (!!($olddata) ? $olddata['querysplit'] : '')  }}"
+            <input type="text" id="datainput{{ $PICOiterative }}" data-improve="" data-previous-decs="{{ (!!($olddata) ? $olddata['previousdata'] : '')  }}" data-old-selected-descriptors="{{ (!!($olddata) ? $olddata['selected-descriptors'] : '')  }}" data-query-split="{{ (!!($olddata) ? $olddata['querysplit'] : '')  }}"
                    data-oldVal="{{ (!!($olddata) ? $olddata['oldval'] : '')  }}"
                    class="form-control" placeholder="{{ __('lang.pico_ex'.$PICOiterative) }}"
                    value="{{ (!!($olddata) ? $olddata['query'] : '')  }}" />

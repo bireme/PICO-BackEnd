@@ -15,9 +15,12 @@ class DeCSProcess extends DeCSInfoProcessor implements ServiceEntryPointInterfac
 
     protected final function Process(ServicePerformanceSV $ServicePerformance, DataTransferObject $DTO, $InitialData)
     {
+        //return;
         $InitialData = $DTO->getInitialData();
         $this->DecodePreviousData($DTO, $InitialData['SavedData'] ?? null);
-        $this->Explore($ServicePerformance, $DTO, $InitialData['mainLanguage'],$InitialData['KeywordList']??[]);
+        $QueryProcessed = $this->ProcessInitialQuery($InitialData['query'],$InitialData['ImprovedSearch']??null);
+        $this->BuildKeywordList($DTO,$QueryProcessed,$InitialData['langs']);
+        $this->Explore($ServicePerformance, $DTO, $InitialData['mainLanguage']);
         $this->BuildDeCSHTML($DTO, $InitialData['PICOnum']);
         $results = [
             'SavedData' => json_encode($DTO->getAttr('SavedData')),
@@ -27,21 +30,22 @@ class DeCSProcess extends DeCSInfoProcessor implements ServiceEntryPointInterfac
         return $results;
     }
 
-    protected function Explore(ServicePerformanceSV $ServicePerformance, DataTransferObject $DTO, string $mainLanguage,array $KeywordList)
+    protected function Explore(ServicePerformanceSV $ServicePerformance, DataTransferObject $DTO, string $mainLanguage)
     {
         $IntegrationResults = [];
-        foreach ($KeywordList as  $keywordDataEncoded) {
-            $keywordData= json_decode($keywordDataEncoded,true);
-            $langs = $keywordData['langs'];
+        $KeywordList = $DTO->getAttr('KeywordList');
+        //dd($KeywordList);
+        foreach ($KeywordList as  $keyword => $langdata) {
+            $langs = array_values($langdata);
             if(count($langs)===0){
                 continue;
             }
-            $keyword = $keywordData['keyword'];
-            $IntegrationResults[$keyword] = $this->Connect($ServicePerformance, $keywordData['keyword'],$langs );
+            $IntegrationResults[$keyword] = $this->Connect($ServicePerformance, $keyword,$langs);
         }
         $this->MixWithOldData($DTO, $IntegrationResults);
         $this->BuildAsTerms($DTO, $mainLanguage);
     }
+
 
     ///////////////////////////////////////////////////////////////////
     //INNER FUNCTIONS

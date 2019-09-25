@@ -13859,13 +13859,12 @@ function getLanguagesInGlobalLang() {
 /*!********************************************************!*\
   !*** ./resources/assets/js/PICObuilder/decsmanager.js ***!
   \********************************************************/
-/*! exports provided: OnExpandDeCS, OnExploreDeCS */
+/*! exports provided: OnExpandDeCS */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* WEBPACK VAR INJECTION */(function($) {/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "OnExpandDeCS", function() { return OnExpandDeCS; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "OnExploreDeCS", function() { return OnExploreDeCS; });
 /* harmony import */ var _commonsdecs_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./commonsdecs.js */ "./resources/assets/js/PICObuilder/commonsdecs.js");
 /* harmony import */ var _loadingrequest_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./loadingrequest.js */ "./resources/assets/js/PICObuilder/loadingrequest.js");
 
@@ -13873,44 +13872,17 @@ __webpack_require__.r(__webpack_exports__);
 
 function OnExpandDeCS(ExpandButton) {
   var langs = Object(_commonsdecs_js__WEBPACK_IMPORTED_MODULE_0__["getLanguages"])();
-  var PICOval = '#datainput' + $(ExpandButton).attr('id').substr(-1);
-  var query = $(PICOval).val();
   var PICOnum = $(ExpandButton).attr('id').substr(-1);
-  eventKeywordManager(query, langs, PICOnum);
-}
-function OnExploreDeCS(ExpandButton) {
-  var KeywordList = getKeywordList();
-  var PICOnum = $('#modalkw').find('.keywordform-piconum').first().val();
-  var SavedData = Object(_commonsdecs_js__WEBPACK_IMPORTED_MODULE_0__["getPreviousResults"])(PICOnum);
-  eventDeCS(SavedData, KeywordList, PICOnum);
+  clearDeCSMenu(PICOnum);
+  var PICOval = '#datainput' + PICOnum;
+  var query = $(PICOval).val();
+  var ImprovedSearch = getImproveSearch(PICOnum);
+  console.log('ImprovedSearch: ' + ImprovedSearch);
+  eventdDeCSManager(query, langs, PICOnum, ImprovedSearch);
 } ////PRIVATE FUNCTIONS
 
 function setPreviousResults(results, PICOnum) {
   $('#datainput' + PICOnum).attr('data-previous-decs', results);
-}
-
-function getKeywordList() {
-  var KeywordList = [];
-  $('#modalkw').find('.DescriptorCheckbox').each(function () {
-    if ($(this).prop('checked')) {
-      KeywordList.push($(this).attr('name'));
-    }
-  });
-  console.log('KeywordList...  ' + JSON.stringify(KeywordList));
-  return KeywordList;
-}
-
-function eventDeCS(SavedData, KeywordList, PICOnum) {
-  var url = "PICO/DeCSExplore";
-  var data = {
-    SavedData: SavedData,
-    KeywordList: KeywordList,
-    PICOnum: parseInt(PICOnum)
-  };
-  Object(_loadingrequest_js__WEBPACK_IMPORTED_MODULE_1__["POSTrequest"])(url, data, function (Data) {
-    createDeCSMenu(Data, PICOnum);
-    showDeCSMenu();
-  });
 }
 
 function showDeCSMenu() {
@@ -13922,42 +13894,42 @@ function showDeCSMenu() {
   });
 }
 
-function createDeCSMenu(data, PICOnum) {
+function getImproveSearch(PICOnum) {
+  return $('#datainput' + PICOnum).attr('data-improve');
+}
+
+function clearDeCSMenu(PICOnum) {
+  var NoData = 'No Data';
+  $('#modal3').find('textarea').val(NoData);
+  $('#modal1').find('.modal-body').first().html(NoData);
+  $('#modal2').find('.modal-body').first().html(NoData);
+}
+
+function createDeCSMenu(data, PICOnum, Improved) {
   var SavedData = data.SavedData;
   var DescriptorsHTML = data.DescriptorsHTML;
   var DeCSHTML = data.DeCSHTML;
+  $('#modal3').find('textarea').val(Improved);
   setPreviousResults(SavedData, PICOnum);
   $('#modal1').find('.modal-body').first().html(DescriptorsHTML);
   $('#modal2').find('.modal-body').first().html(DeCSHTML);
 }
 
-function eventKeywordManager(query, langs, PICOnum) {
-  var url = "PICO/KeywordManager";
+function eventdDeCSManager(query, langs, PICOnum, ImprovedSearch) {
+  var url = "PICO/DeCSExplore";
   var SavedData = Object(_commonsdecs_js__WEBPACK_IMPORTED_MODULE_0__["getPreviousResults"])(PICOnum);
   var data = {
     SavedData: SavedData,
     query: query,
+    ImprovedSearch: ImprovedSearch,
     langs: langs,
     PICOnum: parseInt(PICOnum)
   };
-  Object(_loadingrequest_js__WEBPACK_IMPORTED_MODULE_1__["POSTrequest"])(url, data, function (Data, PICOnum) {
-    createKeywordManagerMenu(Data, PICOnum);
-    showKeywordManagerMenu();
+  Object(_loadingrequest_js__WEBPACK_IMPORTED_MODULE_1__["POSTrequest"])(url, data, function (Data) {
+    console.log('Obtained SavedData... ' + JSON.stringify(Data.SavedData));
+    createDeCSMenu(Data, PICOnum, ImprovedSearch);
+    showDeCSMenu();
   });
-}
-
-function showKeywordManagerMenu() {
-  console.log('showing modal keywordmanager');
-  $('#modalkw').modal({
-    show: true,
-    keyboard: false,
-    backdrop: 'static'
-  });
-}
-
-function createKeywordManagerMenu(data, PICOnum) {
-  var HTML = data.HTML;
-  $('#modalkw').find('.modal-body').first().html(HTML);
 }
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! jquery */ "./node_modules/jquery/dist/jquery.js")))
 
@@ -14004,9 +13976,11 @@ function hideBootstrapObj(Obj) {
 __webpack_require__.r(__webpack_exports__);
 /* WEBPACK VAR INJECTION */(function($) {/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "showInfoMessage", function() { return showInfoMessage; });
 /* harmony import */ var _translator_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./translator.js */ "./resources/assets/js/PICObuilder/translator.js");
+/* harmony import */ var _hideshow__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./hideshow */ "./resources/assets/js/PICObuilder/hideshow.js");
+
  ////PUBLIC FUNCTIONS
 
-function showInfoMessage(type, textcontent, asHTML, ActivateClassName, callback, cbparams, preventEscape) {
+function showInfoMessage(type, textcontent, asHTML, ActivateClassName, callback, cbparams, preventEscape, title, secondary) {
   if (ActivateClassName === undefined) {
     ActivateClassName = '';
   }
@@ -14025,7 +13999,7 @@ function showInfoMessage(type, textcontent, asHTML, ActivateClassName, callback,
 
   var MessageTitles = getMessageTitles();
   var icon = modalinfoObj.find('.iconElement').first();
-  var info = modalinfoObj.find('.infoElement').first().find('span').first();
+  var info = modalinfoObj.find('.modal-title').first();
 
   switch (type) {
     case 'Error':
@@ -14099,11 +14073,37 @@ function showInfoMessage(type, textcontent, asHTML, ActivateClassName, callback,
       break;
   }
 
+  var normaltextObj = modalinfoObj.find('.primary-info').first();
+  var titleObj = modalinfoObj.find('.modal-title').first();
+  var secondaryObj = modalinfoObj.find('.secondary-info').first();
+
+  if (secondary) {
+    Object(_hideshow__WEBPACK_IMPORTED_MODULE_1__["showBootstrapObj"])(secondaryObj);
+  } else {
+    Object(_hideshow__WEBPACK_IMPORTED_MODULE_1__["hideBootstrapObj"])(secondaryObj);
+  }
+
   if (asHTML === true) {
     modalinfoObj.find('.btn-primary').first().addClass(ActivateClassName);
-    modalinfoObj.find('.InfoText').first().html(textcontent);
+    normaltextObj.html(textcontent);
+
+    if (title) {
+      titleObj.html(title);
+    }
+
+    if (secondary) {
+      secondaryObj.html(secondary);
+    }
   } else {
-    modalinfoObj.find('.InfoText').first().text(textcontent);
+    normaltextObj.text(textcontent);
+
+    if (title) {
+      titleObj.text(title);
+    }
+
+    if (secondary) {
+      secondaryObj.text(secondary);
+    }
   }
 
   if (isFunction(callback)) {
@@ -14170,32 +14170,6 @@ function initEvents() {
     }
 
     Object(_decsmanager_js__WEBPACK_IMPORTED_MODULE_4__["OnExpandDeCS"])($(this));
-    Object(_initfunctions_js__WEBPACK_IMPORTED_MODULE_0__["UnBlockButton"])($(this));
-  });
-  $('#modalkw').find('.btn-primary').click(function () {
-    Object(_initfunctions_js__WEBPACK_IMPORTED_MODULE_0__["BlockButton"])($(this));
-
-    if (Object(_loadingrequest_js__WEBPACK_IMPORTED_MODULE_6__["IsLoading"])()) {
-      Object(_initfunctions_js__WEBPACK_IMPORTED_MODULE_0__["UnBlockButton"])($(this));
-      return;
-    }
-
-    $('#closemodalkw').click();
-    Object(_decsmanager_js__WEBPACK_IMPORTED_MODULE_4__["OnExploreDeCS"])($(this));
-    Object(_initfunctions_js__WEBPACK_IMPORTED_MODULE_0__["UnBlockButton"])($(this));
-  });
-  $('#modal1').find('.btn-back').click(function () {
-    Object(_initfunctions_js__WEBPACK_IMPORTED_MODULE_0__["BlockButton"])($(this));
-
-    if (Object(_loadingrequest_js__WEBPACK_IMPORTED_MODULE_6__["IsLoading"])()) {
-      Object(_initfunctions_js__WEBPACK_IMPORTED_MODULE_0__["UnBlockButton"])($(this));
-      return;
-    }
-
-    var PICOnum = $('#modalkw').find('.keywordform-piconum').first().val();
-    console.log(PICOnum);
-    $('#closemodal1').click();
-    Object(_decsmanager_js__WEBPACK_IMPORTED_MODULE_4__["OnExpandDeCS"])($('#Exp' + PICOnum));
     Object(_initfunctions_js__WEBPACK_IMPORTED_MODULE_0__["UnBlockButton"])($(this));
   });
   $('#modal2').find('.btn-back').click(function () {
@@ -14389,12 +14363,10 @@ function CheckExistantHREF(Obj) {
 function ShowPICOinfo(PICOnum) {
   var title = Object(_commons_js__WEBPACK_IMPORTED_MODULE_2__["getPICOElements"])()[PICOnum - 1];
   var msg = getPICOinfo()[PICOnum - 1];
-
-  if (PICOnum < 5) {
-    msg = '<h2>' + title + '</h2>' + '</br></br><h3>' + msg + '</h3></br></br>' + '<h4>' + getPICOPlaceHolder(PICOnum) + '</h4>';
-  }
-
-  Object(_infomessage_js__WEBPACK_IMPORTED_MODULE_5__["showInfoMessage"])('Info', msg, true);
+  var example = getPICOPlaceHolder(PICOnum);
+  var placeholder = getPICOHelpInfo(PICOnum);
+  var secondary = '</br></br>' + example + '</br>' + placeholder;
+  Object(_infomessage_js__WEBPACK_IMPORTED_MODULE_5__["showInfoMessage"])('Info', msg, true, null, null, null, false, title, secondary);
 }
 function ReBuildStudyType() {
   var CheckArr = [];
@@ -14464,11 +14436,19 @@ function getPICOinfo() {
   return [Object(_translator_js__WEBPACK_IMPORTED_MODULE_4__["translate"])('pico_info1'), Object(_translator_js__WEBPACK_IMPORTED_MODULE_4__["translate"])('pico_info2'), Object(_translator_js__WEBPACK_IMPORTED_MODULE_4__["translate"])('pico_info3'), Object(_translator_js__WEBPACK_IMPORTED_MODULE_4__["translate"])('pico_info4'), Object(_translator_js__WEBPACK_IMPORTED_MODULE_4__["translate"])('pico_info5')];
 }
 
+function getPICOHelpInfo(PICOnum) {
+  var PHarr = [Object(_translator_js__WEBPACK_IMPORTED_MODULE_4__["translate"])('pico_exinfo1'), Object(_translator_js__WEBPACK_IMPORTED_MODULE_4__["translate"])('pico_exinfo2'), Object(_translator_js__WEBPACK_IMPORTED_MODULE_4__["translate"])('pico_exinfo3'), Object(_translator_js__WEBPACK_IMPORTED_MODULE_4__["translate"])('pico_exinfo4')];
+
+  if (PICOnum < 5) {
+    return Object(_translator_js__WEBPACK_IMPORTED_MODULE_4__["translate"])('keyas') + ': ' + PHarr[PICOnum - 1];
+  }
+}
+
 function getPICOPlaceHolder(PICOnum) {
   var PHarr = [Object(_translator_js__WEBPACK_IMPORTED_MODULE_4__["translate"])('pico_ex1'), Object(_translator_js__WEBPACK_IMPORTED_MODULE_4__["translate"])('pico_ex2'), Object(_translator_js__WEBPACK_IMPORTED_MODULE_4__["translate"])('pico_ex3'), Object(_translator_js__WEBPACK_IMPORTED_MODULE_4__["translate"])('pico_ex4')];
 
   if (PICOnum < 5) {
-    return Object(_translator_js__WEBPACK_IMPORTED_MODULE_4__["translate"])('keyas') + PHarr[PICOnum - 1];
+    return 'Ex: ' + PHarr[PICOnum - 1];
   }
 }
 
@@ -14835,13 +14815,19 @@ __webpack_require__.r(__webpack_exports__);
 
 function ProcessResults() {
   var ImproveSearchQuery = $('#modal3').find('textarea').val();
-  var PICOnum = $('#modalkw').find('.keywordform-piconum').first().val();
+  var PICOnum = $('#modal1').find('.descriptorsform-piconum').first().val();
+  setImproveSearch(ImproveSearchQuery, PICOnum);
   eventQueryBuild(ImproveSearchQuery, PICOnum);
+}
+
+function setImproveSearch(improve, PICOnum) {
+  $('#datainput' + PICOnum).attr('data-improve', improve);
 } ////PRIVATE FUNCTIONS
+
 
 function BuildImprovedQuery(data) {
   var newQuery = data.newQuery;
-  var PICOnum = $('#modalkw').find('.keywordform-piconum').first().val();
+  var PICOnum = $('#modal1').find('.descriptorsform-piconum').first().val();
   setOldSelectedDescriptors(data.OldSelectedDescriptors, PICOnum);
   $('#datainput' + PICOnum).val(newQuery);
 }
@@ -14880,7 +14866,8 @@ function eventQueryBuild(ImproveSearchQuery, PICOnum) {
   var data = {
     SelectedDescriptors: getSelectedDescriptors(),
     ImproveSearchQuery: ImproveSearchQuery,
-    OldSelectedDescriptors: getOldSelectedDescriptors(PICOnum)
+    OldSelectedDescriptors: getOldSelectedDescriptors(PICOnum),
+    QuerySplit: getQuerySplit()
   };
   Object(_loadingrequest_js__WEBPACK_IMPORTED_MODULE_0__["POSTrequest"])(url, data, function (Data) {
     BuildImprovedQuery(Data);
@@ -14888,7 +14875,7 @@ function eventQueryBuild(ImproveSearchQuery, PICOnum) {
 }
 
 function getQuerySplit() {
-  return $('#modalkw').find('.keywordform-querysplit').first().val();
+  return $('#modal1').find('.descriptorsform-querysplit').first().val();
 }
 
 function setOldSelectedDescriptors(OldSelectedDescriptors, PICOnum) {
@@ -15052,7 +15039,6 @@ function eventResultsNumber(PICOnum, queryobject) {
   };
   Object(_loadingrequest_js__WEBPACK_IMPORTED_MODULE_4__["POSTrequest"])(url, data, function (Data) {
     setResultsNumber(Data, PICOnum);
-    Object(_infomessage_js__WEBPACK_IMPORTED_MODULE_5__["showInfoMessage"])('Success', Object(_translator_js__WEBPACK_IMPORTED_MODULE_3__["translate"])('numresupd') + Object(_commons_js__WEBPACK_IMPORTED_MODULE_2__["getPICOElements"])()[PICOnum - 1], false);
   });
 }
 

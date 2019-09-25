@@ -1,10 +1,14 @@
 <?php
 return [
     'update_results' => 'Por favor atualize os resultados...',
-    'pico_ex1' => 'Dengue, Paraguay, Obese, Adults, Children, Neoplasm',
-    'pico_ex2' => 'Igg, lumbal puncture, nerve graft, aspirine, X-ray',
-    'pico_ex3' => 'Igm, blood test, nerve tranfer, codeine, TAC',
-    'pico_ex4' => 'Sensitivity, Mortality, Recovery, Functional, Time, Movility',
+    'pico_ex1' => '(Dengue OR "Yellow Fever") AND Nicaragua',
+    'pico_ex2' => 'Igg OR Igm',
+    'pico_ex3' => '"Blood Test"',
+    'pico_ex4' => 'Sensitivity AND Specificity AND Mortality AND Recovery',
+    'pico_exinfo1' => 'Dengue, Paraguay, Obese, Adults, Children, Neoplasm',
+    'pico_exinfo2' => 'Igg, lumbal puncture, nerve graft, aspirine, X-ray',
+    'pico_exinfo3' => 'Igm, blood test, nerve tranfer, codeine, TAC',
+    'pico_exinfo4' => 'Sensitivity, Mortality, Recovery, Functional, Time, Movility',
     'pico1' => 'POPULAÇÃO',
     'pico2' => 'INTERVENÇÃO',
     'pico3' => 'COMPARAÇÃO',
@@ -49,9 +53,9 @@ return [
     'seldecs' => 'Selecione o descritor DeCS/MeSH',
     'cont' => 'Continuar',
     'selsyn' => 'Selecione DeCS / MeSH Sinônimo',
-    'free' => 'Palavras-chave livres',
-    'improve' => 'Melhore a pesquisa',
-    'impex' => "Ex: tw:(chicungunya) AND (instance:'regional')",
+    'free' => 'Termos livres (Não controlados)',
+    'improve' => 'Modifique sua pesquisa. A equação a seguir será adicionada no final da equação original',
+    'impex' => "Ex: tw:(chicungunya) AND (instance:'regional')".PHP_EOL."Vai resultar em: (Equação criada) OR ('tw:(chicungunya) AND (instance:'regional'))",
     'unknownerr' => 'Erro desconhecido',
     'langerr' => 'Erro ao mudar o idioma',
     'autor' => 'BIREME - Consultor Daniel Nieto https://github.com/nietodaniel',
@@ -59,12 +63,4 @@ return [
     'title' => 'Pesquisador PICO - BIREME',
     'back' => 'Atrás',
     'description' => 'Pesquisador PICO. Inclui População, Intervenção, Comparação, Tipo de estudo. Importa os descritores DeCS, MeSH / thesauri em inglês, português e espanhol para expandir suas palavras-chave e melhorar sua pesquisa. Facilita a equação e a construção de consultas. A ferramenta gratuita ideal para a sua pesquisa de Revisão Sistemática, Meta-análise ou Guia de Prática Clínica trazida pela BIREME - Biblioteca Virtual em Saúde (BVS)',
-
-
-
-
-
-
-
-
 ];

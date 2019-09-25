@@ -50,10 +50,10 @@ export function CheckExistantHREF(Obj) {
 export function ShowPICOinfo(PICOnum) {
     let title = getPICOElements()[PICOnum - 1];
     let msg = getPICOinfo()[PICOnum - 1];
-    if (PICOnum < 5) {
-        msg = '<h2>' + title + '</h2>' + '</br></br><h3>' + msg + '</h3></br></br>' + '<h4>' + getPICOPlaceHolder(PICOnum) + '</h4>';
-    }
-    showInfoMessage('Info', msg, true);
+    let example = getPICOPlaceHolder(PICOnum);
+    let placeholder = getPICOHelpInfo(PICOnum);
+    let secondary='</br></br>'+example+'</br>'+placeholder;
+    showInfoMessage('Info', msg, true,null,null,null,false,title,secondary);
 }
 
 export function ReBuildStudyType() {
@@ -124,6 +124,18 @@ function getPICOinfo() {
     return [translate('pico_info1'), translate('pico_info2'), translate('pico_info3'), translate('pico_info4'), translate('pico_info5')];
 }
 
+
+function getPICOHelpInfo(PICOnum) {
+    let PHarr = [translate('pico_exinfo1'),
+        translate('pico_exinfo2'),
+        translate('pico_exinfo3'),
+        translate('pico_exinfo4')
+    ];
+    if (PICOnum < 5) {
+        return translate('keyas') + ': '+PHarr[PICOnum - 1];
+    }
+}
+
 function getPICOPlaceHolder(PICOnum) {
     let PHarr = [translate('pico_ex1'),
         translate('pico_ex2'),
@@ -131,7 +143,7 @@ function getPICOPlaceHolder(PICOnum) {
         translate('pico_ex4')
     ];
     if (PICOnum < 5) {
-        return translate('keyas') + PHarr[PICOnum - 1];
+        return 'Ex: ' + PHarr[PICOnum - 1];
     }
 }
 

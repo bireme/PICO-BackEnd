@@ -1,10 +1,14 @@
 <?php
 return [
     'update_results' => 'Veuillez mettre à jour les résultats...',
-    'pico_ex1' => 'Dengue, Paraguay, Obese, Adults, Children, Neoplasm',
-    'pico_ex2' => 'Igg, lumbal puncture, nerve graft, aspirine, X-ray',
-    'pico_ex3' => 'Igm, blood test, nerve tranfer, codeine, TAC',
-    'pico_ex4' => 'Sensitivity, Mortality, Recovery, Functional, Time, Movility',
+    'pico_ex1' => '(Dengue OR "Yellow Fever") AND Nicaragua',
+    'pico_ex2' => 'Igg OR Igm',
+    'pico_ex3' => '"Blood Test"',
+    'pico_ex4' => 'Sensitivity AND Specificity AND Mortality AND Recovery',
+    'pico_exinfo1' => 'Dengue, Paraguay, Obese, Adults, Children, Neoplasm',
+    'pico_exinfo2' => 'Igg, lumbal puncture, nerve graft, aspirine, X-ray',
+    'pico_exinfo3' => 'Igm, blood test, nerve tranfer, codeine, TAC',
+    'pico_exinfo4' => 'Sensitivity, Mortality, Recovery, Functional, Time, Movility',
     'pico1' => 'POPULATION',
     'pico2' => 'INTERVENTION',
     'pico3' => 'COMPARAISON',
@@ -49,9 +53,9 @@ return [
     'seldecs' => 'Sélectionner le descripteur DeCS/MeSH',
     'cont' => 'Continuer',
     'selsyn' => 'Sélectionnez le synonyme DeCS / MeSH',
-    'free' => 'Mots-clés libres',
-    'improve' => 'Améliorer la recherche',
-    'impex' => "Ex: tw:(chicungunya) AND (instance:'regional')",
+    'free' => 'Termes libres (Non contrôlés)',
+    'improve' => "Modifiez votre recherche. L'équation suivante sera ajoutée à la fin de l'équation d'origine",
+    'impex' => " Ex: tw:(chicungunya) AND (instance:'regional')".PHP_EOL."Aura pour résultat: (Équation créée) OR ('tw:(chicungunya) AND (instance:'regional'))",
     'unknownerr' => 'Erreur inconnue ',
     'langerr' => 'Erreur lors du changement de langue',
     'autor' => 'BIREME - Consultant Daniel Nieto https://github.com/nietodaniel',
@@ -59,10 +63,4 @@ return [
     'title' => 'PICO Searcher - BIREME',
     'back' => 'Retour',
     'description' => 'PICO Searcher. Comprend Population, Intervention, Comparaison, Type d\'étude. Importe les descripteurs / thésaurus DeCS, MeSH en anglais, portugais et espagnol pour élargir vos mots-clés et améliorer votre recherche. Facilite la construction d\'équations et de requêtes. L\'outil gratuit et idéal pour votre recherche par Revue systématique, Méta-analyse ou Guide de pratique clinique, présenté par BIREME - Virtual Health Library (VHL)',
-
-
-
-
-
-
 ];

@@ -44,8 +44,6 @@ class DataTransferObject
                 return new IntegrationResultsNumberModel();
             case 'QueryBuild':
                 return new QueryBuildModel();
-            case 'KeywordManager':
-                return new KeywordManagerModel();
             default:
                 throw new ModelNameDoesNotExistInDTOBinds(['modelName' => $modelName]);
                 break;

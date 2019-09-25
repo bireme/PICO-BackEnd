@@ -57,7 +57,6 @@
     53 => 'PICOExplorer\\Providers\\AdvancedServiceProviders\\DeCSServiceProvider',
     54 => 'PICOExplorer\\Providers\\AdvancedServiceProviders\\DeCSIntegrationServiceProvider',
     55 => 'PICOExplorer\\Providers\\AdvancedServiceProviders\\QueryBuildServiceProvider',
-    56 => 'PICOExplorer\\Providers\\AdvancedServiceProviders\\KeywordManagerServiceProvider',
   ),
   'eager' => 
   array (
@@ -101,7 +100,6 @@
     37 => 'PICOExplorer\\Providers\\AdvancedServiceProviders\\DeCSServiceProvider',
     38 => 'PICOExplorer\\Providers\\AdvancedServiceProviders\\DeCSIntegrationServiceProvider',
     39 => 'PICOExplorer\\Providers\\AdvancedServiceProviders\\QueryBuildServiceProvider',
-    40 => 'PICOExplorer\\Providers\\AdvancedServiceProviders\\KeywordManagerServiceProvider',
   ),
   'deferred' => 
   array (

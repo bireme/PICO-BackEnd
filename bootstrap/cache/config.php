@@ -69,7 +69,6 @@
       37 => 'PICOExplorer\\Providers\\AdvancedServiceProviders\\DeCSServiceProvider',
       38 => 'PICOExplorer\\Providers\\AdvancedServiceProviders\\DeCSIntegrationServiceProvider',
       39 => 'PICOExplorer\\Providers\\AdvancedServiceProviders\\QueryBuildServiceProvider',
-      40 => 'PICOExplorer\\Providers\\AdvancedServiceProviders\\KeywordManagerServiceProvider',
     ),
     'aliases' => 
     array (

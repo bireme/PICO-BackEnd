@@ -21,7 +21,7 @@ class KeywordManagerModel extends MainModelsModel
     {
         return [
             'results' => 'required|array|min:1',
-            'results.HTML' => 'string|min:1',
+            'results.KeywordList' => 'array|min:0',
         ];
     }
 
@@ -42,11 +42,10 @@ class KeywordManagerModel extends MainModelsModel
     {
         return [
             'ExploreData' => ['array|min:0'],
-            'FormData' => ['array|min:0'],
+            //'FormData' => ['array|min:0'],
             'PreviousData' => ['required|array|min:0'],
-            'QuerySplit' => ['required|array'],
-            'KeywordList' => ['array|min:0'],
-            'HTML' => ['string|min:1'],
+
+            //'HTML' => ['string|min:1'],
         ];
     }
 

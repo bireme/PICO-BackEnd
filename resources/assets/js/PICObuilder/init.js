@@ -27,28 +27,6 @@ export function initEvents() {
         OnExpandDeCS($(this));
         UnBlockButton($(this));
     });
-    $('#modalkw').find('.btn-primary').click(function () {
-        BlockButton($(this));
-        if (IsLoading()) {
-            UnBlockButton($(this));
-            return;
-        }
-        $('#closemodalkw').click();
-        OnExploreDeCS($(this));
-        UnBlockButton($(this));
-    });
-    $('#modal1').find('.btn-back').click(function () {
-        BlockButton($(this));
-        if (IsLoading()) {
-            UnBlockButton($(this));
-            return;
-        }
-        let PICOnum = $('#modalkw').find('.keywordform-piconum').first().val();
-        console.log(PICOnum);
-        $('#closemodal1').click();
-        OnExpandDeCS($('#Exp'+PICOnum));
-        UnBlockButton($(this));
-    });
     $('#modal2').find('.btn-back').click(function () {
         BlockButton($(this));
         $('#closemodal2').click();

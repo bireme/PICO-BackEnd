@@ -1,8 +1,9 @@
 import {translate} from "./translator.js";
+import {hideBootstrapObj, showBootstrapObj} from "./hideshow";
 
 ////PUBLIC FUNCTIONS
 
-export function showInfoMessage(type, textcontent, asHTML, ActivateClassName, callback, cbparams,preventEscape) {
+export function showInfoMessage(type, textcontent, asHTML, ActivateClassName, callback, cbparams,preventEscape,title,secondary) {
     if (ActivateClassName === undefined) {
         ActivateClassName = '';
     }
@@ -18,7 +19,7 @@ export function showInfoMessage(type, textcontent, asHTML, ActivateClassName, ca
     }
     let MessageTitles = getMessageTitles();
     let icon = modalinfoObj.find('.iconElement').first();
-    let info = modalinfoObj.find('.infoElement').first().find('span').first();
+    let info = modalinfoObj.find('.modal-title').first();
     switch (type) {
         case 'Error':
             $(icon).removeClass('info-success');
@@ -76,11 +77,31 @@ export function showInfoMessage(type, textcontent, asHTML, ActivateClassName, ca
             $(info).text(MessageTitles[3]);
             break;
     }
+    let normaltextObj =  modalinfoObj.find('.primary-info').first();
+    let titleObj =  modalinfoObj.find('.modal-title').first();
+    let secondaryObj = modalinfoObj.find('.secondary-info').first();
+    if(secondary){
+        showBootstrapObj(secondaryObj);
+    }else{
+        hideBootstrapObj(secondaryObj);
+    }
     if (asHTML === true) {
         modalinfoObj.find('.btn-primary').first().addClass(ActivateClassName);
-        modalinfoObj.find('.InfoText').first().html(textcontent);
+        normaltextObj.html(textcontent);
+        if(title){
+            titleObj.html(title);
+        }
+        if(secondary){
+            secondaryObj.html(secondary);
+        }
     } else {
-        modalinfoObj.find('.InfoText').first().text(textcontent);
+        normaltextObj.text(textcontent);
+        if(title){
+            titleObj.text(title);
+        }
+        if(secondary){
+            secondaryObj.text(secondary);
+        }
     }
     if (isFunction(callback)) {
         callback(cbparams);
