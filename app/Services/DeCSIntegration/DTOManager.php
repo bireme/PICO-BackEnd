@@ -16,7 +16,7 @@ abstract class DTOManager extends ServiceEntryPoint
         'MaxExploringLoops' => 5,
         'MaxTreesPerKeyword' => 10,
         'MaxDescendantsPerTree' => 10,
-        'MaxDescendantsDepth' => 3,
+        'MaxDescendantsDepth' => 5,
         'AddDescendantsToMainTrees' => true,
         'AddRelatedTreesToMainTrees' => true,
         'AllValidLanguages'=>[

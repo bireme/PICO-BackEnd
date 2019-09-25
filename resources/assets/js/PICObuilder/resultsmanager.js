@@ -123,7 +123,6 @@ function eventResultsNumber(PICOnum, queryobject) {
     };
     POSTrequest(url, data, function (Data) {
         setResultsNumber(Data, PICOnum);
-        showInfoMessage('Success', translate('numresupd') + getPICOElements()[PICOnum - 1], false);
     });
 }
 

@@ -1,4 +1,4 @@
-@extends('layout.secondarymodaislayout',['modalId' => 'modal4'])
+@extends('layout.terciarymodaislayout',['modalId' => 'modal4'])
 
 @section('modal-header')
 @overwrite

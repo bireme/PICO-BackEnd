@@ -11,7 +11,7 @@ class QueryBuildModel extends MainModelsModel
     {
         return [
             'InitialData' => 'required|array|min:1',
-            'InitialData.QuerySplit' => 'required|array',
+            'InitialData.QuerySplit' => 'required|string',
             'InitialData.OldSelectedDescriptors' => 'required|string|min:0',
             'InitialData.SelectedDescriptors' => 'required|array|min:1',
             'InitialData.ImproveSearchQuery' => 'required|array|min:1',
@@ -167,8 +167,9 @@ class QueryBuildModel extends MainModelsModel
                     ]
                 ],
             ],
+            "ImproveSearchQuery" => "localhost",
+            "QuerySplit" => '[{"type":"keyexplored","value":"dengue"},{"type":"op","value":" "},{"type":"sep","value":"and"},{"type":"op","value":" "},{"type":"keyexplored","value":"zika"}]',
             "OldSelectedDescriptors" => "",
-            'ImproveSearchQuery' => '',
             'mainLanguage' => 'en',
         ]);
     }
@@ -177,6 +178,7 @@ class QueryBuildModel extends MainModelsModel
     {
         return [
             'newQuery' => ['required|string|min:0'],
+            'QuerySplit' => ['required|array|min:0'],
             'decodedOldDescriptors' => ['required|array|min:1'],
             'OldSelectedDescriptors' => ['required|array|min:1'],
         ];

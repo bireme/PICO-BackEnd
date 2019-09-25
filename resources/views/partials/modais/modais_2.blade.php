@@ -1,7 +1,7 @@
 @extends('layout.modaislayout',['modalId' => 'modal2', 'title' => __('lang.selsyn') ])
 
 @section('modal-body')
-    <div class="modal-body" style="overflow-y: auto!important; max-height: 100%!important;">
+    <div class="modal-body" style="height: 400px;overflow-y: auto;">
     </div>
 @overwrite
 

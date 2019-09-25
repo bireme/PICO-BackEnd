@@ -5,17 +5,13 @@ import {POSTrequest} from "./loadingrequest.js";
 
 export function OnExpandDeCS(ExpandButton) {
     let langs = getLanguages();
-    let PICOval = '#datainput' + ($(ExpandButton).attr('id')).substr(-1);
-    let query = $(PICOval).val();
     let PICOnum = ($(ExpandButton).attr('id')).substr(-1);
-    eventKeywordManager(query, langs, PICOnum);
-}
-
-export function OnExploreDeCS(ExpandButton) {
-    let KeywordList = getKeywordList();
-    let PICOnum = $('#modalkw').find('.keywordform-piconum').first().val();
-    let SavedData = getPreviousResults(PICOnum);
-    eventDeCS(SavedData, KeywordList, PICOnum);
+    clearDeCSMenu(PICOnum);
+    let PICOval = '#datainput' + PICOnum;
+    let query = $(PICOval).val();
+    let ImprovedSearch = getImproveSearch(PICOnum);
+    console.log('ImprovedSearch: '+ImprovedSearch)
+    eventdDeCSManager(query, langs, PICOnum,ImprovedSearch);
 }
 
 ////PRIVATE FUNCTIONS
@@ -23,32 +19,6 @@ export function OnExploreDeCS(ExpandButton) {
 function setPreviousResults(results, PICOnum) {
     $('#datainput' + PICOnum).attr('data-previous-decs', results);
 }
-
-function getKeywordList() {
-    let KeywordList = [];
-    $('#modalkw').find('.DescriptorCheckbox').each(function () {
-        if($(this).prop('checked')){
-            KeywordList.push($(this).attr('name'));
-        }
-
-    });
-    console.log('KeywordList...  '+JSON.stringify(KeywordList));
-    return KeywordList;
-}
-
-function eventDeCS(SavedData, KeywordList, PICOnum) {
-    let url = "PICO/DeCSExplore";
-    let data = {
-        SavedData: SavedData,
-        KeywordList: KeywordList,
-        PICOnum: parseInt(PICOnum),
-    };
-    POSTrequest(url, data, function (Data) {
-        createDeCSMenu(Data, PICOnum);
-        showDeCSMenu();
-    });
-}
-
 
 function showDeCSMenu() {
     console.log('showing modal decs');
@@ -59,41 +29,41 @@ function showDeCSMenu() {
     });
 }
 
-function createDeCSMenu(data, PICOnum) {
+function getImproveSearch(PICOnum) {
+    return $('#datainput' + PICOnum).attr('data-improve');
+}
+
+
+function clearDeCSMenu(PICOnum) {
+    let NoData = 'No Data';
+    $('#modal3').find('textarea').val(NoData);
+    $('#modal1').find('.modal-body').first().html(NoData);
+    $('#modal2').find('.modal-body').first().html(NoData);
+}
+
+function createDeCSMenu(data, PICOnum,Improved) {
     let SavedData = data.SavedData;
     let DescriptorsHTML = data.DescriptorsHTML;
     let DeCSHTML = data.DeCSHTML;
+    $('#modal3').find('textarea').val(Improved);
     setPreviousResults(SavedData, PICOnum);
     $('#modal1').find('.modal-body').first().html(DescriptorsHTML);
     $('#modal2').find('.modal-body').first().html(DeCSHTML);
 }
 
-function eventKeywordManager(query, langs, PICOnum) {
-    let url = "PICO/KeywordManager";
+function eventdDeCSManager(query, langs, PICOnum,ImprovedSearch) {
+    let url = "PICO/DeCSExplore";
     let SavedData = getPreviousResults(PICOnum);
     let data = {
         SavedData: SavedData,
         query: query,
+        ImprovedSearch: ImprovedSearch,
         langs: langs,
         PICOnum: parseInt(PICOnum),
     };
-    POSTrequest(url, data, function (Data, PICOnum) {
-        createKeywordManagerMenu(Data, PICOnum);
-        showKeywordManagerMenu();
+    POSTrequest(url, data, function (Data) {
+        console.log('Obtained SavedData... '+JSON.stringify(Data.SavedData));
+        createDeCSMenu(Data, PICOnum,ImprovedSearch);
+        showDeCSMenu();
     });
 }
-
-function showKeywordManagerMenu() {
-    console.log('showing modal keywordmanager');
-    $('#modalkw').modal({
-        show: true,
-        keyboard: false,
-        backdrop: 'static'
-    });
-}
-
-function createKeywordManagerMenu(data, PICOnum) {
-    let HTML = data.HTML;
-    $('#modalkw').find('.modal-body').first().html(HTML);
-}
-
