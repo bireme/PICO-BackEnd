@@ -53,7 +53,6 @@ function setResultsNumber(data, PICOnum) {
     console.log(data);
 
     let spanObj;
-    hideBootstrapObj($('#CalcRes' + PICOnum));
     setCalcResAsSyncAlt(PICOnum);
     let ResNumLocalObj = $('#ResNumLocal' + PICOnum);
     let ResNumGlobalObj = $('#ResNumGlobal' + PICOnum);

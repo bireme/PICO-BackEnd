@@ -13569,10 +13569,10 @@ function ChangeToMustUpdate(PICOnum, LocalObj, LocalSpan, LocalField, ThishasReD
 
     if (loop_i === 6) {
       if (!Object(_hideshow_js__WEBPACK_IMPORTED_MODULE_3__["isHiddenBootstrapObj"])(GlobalSpan)) {
-        Object(_hideshow_js__WEBPACK_IMPORTED_MODULE_3__["showBootstrapObj"])($('#CalcRes' + loop_i));
+        setCalcResAsResult(loop_i);
       }
     } else {
-      Object(_hideshow_js__WEBPACK_IMPORTED_MODULE_3__["showBootstrapObj"])($('#CalcRes' + loop_i));
+      setCalcResAsResult(loop_i);
     }
   }
 
@@ -13600,11 +13600,11 @@ function ReturnToOldState(PICOnum, LocalObj, LocalSpan, LocalField, ThishasReDo)
 
     if (objdata) {
       if (objdata.length > 0) {
-        Object(_hideshow_js__WEBPACK_IMPORTED_MODULE_3__["hideBootstrapObj"])($('#CalcRes' + loop_i));
+        setCalcResAsSyncAlt(loop_i);
       }
     } else {
       if (loop_i === 6) {
-        Object(_hideshow_js__WEBPACK_IMPORTED_MODULE_3__["hideBootstrapObj"])($('#CalcRes' + loop_i));
+        setCalcResAsSyncAlt(loop_i);
       }
     }
 
@@ -14962,7 +14962,6 @@ function setResultsNumber(data, PICOnum) {
   console.log('initialdata in resultsnumber');
   console.log(data);
   var spanObj;
-  Object(_hideshow_js__WEBPACK_IMPORTED_MODULE_6__["hideBootstrapObj"])($('#CalcRes' + PICOnum));
   Object(_changeseeker_js__WEBPACK_IMPORTED_MODULE_0__["setCalcResAsSyncAlt"])(PICOnum);
   var ResNumLocalObj = $('#ResNumLocal' + PICOnum);
   var ResNumGlobalObj = $('#ResNumGlobal' + PICOnum);

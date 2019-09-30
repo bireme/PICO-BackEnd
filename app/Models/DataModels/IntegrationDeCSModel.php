@@ -39,13 +39,9 @@ class IntegrationDeCSModel extends MainModelsModel
         return [
             'keyword' => ['string|min:1'],
             'langs' => ['array|min:1'],
-            'log' => ['string|min:0'],
-            'logcount' => ['array|min:0'],
-            'PendingMainTrees'=>['array|min:0'],
-            'PendingDescendants'=>['array|min:0'],
             'MainTreeList'=>['array|min:0'],
-            'ExploredTrees'=>['array|min:0'],
-            'TmpResults'=>['array|min:0'],
+            'WishList'=>['array|min:0'],
+            'ResultsByTreeId'=>['array|min:0'],
         ];
     }
 

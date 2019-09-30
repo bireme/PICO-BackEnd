@@ -13,6 +13,7 @@ class DeCSLooperBridge extends ParallelServiceEntryPoint implements ParallelServ
 
     use ToControllerIntegrationTrait;
 
+
     protected final function Process(ServicePerformanceSV $ServicePerformance, $InitialData = null)
     {
         $IntegrationResults = $this->Connect($ServicePerformance, $InitialData);
@@ -26,7 +27,8 @@ class DeCSLooperBridge extends ParallelServiceEntryPoint implements ParallelServ
     private final function Connect(ServicePerformanceSV $ServicePerformance, $data)
     {
         $IntegrationController = new IntegrationDeCSController();
-        return $this->ToControllerIntegration($ServicePerformance, $IntegrationController, $data);
+        $results = $this->ToControllerIntegration($ServicePerformance, $IntegrationController, $data);
+        return $results;
     }
 
 }

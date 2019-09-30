@@ -5,37 +5,36 @@ namespace PICOExplorer\Services\AdvancedLogger\Services;
 use Illuminate\Validation\ValidationException;
 use Illuminate\Support\Facades\Validator;
 use PICOExplorer\Services\AdvancedLogger\Exceptions\SpecialValidationException;
-use PICOExplorer\Services\AdvancedLogger\Exceptions\SpecialValidationInternalException;
+use PICOExplorer\Services\AdvancedLogger\Exceptions\ErrorInSpecialValidationService;
 use Throwable;
 use Exception;
 
 class SpecialValidator
 {
 
-    public function SpecialValidate(array $data, array $ruleCasts, string $ThrowerInfo = null,string $ModelName=null)
+    public function SpecialValidate(array $data, array $ruleCasts, string $ThrowerInfo = null, string $ModelName = null)
     {
-        $errorInfo=['data'=>$data,'ruleCasts'=>$ruleCasts];
-        if ($ThrowerInfo) {
-            $errorInfo['ThrowerInfo'] = $ThrowerInfo;
-        }
-        if($ModelName){
-            $errorInfo['ModelName'] = $ModelName;
-        }
+        $errorInfo=null;
         try {
+            $errorInfo = ['data' => $data, 'ruleCasts' => $ruleCasts];
+            if ($ThrowerInfo) {
+                $errorInfo['ThrowerInfo'] = $ThrowerInfo;
+            }
+            if ($ModelName) {
+                $errorInfo['ModelName'] = $ModelName;
+            }
             $rules = $this->GenericValidator($ruleCasts);
-        }catch(Throwable $ex){
-            throw new SpecialValidationInternalException(['errors'=>$errorInfo], $ex);
+            $errorInfo = array_replace($errorInfo, $rules);
+        } catch (Throwable $ex) {
+            throw new ErrorInSpecialValidationService(['errors' => $errorInfo], $ex);
         }
-        $errorInfo=array_replace($errorInfo,$rules);
         try {
             Validator::validate($data, $rules['rules'], $rules['messages'], $rules['names'] ?? []);
         } catch (ValidationException $ex) {
             $errorInfo['errors'] = $ex->errors();
             throw new SpecialValidationException($errorInfo, $ex);
-        }catch(Exception $ex){
-            throw new SpecialValidationInternalException(['errors'=>$errorInfo], $ex);
-        }catch(Throwable $ex){
-            throw new SpecialValidationInternalException(['errors'=>$errorInfo], $ex);
+        } catch (Throwable $ex) {
+            throw new ErrorInSpecialValidationService(['Error'=>$ex->getMessage(),'errors' => $errorInfo], $ex);
         }
     }
 

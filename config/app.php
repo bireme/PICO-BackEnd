@@ -254,6 +254,8 @@ return [
         'ExceptionLoggerFacade' => PICOExplorer\Facades\ExceptionLoggerFacade::class,
         'SpecialValidatorFacade' => PICOExplorer\Facades\SpecialValidatorFacade::class,
         'AuthHandlerFacade' => PICOExplorer\Facades\AuthHandlerFacade::class,
+        'UltraLoggerFacade' => PICOExplorer\Facades\UltraLoggerFacade::class,
+
 
         //Binds with multiple instances --> No Facade
         'ServicePerformanceSV' => PICOExplorer\Services\AdvancedLogger\Services\ServicePerformance::class,

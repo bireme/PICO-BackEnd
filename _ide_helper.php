@@ -3,7 +3,7 @@
 
 /**
  * A helper file for Laravel 5, to provide autocomplete information to your IDE
- * Generated for Laravel 5.8.34 on 2019-09-23 19:00:16.
+ * Generated for Laravel 5.8.34 on 2019-09-30 09:22:35.
  *
  * This file should not be included in your code, only analyzed by your IDE!
  *
@@ -14698,6 +14698,39 @@ namespace PICOExplorer\Facades {
          *
          * @static 
          */ 
+        public static function DeCSLogger($title, $info, $data = null, $level = 'info')
+        {
+                        /** @var \PICOExplorer\Services\AdvancedLogger\AdvancedLogger $instance */
+                        return $instance->DeCSLogger($title, $info, $data, $level);
+        }
+        
+        /**
+         * 
+         *
+         * @static 
+         */ 
+        public static function DeCSIntegrationLogger($title, $info, $data = null, $level = 'info')
+        {
+                        /** @var \PICOExplorer\Services\AdvancedLogger\AdvancedLogger $instance */
+                        return $instance->DeCSIntegrationLogger($title, $info, $data, $level);
+        }
+        
+        /**
+         * 
+         *
+         * @static 
+         */ 
+        public static function DeCSComponentError($class, $params)
+        {
+                        /** @var \PICOExplorer\Services\AdvancedLogger\AdvancedLogger $instance */
+                        return $instance->DeCSComponentError($class, $params);
+        }
+        
+        /**
+         * 
+         *
+         * @static 
+         */ 
         public static function ExternalConnectionInfo($wasSuccess, $url, $attempts, $time, $settings, $log)
         {
                         /** @var \PICOExplorer\Services\AdvancedLogger\AdvancedLogger $instance */
@@ -14833,6 +14866,42 @@ namespace PICOExplorer\Facades {
          *
          * @static 
          */ 
+        public static function DeCSLogger($title, $info, $data = null, $level = 'info')
+        {
+            //Method inherited from \PICOExplorer\Services\AdvancedLogger\AdvancedLogger            
+                        /** @var \PICOExplorer\Services\AdvancedLogger\Exceptions\Handlers\WarningsHandler $instance */
+                        return $instance->DeCSLogger($title, $info, $data, $level);
+        }
+        
+        /**
+         * 
+         *
+         * @static 
+         */ 
+        public static function DeCSIntegrationLogger($title, $info, $data = null, $level = 'info')
+        {
+            //Method inherited from \PICOExplorer\Services\AdvancedLogger\AdvancedLogger            
+                        /** @var \PICOExplorer\Services\AdvancedLogger\Exceptions\Handlers\WarningsHandler $instance */
+                        return $instance->DeCSIntegrationLogger($title, $info, $data, $level);
+        }
+        
+        /**
+         * 
+         *
+         * @static 
+         */ 
+        public static function DeCSComponentError($class, $params)
+        {
+            //Method inherited from \PICOExplorer\Services\AdvancedLogger\AdvancedLogger            
+                        /** @var \PICOExplorer\Services\AdvancedLogger\Exceptions\Handlers\WarningsHandler $instance */
+                        return $instance->DeCSComponentError($class, $params);
+        }
+        
+        /**
+         * 
+         *
+         * @static 
+         */ 
         public static function ExternalConnectionInfo($wasSuccess, $url, $attempts, $time, $settings, $log)
         {
             //Method inherited from \PICOExplorer\Services\AdvancedLogger\AdvancedLogger            
@@ -14931,6 +15000,42 @@ namespace PICOExplorer\Facades {
             //Method inherited from \PICOExplorer\Services\AdvancedLogger\AdvancedLogger            
                         /** @var \PICOExplorer\Services\AdvancedLogger\Services\ExceptionLogger $instance */
                         return $instance->LogConnectionInfo();
+        }
+        
+        /**
+         * 
+         *
+         * @static 
+         */ 
+        public static function DeCSLogger($title, $info, $data = null, $level = 'info')
+        {
+            //Method inherited from \PICOExplorer\Services\AdvancedLogger\AdvancedLogger            
+                        /** @var \PICOExplorer\Services\AdvancedLogger\Services\ExceptionLogger $instance */
+                        return $instance->DeCSLogger($title, $info, $data, $level);
+        }
+        
+        /**
+         * 
+         *
+         * @static 
+         */ 
+        public static function DeCSIntegrationLogger($title, $info, $data = null, $level = 'info')
+        {
+            //Method inherited from \PICOExplorer\Services\AdvancedLogger\AdvancedLogger            
+                        /** @var \PICOExplorer\Services\AdvancedLogger\Services\ExceptionLogger $instance */
+                        return $instance->DeCSIntegrationLogger($title, $info, $data, $level);
+        }
+        
+        /**
+         * 
+         *
+         * @static 
+         */ 
+        public static function DeCSComponentError($class, $params)
+        {
+            //Method inherited from \PICOExplorer\Services\AdvancedLogger\AdvancedLogger            
+                        /** @var \PICOExplorer\Services\AdvancedLogger\Services\ExceptionLogger $instance */
+                        return $instance->DeCSComponentError($class, $params);
         }
         
         /**
@@ -15093,6 +15198,102 @@ namespace PICOExplorer\Facades {
      * 
      *
      */ 
+    class UltraLoggerFacade {
+        
+        /**
+         * 
+         *
+         * @static 
+         */ 
+        public static function createUltraLogger($title, $InitialData = null)
+        {
+                        /** @var \PICOExplorer\Services\AdvancedLogger\Services\UltraLogger $instance */
+                        return $instance->createUltraLogger($title, $InitialData);
+        }
+        
+        /**
+         * 
+         *
+         * @static 
+         */ 
+        public static function UltraLoggerAttempt($logger, $AttemptText)
+        {
+                        /** @var \PICOExplorer\Services\AdvancedLogger\Services\UltraLogger $instance */
+                        return $instance->UltraLoggerAttempt($logger, $AttemptText);
+        }
+        
+        /**
+         * 
+         *
+         * @static 
+         */ 
+        public static function UltraLoggerSuccessfulAttempt($logger, $index = null, $PostText = null)
+        {
+                        /** @var \PICOExplorer\Services\AdvancedLogger\Services\UltraLogger $instance */
+                        return $instance->UltraLoggerSuccessfulAttempt($logger, $index, $PostText);
+        }
+        
+        /**
+         * 
+         *
+         * @static 
+         */ 
+        public static function MapArrayIntoUltraLogger($logger, $title, $MultiData, $maxprintdepth, $ShownInternalKeycontent = null, $level = 0, $MapIndd = false)
+        {
+                        /** @var \PICOExplorer\Services\AdvancedLogger\Services\UltraLogger $instance */
+                        return $instance->MapArrayIntoUltraLogger($logger, $title, $MultiData, $maxprintdepth, $ShownInternalKeycontent, $level, $MapIndd);
+        }
+        
+        /**
+         * 
+         *
+         * @static 
+         */ 
+        public static function InfoToUltraLogger($logger, $text)
+        {
+                        /** @var \PICOExplorer\Services\AdvancedLogger\Services\UltraLogger $instance */
+                        return $instance->InfoToUltraLogger($logger, $text);
+        }
+        
+        /**
+         * 
+         *
+         * @static 
+         */ 
+        public static function WarningToUltraLogger($logger, $text)
+        {
+                        /** @var \PICOExplorer\Services\AdvancedLogger\Services\UltraLogger $instance */
+                        return $instance->WarningToUltraLogger($logger, $text);
+        }
+        
+        /**
+         * 
+         *
+         * @static 
+         */ 
+        public static function ErrorToUltraLogger($logger, $text)
+        {
+                        /** @var \PICOExplorer\Services\AdvancedLogger\Services\UltraLogger $instance */
+                        return $instance->ErrorToUltraLogger($logger, $text);
+        }
+        
+        /**
+         * 
+         *
+         * @static 
+         */ 
+        public static function saveUltraLoggerResults($logger, $wasSuccesful, $isIntegration, $ddtest = false)
+        {
+                        /** @var \PICOExplorer\Services\AdvancedLogger\Services\UltraLogger $instance */
+                        return $instance->saveUltraLoggerResults($logger, $wasSuccesful, $isIntegration, $ddtest);
+        }
+         
+    }
+
+    /**
+     * 
+     *
+     */ 
     class ResultsNumberFacade {
         
         /**
@@ -15180,10 +15381,10 @@ namespace PICOExplorer\Facades {
          *
          * @static 
          */ 
-        public static function processXML($DOMXpath, $XMLText)
+        public static function processXML($DOMXpath, $XMLText, $InitialData)
         {
                         /** @var \PICOExplorer\Services\DeCSIntegration\Looper\DeCSIntegrationLooperImporter $instance */
-                        return $instance->processXML($DOMXpath, $XMLText);
+                        return $instance->processXML($DOMXpath, $XMLText, $InitialData);
         }
         
         /**
@@ -19346,6 +19547,8 @@ namespace  {
     class SpecialValidatorFacade extends \PICOExplorer\Facades\SpecialValidatorFacade {}
 
     class AuthHandlerFacade extends \PICOExplorer\Facades\AuthHandlerFacade {}
+
+    class UltraLoggerFacade extends \PICOExplorer\Facades\UltraLoggerFacade {}
 
     class ServicePerformanceSV extends \PICOExplorer\Services\AdvancedLogger\Services\ServicePerformance {}
 

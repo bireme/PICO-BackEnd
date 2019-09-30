@@ -16,25 +16,41 @@ abstract class DTOManager extends ServiceEntryPoint
         'MaxExploringLoops' => 5,
         'MaxTreesPerKeyword' => 10,
         'MaxDescendantsPerTree' => 10,
+        'MaxTotalTrees' => 300,
         'MaxDescendantsDepth' => 5,
-        'AddDescendantsToMainTrees' => true,
-        'AddRelatedTreesToMainTrees' => true,
-        'AllValidLanguages'=>[
+        'SaveDescendantsOfPrimaryMainTreesIntoMainTrees' => true,
+        'SaveRelatedTreesOfPrimaryMainTreesIntoMainTrees' => true,
+        'AllValidLanguages' => [
             'en',
             'es',
             'pt'
         ]
     ];
 
-    protected function getAllValidLanguages()
-    {
-        return $this->controllerData['AllValidLanguages'];
-    }
+    ///
+    ///GLOBAL CONTROLLER VARS
+    ///
+
 
     protected function getMaxExploringLoops()
     {
         return $this->controllerData['MaxExploringLoops'];
     }
+
+    protected function getMaxWishList()
+    {
+        return $this->controllerData['MaxTotalTrees'];
+    }
+
+    protected function getMaxDescendantsDepth()
+    {
+        return $this->controllerData['MaxDescendantsDepth'];
+    }
+
+
+    ///
+    ///TREE OR KW
+    ///
 
     protected function getMaxTreesPerKeyword()
     {
@@ -44,21 +60,6 @@ abstract class DTOManager extends ServiceEntryPoint
     protected function getMaxDescendantsPerTree()
     {
         return $this->controllerData['MaxDescendantsPerTree'];
-    }
-
-    protected function getMaxDescendantsDepth()
-    {
-        return $this->controllerData['MaxDescendantsDepth'];
-    }
-
-    protected function ShouldIAddDescendantsToMainTrees()
-    {
-        return $this->controllerData['AddDescendantsToMainTrees'];
-    }
-
-    protected function ShouldIAddRelatedTreesToMainTrees()
-    {
-        return $this->controllerData['AddRelatedTreesToMainTrees'];
     }
 
     ////////////////////////////////////////////////////////
@@ -74,19 +75,18 @@ abstract class DTOManager extends ServiceEntryPoint
         $keyword = str_replace(' ', '+', $keyword);
 
         $inidata = [
-            'log' => '',
-            'logcount' => 0,
             'langs' => $InitialData['langs'],
             'keyword' => $keyword,
-            'PendingMainTrees' => [],
-            'PendingDescendants' => [],
             'MainTreeList' => [],
-            'ExploredTrees' => [],
-            'TmpResults' => [],
+            'WishList' => [],
+            'ResultsByTreeId' => [],
         ];
-
         $DTO->SaveToModel(get_class($this), $inidata);
-        $this->addLogData('Using Controllerdata:', $this->controllerData,$DTO);
+    }
+
+    protected function getAllValidLanguages()
+    {
+        return $this->controllerData['AllValidLanguages'];
     }
 
     protected function getKeyword(DataTransferObject $DTO)
@@ -100,43 +100,7 @@ abstract class DTOManager extends ServiceEntryPoint
     }
 
     ////////////////////////////////////////////////////////
-    /// LOG FUNCTIONS
-    ////////////////////////////////////////////////////////
-
-    protected function addLogLine(string $txt,DataTransferObject $DTO)
-    {
-        $logcount = $DTO->getAttr('logcount') + 1;
-        $log = $DTO->getAttr('log');
-        $log = '[' . $logcount . ']' . $log . $txt . PHP_EOL;
-        $DTO->SaveToModel(get_class($this), ['log' => $log, 'logcount' => $logcount]);
-    }
-
-    protected function addLogData(string $description, $data,DataTransferObject $DTO)
-    {
-        $datatxt = json_encode($data);
-        $txt = $description . ' => ' . $datatxt;
-        $this->addLogLine($txt,$DTO);
-    }
-
-    protected function addLogError(string $ErrorDescription, $data,DataTransferObject $DTO)
-    {
-        $description = '[Error] ' . $ErrorDescription;
-        $this->addLogData($description, $data,$DTO);
-    }
-
-    protected function getLog(DataTransferObject $DTO)
-    {
-        return $DTO->getAttr('log');
-    }
-
-    private function Summary(DataTransferObject $DTO)
-    {
-        $MainTrees = $this->getMainTreeList($DTO);
-        $txt = count($MainTrees) . ' Main Trees: ' . json_encode($MainTrees);
-    }
-
-    ////////////////////////////////////////////////////////
-    /// Getters of trees
+    /// Simple Getters of trees
     ////////////////////////////////////////////////////////
 
     protected function getMainTreeList(DataTransferObject $DTO)
@@ -144,88 +108,246 @@ abstract class DTOManager extends ServiceEntryPoint
         return $DTO->getAttr('MainTreeList');
     }
 
-    protected function getExploredMainTrees(DataTransferObject $DTO)
+    protected function getWishList(DataTransferObject $DTO)
     {
-        $explored = $DTO->getAttr('ExploredTrees');
-        $maintrees = $DTO->getAttr('MainTreeList');
-        return array_diff($maintrees, $explored);
+        return $DTO->getAttr('WishList');
     }
 
-    protected function ExploredTrees(DataTransferObject $DTO)
+    protected function getResultsOrderedByTreeId(DataTransferObject $DTO)
     {
-        return $DTO->getAttr('ExploredTrees');
+        return $DTO->getAttr('ResultsByTreeId');
     }
 
-    protected function getUnexploredTrees(DataTransferObject $DTO)
+    protected function saveResultsOrderedByTreeId(DataTransferObject $DTO, array $ResultsOrderedByTreeId)
     {
-        $maintrees = $DTO->getAttr('PendingMainTrees');
-        $descendants = $DTO->getAttr('PendingDescendants');
-        return array_unique(array_merge($maintrees, $descendants));
+        $DTO->SaveToModel(get_class($this), ['ResultsByTreeId' => $ResultsOrderedByTreeId]);
     }
 
-    protected function addToMainTreeList(array $tree_ids,DataTransferObject $DTO)
+    protected function getExploreList(DataTransferObject $DTO)
     {
-        $maintrees = $DTO->getAttr('MainTreeList');
-        $maintrees = array_unique(array_merge($maintrees, $tree_ids));
-        $DTO->SaveToModel(get_class($this), ['MainTreeList' => $maintrees]);
-    }
+        $maintrees = $this->getMainTreeList($DTO);
+        $wishlist = $this->getWishList($DTO);
+        $listorder = array_unique(array_merge($maintrees, $wishlist));
 
-    protected function addToUnexploredMainTrees(array $tree_ids,DataTransferObject $DTO)
-    {
-        $maintrees = $DTO->getAttr('PendingMainTrees');
-        $maintrees = array_unique(array_merge($maintrees, $tree_ids));
-        $DTO->SaveToModel(get_class($this), ['PendingMainTrees' => $maintrees]);
-    }
+        $currentdata = $this->getResultsOrderedByTreeId($DTO);
 
-    protected function addToUnexploredDescendants(array $tree_ids,DataTransferObject $DTO)
-    {
-        $descendants = $DTO->getAttr('PendingDescendants');
-        $descendants = array_unique(array_merge($descendants, $tree_ids));
-        $DTO->SaveToModel(get_class($this), ['PendingDescendants' => $descendants]);
-    }
-
-    protected function addToExploredTrees(string $tree_id,DataTransferObject $DTO)
-    {
-        $ExploredTrees = $DTO->getAttr('ExploredTrees');
-        array_push($ExploredTrees, $tree_id);
-        $DTO->SaveToModel(get_class($this), ['ExploredTrees' => $ExploredTrees]);
-    }
-
-    ////////////////////////////////////////////////////////
-    /// Getters of DTO
-    ////////////////////////////////////////////////////////
-
-    protected function getDataByTreeId(DataTransferObject $DTO)
-    {
-        return $DTO->getAttr('TmpResults');
-    }
-
-    protected function AddDataToResults(string $tree_id, string $lang, string $term, array $decs, array $descendants,DataTransferObject $DTO)
-    {
-        $ResultsByTreeId = $this->getDataByTreeId($DTO);
-        if (!(array_key_exists($tree_id, $ResultsByTreeId))) {
-            $ResultsByTreeId[$tree_id] = [];
+        $ExploreList = [];
+        foreach ($listorder as $keyword) {
+            $currentKeyword = $currentdata[$keyword] ?? null;
+            $currentPendingByKeyword = $currentKeyword['remaininglangs'] ?? null;
+            if ($currentPendingByKeyword === null) {
+                $langs = $this->getLangs($DTO);
+            } elseif (count($currentPendingByKeyword)) {
+                $langs = $currentPendingByKeyword;
+            } else {
+                continue;
+            }
+            $arrayitem = ['key' => $keyword, 'langs' => $langs];
+            array_push($ExploreList, $arrayitem);
         }
-        if (!(array_key_exists('descendants', $ResultsByTreeId[$tree_id]))) {
-            $this->addLogData('Adding descendants...', $descendants,$DTO);
-            $ResultsByTreeId[$tree_id]['descendants'] = $descendants;
+        return $ExploreList;
+    }
+
+    /////////////////////////////////////////////////////
+    /// GLOBAL LIMITERS
+    ////////////////////////////////////////////////////////
+
+    protected function addToMainTreeList(array $tree_ids, DataTransferObject $DTO)
+    {
+        $oldmaintrees = $this->getMainTreeList($DTO);
+        $remainingmaintrees = $this->getRemainingMainTreesToAdd($DTO);
+
+        $newtrees = array_diff($tree_ids, $oldmaintrees);
+
+        if ($remainingmaintrees) {
+            $added = array_slice($newtrees, 0, $remainingmaintrees, true);
         } else {
-            $descendants = array_diff($descendants, $ResultsByTreeId[$tree_id]['descendants']);
-            if (count($descendants)) {
-                $this->addLogData('Adding descendants...', $descendants,$DTO);
-                $ResultsByTreeId[$tree_id]['descendants'] = array_merge($ResultsByTreeId[$tree_id]['descendants'], $descendants);
+            $added = [];
+        }
+        $cut = array_diff($newtrees, $added);
+
+        $info = [
+            'added' => $added,
+            'cut' => $cut,
+        ];
+        $DTO->SaveToModel(get_class($this), ['MainTreeList' => array_merge($oldmaintrees,$added)]);
+        $this->addToWishList($added, $DTO);
+        return $info;
+    }
+
+    protected function addToWishList(array $tree_ids, DataTransferObject $DTO)
+    {
+        $oldwishlist = $this->getWishList($DTO);
+        $remainingwishlist = $this->getRemainingWishListToAdd($DTO);
+
+        $newtrees = array_diff($tree_ids, $oldwishlist);
+
+        if ($remainingwishlist) {
+            $added = array_slice($newtrees, 0, $remainingwishlist, true);
+        } else {
+            $added = [];
+        }
+        $cut = array_diff($newtrees, $added);
+        $wishlist = array_merge($oldwishlist, $added);
+        $DTO->SaveToModel(get_class($this), ['WishList' => $wishlist]);
+
+        $info = [
+            'added' => $added,
+            'cut' => $cut,
+        ];
+        return $info;
+    }
+
+
+    protected function ShouldISaveDescendantsOfPrimaryMainTreesIntoMainTrees()
+    {
+        return $this->controllerData['SaveDescendantsOfPrimaryMainTreesIntoMainTrees'];
+    }
+
+    protected function ShouldISaveRelatedTreesOfPrimaryMainTreesIntoMainTrees()
+    {
+        return $this->controllerData['SaveRelatedTreesOfPrimaryMainTreesIntoMainTrees'];
+    }
+
+    protected function addDescendantsToTree(array $descendants_ids, String $tree_id, bool $isMain, DataTransferObject $DTO)
+    {
+        if (!($isMain)) {
+            $olddescendants = $this->getDescendants($tree_id, $DTO);
+            if ($olddescendants === -1) {
+                return;
+            }
+        } else {
+            $olddescendants = [];
+        }
+        $newdescendants = array_diff($descendants_ids, $olddescendants);
+
+        $maxdescendants = $this->getMaxDescendantsPerTree();
+        $remainingdescendants = $maxdescendants - count($olddescendants);
+
+        if ($remainingdescendants) {
+            $added = array_slice($newdescendants, 0, $remainingdescendants, true);
+        } else {
+            $added = [];
+        }
+
+        $wishinfo = $this->addToWishList($added, $DTO);
+        $added = $wishinfo['added'];
+        $cut = array_diff($newdescendants, $added);
+
+        $info = [
+            'added' => $added,
+            'cut' => $cut,
+        ];
+        return $info;
+    }
+
+    protected function WishListType(DataTransferObject $DTO)
+    {
+        $maintrees = $this->getMainTreeList($DTO);
+        $exploredTrees = $this->getResultsOrderedByTreeId($DTO);
+        $wishlist = $this->getWishList($DTO);
+        $relevant = array_intersect($wishlist,array_keys($exploredTrees));
+
+        $result = [];
+        foreach ($relevant as $key => $tree_id) {
+            if (in_array($tree_id, $maintrees)) {
+                $type = true;
+            } else {
+                $type = false;
+            }
+            $TreeObj = $exploredTrees[$tree_id]??null;
+            if ($TreeObj) {
+                $descendants = $TreeObj['descendants'];
+                if (count($descendants) === 0) {
+                    continue;
+                }
+            } else {
+                continue;
+            }
+            $result[$tree_id] = ['type' => $type, 'descendants' => $descendants];
+        }
+        return $result;
+    }
+
+
+    protected function IsTreeDepthOk(String $tree_id, DataTransferObject $DTO)
+    {
+        $MainList = $this->getMainTreeList($DTO);
+        $maxdepth = $this->getMaxDescendantsDepth();
+        if(in_array($tree_id,$MainList)){
+            $currentdepth = 1;
+        }else{
+            $WishListType = $this->WishListType($DTO);
+            $result=[];
+            $this->getTreeIdDepth($tree_id, $WishListType, 1, $DTO,$result);
+            $currentdepth = 999;
+            $masterParent = '';
+            foreach($result as $itemarray){
+                if($itemarray['level']<$currentdepth){
+                    $currentdepth = $itemarray['level'];
+                    $masterParent = $itemarray['tree_id'];
+                }
             }
         }
-        $data = [
-            'term' => $term,
-            'decs' => $decs,
+        $info = [
+            'maxdepth' => $maxdepth,
+            'currentdepth' => $currentdepth,
         ];
-        if (!(array_key_exists($lang, $ResultsByTreeId[$tree_id]))) {
-            $ResultsByTreeId[$tree_id][$lang] = $data;
-            $DTO->SaveToModel(get_class($this), ['TmpResults' => $ResultsByTreeId]);
-            $this->addLogData('Adding results...', $data,$DTO);
-        } else {
-            $this->addLogError('Attempted to add data to already explored lang (' . $lang . ') of tree_id(' . $tree_id . ')', $data,$DTO);
+        return $info;
+    }
+
+    ///////////////////////////////////////
+    /// INNNER
+    /// //////////////////////////////////////
+
+    private function getTree(String $tree_id, DataTransferObject $DTO)
+    {
+        $resultsByTreeId = $this->getResultsOrderedByTreeId($DTO);
+        $TreeObject = $resultsByTreeId[$tree_id] ?? null;
+        return $TreeObject;
+    }
+
+    private function getDescendants(String $tree_id, DataTransferObject $DTO)
+    {
+        $treeobject = $this->getTree($tree_id, $DTO);
+        if (!($treeobject)) {
+            return -1;
+        }
+        return $treeobject['descendants'];
+    }
+
+    private function getRemainingMainTreesToAdd(DataTransferObject $DTO)
+    {
+        $limit = $this->getMaxTreesPerKeyword() - count($this->getMainTreeList($DTO));
+        if ($limit < 0) {
+            return 0;
+        }
+        return $limit;
+    }
+
+    private function getRemainingWishListToAdd(DataTransferObject $DTO)
+    {
+        $limit = $this->getMaxWishList() - count($this->getWishList($DTO));
+        if ($limit < 0) {
+            return 0;
+        }
+        return $limit;
+    }
+
+    private function getTreeIdDepth(string $tree_id, array $WishListType, int $level, DataTransferObject $DTO, array &$result)
+    {
+        $level++;
+        foreach ($WishListType as $local_tree_id => $treedata) {
+            $descendants = $treedata['descendants']??[];
+            if (in_array($tree_id, $descendants)) {
+                $type = $treedata['type'];
+                if ($type) {
+                    array_push($result,['tree_id' => $local_tree_id, 'level' =>$level]);
+                    return;
+                } else {
+                    $this->getTreeIdDepth($local_tree_id, $WishListType, $level, $DTO, $result);
+                }
+            }
         }
     }
 

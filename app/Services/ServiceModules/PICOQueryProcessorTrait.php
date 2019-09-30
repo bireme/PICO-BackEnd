@@ -8,8 +8,8 @@ trait PICOQueryProcessorTrait
     protected function ProcessQuery(string $query)
     {
         $QuerySplitBySeparators = $this->splitQueryWithDelimiters($query);
-        $QueryProcessed = $this->setArrayItemElements($QuerySplitBySeparators);
-        return $QueryProcessed;
+        $FixedQuoted = $this->RepairQuotes($QuerySplitBySeparators, "'");
+        return $FixedQuoted;
     }
 
     ///////////////////////////////////////////////////////////////////
@@ -19,68 +19,93 @@ trait PICOQueryProcessorTrait
     private function splitQueryWithDelimiters(string $query)
     {
         $query = str_replace('  ', ' ', $query);
+        $query = str_replace("'", '"', $query);
         $query = strtolower($query);
-        $pattern = '/([()": ])/';
+        $pattern = '/([():])/';
         $QuerySplitBySeparators = preg_split($pattern, $query, -1, PREG_SPLIT_DELIM_CAPTURE | PREG_SPLIT_NO_EMPTY);
+        $QuerySplitBySeparators = $this->SplitArrayByOps(' or ',[' ','or',' '],$QuerySplitBySeparators);
+        $QuerySplitBySeparators = $this->SplitArrayByOps(' and ',[' ','and',' '], $QuerySplitBySeparators);
+        $QuerySplitBySeparators = $this->SplitArrayByOps('not ',['not',' '], $QuerySplitBySeparators);
         return $QuerySplitBySeparators;
     }
 
-    private function setArrayItemElements(array $QuerySplitBySeparators)
+    private function SplitArrayByOps(string $delimiter, array $replacedelimiter, array $array)
     {
-        $FixedQuoted = $this->FixComposeParenthesesQuoted($QuerySplitBySeparators);
-        $QueryProcessed = $this->FixComposeParentheses($FixedQuoted);
-        return $QueryProcessed;
-    }
-
-    private function FixComposeParenthesesQuoted(array $QuerySplitBySeparators)
-    {
-        $FixedQuoted = [];
-        $doublequote = 0;
-        $NewComposedKeyword=null;
-        foreach ($QuerySplitBySeparators as $QuerySplitBySepsElement) {
-            if ($doublequote == 0) {
-                if ($QuerySplitBySepsElement == '"') {
-                    $doublequote = 1;
-                    $NewComposedKeyword = '';
-                } else {
-                    array_push($FixedQuoted, $QuerySplitBySepsElement);
-                }
-            } else {
-                if ($QuerySplitBySepsElement == '"') {
-                    $doublequote = 0;
-                    array_push($FixedQuoted, $NewComposedKeyword);
-                } else {
-                    $NewComposedKeyword = $NewComposedKeyword . $QuerySplitBySepsElement;
+        $res = [];
+        foreach ($array as $obj) {
+            if (!($obj)) {
+                continue;
+            }
+            $parts = explode($delimiter, $obj);
+            foreach ($parts as $index => $partsobj) {
+                array_push($res, $partsobj);
+                if ($index < count($parts) - 1) {
+                    array_merge($res, $replacedelimiter);
                 }
             }
         }
-        return $FixedQuoted;
+        return $res;
     }
 
-    private function FixComposeParentheses(array $FixedQuoted)
+
+    private function isInRange(int $index, array $FoundQuotes)
     {
-        $index = count($FixedQuoted);
-        $Ops = array('or', 'and', 'not');
-        $Seps = array('(', ')', ' ', ':');
-        $i = 0;
-        $QueryProcessed = [];
-        while ($i < $index) {
-            if ((($i + 2 < $index))) {
-                if (((!(in_array(strtolower($FixedQuoted[$i]), $Seps) || in_array(strtolower($FixedQuoted[$i]), $Ops))) && ($FixedQuoted[$i + 1] == ' ' && (!(in_array(strtolower($FixedQuoted[$i + 2]), $Seps) || in_array(strtolower($FixedQuoted[$i + 2]), $Ops)))))) {
-                    $valx = $FixedQuoted[$i] . $FixedQuoted[$i + 1] . $FixedQuoted[$i + 2];
-                    $i = $i + 3;
-                } else {
-                    $valx = $FixedQuoted[$i];
-                    $i++;
-                }
-            } else {
-                $valx = $FixedQuoted[$i];
-                $i++;
+        foreach ($FoundQuotes as $array) {
+            $min = $array[0];
+            $max = $array[1];
+            if ($index < $min) {
+                continue;
             }
-            $valx = ucfirst($valx);
-            array_push($QueryProcessed, $valx);
+            if ($index > $max) {
+                continue;
+            }
+            if ($index === $max) {
+                return 0;
+            } else {
+                return 1;
+            }
         }
-        return $QueryProcessed;
+        return -1;
+    }
+
+    private function RemoveQuotes(array $QuerySplitBySeparators, array $FoundQuotes)
+    {
+        $index = count($QuerySplitBySeparators);
+        while ($index >= 0) {
+            $index--;
+            $range = $this->isInRange($index, $FoundQuotes);
+            if ($range === -1) {
+                continue;
+            } elseif ($range === 1) {
+                $QuerySplitBySeparators[$index] = $QuerySplitBySeparators[$index] . $QuerySplitBySeparators[$index + 1];
+                unset($QuerySplitBySeparators[$index + 1]);
+            }
+        }
+        return $QuerySplitBySeparators;
+    }
+
+    private function RepairQuotes(array $QuerySplitBySeparators, string $Quote)
+    {
+        $UniqueQuote = [];
+        foreach ($QuerySplitBySeparators as $index => $QuerySplitBySepsElement) {
+            if (substr($QuerySplitBySepsElement, 0, 1) === $Quote) {
+                array_push($UniqueQuote, [$index]);
+            }
+            if (substr($QuerySplitBySepsElement, -1) === $Quote) {
+                $tmp = $UniqueQuote[count($UniqueQuote) - 1] ?? null;
+                if ($tmp) {
+                    $num = count($tmp) ?? 0;
+                    if ($num === 1) {
+                        array_push($UniqueQuote[count($UniqueQuote) - 1], $index);
+                    }
+                }
+            }
+            $QuerySplitBySepsElement = str_replace('"', '', $QuerySplitBySepsElement);
+        }
+        if (count($UniqueQuote) === 0) {
+            $QuerySplitBySeparators = $this->RemoveQuotes($QuerySplitBySeparators, $UniqueQuote);
+        }
+        return $QuerySplitBySeparators;
     }
 
 }

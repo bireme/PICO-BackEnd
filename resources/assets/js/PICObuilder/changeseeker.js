@@ -117,10 +117,10 @@ function ChangeToMustUpdate(PICOnum, LocalObj, LocalSpan, LocalField, ThishasReD
         SetToReDoButton(GlobalSpan);
         if (loop_i === 6) {
             if (!(isHiddenBootstrapObj(GlobalSpan))) {
-                showBootstrapObj($('#CalcRes' + loop_i));
+                setCalcResAsResult(loop_i);
             }
         } else {
-            showBootstrapObj($('#CalcRes' + loop_i));
+            setCalcResAsResult(loop_i);
         }
 
     }
@@ -145,11 +145,11 @@ function ReturnToOldState(PICOnum, LocalObj, LocalSpan, LocalField, ThishasReDo)
         let objdata = $('#datainput' + loop_i).val();
         if (objdata) {
             if (objdata.length > 0) {
-                hideBootstrapObj($('#CalcRes' + loop_i));
+                setCalcResAsSyncAlt(loop_i);
             }
         } else {
             if (loop_i === 6) {
-                hideBootstrapObj($('#CalcRes' + loop_i));
+                setCalcResAsSyncAlt(loop_i);
             }
         }
         let FinalSearchDetailsObj = $('#FinalSearchDetails');
