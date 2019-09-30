@@ -3,47 +3,88 @@
 namespace PICOExplorer\Services\DeCS;
 
 use PICOExplorer\Facades\DeCSLooperFacade;
+use PICOExplorer\Facades\UltraLoggerFacade;
 use PICOExplorer\Models\DataTransferObject;
+use PICOExplorer\Services\AdvancedLogger\Exceptions\DontCatchException;
+use PICOExplorer\Services\AdvancedLogger\Services\UltraLoggerDevice;
 use PICOExplorer\Services\ServiceModels\ServiceEntryPointInterface;
 use PICOExplorer\Services\ServiceModels\ToParallelServiceIntegrationTrait;
 use ServicePerformanceSV;
 
-class DeCSProcess extends DeCSInfoProcessor implements ServiceEntryPointInterface
+class DeCSProcess extends DeCSQueryBuild implements ServiceEntryPointInterface
 {
 
     use ToParallelServiceIntegrationTrait;
 
     protected final function Process(ServicePerformanceSV $ServicePerformance, DataTransferObject $DTO, $InitialData)
     {
-        //return;
-        $InitialData = $DTO->getInitialData();
-        $this->DecodePreviousData($DTO, $InitialData['SavedData'] ?? null);
-        $QueryProcessed = $this->ProcessInitialQuery($InitialData['query'],$InitialData['ImprovedSearch']??null);
-        $this->BuildKeywordList($DTO,$QueryProcessed,$InitialData['langs']);
-        $this->Explore($ServicePerformance, $DTO, $InitialData['mainLanguage']);
-        $this->BuildDeCSHTML($DTO, $InitialData['PICOnum']);
-        $results = [
-            'SavedData' => json_encode($DTO->getAttr('SavedData')),
-            'DescriptorsHTML' => $DTO->getAttr('DescriptorsHTML'),
-            'DeCSHTML' => $DTO->getAttr('DeCSHTML'),
-        ];
+        $Log = null;
+        $results = 'Unset';
+        $wasSuccesful=false;
+        try {
+            $InitialData = $DTO->getInitialData();
+            $Log = UltraLoggerFacade::createUltraLogger('DeCSProcess', $InitialData);
+
+            $LogData = UltraLoggerFacade::UltraLoggerAttempt($Log, 'Attempting to decode previous data');
+            $this->DecodePreviousData($DTO, $InitialData['SavedData'] ?? null);
+            UltraLoggerFacade::UltraLoggerSuccessfulAttempt($Log, $LogData);
+
+            $LogData = UltraLoggerFacade::UltraLoggerAttempt($Log, 'Attempting to process query and improved search');
+            $QueryProcessed = $this->ProcessInitialQuery($InitialData['query'], $InitialData['ImprovedSearch'] ?? null);
+            UltraLoggerFacade::UltraLoggerSuccessfulAttempt($Log, $LogData);
+
+            $LogData = UltraLoggerFacade::UltraLoggerAttempt($Log, 'Attempting to build keywordList');
+            $this->BuildKeywordList($DTO, $QueryProcessed, $InitialData['langs'], $Log);
+            UltraLoggerFacade::UltraLoggerSuccessfulAttempt($Log, $LogData);
+
+            $this->Explore($ServicePerformance, $DTO, $InitialData['mainLanguage'], $Log);
+
+            $LogData = UltraLoggerFacade::UltraLoggerAttempt($Log, 'Attempting to build html');
+            $this->BuildDeCSHTML($DTO, $InitialData['PICOnum']);
+            UltraLoggerFacade::UltraLoggerSuccessfulAttempt($Log, $LogData);
+            $results = [
+                'SavedData' => json_encode($DTO->getAttr('SavedData')),
+                'DescriptorsHTML' => $DTO->getAttr('DescriptorsHTML'),
+                'DeCSHTML' => $DTO->getAttr('DeCSHTML'),
+            ];
+            $wasSuccesful=true;
+        } catch (DontCatchException $ex) {
+            //
+        } finally {
+            if ($Log) {
+                UltraLoggerFacade::saveUltraLoggerResults($Log,$wasSuccesful, false);
+            }
+        }
         return $results;
+
     }
 
-    protected function Explore(ServicePerformanceSV $ServicePerformance, DataTransferObject $DTO, string $mainLanguage)
+    protected function Explore(ServicePerformanceSV $ServicePerformance, DataTransferObject $DTO, string $mainLanguage, UltraLoggerDevice $Log)
     {
         $IntegrationResults = [];
         $KeywordList = $DTO->getAttr('KeywordList');
-        //dd($KeywordList);
-        foreach ($KeywordList as  $keyword => $langdata) {
+
+        $LogData = UltraLoggerFacade::UltraLoggerAttempt($Log, 'Attempting to explore connections');
+        foreach ($KeywordList as $keyword => $langdata) {
             $langs = array_values($langdata);
-            if(count($langs)===0){
+            if (count($langs) === 0) {
                 continue;
             }
-            $IntegrationResults[$keyword] = $this->Connect($ServicePerformance, $keyword,$langs);
+            $res = $this->Connect($ServicePerformance, $keyword, $langs, $Log);
+            if($res==='no-res'){
+                $res=null;
+            }
+            $IntegrationResults[$keyword] = $res;
         }
-        $this->MixWithOldData($DTO, $IntegrationResults);
-        $this->BuildAsTerms($DTO, $mainLanguage);
+        UltraLoggerFacade::UltraLoggerSuccessfulAttempt($Log, $LogData);
+
+        $LogData = UltraLoggerFacade::UltraLoggerAttempt($Log, 'Attempting to mix new and old data');
+        $this->MixWithOldData($DTO, $IntegrationResults, $Log);
+        UltraLoggerFacade::UltraLoggerSuccessfulAttempt($Log, $LogData);
+
+        $LogData = UltraLoggerFacade::UltraLoggerAttempt($Log, 'Attempting to build results as terms');
+        $this->BuildAsTerms($DTO, $mainLanguage, $Log);
+        UltraLoggerFacade::UltraLoggerSuccessfulAttempt($Log, $LogData);
     }
 
 
@@ -52,7 +93,7 @@ class DeCSProcess extends DeCSInfoProcessor implements ServiceEntryPointInterfac
     ///////////////////////////////////////////////////////////////////
 
 
-    private final function Connect(ServicePerformanceSV $ServicePerformance, string $keyword, array $langs)
+    private final function Connect(ServicePerformanceSV $ServicePerformance, string $keyword, array $langs, UltraLoggerDevice $Log)
     {
         $data = [
             'keyword' => $keyword,

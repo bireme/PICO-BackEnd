@@ -17,7 +17,7 @@ use ServicePerformanceSV;
 trait ToExternalSourceTrait
 {
 
-    protected function Connect(ServicePerformanceSV $ServicePerformance, string $RequestMethod, array $data, string $fullURL, array $headers, float $timeout=30.0, int $maxAttempts=3,bool $sendAsJson = false, bool $ParseJSONReceived = false)
+    protected function Connect(ServicePerformanceSV $ServicePerformance, string $RequestMethod, array $data, string $fullURL, array $headers, float $timeout=30.0, int $maxAttempts=3,bool $sendAsJson = false, bool $ParseJSONReceived = false,$extraArgument=null)
     {
         $imported =$this->MakeRequest($ServicePerformance,$RequestMethod, $data, $fullURL, $headers, $timeout, $maxAttempts, $sendAsJson, $ParseJSONReceived);
         $results = null;
@@ -35,7 +35,7 @@ trait ToExternalSourceTrait
         }
         try {
             $XMLText=$DOM->saveXML();
-            $results = $this->processXML($DOMXpath,$XMLText);
+            $results = $this->processXML($DOMXpath,$XMLText,$extraArgument);
 
             return $results;
         } catch (Exception $ex) {
@@ -106,5 +106,5 @@ trait ToExternalSourceTrait
         return $response;
     }
 
-    abstract protected function processXML(DOMXPath $DOMXpath, string $XMLText);
+    abstract protected function processXML(DOMXPath $DOMXpath, string $XMLText,$extraArgument=null);
 }

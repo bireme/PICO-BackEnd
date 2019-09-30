@@ -9,6 +9,7 @@ use PICOExplorer\Services\AdvancedLogger\Services\ExceptionLogger;
 use PICOExplorer\Services\AdvancedLogger\Services\ServicePerformance;
 use PICOExplorer\Services\AdvancedLogger\Services\SpecialValidator;
 use PICOExplorer\Services\AdvancedLogger\Services\AdvancedTimer;
+use PICOExplorer\Services\AdvancedLogger\Services\UltraLogger;
 
 class AdvancedLoggerProvider extends ServiceProvider
 {
@@ -30,6 +31,9 @@ class AdvancedLoggerProvider extends ServiceProvider
         });
         $this->app->singleton('specialvalidator', function () {
             return new SpecialValidator();
+        });
+        $this->app->singleton('ultralogger', function () {
+            return new UltraLogger();
         });
     }
 

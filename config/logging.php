@@ -91,6 +91,18 @@ return [
             'level' => 'debug',
             'days' => 1204,
         ],
+        'DeCS' => [
+            'driver' => 'daily',
+            'path' => storage_path('logs/DeCS/DeCS.log'),
+            'level' => 'debug',
+            'days' => 1204,
+        ],
+        'DeCSImporter' => [
+            'driver' => 'daily',
+            'path' => storage_path('logs/DeCSImporter/DeCSImporter.log'),
+            'level' => 'debug',
+            'days' => 1204,
+        ],
 
         'Console' => [
             'driver' => 'daily',

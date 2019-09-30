@@ -2,6 +2,9 @@
 
 namespace PICOExplorer\Services\AdvancedLogger\Services;
 
+use PICOExplorer\Exceptions\Exceptions\AppError\ErrorInAdvancerTimerService;
+use Throwable;
+
 class AdvancedTimer
 {
 
@@ -12,9 +15,13 @@ class AdvancedTimer
 
     public function Start(String $name)
     {
-        $this->time = microtime(true);
-        $this->name = $name;
-        return $this;
+        try {
+            $this->time = microtime(true);
+            $this->name = $name;
+            return $this;
+        } catch (Throwable $ex) {
+            throw new ErrorInAdvancerTimerService(['errors' => $ex->getMessage()], $ex);
+        }
     }
 
     /**
@@ -22,21 +29,33 @@ class AdvancedTimer
      */
     public function Stop()
     {
-        if (!($this->locked)) {
-            $this->finaltime = (int)((microtime(true) - $this->time) * 1000);
-            $this->locked = true;
+        try {
+            if (!($this->locked)) {
+                $this->finaltime = (int)((microtime(true) - $this->time) * 1000);
+                $this->locked = true;
+            }
+            return $this->finaltime;
+        } catch (Throwable $ex) {
+            throw new ErrorInAdvancerTimerService(['errors' => $ex->getMessage()], $ex);
         }
-        return $this->finaltime;
     }
 
     public function get()
     {
-        return $this->finaltime;
+        try {
+            return $this->finaltime;
+        } catch (Throwable $ex) {
+            throw new ErrorInAdvancerTimerService(['errors' => $ex->getMessage()], $ex);
+        }
     }
 
     public function name()
     {
-        return $this->name;
+        try {
+            return $this->name;
+        } catch (Throwable $ex) {
+            throw new ErrorInAdvancerTimerService(['errors' => $ex->getMessage()], $ex);
+        }
     }
 
 }

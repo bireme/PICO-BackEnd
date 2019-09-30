@@ -15,7 +15,7 @@
             <div class="card-body container">
                 <div class="datacontent container-fluid">
                     <div class="row">
-                        <div class="col-md-12">{{$value}}</div>
+                        <div class="col-md-12 small" style="background-color:black;line-height: 1.5em;"><samp class="small" style="color:white;">{{$value}}</samp></div>
                     </div>
                 </div>
             </div>

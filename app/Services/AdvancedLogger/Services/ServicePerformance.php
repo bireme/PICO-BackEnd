@@ -2,9 +2,11 @@
 
 namespace PICOExplorer\Services\AdvancedLogger\Services;
 
+use PICOExplorer\Exceptions\Exceptions\AppError\ErrorInServicePerformanceService;
 use PICOExplorer\Facades\AdvancedLoggerFacade;
 use PICOExplorer\Facades\SpecialValidatorFacade;
 use PICOExplorer\Models\DataTransferObject;
+use Throwable;
 
 class ServicePerformance
 {
@@ -28,43 +30,55 @@ class ServicePerformance
      */
     public function newConnectionTimer(string $name)
     {
-        $timer = $this->Timer('connection-' . (count($this->conTimers)+1) . ':' . $name);
-        array_push($this->conTimers, $timer);
-        return $timer;
+        try {
+            $timer = $this->Timer('connection-' . (count($this->conTimers) + 1) . ':' . $name);
+            array_push($this->conTimers, $timer);
+            return $timer;
+        } catch (Throwable $ex) {
+            throw new ErrorInServicePerformanceService(['errors' => $ex->getMessage()], $ex);
+        }
     }
 
     public function ServicePerformanceStart(DataTransferObject $DTO, string $monitoredObject)
     {
-        $this->operationTimer = $this->Timer(get_class($this) . ':Operation');
-        $this->DTO = $DTO;
-        $this->monitoredObject = $monitoredObject;
-        return $this;
+        try {
+            $this->operationTimer = $this->Timer(get_class($this) . ':Operation');
+            $this->DTO = $DTO;
+            $this->monitoredObject = $monitoredObject;
+            return $this;
+        } catch (Throwable $ex) {
+            throw new ErrorInServicePerformanceService(['errors' => $ex->getMessage()], $ex);
+        }
     }
 
     public function ServicePerformanceSummary(bool $wasSuccess)
     {
-        if ($wasSuccess) {
-            $info = 'Success ';
-            $level = 'info';
-        } else {
-            $info = 'Error ';
-            $level = 'error';
+        try {
+            if ($wasSuccess) {
+                $info = 'Success ';
+                $level = 'info';
+            } else {
+                $info = 'Error ';
+                $level = 'error';
+            }
+            $InputOutput = [
+                'Input' => $this->DTO->getInitialData(null, true),
+                'Output' => $this->DTO->getResults(null, true),
+            ];
+            $Adecuability = $this->ValidateInterfaces($InputOutput);
+            $this->operationTimer->Stop();
+            $Timers = $this->getTimers();
+            $data = [
+                'Success' => $wasSuccess,
+                'Timers' => $Timers,
+                'InputOutput' => $InputOutput,
+                'Adecuability' => $Adecuability,
+            ];
+            $title = $info . ': ' . $this->monitoredObject;
+            $this->LogMessage('Performance', $level, $title, $info, $data, null);
+        } catch (Throwable $ex) {
+            throw new ErrorInServicePerformanceService(['errors' => $ex->getMessage()], $ex);
         }
-        $InputOutput = [
-            'Input' => $this->DTO->getInitialData(null, true),
-            'Output' => $this->DTO->getResults(null, true),
-        ];
-        $Adecuability = $this->ValidateInterfaces($InputOutput);
-        $this->operationTimer->Stop();
-        $Timers = $this->getTimers();
-        $data = [
-            'Success' => $wasSuccess,
-            'Timers' => $Timers,
-            'InputOutput' => $InputOutput,
-            'Adecuability' => $Adecuability,
-        ];
-        $title = $info . ': ' . $this->monitoredObject;
-        $this->LogMessage('Performance', $level, $title, $info, $data, null);
     }
 
     ///////////////////////////////////////////////////////////

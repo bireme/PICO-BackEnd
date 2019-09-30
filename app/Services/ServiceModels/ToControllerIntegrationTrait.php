@@ -32,7 +32,7 @@ trait ToControllerIntegrationTrait
         } finally {
             $timer->Stop();
             if ($wasSuccessful) {
-                if (!($results)) {
+                if (!($results) || $results==='Unset') {
                     throw new PICOIntegrationReturnedNull(['referer' => __METHOD__ . '@' . get_class($this), 'Controller' => get_class($IntegrationController),'previousErr'=>$previousErr]);
                 }
             }

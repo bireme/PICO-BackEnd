@@ -114,6 +114,7 @@
       'ExceptionLoggerFacade' => 'PICOExplorer\\Facades\\ExceptionLoggerFacade',
       'SpecialValidatorFacade' => 'PICOExplorer\\Facades\\SpecialValidatorFacade',
       'AuthHandlerFacade' => 'PICOExplorer\\Facades\\AuthHandlerFacade',
+      'UltraLoggerFacade' => 'PICOExplorer\\Facades\\UltraLoggerFacade',
       'ServicePerformanceSV' => 'PICOExplorer\\Services\\AdvancedLogger\\Services\\ServicePerformance',
       'ResultsNumberFacade' => 'PICOExplorer\\Facades\\ResultsNumberFacade',
       'ResultsNumberIntegrationFacade' => 'PICOExplorer\\Facades\\ResultsNumberIntegrationFacade',
@@ -911,6 +912,20 @@
       array (
         'driver' => 'daily',
         'path' => 'C:\\xampp\\htdocs\\home\\apps\\bvsalud.org\\pesquisa\\htdocs\\pico\\PICO-BackEnd\\storage\\logs/Connections-Out/Connections-Out.log',
+        'level' => 'debug',
+        'days' => 1204,
+      ),
+      'DeCS' => 
+      array (
+        'driver' => 'daily',
+        'path' => 'C:\\xampp\\htdocs\\home\\apps\\bvsalud.org\\pesquisa\\htdocs\\pico\\PICO-BackEnd\\storage\\logs/DeCS/DeCS.log',
+        'level' => 'debug',
+        'days' => 1204,
+      ),
+      'DeCSImporter' => 
+      array (
+        'driver' => 'daily',
+        'path' => 'C:\\xampp\\htdocs\\home\\apps\\bvsalud.org\\pesquisa\\htdocs\\pico\\PICO-BackEnd\\storage\\logs/DeCSImporter/DeCSImporter.log',
         'level' => 'debug',
         'days' => 1204,
       ),
