@@ -5,7 +5,7 @@ $(function () {
     initialize();
 });
 function checkDivLoaded() {
-    if ($('#footer').length == 0) {
+    if ($('#footer').length === 0) {
         $jquery.error('not ready');
     }else{
         startfunctions();

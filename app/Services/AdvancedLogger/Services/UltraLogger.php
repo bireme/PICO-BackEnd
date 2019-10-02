@@ -74,6 +74,16 @@ class UltraLogger
         }
     }
 
+    public function setSubTitle(UltraLoggerDevice &$logger, string $text)
+    {
+        try {
+            $logger->setSubTitle($text);
+
+        } catch (Throwable $ex) {
+            throw new ErrorInUltraLogger(['Error' => $ex->getMessage(), 'text' => $text], $ex);
+        }
+    }
+
     public function ErrorToUltraLogger(UltraLoggerDevice &$logger, string $text)
     {
         try {

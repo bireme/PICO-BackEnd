@@ -13558,12 +13558,15 @@ function CompareNewOld(PICOnum, onlyGlobal) {
 
 function ChangeToMustUpdate(PICOnum, LocalObj, LocalSpan, LocalField, ThishasReDo) {
   objResNumSetMustUpdate(LocalObj);
+  hideLocalButton(PICOnum);
   SetToReDoButton(LocalSpan);
+  console.log('Changning to mustupdate pico' + PICOnum);
   var loop_i;
 
   for (loop_i = PICOnum; loop_i <= 6; loop_i++) {
     var GlobalObj = $('#ResNumGlobal' + loop_i);
     var GlobalSpan = GlobalObj.find('span').first();
+    hideGlobalButton(loop_i);
     objResNumSetMustUpdate(GlobalObj);
     SetToReDoButton(GlobalSpan);
 
@@ -13586,8 +13589,10 @@ function ReturnToOldState(PICOnum, LocalObj, LocalSpan, LocalField, ThishasReDo)
     return;
   }
 
+  console.log('Returning to oldstate pico' + PICOnum);
   objResNumSetOldResult(LocalObj);
   objSpanSetOldResult(LocalSpan);
+  showLocalButton(PICOnum);
   Object(_commonschange_js__WEBPACK_IMPORTED_MODULE_1__["RemoveReDoButton"])(LocalSpan);
 
   for (var loop_i = 1; loop_i <= 6; loop_i++) {
@@ -13595,6 +13600,7 @@ function ReturnToOldState(PICOnum, LocalObj, LocalSpan, LocalField, ThishasReDo)
     var GlobalSpan = GlobalObj.find('span').first();
     objResNumSetOldResult(GlobalObj);
     objSpanSetOldResult(GlobalSpan);
+    showGlobalButton(loop_i);
     Object(_commonschange_js__WEBPACK_IMPORTED_MODULE_1__["RemoveReDoButton"])(GlobalSpan);
     var objdata = $('#datainput' + loop_i).val();
 
@@ -13625,16 +13631,28 @@ function ShowExplodeButton(PICOnum) {
     Object(_hideshow_js__WEBPACK_IMPORTED_MODULE_3__["showBootstrapObj"])(explodebutton);
 
     if (objResNumHasoldval(PICOnum)) {
-      Object(_hideshow_js__WEBPACK_IMPORTED_MODULE_3__["showBootstrapObj"])($('#ResNumLocal' + PICOnum));
-      Object(_hideshow_js__WEBPACK_IMPORTED_MODULE_3__["showBootstrapObj"])($('#ResNumGlobal' + PICOnum));
       setCalcResAsSyncAlt(PICOnum);
     }
   } else {
     setCalcResAsResult(PICOnum);
-    Object(_hideshow_js__WEBPACK_IMPORTED_MODULE_3__["hideBootstrapObj"])($('#ResNumLocal' + PICOnum));
-    Object(_hideshow_js__WEBPACK_IMPORTED_MODULE_3__["hideBootstrapObj"])($('#ResNumGlobal' + PICOnum));
     Object(_hideshow_js__WEBPACK_IMPORTED_MODULE_3__["hideBootstrapObj"])(explodebutton);
   }
+}
+
+function hideLocalButton(PICOnum) {
+  Object(_hideshow_js__WEBPACK_IMPORTED_MODULE_3__["hideBootstrapObj"])($('#ResNumLocal' + PICOnum));
+}
+
+function hideGlobalButton(PICOnum) {
+  Object(_hideshow_js__WEBPACK_IMPORTED_MODULE_3__["hideBootstrapObj"])($('#ResNumGlobal' + PICOnum));
+}
+
+function showLocalButton(PICOnum) {
+  Object(_hideshow_js__WEBPACK_IMPORTED_MODULE_3__["showBootstrapObj"])($('#ResNumLocal' + PICOnum));
+}
+
+function showGlobalButton(PICOnum) {
+  Object(_hideshow_js__WEBPACK_IMPORTED_MODULE_3__["showBootstrapObj"])($('#ResNumGlobal' + PICOnum));
 }
 
 function objSpanSetOldResult(objSpan) {

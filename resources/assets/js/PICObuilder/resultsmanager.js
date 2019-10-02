@@ -1,10 +1,7 @@
-import {setCalcResAsSyncAlt} from "./changeseeker.js";
-import {getGlobalSpanJSON,getFieldListOptionNum,RemoveReDoButton} from "./commonschange.js";
-import {getPICOElements} from "./commons.js";
+import {getFieldListOptionNum} from "./commons.js";
 import {translate} from "./translator.js";
 import {POSTrequest} from "./loadingrequest.js";
 import {showInfoMessage} from "./infomessage.js";
-import {showBootstrapObj,hideBootstrapObj} from "./hideshow.js";
 
 ////PUBLIC FUNCTIONS
 
@@ -49,69 +46,40 @@ function getAllInputFields() {
 }
 
 function setResultsNumber(data, PICOnum) {
-    console.log('initialdata in resultsnumber');
-    console.log(data);
-
-    let spanObj;
-    setCalcResAsSyncAlt(PICOnum);
-    let ResNumLocalObj = $('#ResNumLocal' + PICOnum);
-    let ResNumGlobalObj = $('#ResNumGlobal' + PICOnum);
-
     let localresultsnumber = data.local.ResultsNumber;
     let localresultsurl = data.local.ResultsURL;
     let globalresultsnumber = data.global.ResultsNumber;
     let globalresultsurl = data.global.ResultsURL;
-
-    console.log('localresultsnumber');
-    console.log(localresultsnumber);
-    console.log('localresultsurl');
-    console.log(localresultsurl);
-    console.log('globalresultsnumber');
-    console.log(globalresultsnumber);
-    console.log('globalresultsurl');
-    console.log(globalresultsurl);
+    let ResNumLocalObj = $('#ResNumLocal' + PICOnum);
+    let ResNumGlobalObj = $('#ResNumGlobal' + PICOnum);
+    let spanObj;
     if (PICOnum < 5) {
         spanObj = ResNumLocalObj.find('span').first();
-        showBootstrapObj(spanObj.parent());
-        RemoveReDoButton(spanObj);
         if (localresultsnumber === 0) {
             addIconZeroResults(spanObj);
         } else {
             $(spanObj).text(localresultsnumber);
         }
-        $(spanObj).attr('data-oldval', localresultsnumber);
         ResNumLocalObj.attr("href", localresultsurl);
     }
     if (PICOnum > 1 && PICOnum !== 5) {
         spanObj = ResNumGlobalObj.find('span').first();
-        showBootstrapObj(spanObj.parent());
-        RemoveReDoButton(spanObj);
         if (globalresultsnumber === 0) {
             addIconZeroResults(spanObj);
         } else {
             $(spanObj).text(globalresultsnumber);
-            if (PICOnum === 6) {
-                showBootstrapObj(spanObj);
-            }
         }
-        $(spanObj).attr('data-oldval', globalresultsnumber);
         ResNumGlobalObj.attr("href", globalresultsurl);
     }
     if (PICOnum === 6) {
-        let FinalSearchDetailsObj = $('#FinalSearchDetails');
-        FinalSearchDetailsObj.val(data.global.query);
-        FinalSearchDetailsObj.attr('data-oldval', data.global.query);
+        $('#FinalSearchDetails').val(data.global.query);
     }
+}
 
-    let oldvalJSON = getGlobalSpanJSON(PICOnum);
-    $('#datainput' + PICOnum).attr('data-oldval', oldvalJSON);
-    if (PICOnum === 6) {
-        PICOnum = 5;
-    }
 
-    if (PICOnum < 5) {
-        FieldListSetoldval(PICOnum);
-    }
+function addIconZeroResults(obj) {
+    let iconHTML = '0 <a class="PICOiconzeroElement"><span>?</span></a>';
+    $(obj).html(iconHTML);
 }
 
 function eventResultsNumber(PICOnum, queryobject) {
@@ -125,12 +93,3 @@ function eventResultsNumber(PICOnum, queryobject) {
     });
 }
 
-function addIconZeroResults(obj) {
-    let iconHTML = '0 <a class="PICOiconzeroElement"><span>?</span></a>';
-    $(obj).html(iconHTML);
-}
-
-function FieldListSetoldval(PICOnum) {
-    let objFieldList = $('#FieldList' + PICOnum);
-    objFieldList.attr('data-oldval', getFieldListOptionNum(PICOnum));
-}

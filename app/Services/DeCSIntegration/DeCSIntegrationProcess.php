@@ -2,7 +2,6 @@
 
 namespace PICOExplorer\Services\DeCSIntegration;
 
-use PICOExplorer\Exceptions\Exceptions\AppError\DeCSExploringError;
 use PICOExplorer\Facades\DeCSIntegrationLooperFacade;
 use PICOExplorer\Facades\UltraLoggerFacade;
 use PICOExplorer\Models\DataTransferObject;
@@ -21,82 +20,94 @@ class DeCSIntegrationProcess extends DeCSIntegrationSupport implements ServiceEn
     {
         $Log = null;
         $results = 'Unset';
-        $wasSuccesful=false;
+        $wasSuccesful = false;
         try {
-            $Log = UltraLoggerFacade::createUltraLogger('DeCSIntegrationProcess',$InitialData);
-            $LogData = UltraLoggerFacade::UltraLoggerAttempt($Log, 'Step 1/3. Setting initial vars');
+            $Log = UltraLoggerFacade::createUltraLogger('DeCSIntegrationProcess', $InitialData);
+            $LogData = UltraLoggerFacade::UltraLoggerAttempt($Log, 'Step 1/5. Setting initial vars');
             $this->setInitialVars($DTO);
             UltraLoggerFacade::UltraLoggerSuccessfulAttempt($Log, $LogData);
 
-            $LogData = UltraLoggerFacade::UltraLoggerAttempt($Log, 'Step 2/3. Primary Main Trees');
-            $this->ExploreMainTrees($ServicePerformance, $DTO,$Log);
+            $LogData = UltraLoggerFacade::UltraLoggerAttempt($Log, 'Step 2/5. Primary Main Trees');
+            $this->ExploreMainTrees($ServicePerformance, $DTO, $Log);
             UltraLoggerFacade::UltraLoggerSuccessfulAttempt($Log, $LogData);
 
-            $TreesToExplore = $this->getExploreList($DTO);
-            if (!(is_array($TreesToExplore))) {
-                UltraLoggerFacade::ErrorToUltraLogger($Log, 'MainTrees Is Not Array');
-                throw new DeCSExploringError(['Error' => 'TreesToExploreIsNotArray', 'TreesToExplore' => $TreesToExplore]);
-            } else {
-                if (count($TreesToExplore) === 0) {
-                    UltraLoggerFacade::WarningToUltraLogger($Log, 'No tree_ids were retrieved from BIREME. Step 3 Skipped');
-                    $results = 'no-res';
-                } else {
-                    $LogData = UltraLoggerFacade::UltraLoggerAttempt($Log, 'Step 3/3. Exploring secondary trees');
-                    $this->ExploreSecondaryTrees($ServicePerformance,$TreesToExplore, $DTO, $Log);
-                    UltraLoggerFacade::UltraLoggerSuccessfulAttempt($Log, $LogData);
-                }
-            }
+            $LogData = UltraLoggerFacade::UltraLoggerAttempt($Log, 'Step 3/5. Exploring other languages in Primary Main Trees');
+            $this->ExploreLanguagesOfMainTrees($ServicePerformance, $DTO, $Log);
+            UltraLoggerFacade::UltraLoggerSuccessfulAttempt($Log, $LogData);
 
-            $results = $this->getResultsOrderedByTreeId($DTO);
-            if(count($results)===0){
-                $results= 'no-res';
+            $LogData = UltraLoggerFacade::UltraLoggerAttempt($Log, 'Step 4/5. Exploring secondary trees');
+            $this->ExploreSecondaryTrees($ServicePerformance, $DTO, $Log);
+            UltraLoggerFacade::UltraLoggerSuccessfulAttempt($Log, $LogData);
+
+            $LogData = UltraLoggerFacade::UltraLoggerAttempt($Log, 'Step 5/5. Mixing descendant Trees into MainTree');
+            $this->MixDescendantTreesIntoMainTree($DTO, $Log);
+            UltraLoggerFacade::UltraLoggerSuccessfulAttempt($Log, $LogData);
+
+
+            $MainTrees = $this->getMainTreeList($DTO);
+            $TmpResults = $this->getResultsOrderedByTreeId($DTO);
+            $ObtainedTreeIds=array_keys($TmpResults);
+
+            UltraLoggerFacade::InfoToUltraLogger($Log,'---------------');
+            UltraLoggerFacade::InfoToUltraLogger($Log,'Summary');
+            UltraLoggerFacade::InfoToUltraLogger($Log,count($MainTrees).' MaintTrees: '.json_encode($MainTrees));
+            UltraLoggerFacade::InfoToUltraLogger($Log,count($ObtainedTreeIds).' Total Trees: '.json_encode($ObtainedTreeIds));
+
+            $results = $this->getFinalResults($DTO);
+            if (count($results) === 0) {
+                $results = 'no-res';
             }
-            $wasSuccesful=true;
+            $InitialData = $DTO->getInitialData();
+            UltraLoggerFacade::setSubTitle($Log,$InitialData['keyword'].':'.json_encode($InitialData['langs']));
+            UltraLoggerFacade::setSubTitle($Log,count($MainTrees).' MainTrees ('.count($ObtainedTreeIds).' Total)');
+            $wasSuccesful = true;
         } catch (DontCatchException $ex) {
             //
         } finally {
-            if($results==='no-res'){
+            if ($results === 'no-res') {
                 UltraLoggerFacade::WarningToUltraLogger($Log, 'No results built in this service. Returning "no-res"');
             }
             if ($Log) {
-                UltraLoggerFacade::saveUltraLoggerResults($Log,$wasSuccesful, true);
+                UltraLoggerFacade::saveUltraLoggerResults($Log, $wasSuccesful, true);
             }
-            return $results;
         }
+        return $results;
     }
 
     ///////////////////////////////////////////////////////////////////
     //INNER FUNCTIONS
     //////////////////////////////////////////////////////////////////
 
-    protected function Explore(ServicePerformanceSV $ServicePerformance, string $key, bool $IsMainTree, DataTransferObject $DTO, UltraLoggerDevice $Log, array $langs)
+    protected function Explore(ServicePerformanceSV $ServicePerformance, string $key, int $TreeType, DataTransferObject $DTO, UltraLoggerDevice $Log, array $langs)
     {
-        $keyword = $this->getKeyword($DTO);
-        $title = '[kw= ' . $keyword . '] Exploring languages: '. json_encode($langs);
-        if ($IsMainTree) {
-            $title = $title . 'words= ' . $key;
-        } else {
-            $title = $title . 'tree_id= ' . $key;
+
+        $FirstArgument = 'tree_id';
+        if ($TreeType == 1) {
+            $FirstArgument = 'words';
         }
 
-        $LogData = UltraLoggerFacade::UltraLoggerAttempt($Log, $title);
-        $results=[];
-        foreach ($langs as $lang) {
-            $FirstArgument = 'tree_id';
-            if ($IsMainTree == true) {
-                $FirstArgument = 'words';
-            }
+        $title = '[' . $FirstArgument . '=' . $key . ' langs=' . json_encode($langs).']. ';
+        UltraLoggerFacade::InfoToUltraLogger($Log, $title.'Step 1/2 Connections');
+        $results = [];
+        foreach ($langs as $index => $lang) {
             $data = [
                 $FirstArgument => $key,
                 'lang' => $lang,
             ];
-            $results[$lang] = $this->Connect($ServicePerformance, $data,$Log);
+            $LogData = UltraLoggerFacade::UltraLoggerAttempt($Log, '('.($index+1). '/' .(count($langs). ') Attempting Connection:' . json_encode($data)));
+            $results[$lang] = $this->Connect($ServicePerformance, $data, $Log);
+            UltraLoggerFacade::UltraLoggerSuccessfulAttempt($Log, $LogData);
         }
-        UltraLoggerFacade::UltraLoggerSuccessfulAttempt($Log, $LogData);
 
+        $LogData = UltraLoggerFacade::UltraLoggerAttempt($Log, $title . 'Step 2/2 Processing results');
+        if($TreeType===1 || $TreeType===-1){
+            $isMain=true;
+        }else{
+            $isMain=false;
+        }
 
-        $LogData = UltraLoggerFacade::UltraLoggerAttempt($Log, $title);
-        $this->ProcessImportResults($results,$IsMainTree,$DTO,$title,$Log);
+        $this->ProcessImportResults($results, $isMain, $DTO, $title, $Log);
+        UltraLoggerFacade::InfoToUltraLogger($Log, '--------------');
         UltraLoggerFacade::UltraLoggerSuccessfulAttempt($Log, $LogData);
     }
 
@@ -104,12 +115,12 @@ class DeCSIntegrationProcess extends DeCSIntegrationSupport implements ServiceEn
     //INNER FUNCTIONS
     ///////////////////////////////////////////////////////////////////
 
-    private final function Connect(ServicePerformanceSV $ServicePerformance, $data,$Log)
+    private final function Connect(ServicePerformanceSV $ServicePerformance, $data, $Log)
     {
         $AdvancedFacade = new DeCSIntegrationLooperFacade();
         $XMLresults = $this->ToParallelServiceIntegration($ServicePerformance, $AdvancedFacade, $data);
-        if($XMLresults==='no-res'){
-            $XMLresults=[];
+        if ($XMLresults === 'no-res') {
+            $XMLresults = [];
         }
         return $XMLresults;
     }

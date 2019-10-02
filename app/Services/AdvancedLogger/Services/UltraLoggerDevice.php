@@ -27,6 +27,10 @@ class UltraLoggerDevice
         return $sent;
     }
 
+    public function setSubTitle(string $text){
+        $this->title = $this->title .' - '.$text;
+    }
+
     public function UltraLogerDeviceConnection($AttemptText, $sent)
     {
         $arrayitem = ['type' => 'Connection', 'text' => $AttemptText, 'sent' => $sent];
@@ -95,10 +99,10 @@ class UltraLoggerDevice
     {
         $level = 0;
 
-        if($wasSuccesful){
-            $finalitem=['type'=>'Info','text'=>'Operation Successful!'];
-        }else{
-            $finalitem=['type'=>'Error','text'=>'Operation not completed'];
+        if ($wasSuccesful) {
+            $finalitem = ['type' => 'Info', 'text' => 'Operation Successful!'];
+        } else {
+            $finalitem = ['type' => 'Error', 'text' => 'Operation not completed'];
         }
 
         foreach ($this->log as $index => $arrayitem) {
@@ -119,8 +123,8 @@ class UltraLoggerDevice
         }
         array_push($this->log, $finalitem);
 
-        $firsterror=null;
-        $firstwarning=null;
+        $ErrorCount = 0;
+        $WarningCount = 0;
         $results = [];
 
         foreach ($this->log as $index => $arrayitem) {
@@ -130,8 +134,8 @@ class UltraLoggerDevice
             $type = $arrayitem['type'] ?? null;
             $pretext = '';
 
-            $text = $this->log[$index]['text']?? null;
-            if(!($text)){
+            $text = $this->log[$index]['text'] ?? null;
+            if (!($text)) {
                 continue;
             }
             if ($type === 'Warning') {
@@ -139,20 +143,16 @@ class UltraLoggerDevice
                     $level = 1;
                 }
                 $pretext = ' [Warning]';
-                if(!($firstwarning)){
-                    $firstwarning= $text;
-                }
+                $WarningCount++;
             } elseif ($type === 'Error') {
                 if ($level < 2) {
                     $level = 2;
                 }
                 $pretext = ' [Error]';
-                if(!($firsterror)){
-                    $firsterror= $text;
-                }
+                $ErrorCount++;
             }
 
-            if(!($text) || (!(is_string($text)))){
+            if (!($text) || (!(is_string($text)))) {
                 continue;
             }
             $localtxt = $index . $pretext . ' => **' . $text;
@@ -160,10 +160,11 @@ class UltraLoggerDevice
         }
 
         $title = $this->title;
-        $issue =$firsterror??$firstwarning;
-        if($issue){
-            $issue = substr($issue, 0, 60);
-            $title = $title. ' - '.$issue;
+        if ($ErrorCount > 0) {
+            $title = $title . ' - ' . $WarningCount . ' Errors';
+        }
+        if ($WarningCount > 0) {
+            $title = $title . ' - ' . $WarningCount . ' Warnings';
         }
 
         return ['level' => $level,

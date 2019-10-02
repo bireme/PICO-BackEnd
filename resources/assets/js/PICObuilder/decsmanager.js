@@ -6,11 +6,10 @@ import {POSTrequest} from "./loadingrequest.js";
 export function OnExpandDeCS(ExpandButton) {
     let langs = getLanguages();
     let PICOnum = ($(ExpandButton).attr('id')).substr(-1);
-    clearDeCSMenu(PICOnum);
+    clearDeCSMenu();
     let PICOval = '#datainput' + PICOnum;
     let query = $(PICOval).val();
     let ImprovedSearch = getImproveSearch(PICOnum);
-    console.log('ImprovedSearch: '+ImprovedSearch)
     eventdDeCSManager(query, langs, PICOnum,ImprovedSearch);
 }
 
@@ -34,7 +33,7 @@ function getImproveSearch(PICOnum) {
 }
 
 
-function clearDeCSMenu(PICOnum) {
+function clearDeCSMenu() {
     let NoData = 'No Data';
     $('#modal3').find('textarea').val(NoData);
     $('#modal1').find('.modal-body').first().html(NoData);
