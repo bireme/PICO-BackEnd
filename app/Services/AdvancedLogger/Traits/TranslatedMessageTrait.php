@@ -11,7 +11,7 @@ trait TranslatedMessageTrait
         $tmp = explode('\\', $ErrorKey);
         $ErrorKey = end($tmp);
         $Internals = trans('Internals', [], 'en');
-        $ServerTxt = trans('Server', [], 'en');
+        $ServerTxt = trans('Server', [], app()->getLocale());
         if (array_key_exists($ErrorKey, $ServerTxt)) {
             return $ServerTxt[$ErrorKey];
         } elseif (array_key_exists($ErrorKey, $Internals)) {

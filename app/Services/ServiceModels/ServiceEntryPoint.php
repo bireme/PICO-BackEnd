@@ -28,8 +28,8 @@ abstract class ServiceEntryPoint
             $results = $this->Process($ServicePerformance, $DTO,$InitialData);
             $this->setResults($DTO,get_class($this),$results);
             $wasSuccess=true;
-        } catch (DontCatchException $ex) {
-            //
+        } catch (\Throwable $ex) {
+            throw $ex;
         } finally {
             $ServicePerformance->ServicePerformanceSummary($wasSuccess);
         }

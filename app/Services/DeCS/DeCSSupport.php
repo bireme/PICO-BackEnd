@@ -3,6 +3,7 @@
 namespace PICOExplorer\Services\DeCS;
 
 use PICOExplorer\Exceptions\Exceptions\AppError\PreviousDataCouldNotBeDecoded;
+use PICOExplorer\Exceptions\Exceptions\ClientError\NoContentFound;
 use PICOExplorer\Facades\UltraLoggerFacade;
 use PICOExplorer\Models\DataTransferObject;
 use PICOExplorer\Services\ServiceModels\ServiceEntryPoint;
@@ -10,7 +11,7 @@ use PICOExplorer\Services\ServiceModules\BuildHTMLTrait;
 use PICOExplorer\Services\AdvancedLogger\Services\UltraLoggerDevice;
 use Throwable;
 
-abstract class DeCSInfoProcessor extends ServiceEntryPoint
+abstract class DeCSSupport extends ServiceEntryPoint
 {
 
     use BuildHTMLTrait;
@@ -104,6 +105,9 @@ abstract class DeCSInfoProcessor extends ServiceEntryPoint
     {
         $ProcessedDescriptors = $DTO->getAttr('ProcessedDescriptors');
         $ProcessedDeCS = $DTO->getAttr('ProcessedDeCS');
+        if(count($ProcessedDescriptors)===0){
+         throw new NoContentFound();
+        }
         $QuerySplit = $DTO->getAttr('QuerySplit');
         $DescriptorsHTML = $this->BuildHiddenField('descriptorsform', 'querysplit', $QuerySplit);
         $DescriptorsHTML = $DescriptorsHTML . $this->BuildHiddenField('descriptorsform', 'piconum', $PICOnum);

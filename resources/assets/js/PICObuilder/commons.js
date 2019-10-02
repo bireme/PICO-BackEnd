@@ -14,4 +14,9 @@ export function setResNumAltText(objSpan, hasReDo) {
     $(objSpan).parent().attr('data-original-title', msg);
 }
 
+export function getFieldListOptionNum(PICOnum) {
+    return $('#FieldList' + PICOnum).children("option:selected").index();
+}
+
+
 ////PRIVATE FUNCTIONS

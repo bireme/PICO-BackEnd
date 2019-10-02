@@ -29,12 +29,14 @@ class DeCSProcess extends DeCSQueryBuild implements ServiceEntryPointInterface
             $this->DecodePreviousData($DTO, $InitialData['SavedData'] ?? null);
             UltraLoggerFacade::UltraLoggerSuccessfulAttempt($Log, $LogData);
 
+
+
             $LogData = UltraLoggerFacade::UltraLoggerAttempt($Log, 'Attempting to process query and improved search');
             $QueryProcessed = $this->ProcessInitialQuery($InitialData['query'], $InitialData['ImprovedSearch'] ?? null);
             UltraLoggerFacade::UltraLoggerSuccessfulAttempt($Log, $LogData);
 
-            $LogData = UltraLoggerFacade::UltraLoggerAttempt($Log, 'Attempting to build keywordList');
-            $this->BuildKeywordList($DTO, $QueryProcessed, $InitialData['langs'], $Log);
+            $LogData = UltraLoggerFacade::UltraLoggerAttempt($Log, 'Attempting to build Lists From proocessed queries');
+            $this->BuildListsFromProcessedData($DTO, $QueryProcessed, $InitialData['langs'], $Log);
             UltraLoggerFacade::UltraLoggerSuccessfulAttempt($Log, $LogData);
 
             $this->Explore($ServicePerformance, $DTO, $InitialData['mainLanguage'], $Log);
@@ -61,30 +63,32 @@ class DeCSProcess extends DeCSQueryBuild implements ServiceEntryPointInterface
 
     protected function Explore(ServicePerformanceSV $ServicePerformance, DataTransferObject $DTO, string $mainLanguage, UltraLoggerDevice $Log)
     {
-        $IntegrationResults = [];
-        $KeywordList = $DTO->getAttr('KeywordList');
 
-        $LogData = UltraLoggerFacade::UltraLoggerAttempt($Log, 'Attempting to explore connections');
+        $KeywordList = $DTO->getAttr('KeywordList');
+        UltraLoggerFacade::InfoToUltraLogger($Log, 'Processing KeywordList => Step 1/2 Connections');
+
+        $index=1;
+        $IntegrationResults = [];
         foreach ($KeywordList as $keyword => $langdata) {
             $langs = array_values($langdata);
             if (count($langs) === 0) {
                 continue;
             }
+            $LogData = UltraLoggerFacade::UltraLoggerAttempt($Log, '('.($index+1). '/' .(count($langs). ') Attempting Connection:' . json_encode(['keyword'=>$keyword,'langs'=>$langs])));
             $res = $this->Connect($ServicePerformance, $keyword, $langs, $Log);
+            UltraLoggerFacade::UltraLoggerSuccessfulAttempt($Log, $LogData);
+
             if($res==='no-res'){
                 $res=null;
             }
             $IntegrationResults[$keyword] = $res;
+            $index++;
         }
-        UltraLoggerFacade::UltraLoggerSuccessfulAttempt($Log, $LogData);
-
-        $LogData = UltraLoggerFacade::UltraLoggerAttempt($Log, 'Attempting to mix new and old data');
+        UltraLoggerFacade::InfoToUltraLogger($Log, 'Processing KeywordList => Step 2/3 Mixing Results With OldData');
         $this->MixWithOldData($DTO, $IntegrationResults, $Log);
-        UltraLoggerFacade::UltraLoggerSuccessfulAttempt($Log, $LogData);
 
-        $LogData = UltraLoggerFacade::UltraLoggerAttempt($Log, 'Attempting to build results as terms');
+        UltraLoggerFacade::InfoToUltraLogger($Log, 'Processing KeywordList => Step 3/3 Building as Terms');
         $this->BuildAsTerms($DTO, $mainLanguage, $Log);
-        UltraLoggerFacade::UltraLoggerSuccessfulAttempt($Log, $LogData);
     }
 
 

@@ -3,7 +3,7 @@
 
 /**
  * A helper file for Laravel 5, to provide autocomplete information to your IDE
- * Generated for Laravel 5.8.34 on 2019-09-30 09:22:35.
+ * Generated for Laravel 5.8.34 on 2019-10-01 15:10:02.
  *
  * This file should not be included in your code, only analyzed by your IDE!
  *
@@ -15264,6 +15264,17 @@ namespace PICOExplorer\Facades {
         {
                         /** @var \PICOExplorer\Services\AdvancedLogger\Services\UltraLogger $instance */
                         return $instance->WarningToUltraLogger($logger, $text);
+        }
+        
+        /**
+         * 
+         *
+         * @static 
+         */ 
+        public static function setSubTitle($logger, $text)
+        {
+                        /** @var \PICOExplorer\Services\AdvancedLogger\Services\UltraLogger $instance */
+                        return $instance->setSubTitle($logger, $text);
         }
         
         /**

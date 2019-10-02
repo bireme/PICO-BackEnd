@@ -2,8 +2,11 @@
 
 namespace PICOExplorer\Services\DeCSIntegration;
 
+use mysql_xdevapi\Exception;
+use PICOExplorer\Exceptions\Exceptions\AppError\ErrorInExploredTrees;
 use PICOExplorer\Models\DataTransferObject;
 use PICOExplorer\Services\ServiceModels\ServiceEntryPoint;
+use Symfony\Component\CssSelector\Exception\InternalErrorException;
 
 abstract class DTOManager extends ServiceEntryPoint
 {
@@ -13,13 +16,12 @@ abstract class DTOManager extends ServiceEntryPoint
     ////////////////////////////////////////////////////////
 
     protected $controllerData = [
-        'MaxExploringLoops' => 5,
         'MaxTreesPerKeyword' => 10,
-        'MaxDescendantsPerTree' => 10,
-        'MaxTotalTrees' => 300,
+        'MaxDescendantsPerTree' => 30,
         'MaxDescendantsDepth' => 5,
         'SaveDescendantsOfPrimaryMainTreesIntoMainTrees' => true,
         'SaveRelatedTreesOfPrimaryMainTreesIntoMainTrees' => true,
+        'MaxSecondaryLoopsSecurity' => 200,
         'AllValidLanguages' => [
             'en',
             'es',
@@ -30,17 +32,6 @@ abstract class DTOManager extends ServiceEntryPoint
     ///
     ///GLOBAL CONTROLLER VARS
     ///
-
-
-    protected function getMaxExploringLoops()
-    {
-        return $this->controllerData['MaxExploringLoops'];
-    }
-
-    protected function getMaxWishList()
-    {
-        return $this->controllerData['MaxTotalTrees'];
-    }
 
     protected function getMaxDescendantsDepth()
     {
@@ -72,16 +63,22 @@ abstract class DTOManager extends ServiceEntryPoint
         $keyword = $InitialData['keyword'];
         $keyword = str_replace('  ', ' ', $keyword);
         $keyword = trim($keyword);
-        $keyword = str_replace(' ', '+', $keyword);
-
+        $keyword = str_replace(' ', '*', $keyword);
         $inidata = [
             'langs' => $InitialData['langs'],
             'keyword' => $keyword,
             'MainTreeList' => [],
             'WishList' => [],
             'ResultsByTreeId' => [],
+            'FinalResults' => [],
+            'LevelList' => [],
         ];
         $DTO->SaveToModel(get_class($this), $inidata);
+    }
+
+    protected function getMaxExploringLoops()
+    {
+        return $this->controllerData['MaxSecondaryLoopsSecurity'];
     }
 
     protected function getAllValidLanguages()
@@ -118,15 +115,34 @@ abstract class DTOManager extends ServiceEntryPoint
         return $DTO->getAttr('ResultsByTreeId');
     }
 
+    protected function getLevelList(DataTransferObject $DTO)
+    {
+        return $DTO->getAttr('LevelList');
+    }
+
     protected function saveResultsOrderedByTreeId(DataTransferObject $DTO, array $ResultsOrderedByTreeId)
     {
         $DTO->SaveToModel(get_class($this), ['ResultsByTreeId' => $ResultsOrderedByTreeId]);
     }
 
-    protected function getExploreList(DataTransferObject $DTO)
+    protected function saveFinalResults(DataTransferObject $DTO, array $FinalResults)
+    {
+        $DTO->SaveToModel(get_class($this), ['FinalResults' => $FinalResults]);
+    }
+
+    protected function getFinalResults(DataTransferObject $DTO)
+    {
+        return $DTO->getAttr('FinalResults');
+    }
+
+    protected function getExploreList(DataTransferObject $DTO, bool $onlyMain)
     {
         $maintrees = $this->getMainTreeList($DTO);
-        $wishlist = $this->getWishList($DTO);
+        if (!($onlyMain)) {
+            $wishlist = $this->getWishList($DTO);
+        } else {
+            $wishlist = [];
+        }
         $listorder = array_unique(array_merge($maintrees, $wishlist));
 
         $currentdata = $this->getResultsOrderedByTreeId($DTO);
@@ -170,30 +186,27 @@ abstract class DTOManager extends ServiceEntryPoint
             'added' => $added,
             'cut' => $cut,
         ];
-        $DTO->SaveToModel(get_class($this), ['MainTreeList' => array_merge($oldmaintrees,$added)]);
-        $this->addToWishList($added, $DTO);
+        $DTO->SaveToModel(get_class($this), ['MainTreeList' => array_merge($oldmaintrees, $added)]);
+        $depthlevel = 0;
+        $this->addToWishList($added, $depthlevel, $DTO);
         return $info;
     }
 
-    protected function addToWishList(array $tree_ids, DataTransferObject $DTO)
+    protected function addToWishList(array $tree_ids, int $depthlevel, DataTransferObject $DTO)
     {
         $oldwishlist = $this->getWishList($DTO);
-        $remainingwishlist = $this->getRemainingWishListToAdd($DTO);
-
-        $newtrees = array_diff($tree_ids, $oldwishlist);
-
-        if ($remainingwishlist) {
-            $added = array_slice($newtrees, 0, $remainingwishlist, true);
-        } else {
-            $added = [];
+        $levellist = $this->getLevelList($DTO);
+        if (($levellist[$depthlevel] ?? null) === null) {
+            $levellist[$depthlevel] = [];
         }
-        $cut = array_diff($newtrees, $added);
+        $levellist[$depthlevel] = array_unique(array_merge($levellist[$depthlevel], $tree_ids));
+        $added = array_diff($tree_ids, $oldwishlist);
+        $cut = array_diff($tree_ids, $added);
         $wishlist = array_merge($oldwishlist, $added);
-        $DTO->SaveToModel(get_class($this), ['WishList' => $wishlist]);
+        $DTO->SaveToModel(get_class($this), ['WishList' => $wishlist, 'LevelList' => $levellist]);
 
         $info = [
             'added' => $added,
-            'cut' => $cut,
         ];
         return $info;
     }
@@ -209,13 +222,11 @@ abstract class DTOManager extends ServiceEntryPoint
         return $this->controllerData['SaveRelatedTreesOfPrimaryMainTreesIntoMainTrees'];
     }
 
-    protected function addDescendantsToTree(array $descendants_ids, String $tree_id, bool $isMain, DataTransferObject $DTO)
+    protected function addDescendantsToTree(array $descendants_ids, String $tree_id, int $depthlevel, bool $isMain, DataTransferObject $DTO)
     {
         if (!($isMain)) {
-            $olddescendants = $this->getDescendants($tree_id, $DTO);
-            if ($olddescendants === -1) {
-                return;
-            }
+            $resultsByTreeId = $this->getResultsOrderedByTreeId($DTO);
+            $olddescendants = $resultsByTreeId[$tree_id]['descendants'] ?? [];
         } else {
             $olddescendants = [];
         }
@@ -230,10 +241,9 @@ abstract class DTOManager extends ServiceEntryPoint
             $added = [];
         }
 
-        $wishinfo = $this->addToWishList($added, $DTO);
-        $added = $wishinfo['added'];
-        $cut = array_diff($newdescendants, $added);
+        $this->addToWishList($added, $depthlevel, $DTO);
 
+        $cut = array_diff($newdescendants, $added);
         $info = [
             'added' => $added,
             'cut' => $cut,
@@ -246,7 +256,7 @@ abstract class DTOManager extends ServiceEntryPoint
         $maintrees = $this->getMainTreeList($DTO);
         $exploredTrees = $this->getResultsOrderedByTreeId($DTO);
         $wishlist = $this->getWishList($DTO);
-        $relevant = array_intersect($wishlist,array_keys($exploredTrees));
+        $relevant = array_intersect($wishlist, array_keys($exploredTrees));
 
         $result = [];
         foreach ($relevant as $key => $tree_id) {
@@ -255,7 +265,7 @@ abstract class DTOManager extends ServiceEntryPoint
             } else {
                 $type = false;
             }
-            $TreeObj = $exploredTrees[$tree_id]??null;
+            $TreeObj = $exploredTrees[$tree_id] ?? null;
             if ($TreeObj) {
                 $descendants = $TreeObj['descendants'];
                 if (count($descendants) === 0) {
@@ -270,51 +280,28 @@ abstract class DTOManager extends ServiceEntryPoint
     }
 
 
-    protected function IsTreeDepthOk(String $tree_id, DataTransferObject $DTO)
+    protected function IsTreeDepthOk(String $parent_id, DataTransferObject $DTO)
     {
-        $MainList = $this->getMainTreeList($DTO);
+        $LevelList = $this->getLevelList($DTO);
         $maxdepth = $this->getMaxDescendantsDepth();
-        if(in_array($tree_id,$MainList)){
-            $currentdepth = 1;
-        }else{
-            $WishListType = $this->WishListType($DTO);
-            $result=[];
-            $this->getTreeIdDepth($tree_id, $WishListType, 1, $DTO,$result);
-            $currentdepth = 999;
-            $masterParent = '';
-            foreach($result as $itemarray){
-                if($itemarray['level']<$currentdepth){
-                    $currentdepth = $itemarray['level'];
-                    $masterParent = $itemarray['tree_id'];
-                }
+        $current = null;
+        foreach ($LevelList as $level => $data) {
+            if (in_array($parent_id, $data)) {
+                $current = $level;
+                break;
             }
         }
         $info = [
-            'maxdepth' => $maxdepth,
-            'currentdepth' => $currentdepth,
+            'current' => $current,
+            'max' => $maxdepth,
         ];
+
         return $info;
     }
 
     ///////////////////////////////////////
     /// INNNER
     /// //////////////////////////////////////
-
-    private function getTree(String $tree_id, DataTransferObject $DTO)
-    {
-        $resultsByTreeId = $this->getResultsOrderedByTreeId($DTO);
-        $TreeObject = $resultsByTreeId[$tree_id] ?? null;
-        return $TreeObject;
-    }
-
-    private function getDescendants(String $tree_id, DataTransferObject $DTO)
-    {
-        $treeobject = $this->getTree($tree_id, $DTO);
-        if (!($treeobject)) {
-            return -1;
-        }
-        return $treeobject['descendants'];
-    }
 
     private function getRemainingMainTreesToAdd(DataTransferObject $DTO)
     {
@@ -323,32 +310,6 @@ abstract class DTOManager extends ServiceEntryPoint
             return 0;
         }
         return $limit;
-    }
-
-    private function getRemainingWishListToAdd(DataTransferObject $DTO)
-    {
-        $limit = $this->getMaxWishList() - count($this->getWishList($DTO));
-        if ($limit < 0) {
-            return 0;
-        }
-        return $limit;
-    }
-
-    private function getTreeIdDepth(string $tree_id, array $WishListType, int $level, DataTransferObject $DTO, array &$result)
-    {
-        $level++;
-        foreach ($WishListType as $local_tree_id => $treedata) {
-            $descendants = $treedata['descendants']??[];
-            if (in_array($tree_id, $descendants)) {
-                $type = $treedata['type'];
-                if ($type) {
-                    array_push($result,['tree_id' => $local_tree_id, 'level' =>$level]);
-                    return;
-                } else {
-                    $this->getTreeIdDepth($local_tree_id, $WishListType, $level, $DTO, $result);
-                }
-            }
-        }
     }
 
 }

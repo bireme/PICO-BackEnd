@@ -5,21 +5,14 @@ namespace PICOExplorer\Services\DeCSIntegration;
 use PICOExplorer\Facades\UltraLoggerFacade;
 use PICOExplorer\Models\DataTransferObject;
 use PICOExplorer\Services\AdvancedLogger\Services\UltraLoggerDevice;
+use Symfony\Component\CssSelector\Exception\InternalErrorException;
 
 abstract class DeCSIntegrationDataProcessor extends DTOManager
 {
-    //data['lang']=[obj,obj,obj,obj]
-    //obj['term']
-//obj['tree_id']
-//obj['decs']
-//obj['trees']
-//obj['descendants']
 
     protected function ProcessImportResults(array $resultsByLang, bool $IsMainTree, DataTransferObject $DTO, string $queryTitle, UltraLoggerDevice $Log)
     {
-        UltraLoggerFacade::MapArrayIntoUltraLogger($Log, 'Integration results for ' . $queryTitle, ['IntegrationResults' => $resultsByLang], 2, 'tree_id');
         $TreeList = [];
-
         foreach ($resultsByLang as $lang => $TreeListObj) {
             if (!($TreeListObj)) {
                 continue;
@@ -27,75 +20,127 @@ abstract class DeCSIntegrationDataProcessor extends DTOManager
             foreach ($TreeListObj as $index => $TreeData) {
                 $tree_id = $TreeData['tree_id'] ?? null;
                 if ($tree_id) {
-                    $TreeList[$tree_id] = $TreeData;
+                    if (($TreeList[$tree_id] ?? null) === null) {
+                        $TreeList[$tree_id] = [];
+                    }
+                    $TreeList[$tree_id][$lang] = $TreeData;
                 }
             }
         }
-        if (count($TreeList) === 0) {
-            UltraLoggerFacade::WarningToUltraLogger($Log, 'No trees were found in this loop');
-            return null;
-        }else{
-            if($IsMainTree){
-                $info=$this->addToMainTreeList(array_keys($TreeList),$DTO);
+        if ($IsMainTree) {
+            if (count($TreeList) === 0) {
+                UltraLoggerFacade::WarningToUltraLogger($Log, 'There were no trees found to be processed');
+                return null;
+            } else {
+                UltraLoggerFacade::InfoToUltraLogger($Log, count($TreeList) . ' trees found to be processed');
+
+                $info = $this->addToMainTreeList(array_keys($TreeList), $DTO);
                 $added = $info['added'];
                 $cut = $info['cut'];
-                if(count($added)) {
-                    UltraLoggerFacade::InfoToUltraLogger($Log, 'The following keys were added to main trees ' . json_encode($info['added']));
+                if (count($added)) {
+                    UltraLoggerFacade::InfoToUltraLogger($Log, 'The following keys were added to Primary Main Trees ' . json_encode($info['added']));
                 }
-                if(count($cut)) {
-                    UltraLoggerFacade::WarningToUltraLogger($Log, 'The following keys were not included in master list ' . json_encode($info['cut']));
+                if (count($cut)) {
+                    UltraLoggerFacade::WarningToUltraLogger($Log, count($info['cut']) . ' trees excluded from Primary Main List');
                 }
             }
         }
+
         $CurrentResults = $this->getResultsOrderedByTreeId($DTO);
         $OfficialLangs = $this->getLangs($DTO);
 
-        $currentTrees = [];
-        $descendants = [];
-        $trees = [];
-
-        $LogData = UltraLoggerFacade::UltraLoggerAttempt($Log, 'Adding integration data to results');
-
-        foreach ($TreeList as $tree_id => $newTreeData) {
-            if ($newTreeData) {
-                if (!(array_key_exists($tree_id, $CurrentResults))) {
-                    $CurrentResults[$tree_id] = [];
-                    $CurrentResults[$tree_id]['descendants'] = [];
-                    $CurrentResults[$tree_id]['remaininglangs'] = $OfficialLangs;
-                    UltraLoggerFacade::InfoToUltraLogger($Log, 'Created Tree ' . $tree_id . ' into results');
+        foreach ($TreeList as $tree_id => $newTreeObject) {
+            if ($newTreeObject === null) {
+                continue;
+            }
+            if (!(array_key_exists($tree_id, $CurrentResults))) {
+                $CurrentResults[$tree_id] = [];
+                $CurrentResults[$tree_id]['descendants'] = [];
+                $CurrentResults[$tree_id]['remaininglangs'] = $OfficialLangs;
+            }
+            foreach ($newTreeObject as $lang => $newTreeLangData) {
+                if ($newTreeLangData === null) {
+                    continue;
                 }
                 if (!(array_key_exists($lang, $CurrentResults[$tree_id]))) {
                     $CurrentResults[$tree_id][$lang] = [];
-                    UltraLoggerFacade::InfoToUltraLogger($Log, 'Created ' . $tree_id . '[.$lang.]' . ' into results');
                 }
-                $decs = $this->RemoveCommasFromDeCS(array_merge([$newTreeData['term']], $newTreeData['decs']));
+                if (!(array_key_exists($lang, $CurrentResults[$tree_id]))) {
+                    $CurrentResults[$tree_id][$lang] = [];
+                }
+                $decs = $this->RemoveCommasFromDeCS(array_merge([$newTreeLangData['term']], $newTreeLangData['decs']));
                 $term = $decs[0];
+                $CurrentResults[$tree_id]['remaininglangs'] = array_diff($CurrentResults[$tree_id]['remaininglangs'], [$lang]);
                 $CurrentResults[$tree_id][$lang] = [
                     'term' => $term,
                     'decs' => $decs,
                 ];
-                $NewDescendants = $this->HandleTreeDescendantsSaving($DTO, $Log, $IsMainTree, $tree_id, $newTreeData['descendants'] ?? []);
-                $CurrentResults[$tree_id]['descendants'] = $NewDescendants;
-
-                UltraLoggerFacade::InfoToUltraLogger($Log, 'Saved Lang="' . $lang . '" in tree ' . $tree_id);
-                UltraLoggerFacade::InfoToUltraLogger($Log, $tree_id . '[' . $lang . '] => Term:' . $term . '. DeCS=' . count($decs) . ' Descendants=' . count($NewDescendants));
-
-                if (($langkey = array_search($lang, $CurrentResults[$tree_id]['remaininglangs'])) !== false) {
-                    unset($CurrentResults[$tree_id]['remaininglangs'][$langkey]);
-                    UltraLoggerFacade::InfoToUltraLogger($Log, 'Tree´s (' . $tree_id . ') pending Langs. Remaining:' . json_encode($CurrentResults[$tree_id]['remaininglangs']));
-                }
-                array_push($currentTrees, $tree_id);
-                $descendants = array_merge($descendants, $NewDescendants);
-                $trees = array_merge($trees, $newTreeData['trees']);
+                UltraLoggerFacade::InfoToUltraLogger($Log, '--------------');
+                $treeinfo = $tree_id . '[' . $lang . '] => Term:' . $term . '. DeCS=' . count($decs);
+                UltraLoggerFacade::InfoToUltraLogger($Log, $treeinfo);
+                $oridescendants = $newTreeLangData['descendants'];
+                $NewDescendants = $this->HandleTreeDescendantsSaving($DTO, $Log, $IsMainTree, $tree_id, $oridescendants);
+                $treeinfo = count($NewDescendants) . ' added descendants(original=' . count($oridescendants) . ') => ' . json_encode($NewDescendants);
+                UltraLoggerFacade::InfoToUltraLogger($Log, $treeinfo);
+                $CurrentResults[$tree_id]['descendants'] = array_merge($CurrentResults[$tree_id]['descendants'], $NewDescendants);
             }
         }
 
         $this->saveResultsOrderedByTreeId($DTO, $CurrentResults);
-        UltraLoggerFacade::UltraLoggerSuccessfulAttempt($Log, $LogData);
 
         //$LogData = UltraLoggerFacade::UltraLoggerAttempt($Log, 'Managing Trees recently obtained');
         //$this->TreeManager($IsMainTree, array_unique($descendants),array_unique($currentTrees),  $DTO, $Log);
         //UltraLoggerFacade::UltraLoggerSuccessfulAttempt($Log, $LogData);
+    }
+
+    protected function MixDescendantTreesIntoMainTree(DataTransferObject $DTO, UltraLoggerDevice $Log)
+    {
+        $MainTrees = $this->getMainTreeList($DTO);
+        $TmpResults = $this->getResultsOrderedByTreeId($DTO);
+        $ValidLangs = $this->getLangs($DTO);
+        $FinalResults = [];
+        foreach ($MainTrees as $MainTree) {
+            UltraLoggerFacade::InfoToUltraLogger($Log, '--------------');
+            UltraLoggerFacade::InfoToUltraLogger($Log, '[Maintree ' . $MainTree . '] Merging DeCS and Terms of descendants');
+            try {
+                $res = $this->MergeDescendantsOfMainTree($MainTree, $TmpResults, $ValidLangs, $Log);
+                if ($res !== null) {
+                    $FinalResults[$MainTree] = $res;
+                }
+            } catch (\Throwable $ex) {
+                UltraLoggerFacade::ErrorToUltraLogger($Log, $ex->getMessage() . '@' . $ex->getLine() . '@' . $ex->getFile());
+            }
+        }
+        $this->saveFinalResults($DTO, $FinalResults);
+    }
+
+    private function MergeDescendantsOfMainTree(string $MainTree, array $TmpResults, array $ValidLangs, UltraLoggerDevice $Log)
+    {
+        $MainTreeData = $TmpResults[$MainTree] ?? null;
+        if ($MainTreeData === null) {
+            UltraLoggerFacade::ErrorToUltraLogger($Log, 'MainTree ' . $MainTree . ' not found in explored data');
+            return null;
+        }
+        $globaldecs = [];
+        $this->MergeDescendantsOTree($MainTree, $MainTreeData, $TmpResults, $ValidLangs, $globaldecs, $Log);
+        if (count($globaldecs) === 0) {
+            UltraLoggerFacade::ErrorToUltraLogger($Log, $MainTree . ': Error Retrieving globaldecs. Was empty');
+            return null;
+        }
+        $Error = false;
+        foreach ($globaldecs as $lang => $langdata) {
+            if (count($langdata) === 0) {
+                UltraLoggerFacade::ErrorToUltraLogger($Log, $MainTree . ': Error Retrieving globaldecs langdata. Lang=' . $lang);
+                $Error = true;
+                continue;
+            }
+            $globaldecs[$lang]['decs'] = array_unique($langdata['decs']);
+            $globaldecs[$lang]['term'] = array_shift($globaldecs[$lang]['decs']);
+        }
+        if ($Error) {
+            return null;
+        }
+        return $globaldecs;
     }
 
     /////////////////////////////////////////////////////////
@@ -103,6 +148,124 @@ abstract class DeCSIntegrationDataProcessor extends DTOManager
     /// INNER FUNCTIONS
     /////////////////////////////////////////////////////////
     /////////////////////////////////////////////////////////
+
+    private function MergeDescendantsOTree(string $parent_tree_id, array $TreeData, array $TmpResults, array $ValidLangs, array &$globaldecs, UltraLoggerDevice $Log)
+    {
+        $descendants = $TreeData['descendants'] ?? null;
+        $remaininglangs = $TreeData['remaininglangs'] ?? null;
+        if ($descendants === null) {
+            UltraLoggerFacade::ErrorToUltraLogger($Log, 'Descendants not found in ' . $parent_tree_id);
+            return;
+        }
+        if ($remaininglangs === null) {
+            UltraLoggerFacade::ErrorToUltraLogger($Log, 'remaininglangs not found in ' . $parent_tree_id);
+            return;
+        }
+        if (count($remaininglangs) > 0) {
+            UltraLoggerFacade::ErrorToUltraLogger($Log, $parent_tree_id . 'HAS UNEXPLORED LANGS: ' . json_encode($remaininglangs));
+            return;
+        }
+        foreach ($TreeData as $lang => $langData) {
+            if (!(in_array($lang, $ValidLangs))) {
+                continue;
+            }
+            if (!($globaldecs[$lang] ?? null)) {
+                $globaldecs[$lang] = [
+                    'term' => 'Unset',
+                    'decs' => [],
+                ];
+            }
+            $decs = $langData['decs'] ?? null;
+            $term = $langData['term'] ?? null;
+            if ($decs === null) {
+                UltraLoggerFacade::ErrorToUltraLogger($Log, '$decs not found in ' . $parent_tree_id);
+                return;
+            }
+            if ($term === null) {
+                UltraLoggerFacade::ErrorToUltraLogger($Log, '$term not found in ' . $parent_tree_id);
+                return;
+            }
+            $local_decs = array_merge([$term], $decs);
+            $added = array_diff($local_decs, $globaldecs[$lang]['decs']);
+            UltraLoggerFacade::InfoToUltraLogger($Log, 'Explored ' . $parent_tree_id . ': Added ' . count($added) . ' decs [' . count($local_decs) . ' total]');
+            $globaldecs[$lang]['decs'] = array_merge($globaldecs[$lang]['decs'], $local_decs);
+        }
+
+
+        if (count($descendants)) {
+            foreach ($descendants as $descendant) {
+                $InnerTreeData = $TmpResults[$descendant] ?? null;
+                if (!($InnerTreeData)) {
+                    UltraLoggerFacade::WarningToUltraLogger($Log, 'Tree ' . $descendant . ' not found in explored data. Skipping');
+                    continue;
+                }
+                $this->MergeDescendantsOTree($descendant, $InnerTreeData, $TmpResults, $ValidLangs, $globaldecs, $Log);
+
+            }
+        }
+    }
+
+    private function HandleTreeDescendantsSaving(DataTransferObject $DTO, UltraLoggerDevice $Log, bool $IsMainTree, string $tree_id, array $descendants)
+    {
+        if (count($descendants) === 0) {
+            return [];
+        }
+        $depthlevel = null;
+        $depthAuth = true;
+        if (!($IsMainTree)) {
+            $depthAuth = null;
+            $depthlevel = 0;
+            try {
+                $info = $this->IsTreeDepthOk($tree_id, $DTO);
+                $maxdepth = $info['max'];
+                $depthlevel = $info['current'];
+                $MainTree = $info['tree_id'] ?? 'ErrorCalculating';
+                $subtitle = ' depth =' . $depthlevel . ' (Max ' . $maxdepth . ')';
+                if ($depthlevel === null) {
+                    UltraLoggerFacade::ErrorToUltraLogger($Log, 'Couldnt calculate currentdepth===999');
+                    $depthAuth = true;
+                }
+                if (($depthlevel + 1) <= $maxdepth) {
+                    UltraLoggerFacade::InfoToUltraLogger($Log, '[Granted]' . $subtitle . ' belongs to MainTree: ' . $MainTree);
+                    $depthAuth = true;
+                } else {
+                    UltraLoggerFacade::WarningToUltraLogger($Log, '[Denied]' . $subtitle);
+                    $depthAuth = false;
+                }
+            } catch (\Throwable $ex) {
+                UltraLoggerFacade::ErrorToUltraLogger($Log, 'ERROR PROCESSING TREEDEPTH: ' . $ex->getMessage() . '@' . $ex->getLine() . '@' . $ex->getFile());
+            }
+            if ($depthAuth === null) {
+                UltraLoggerFacade::ErrorToUltraLogger($Log, 'Error Obtaining depthAuth');
+                return [];
+            }
+        }
+        if ($depthAuth) {
+            $ProcessedDescendants = $this->ToTreeData($DTO, $Log, $descendants, $depthlevel + 1, $tree_id, $IsMainTree);
+            return $ProcessedDescendants;
+        } else {
+            return [];
+        }
+    }
+
+    private function ToTreeData(DataTransferObject $DTO, UltraLoggerDevice $Log, array $descendants, int $depthlevel, string $tree_id, bool $isMain)
+    {
+        $info = $this->addDescendantsToTree($descendants, $tree_id, $depthlevel, $isMain, $DTO);
+        $countAdd = count($info['added']);
+        $countCut = count($info['cut']);
+        if ($countAdd > 0) {
+            if ($countCut > 0) {
+                UltraLoggerFacade::WarningToUltraLogger($Log, 'Full descendants. Excluded' . count($info['cut']) . ' trees');
+            }
+        } else {
+            if ($countCut > 0) {
+                UltraLoggerFacade::WarningToUltraLogger($Log, 'Full descendants. Excluded' . count($info['cut']) . ' trees');
+            } else {
+                UltraLoggerFacade::InfoToUltraLogger($Log, 'No new descendants to add');
+            }
+        }
+        return $info['added'];
+    }
 
     private function TreeManager(bool $IsMainTree, array $descendants, array $trees, DataTransferObject $DTO, UltraLoggerDevice $Log)
     {
@@ -115,11 +278,11 @@ abstract class DeCSIntegrationDataProcessor extends DTOManager
                 UltraLoggerFacade::UltraLoggerSuccessfulAttempt($Log, $LogData);
                 if ($countAdd > 0) {
                     if ($countCut > 0) {
-                        UltraLoggerFacade::WarningToUltraLogger($Log, 'MainList Full. Couldnt add descendants: ' . json_encode($info['cut']));
+                        UltraLoggerFacade::WarningToUltraLogger($Log, 'MainList Full. Couldnt add descendants: ' . count($info['cut']) . ' items');
                     }
                 } else {
                     if ($countCut > 0) {
-                        UltraLoggerFacade::WarningToUltraLogger($Log, 'MainList Full. Couldnt add any descendant: ' . json_encode($info['cut']));
+                        UltraLoggerFacade::WarningToUltraLogger($Log, 'MainList Full. Couldnt add any descendant: ' . count($info['cut']) . ' items');
                     } else {
                         UltraLoggerFacade::InfoToUltraLogger($Log, 'There were no new trees to add to MainList');
                     }
@@ -133,11 +296,11 @@ abstract class DeCSIntegrationDataProcessor extends DTOManager
                 UltraLoggerFacade::UltraLoggerSuccessfulAttempt($Log, $LogData);
                 if ($countAdd > 0) {
                     if ($countCut > 0) {
-                        UltraLoggerFacade::WarningToUltraLogger($Log, 'MainList Full. Couldnt add related trees: ' . json_encode($info['cut']));
+                        UltraLoggerFacade::WarningToUltraLogger($Log, 'MainList Full. Couldnt add related trees: ' . count($info['cut']) . ' items');
                     }
                 } else {
                     if ($countCut > 0) {
-                        UltraLoggerFacade::WarningToUltraLogger($Log, 'MainList Full. Couldnt add any related tree: ' . json_encode($info['cut']));
+                        UltraLoggerFacade::WarningToUltraLogger($Log, 'MainList Full. Couldnt add any related tree: ' . count($info['cut']) . ' items');
                     } else {
                         UltraLoggerFacade::InfoToUltraLogger($Log, 'There were no new trees to add to MainList');
                     }
@@ -146,55 +309,9 @@ abstract class DeCSIntegrationDataProcessor extends DTOManager
         }
     }
 
-    private function HandleTreeDescendantsSaving(DataTransferObject $DTO, UltraLoggerDevice $Log, bool $IsMainTree, string $tree_id, array $descendants)
-    {
-        if($IsMainTree) {
-            $descendants = $this->ToTreeData($DTO, $Log, $descendants, $tree_id,$IsMainTree);
-            return $descendants;
-        }
-        $LogData = UltraLoggerFacade::UltraLoggerAttempt($Log, 'Attempting to retrieve tree depth');
-        $info = $this->IsTreeDepthOk($tree_id, $DTO);
-        $maxdepth = $info['maxdepth'];
-        $currentdepth = $info['currentdepth'];
-        UltraLoggerFacade::UltraLoggerSuccessfulAttempt($Log, $LogData);
-        $title = 'DEPTH: tree_id=' . json_encode($currentdepth) . ' descendants=' . json_encode($currentdepth + 1) . ' max=' . json_encode($maxdepth);
-        if (($currentdepth + 1) <= $maxdepth) {
-            $title = '[Granted] ' . $title;
-            UltraLoggerFacade::InfoToUltraLogger($Log, $title);
-            $ProcessedDescendants = $this->ToTreeData($DTO, $Log, $descendants, $tree_id,$IsMainTree);
-            return $ProcessedDescendants;
-        } else {
-            $title = '[Failed] ' . $title;
-            UltraLoggerFacade::WarningToUltraLogger($Log, $title);
-            return [];
-        }
-
-    }
-
     ////////////////////////////////
     /// NOT LOGGED
     /// ///////////////////////////////////
-
-    private function ToTreeData(DataTransferObject $DTO, UltraLoggerDevice $Log, array $descendants, string $tree_id, bool $isMain)
-    {
-        $LogData = UltraLoggerFacade::UltraLoggerAttempt($Log, 'Processing descentants to add to tree_id ' . $tree_id);
-        $info = $this->addDescendantsToTree($descendants, $tree_id, $isMain, $DTO);
-        $countAdd = count($info['added']);
-        $countCut = count($info['cut']);
-        UltraLoggerFacade::UltraLoggerSuccessfulAttempt($Log, $LogData);
-        if ($countAdd > 0) {
-            if ($countCut > 0) {
-                UltraLoggerFacade::WarningToUltraLogger($Log, 'List Full. Couldnt add descendants: ' . json_encode($info['cut']));
-            }
-        } else {
-            if ($countCut > 0) {
-                UltraLoggerFacade::WarningToUltraLogger($Log, 'List Full. Couldnt add any descendant: ' . json_encode($info['cut']));
-            } else {
-                UltraLoggerFacade::InfoToUltraLogger($Log, 'There were no new descenants to add to this tree');
-            }
-        }
-        return $info['added'];
-    }
 
 
     private function RemoveCommasFromDeCS(array $DeCSarray)

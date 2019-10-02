@@ -2,6 +2,7 @@
 
 namespace PICOExplorer\Http\Controllers\PICO;
 
+use PICOExplorer\Exceptions\Exceptions\AppError\ContactedComponentReturnedNull;
 use PICOExplorer\Exceptions\Exceptions\AppError\ControllerResultsIsNull;
 use PICOExplorer\Exceptions\Exceptions\AppError\DataIntroducedInControllerIsNull;
 use PICOExplorer\Exceptions\Exceptions\AppError\ExceptionInsideService;
@@ -10,6 +11,7 @@ use PICOExplorer\Exceptions\Exceptions\AppError\TheServicelIsNotInstanceOfAdvanc
 use PICOExplorer\Exceptions\Exceptions\ClientError\TheDataSentWasNotJSONEncoded;
 use PICOExplorer\Facades\AdvancedFacade;
 use PICOExplorer\Facades\ExceptionLoggerFacade;
+use PICOExplorer\Services\AdvancedLogger\Exceptions\Models\ClientError;
 use PICOExplorer\Services\AdvancedLogger\Traits\TranslatedMessageTrait;
 use PICOExplorer\Models\DataTransferObject;
 use PICOExplorer\Models\MainModelsModel;
@@ -99,7 +101,7 @@ abstract class ControllerModel
             $title = 'Client Error';
             $dbtext = $this->getTranslatedMessage($message, $ex instanceof CustomException);
             if ($dbtext) {
-                $message = $message . PHP_EOL . $dbtext;
+                $message = $dbtext;
             }
         }
         return Response::json(['Error' => $title . PHP_EOL . PHP_EOL . $message, 'Data' => $data], 200);
@@ -145,6 +147,7 @@ abstract class ControllerModel
     {
         $DTO->setInitialData(__METHOD__ . '@' . get_class($this), $data, 'main');
         $results = null;
+        $connectionTimer=null;
         $wasSuccessful = false;
         try {
             $connectionTimer = $this->ServicePerformance->newConnectionTimer(get_class($this).'toservice-' . get_class($this) . '-timer');
@@ -152,8 +155,12 @@ abstract class ControllerModel
             $results = $DTO->getResults('main');
             $wasSuccessful = true;
         } catch (Exception $ex) {
-            ExceptionLoggerFacade::ReportException($ex);
-            throw new ExceptionInsideService(['caller' => get_class($this), 'target' => get_class($this->Service), 'ErrorInTarget' => $ex->getMessage()], $ex);
+            if($ex instanceof ClientError){
+                throw $ex;
+            }else{
+                ExceptionLoggerFacade::ReportException($ex);
+                throw new ExceptionInsideService(['caller' => get_class($this), 'target' => get_class($this->Service), 'ErrorInTarget' => $ex->getMessage()], $ex);
+            }
         }finally{
             $info = 'Connection Failed';
             if ($wasSuccessful) {

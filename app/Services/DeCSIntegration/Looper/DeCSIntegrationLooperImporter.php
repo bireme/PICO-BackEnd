@@ -35,8 +35,10 @@ class DeCSIntegrationLooperImporter extends DeCSIntegrationLooperSupport impleme
         $Log = null;
         $DeCSData = null;
         try {
+            $url = $InitialData['url'];
             $Log = UltraLoggerFacade::createUltraLogger('DeCSIntegrationLooper', $InitialData);
-            UltraLoggerFacade::InfoToUltraLogger($Log, 'Full URL: ' . $InitialData['url']);
+            UltraLoggerFacade::setSubTitle($Log,json_encode(array_diff($InitialData,[$url])));
+            UltraLoggerFacade::InfoToUltraLogger($Log, 'Full URL: ' . $url);
             $LogData = UltraLoggerFacade::UltraLoggerAttempt($Log, 'Attempting to process data imported from BIREME');
             $statusNode = $DOMXpath->query("//decsvmx");
             if (!($statusNode) || (!count($statusNode))) {
@@ -52,6 +54,7 @@ class DeCSIntegrationLooperImporter extends DeCSIntegrationLooperSupport impleme
                 $DeCSData = 'no-res';
                 return $DeCSData;
             }
+            $DeCSData=[];
             foreach ($decswsResults as $key => $ResultElement) {
                 $result = $this->XMLDeCSRelatedAndDescendants($ResultElement, $XMLText, $DOMXpath, $Log);
                 if ($result === -1) {
@@ -62,8 +65,26 @@ class DeCSIntegrationLooperImporter extends DeCSIntegrationLooperSupport impleme
         } catch (DontCatchException $ex) {
             //
         } finally {
+            $words = $InitialData['words'] ?? null;
+            $tree_id = $InitialData['tree_id'] ?? null;
+            $lang = $InitialData['lang'] ?? '';
+            $info = $words ?? $tree_id ?? '';
+            $info = $info . '[' . $lang . '] => ';
             if ($DeCSData === 'no-res') {
                 UltraLoggerFacade::WarningToUltraLogger($Log, 'No results built in this service. Returning "no-res"');
+                UltraLoggerFacade::setSubTitle($Log, $info . 'No Results');
+            } else {
+                if ($words) {
+                    UltraLoggerFacade::setSubTitle($Log, $info . count($DeCSData ?? []) . ' tree_ids');
+                } else {
+                    $cdecs = 0;
+                    $cdescendants = 0;
+                    foreach ($DeCSData as $key => $data) {
+                        $cdecs = $cdecs + count($data['decs'] ?? []);
+                        $cdescendants = $cdescendants + count($data['descendants'] ?? []);
+                    }
+                    UltraLoggerFacade::setSubTitle($Log, $info . $cdecs . ' decs, ' . $cdescendants . ' descendants');
+                }
             }
             if ($Log) {
                 UltraLoggerFacade::saveUltraLoggerResults($Log, !!($DeCSData), true);

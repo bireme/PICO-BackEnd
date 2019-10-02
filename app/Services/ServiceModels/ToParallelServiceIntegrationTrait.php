@@ -24,14 +24,9 @@ trait ToParallelServiceIntegrationTrait
             $wasSuccessful = true;
         } catch (Throwable $ex) {
             ExceptionLoggerFacade::ReportException($ex);
-            throw new ErrorInsideAnotherComponent(['caller' => get_class($this), 'target' => get_class($ParallelFacade), 'ErrorInTarget' => $ex->getMessage()], $ex);
+            throw $ex;
         } finally {
             $timer->Stop();
-            if ($wasSuccessful) {
-                if (!($results) || $results==='Unset') {
-                    throw new PICOIntegrationReturnedNull(['referer' => __METHOD__ . '@' . get_class($this), 'Controller' => get_class($ParallelFacade), 'previousErr' => $previousErr]);
-                }
-            }
         }
         return $results;
     }

@@ -1,13 +1,24 @@
 import {setLanguagesOfModal} from "./decslanguages.js";
-import {ChangeSeeker} from "./changeseeker.js";
 import {getPICOElements} from "./commons.js";
 import {getLanguages} from "./commonsdecs.js";
 import {translate} from "./translator.js";
 import {showInfoMessage} from "./infomessage.js";
 import {showBootstrapObj, hideBootstrapObj} from "./hideshow.js";
+import {UpdateLanguageInfo} from "./languagetoggler";
+import {ChangeSeekerStart, UpdateAfterResults,ChangeSeekerHandler} from "./changeseeker";
+import {AccordionAndTooltip} from "./AccordionTooltip";
+import {UpdateLanguageInfo} from "./languagetoggler.js";
+import {AccordionAndTooltip} from "./AccordionTooltip.js";
+import {getResultsNumber} from "./resultsmanager";
 
 
 ////PUBLIC FUNCTIONS
+
+export function ManageResultsNumber(PICOnum){
+    getResultsNumber(PICOnum);
+    UpdateAfterResults(PICOnum);
+}
+
 
 export function ExpandDeCSConfig() {
     let msg = '<div id="LanguageSection" class="container "><div class="row"><div class="col-md-7 sidebar LanguageContainer"><label class="labelMain">';
@@ -24,6 +35,16 @@ export function ExpandDeCSConfig() {
     </div>';
     let langs = getLanguages();
     showInfoMessage('Config', msg, true, 'golanguage', setLanguagesOfModal, langs, true);
+}
+
+export function EquationChanged(PICOnum){
+    ChangeSeekerHandler(PICOnum);
+}
+
+export function StartFunctions(){
+    UpdateLanguageInfo();
+    ChangeSeekerStart();
+    AccordionAndTooltip();
 }
 
 export function InfoNoResults() {
@@ -52,8 +73,8 @@ export function ShowPICOinfo(PICOnum) {
     let msg = getPICOinfo()[PICOnum - 1];
     let example = getPICOPlaceHolder(PICOnum);
     let placeholder = getPICOHelpInfo(PICOnum);
-    let secondary='</br></br>'+example+'</br>'+placeholder;
-    showInfoMessage('Info', msg, true,null,null,null,false,title,secondary);
+    let secondary = '</br></br>' + example + '</br>' + placeholder;
+    showInfoMessage('Info', msg, true, null, null, null, false, title, secondary);
 }
 
 export function ReBuildStudyType() {
@@ -69,9 +90,8 @@ export function ReBuildStudyType() {
         msg = '(' + msg + ')';
     }
     $('#datainput5').val(msg);
-    ChangeSeeker(5);
+    ChangeSeekerHandler(5);
 }
-
 
 export function setLanguagesFromModal(LangParent) {
     let langs = [];
@@ -132,7 +152,7 @@ function getPICOHelpInfo(PICOnum) {
         translate('pico_exinfo4')
     ];
     if (PICOnum < 5) {
-        return translate('keyas') + ': '+PHarr[PICOnum - 1];
+        return translate('keyas') + ': ' + PHarr[PICOnum - 1];
     }
 }
 

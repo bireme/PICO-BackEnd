@@ -1,12 +1,8 @@
-import {BlockButton,UnBlockButton,ShowPICOinfo,setLanguagesFromModal,ReBuildStudyType,CheckExistantHREF,InfoNoResults,HideUnselectedDeCS,ExpandDeCSConfig} from "./initfunctions.js";
-import {UpdateLanguageInfo} from "./languagetoggler.js";
+import {ManageResultsNumber,EquationChanged,StartFunctions,BlockButton,UnBlockButton,ShowPICOinfo,setLanguagesFromModal,ReBuildStudyType,CheckExistantHREF,InfoNoResults,HideUnselectedDeCS,ExpandDeCSConfig} from "./initfunctions.js";
 import {ProcessResults} from "./newquerybuild.js";
-import {getResultsNumber} from "./resultsmanager.js";
-import {OnExpandDeCS,OnExploreDeCS} from "./decsmanager.js";
-import {SetAllToReDoButton, ChangeSeeker} from "./changeseeker.js";
+import {OnExpandDeCS} from "./decsmanager.js";
 import {IsLoading, CancelLoading} from "./loadingrequest.js";
 import {isHiddenBootstrapObj} from "./hideshow.js";
-import {AccordionAndTooltip} from "./AccordionTooltip.js";
 import {ChangeLocale} from "./localepreservedata.js";
 
 ////PUBLIC FUNCTIONS
@@ -27,13 +23,16 @@ export function initEvents() {
         OnExpandDeCS($(this));
         UnBlockButton($(this));
     });
-    $('#modal2').find('.btn-back').click(function () {
+    let modal2 =$('#modal2');
+    let modal3 =$('#modal3');
+
+    modal2.find('.btn-back').click(function () {
         BlockButton($(this));
         $('#closemodal2').click();
         $('#modal1').modal('show');
         UnBlockButton($(this));
     });
-    $('#modal3').find('.btn-back').click(function () {
+    $(modal3).find('.btn-back').click(function () {
         BlockButton($(this));
         if (IsLoading()) {
             UnBlockButton($(this));
@@ -50,13 +49,13 @@ export function initEvents() {
         HideUnselectedDeCS();
         UnBlockButton($(this));
     });
-    $('#modal2').find('.btn-continue').click(function () {
+    $(modal2).find('.btn-continue').click(function () {
         BlockButton($(this));
         $('#closemodal2').click();
         $('#modal3').modal('show');
         UnBlockButton($(this));
     });
-    $('#modal3').find('.btn-continue').click(function () {
+    $(modal3).find('.btn-continue').click(function () {
         BlockButton($(this));
         ProcessResults();
         $('#closemodal3').click();
@@ -69,7 +68,7 @@ export function initEvents() {
             return;
         }
         let PICOnum = ($(this).attr('id')).substr(-1);
-        getResultsNumber(PICOnum);
+        ManageResultsNumber(PICOnum);
         UnBlockButton($(this));
     });
     $(document).find('button[id^= page-lang]').click(function () {
@@ -89,7 +88,7 @@ export function initEvents() {
         if (PICOnum === 6) {
             let obj = $(this).find('span').first();
             if (isHiddenBootstrapObj(obj)) {
-                getResultsNumber(6);
+                ManageResultsNumber(6);
                 UnBlockButton($(this));
                 return;
             }
@@ -104,13 +103,13 @@ export function initEvents() {
         UnBlockButton($(this));
     });
     $(document).find('input[id^=datainput]').on('input', function () {
-        ChangeSeeker(($(this).attr('id')).substr(-1));
+        EquationChanged(($(this).attr('id')).substr(-1));
     });
     $('#collapse5').find('.form-group').find('input').change(function () {
         ReBuildStudyType();
     });
     $(document).find('select[id^=FieldList]').change(function () {
-        ChangeSeeker(($(this).attr('id')).substr(-1));
+        EquationChanged(($(this).attr('id')).substr(-1));
     });
     $(document).find('a[id^=PICOinfo]').click(function (e) {
         BlockButton($(this));
@@ -132,7 +131,6 @@ export function initEvents() {
         },
     });
 
-    UpdateLanguageInfo();
-    SetAllToReDoButton();
-    AccordionAndTooltip();
+    StartFunctions();
+
 }

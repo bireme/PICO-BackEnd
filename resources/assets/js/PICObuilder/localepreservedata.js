@@ -1,5 +1,5 @@
 import {showInfoMessage} from "./infomessage";
-import {getFieldListOptionNum} from "./commonschange.js";
+import {getFieldListOptionNum} from "./commons.js";
 import {translate} from "./translator.js";
 
 ////PUBLIC FUNCTIONS
@@ -20,7 +20,7 @@ export function ChangeLocale(locale) {
         error: function (xhr, status, error) {
             FailLanguage(locale, xhr, status, error);
         },
-        success: function (response) {
+        success: function () {
             window.location.href = locale;
         }
     });
