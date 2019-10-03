@@ -16,17 +16,19 @@ abstract class DeCSQueryBuild extends DeCSSupport
 
     protected function ProcessInitialQuery(string $query, string $ImprovedSearch = null)
     {
-        try {
+        $QueryProcessed=[];
+        $ImprovedSearchProcessed=[];
+        if ($ImprovedSearch) {
             $ImprovedSearchProcessed = $this->ProcessQuery($ImprovedSearch);
-            $QueryProcessed = $this->ProcessQuery($query);
-            $infodata = [
-                'ImprovedSearchProcessed' => $ImprovedSearchProcessed,
-                'QueryProcessed' => $QueryProcessed,
-            ];
-            return $infodata;
-        } catch (\Throwable $ex) {
-            throw new WrongQueryFormat(null, $ex);
         }
+        if($query){
+            $QueryProcessed = $this->ProcessQuery($query);
+        }
+        $infodata = [
+            'ImprovedSearchProcessed' => $ImprovedSearchProcessed,
+            'QueryProcessed' => $QueryProcessed,
+        ];
+        return $infodata;
     }
 
 
@@ -40,16 +42,18 @@ abstract class DeCSQueryBuild extends DeCSSupport
             $infoimprov = $this->BuildImproveList($ImprovedArray, $Ops, $Seps);
             $infodata = $this->BuildKeywordList($DTO, $ItemArray, $langArr, $Ops, $Seps, $infoimprov, $Log);
             $KeywordList = $infodata['KeywordList'];
+            $AllKeywords =$infodata['AllKeywords']??[];
             $QuerySplit = $this->improveQuerySplit($infodata['QuerySplit'], $Ops, $Seps);
-        }catch(\Throwable $ex){
+        } catch (\Throwable $ex) {
             throw new WrongQueryFormat();
         }
         if (count($KeywordList ?? []) === 0) {
             throw new NoNewDataToExplore(['TreesToExplore' => null]);
         }
+
         UltraLoggerFacade::MapArrayIntoUltraLogger($Log, 'KeywordList', ['KeywordList' => $KeywordList], 3);
         UltraLoggerFacade::MapArrayIntoUltraLogger($Log, 'QuerySplit', ['QuerySplit' => $QuerySplit], 1, 'value');
-        $DTO->SaveToModel(get_class($this), ['QuerySplit' => $QuerySplit, 'KeywordList' => $KeywordList]);
+        $DTO->SaveToModel(get_class($this), ['QuerySplit' => $QuerySplit, 'KeywordList' => $KeywordList,'AllKeywords'=>$AllKeywords]);
 
     }
 
@@ -57,12 +61,13 @@ abstract class DeCSQueryBuild extends DeCSSupport
 //INNER FUNCTIONS
 ///////////////////////////////////////////////////////////////////
 
-    private function BuildImproveList(array $ItemArray, array $Ops, array $Seps){
-        $exclude= array_merge($Ops,$Seps);
+    private function BuildImproveList(array $ItemArray, array $Ops, array $Seps)
+    {
+        $exclude = array_merge($Ops, $Seps);
         $ImproveWords = [];
         foreach ($ItemArray as $index => $value) {
-            if(!(in_array($value,$exclude))){
-                array_push($ImproveWords,$value);
+            if (!(in_array($value, $exclude))) {
+                array_push($ImproveWords, $value);
             }
         }
         return $ImproveWords;
@@ -78,6 +83,7 @@ abstract class DeCSQueryBuild extends DeCSSupport
         $KeywordList = [];
         $QuerySplit = [];
         $localkeywords = [];
+        $AllKeywords=[];
         $localkeywords[0] = [];
         array_push($localkeywords[0], []);
         foreach ($ItemArray as $index => $value) {
@@ -85,6 +91,8 @@ abstract class DeCSQueryBuild extends DeCSSupport
             if (strlen($value) === 0) {
                 continue;
             }
+            $value = str_replace('"', '', $value);
+            $value = str_replace("'", '', $value);
             if ($value === '(') {
                 $type = 'op';
                 $level++;
@@ -96,35 +104,34 @@ abstract class DeCSQueryBuild extends DeCSSupport
                 $level--;
                 $type = 'op';
             } else {
-                $type = $this->WordType($value, $KeywordsDeCSTerms, $UsedKeyWords, $Seps, $Ops,$infoimprov);
-                if ($type === 'decs' || $type === 'term') {
-                    continue;
-                }
-                if ($type === 'keyexplored' || $type === 'keyword' || $type === 'keyrep') {
-                    $kwindex = count($localkeywords[$level]) - 1;
-                    if (in_array($value, $localkeywords[$level][$kwindex])) {
-                        continue;
-                    } else {
-                        array_push($localkeywords[$level][$kwindex], $value);
-                    }
-                    if ($type === 'keyexplored' || $type === 'keyword') {
-                        $UnexploredLangs = $this->getUnexploredLangs($value, $PreviousData, $langArr);
-                        if ($type === 'keyexplored') {
-                            if (count($UnexploredLangs) > 0) {
-                                $type = 'keypartial';
-                            }
+                $type = $this->WordType($value, $KeywordsDeCSTerms, $UsedKeyWords, $Seps, $Ops, $infoimprov);
+                if ($type !== 'decs' && $type !== 'term' && $type !== 'improve' ) {
+                    if ($type === 'keyexplored' || $type === 'keyword' || $type === 'keyrep') {
+                        array_push($AllKeywords,$value);
+                        $kwindex = count($localkeywords[$level]) - 1;
+                        if (in_array($value, $localkeywords[$level][$kwindex])) {
+                            continue;
+                        } else {
+                            array_push($localkeywords[$level][$kwindex], $value);
                         }
-                        array_push($UsedKeyWords, $value);
-                        $KeywordList[$value] = $UnexploredLangs;
+                        if ($type === 'keyexplored' || $type === 'keyword') {
+                            $UnexploredLangs = $this->getUnexploredLangs($value, $PreviousData, $langArr);
+                            if ($type === 'keyexplored') {
+                                if (count($UnexploredLangs) > 0) {
+                                    $type = 'keypartial';
+                                }
+                            }
+                            array_push($UsedKeyWords, $value);
+                            $KeywordList[$value] = $UnexploredLangs;
+                        }
                     }
                 }
             }
             array_push($QuerySplit, ['type' => $type, 'value' => $value]);
         }
-        return ['QuerySplit' => $QuerySplit, 'KeywordList' => $KeywordList];
+        $infodata = ['QuerySplit' => $QuerySplit, 'KeywordList' => $KeywordList,'AllKeywords'=>$AllKeywords];
+        return $infodata;
     }
-
-
 
 
     private function improveQuerySplit(array $QuerySplit, array $Ops, array $Seps)
@@ -272,7 +279,7 @@ abstract class DeCSQueryBuild extends DeCSSupport
 
 
     private
-    function WordType(string $word, array $KeywordsDeCSTerms, array $UsedKeyWords, array $Ops, array $Seps,array $infoimprov)
+    function WordType(string $word, array $KeywordsDeCSTerms, array $UsedKeyWords, array $Ops, array $Seps, array $infoimprov)
     {
         if (in_array($word, $Seps)) {
             return 'sep';

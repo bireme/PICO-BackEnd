@@ -3,8 +3,6 @@
 namespace PICOExplorer\Services\QueryBuild;
 
 use PICOExplorer\Exceptions\Exceptions\AppError\PreviousDataCouldNotBeDecoded;
-use PICOExplorer\Exceptions\Exceptions\ClientError\QuerySplitCouldNotBeDecoded;
-use PICOExplorer\Exceptions\Exceptions\ClientError\QuerySplitDoesNotExist;
 use PICOExplorer\Models\DataTransferObject;
 use PICOExplorer\Services\ServiceModels\PICOQueryProcessorTrait;
 use PICOExplorer\Services\ServiceModels\ServiceEntryPoint;
@@ -18,71 +16,6 @@ abstract class QueryBuildSupport extends ServiceEntryPoint
     ///////////////////////////////////////////////////////////////////
     //protected FUNCTIONS
     ///////////////////////////////////////////////////////////////////
-
-    protected function MixDescriptors(DataTransferObject $DTO, array $NewSelectedDescriptors)
-    {
-        $SelectedDescriptors = $DTO->getAttr('decodedOldDescriptors');
-        if (count($SelectedDescriptors) === 0) {
-            return $NewSelectedDescriptors;
-        }
-        foreach ($NewSelectedDescriptors as $keyword => $keywordData) {
-            if (!(array_key_exists($keyword, $SelectedDescriptors))) {
-                $SelectedDescriptors[$keyword] = $NewSelectedDescriptors[$keyword];
-            } else {
-                foreach ($keywordData as $term => $content) {
-                    if (!(array_key_exists($term, $SelectedDescriptors[$keyword]))) {
-                        $SelectedDescriptors[$keyword][$term] = $content;
-                    } else {
-                        $SelectedDescriptors[$keyword][$term] = array_merge(array_unique($SelectedDescriptors[$keyword][$term], $content));
-                    }
-                }
-            }
-        }
-        return $SelectedDescriptors;
-    }
-
-
-    protected function BuildBaseEquation(DataTransferObject $DTO, array $SelectedDescriptors, array $QuerySplit)
-    {
-        $baseEquation = '';
-        $keywordEquations = $this->BuildKeywordEquations($SelectedDescriptors);
-        foreach ($QuerySplit as $wordData) {
-            $type = $wordData['type'];
-            $word = $wordData['value'];
-            if ($type === 'decs' || $type === 'term') {
-                continue;
-            }
-            if ($type === 'keyrep' || $type === 'keyword' || $type === 'keyexplored' || $type === 'keypartial') {
-                $keywordeq = $keywordEquations[$word] ?? null;
-                if ($keywordeq) {
-                    $keywordeq = '(' . $keywordeq . ')';
-                } else {
-                    $keywordeq = $word;
-                }
-                $baseEquation = $baseEquation . $keywordeq;
-            } else {
-                $baseEquation = $baseEquation . $word;
-            }
-        }
-        if (strlen($baseEquation) != 0) {
-            $baseEquation = '(' . $baseEquation . ')';
-        }
-        $DTO->SaveToModel(get_class($this), ['newQuery' => $baseEquation]);
-    }
-
-    protected function BuildKeywordEquations(array $SelectedDescriptors)
-    {
-        $KeywordEquations = [];
-        foreach ($SelectedDescriptors as $keyword => $keywordData) {
-            $local = $keyword;
-            $TermData = $this->BuildTermEquation($keywordData);
-            if (strlen($TermData) != 0) {
-                $local = '(' . $local . ' OR ' . $TermData . ')';
-            }
-            $KeywordEquations[$keyword] =$local;
-        }
-        return $KeywordEquations;
-    }
 
     protected function decodeQuerySplit(DataTransferObject $DTO, string $undecodedQuerySplit = null)
     {
@@ -99,20 +32,76 @@ abstract class QueryBuildSupport extends ServiceEntryPoint
         $DTO->SaveToModel(get_class($this), ['QuerySplit' => $decodedQuerySplit]);
     }
 
-    protected function decodeOldSelectedDescriptors(DataTransferObject $DTO, string $undecodedPreviousData = null)
+    protected function BuildBaseEquation(DataTransferObject $DTO, array $SelectedDescriptors)
     {
-        $decodedOldDescriptors = null;
-        if ($undecodedPreviousData) {
-            try {
-                $decodedOldDescriptors = json_decode($undecodedPreviousData, true);
-            } catch (\Throwable $ex) {
-                throw new PreviousDataCouldNotBeDecoded(['PreviousData' => json_encode($undecodedPreviousData)], $ex);
+        $QuerySplit = $DTO->getAttr('QuerySplit');
+        $keytypes = ['keyexplored', 'keypartial', 'keyword', 'keyrep'];
+        $dont = ['decs', 'term', 'improve'];
+
+        $DontAdd = [];
+        $DoAdd = [];
+
+        foreach ($QuerySplit as $itemArray) {
+            $type = $itemArray['type'];
+            $value = strtolower($itemArray['value']);
+            if (in_array($type, $dont)) {
+                array_push($DontAdd, $value);
             }
-        } else {
-            $decodedOldDescriptors = [];
+            if (in_array($type, $keytypes)) {
+                array_push($DoAdd, $value);
+            }
         }
-        $DTO->SaveToModel(get_class($this), ['decodedOldDescriptors' => $decodedOldDescriptors]);
+
+        $DontAdd = array_diff($DontAdd, $DoAdd);
+
+        $KeywordEquations = $this->BuildKeywordEquations($SelectedDescriptors, $DontAdd);
+
+        foreach ($QuerySplit as $index => $itemArray) {
+            $type = $itemArray['type'];
+            $value = strtolower($itemArray['value']);
+            $changed = false;
+            if (in_array($type, $keytypes)) {
+                $content = $KeywordEquations[strtolower($value)] ?? null;
+                if ($content !== null) {
+                    $itemArray['value'] = $content;
+                    $QuerySplit[$index] = $itemArray;
+                    $changed = true;
+                }
+            }
+            if ($changed === false) {
+                if ($type !== 'sep' && $type !== 'op') {
+                    $value = ucfirst($value);
+                    if (strpos($value, ' ') !== false) {
+                        $value = '"' . $value . '"';
+                    }
+                    $itemArray['value'] = $value;
+                } elseif ($type === 'op') {
+                    $itemArray['value'] = strtoupper($value);
+                }
+                $QuerySplit[$index] = $itemArray;
+            }
+        }
+
+        $newQuery = '';
+        foreach ($QuerySplit as $item) {
+            $val = $item['value'] ?? null;
+            if ($val !== null) {
+                $newQuery = $newQuery . $val;
+            }
+        }
+
+        $DTO->SaveToModel(get_class($this), ['newQuery' => $newQuery]);
     }
+
+
+    protected function getImproveQuerySplit(string $ImproveSearchQuery)
+    {
+        $improvesplit = $this->ProcessQuery($ImproveSearchQuery);
+        $improvesplit = array_map('ucfirst', $improvesplit);
+        $ImproveSearchQuery = join('', $improvesplit);
+        return $ImproveSearchQuery;
+    }
+
 
     protected function ImproveBasicEquation(DataTransferObject $DTO, string $ImproveSearchQuery)
     {
@@ -120,7 +109,7 @@ abstract class QueryBuildSupport extends ServiceEntryPoint
             return;
         }
         $newQuery = $DTO->getAttr('newQuery');
-        $newQuery = $newQuery .' OR ('. $ImproveSearchQuery.')';
+        $newQuery = $newQuery . ' OR (' . $ImproveSearchQuery . ')';
         $DTO->SaveToModel(get_class($this), ['newQuery' => $newQuery]);
     }
 
@@ -130,20 +119,58 @@ abstract class QueryBuildSupport extends ServiceEntryPoint
     /// INNER
     /// ///////////////////////////
 
+    private function BuildKeywordEquations(array $SelectedDescriptors, array $DontAdd)
+    {
+        $KeywordEquations = [];
+        foreach ($SelectedDescriptors as $keyword => $keywordData) {
+            $local = strtolower($keyword);
+            array_push($DontAdd, $local);
+            $TermData = $this->BuildTermEquation($keywordData, $DontAdd);
+            if (strpos($local, ' ') !== false) {
+                $local = '"' . $local . '"';
+            }
+            if (strlen($TermData) != 0) {
+                $local = '(' . ucfirst($local) . ' OR ' . $TermData . ')';
+            }
+            $KeywordEquations[$keyword] = $local;
+        }
+        return $KeywordEquations;
+    }
 
-    private function BuildTermEquation(array $KeywordData)
+
+    private function BuildTermEquation(array $KeywordData, array $DontAdd)
     {
         $TermEquation = '';
         foreach ($KeywordData as $term => $DeCSArr) {
+            $localterm='';
+            if (!(in_array(strtolower($term), $DontAdd))) {
+                if (strlen($localterm) > 0) {
+                    $localterm = $localterm . ' OR ';
+                }
+                array_push($DontAdd, strtolower($term));
+                if (strpos($term, ' ') !== false) {
+                    $term = '"' . $term . '"';
+                }
+                $localterm = $localterm . ucfirst($term);
+            }
+
+            $DeCSArr = array_map('strtolower', $DeCSArr);
+            $DeCSArr = array_diff($DeCSArr, $DontAdd);
+            $DeCSArr = array_map('ucfirst', $DeCSArr);
             foreach ($DeCSArr as $id => $DeCS) {
                 if (strpos($DeCS, ' ') !== false) {
-                    $DeCS = '"' . $DeCS . '"';
+                    $DeCSArr[$id] = '"' . $DeCS . '"';
                 }
-                if (strlen($TermEquation) > 0) {
-                    $TermEquation = $TermEquation . ' OR ';
-                }
-                $TermEquation = $TermEquation . ucfirst($DeCS);
             }
+            $localterm =$localterm. join(' OR ', $DeCSArr);
+            if (strlen($localterm) > 0) {
+                $localterm='('.$localterm.')';
+            }
+            if (strlen($TermEquation) > 0) {
+                $localterm=' OR '. $localterm;
+            }
+            $TermEquation=$TermEquation.$localterm;
+
         }
         return $TermEquation;
     }

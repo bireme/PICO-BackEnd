@@ -12,11 +12,10 @@ class QueryBuildProcess extends QueryBuildSupport implements ServiceEntryPointIn
     protected final function Process(ServicePerformanceSV $ServicePerformance, DataTransferObject $DTO, $InitialData)
     {
         $InitialData = $DTO->getInitialData();
-        $this->decodeOldSelectedDescriptors($DTO, $InitialData['OldSelectedDescriptors']);
+        $ImproveQuerySplit=$this->getImproveQuerySplit($InitialData['ImproveSearchQuery']);
         $this->decodeQuerySplit($DTO, $InitialData['QuerySplit']);
-        $QuerySplit = $DTO->getAttr('QuerySplit');
-        $this->BuildBaseEquation($DTO, $InitialData['SelectedDescriptors'],$QuerySplit);
-        $this->ImproveBasicEquation($DTO,$InitialData['ImproveSearchQuery']);
+        $this->BuildBaseEquation($DTO, $InitialData['SelectedDescriptors']);
+        $this->ImproveBasicEquation($DTO,$ImproveQuerySplit);
         $results = [
             'newQuery' => $DTO->getAttr('newQuery'),
             'OldSelectedDescriptors' => $InitialData['SelectedDescriptors'],

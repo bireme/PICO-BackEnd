@@ -6,7 +6,7 @@ export function ProcessResults() {
     let ImproveSearchQuery = $('#modal3').find('textarea').val();
     let PICOnum = $('#modal1').find('.descriptorsform-piconum').first().val();
     setImproveSearch(ImproveSearchQuery, PICOnum);
-    eventQueryBuild(ImproveSearchQuery, PICOnum);
+    eventQueryBuild(ImproveSearchQuer);
 }
 
 function setImproveSearch(improve, PICOnum) {
@@ -18,7 +18,6 @@ function setImproveSearch(improve, PICOnum) {
 function BuildImprovedQuery(data) {
     let newQuery = data.newQuery;
     let PICOnum = $('#modal1').find('.descriptorsform-piconum').first().val();
-    setOldSelectedDescriptors(data.OldSelectedDescriptors, PICOnum);
     $('#datainput' + PICOnum).val(newQuery);
 }
 
@@ -47,12 +46,11 @@ function getSelectedDescriptors() {
     return SelectedDescriptors;
 }
 
-function eventQueryBuild(ImproveSearchQuery, PICOnum) {
+function eventQueryBuild(ImproveSearchQuery) {
     let url = "PICO/QueryBuild";
     let data = {
         SelectedDescriptors: getSelectedDescriptors(),
         ImproveSearchQuery: ImproveSearchQuery,
-        OldSelectedDescriptors: getOldSelectedDescriptors(PICOnum),
         QuerySplit: getQuerySplit(),
     };
     POSTrequest(url, data, function (Data) {
@@ -62,12 +60,4 @@ function eventQueryBuild(ImproveSearchQuery, PICOnum) {
 
 function getQuerySplit() {
     return $('#modal1').find('.descriptorsform-querysplit').first().val();
-}
-
-function setOldSelectedDescriptors(OldSelectedDescriptors, PICOnum) {
-    $('#datainput' + PICOnum).attr('data-old-selected-descriptors', OldSelectedDescriptors);
-}
-
-function getOldSelectedDescriptors(PICOnum) {
-    return $('#datainput' + PICOnum).attr('data-old-selected-descriptors');
 }

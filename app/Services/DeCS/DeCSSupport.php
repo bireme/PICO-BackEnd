@@ -69,10 +69,10 @@ abstract class DeCSSupport extends ServiceEntryPoint
         $ProcessedDescriptors = [];
         $ProcessedDeCS = [];
         $MixedData = $DTO->getAttr('SavedData');
-        $KeywordList = array_keys($DTO->getAttr('KeywordList'));
+        $AllKeywordList = $DTO->getAttr('AllKeywords');
 
         foreach ($MixedData as $keyword => $keywordData) {
-            if (!(in_array($keyword, $KeywordList))) {
+            if (!(in_array($keyword, $AllKeywordList))) {
                 continue;
             }
             $UsedTrees = [];
