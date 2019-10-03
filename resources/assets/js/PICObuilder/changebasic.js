@@ -1,27 +1,32 @@
-import {setResNumAltText,getFieldListOptionNum} from "./commons.js";
+import {setResNumAltText, getFieldListOptionNum} from "./commons.js";
 import {hideBootstrapObj, showBootstrapObj} from "./hideshow";
 import {translate} from "./translator";
 
 ////PUBLIC FUNCTIONS
+
+///STATE OF BUTTONS
+
 
 export function ShowExplodeButton(PICOnum) {
     let explodebutton = $('#Exp' + PICOnum);
     if ($('#datainput' + PICOnum).val().length > 0) {
         showBootstrapObj(explodebutton);
         if (objResNumHasoldval(PICOnum)) {
-            setCalcResAsSyncAlt(PICOnum);
+            CalcResAsMustUpdate(PICOnum);
         }
     } else {
-        setCalcResAsResult(PICOnum);
+        CalcResAsReady(objCalcRes);
         hideBootstrapObj(explodebutton);
     }
 }
 
+/// SEEK COMPARISONS
+
 export function getGlobalCompValue(PICOnum) {
-    let txt='';
+    let txt = '';
     for (let loop_i = PICOnum; loop_i >= 1; loop_i--) {
-        let localval = $('#ResNumLocal' + PICOnum).attr('data-oldval');
-        txt = txt+ localval;
+        let localval =  getResNumOldVal(PICOnum,false);
+        txt = txt + localval;
     }
     return txt;
 }
@@ -29,108 +34,60 @@ export function getGlobalCompValue(PICOnum) {
 export function getLocalCompValue(PICOnum) {
     let FieldData = getFieldListOptionNum(PICOnum);
     let queryVal = $('#datainput' + PICOnum).val();
-    return queryVal+'Field'+FieldData;
+    return queryVal + FieldData;
 }
 
-export function getLocalOldVal(PICOnum) {
-    $('#ResNumLocal' + PICOnum).attr('data-oldval');
-}
-
-export function getGlobalOldVal(PICOnum) {
-    $('#ResNumGlobal' + PICOnum).attr('data-oldval');
-}
-
-export function MustRecalculate(objResNum) {
-    objResNumSetMustUpdate(objResNum);
-    RemoveReDoButton(objSpan);
-    SetToReDoButton(objSpan);
-    hideLocalButton
-    hideGlobalButton
-}
-
-export function ReturnToOldState(PICOnum, LocalObj, LocalSpan, LocalField, ThishasReDo) {
-    if (!(ThishasReDo) && PICOnum !== 5) {
-        return;
+export function getResNumOldVal(PICOnum,isGlobal) {
+    let objResNum = null;
+    if(isGlobal){
+        objResNum = $('#ResNumGlobal' + PICOnum);
+    }else{
+        objResNum = $('#ResNumLocal' + PICOnum);
     }
-    console.log('Returning to oldstate pico' + PICOnum);
-    objResNumSetOldResult(LocalObj);
-    objSpanSetOldResult(LocalSpan);
-    showLocalButton(PICOnum);
-    showGlobalButton
+    return $(objResNum).attr('data-oldval');
 }
 
-export function setCalcResAsSyncAlt(PICOnum) {
-    let CalcResObj = $('#CalcRes' + PICOnum);
-    $(CalcResObj).html('<i class="fas fa-sync-alt"></i>');
-    $(CalcResObj).addClass(getCalcResColorClass(PICOnum));
-    $(CalcResObj).removeClass(getCalcResColorClass(-1));
+
+export function MustRecalculate(objResNum, objSpan) {
+    removeHREF(objResNum);
+    hideDataButton(objResNum);
+    AddReDoButton(objSpan);
+    CalcResAsMustUpdate(objCalcRes)
+}
+
+export function ReturnToOldState(objResNum, objSpan) {
+    recoverHREF(objResNum);
+    RemoveReDoButton(objSpan);
+    showDataButton(objResNum);
+    CalcResAsReady(objCalcRes)
 }
 
 ////PRIVATE FUNCTIONS
 
-function getCalcResColorClass(PICOnum) {
-    if (PICOnum === -1) {
-        return 'btn-info';
-    }
-    if (PICOnum === 1) {
-        return 'btn-outline-info';
-    }
-    return 'btn-outline-warning';
+function hideDataButton(objResNum) {
+    hideBootstrapObj(objResNum);
 }
 
-function setCalcResAsResult(PICOnum) {
-    let CalcResObj = $('#CalcRes' + PICOnum);
-    $(CalcResObj).html(translate('butres'));
-    $(CalcResObj).addClass(getCalcResColorClass(-1));
-    $(CalcResObj).removeClass(getCalcResColorClass(PICOnum));
+function showDataButton(objResNum) {
+    showBootstrapObj(objResNum);
 }
 
-
-function hideLocalButton(PICOnum) {
-    let ObjResNum = $('#ResNumLocal' + PICOnum);
-    let objSpan = $(ObjResNum).find('span').first();
-    if (PICOnum !== 6) {
-        SetToReDoButton(objSpan);
-    }
-    hideBootstrapObj(ObjResNum);
+function objResNumHasoldval(objResNum) {
+    return !!$(objResNum).attr('data-oldval')
 }
 
-function hideGlobalButton(PICOnum) {
-    let ObjResNum = $('#ResNumGlobal' + PICOnum);
-    let objSpan = $(ObjResNum).find('span').first();
-    if (PICOnum !== 6) {
-        SetToReDoButton(objSpan);
-    }
-    hideBootstrapObj($('#ResNumGlobal' + PICOnum));
+function removeHREF(objResNum) {
+    objResNum.attr('data-oldhref', (objResNum.attr('href')));
+    objResNum.removeAttr('href');
 }
 
-function showLocalButton(PICOnum) {
-    showBootstrapObj($('#ResNumLocal' + PICOnum));
+function recoverHREF(objResNum) {
+    objResNum.attr('data-href', (objResNum.attr('data-oldhref')));
 }
 
-function showGlobalButton(PICOnum) {
-    showBootstrapObj($('#ResNumGlobal' + PICOnum));
-}
+/// RE-DO BUTTON
 
-
-function objSpanSetOldResult(objSpan) {
-    objSpan.text(objSpan.attr('data-oldval'));
-}
-
-function objResNumSetOldResult(objResNum) {
-    objResNum.attr('href', (objResNum.attr('data-oldval')));
-}
-
-
-function objResNumHasoldval(PICOnum) {
-    return  !!$('#ResNumLocal' + PICOnum).attr('data-oldval')
-}
-
-function hasReDoButton(objSpan) {
-    return (objSpan).hasClass('fa-redo');
-}
-
-export function SetToReDoButton(objSpan) {
+function AddReDoButton(objSpan) {
     if (!(hasReDoButton(objSpan))) {
         $(objSpan).addClass('fas fa-redo');
         $(objSpan).text(' ');
@@ -138,9 +95,8 @@ export function SetToReDoButton(objSpan) {
     }
 }
 
-function objResNumSetMustUpdate(objResNum) {
-    objResNum.attr('data-oldval', (objResNum.attr('href')));
-    objResNum.removeAttr('href');
+function hasReDoButton(objSpan) {
+    return (objSpan).hasClass('fa-redo');
 }
 
 function RemoveReDoButton(objSpan) {
@@ -149,3 +105,30 @@ function RemoveReDoButton(objSpan) {
         setResNumAltText(objSpan, false);
     }
 }
+
+//////////////////////////////////
+///CALC RES AKA EXPAND BUTTON
+/////////////////////////////////
+
+function getCalcResColorClass(choice) {
+    if (cgoice === -1) {
+        return 'btn-info';
+    }
+    if (choice === 1) {
+        return 'btn-outline-info';
+    }
+    return 'btn-outline-warning';
+}
+
+function CalcResAsReady(objCalcRes) {
+    $(objCalcRes).html(translate('butres'));
+    $(objCalcRes).addClass(getCalcResColorClass(-1));
+    $(objCalcRes).removeClass(getCalcResColorClass(objCalcRes));
+}
+
+function CalcResAsMustUpdate(objCalcRes) {
+    $(objCalcRes).html('<i class="fas fa-sync-alt"></i>');
+    $(objCalcRes).addClass(getCalcResColorClass(objCalcRes));
+    $(objCalcRes).removeClass(getCalcResColorClass(-1));
+}
+
