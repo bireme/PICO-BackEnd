@@ -63,4 +63,8 @@ return [
     'title' => 'Buscador PICO - BIREME',
     'back' => 'Voltar',
     'description' => 'Buscador PICO. Incluye Población, Intervención, Comparación, Tipo de estudio. Importa los descriptores / tesauros de DeCS, MeSH en inglés, portugués y español para ampliar sus palabras clave y mejorar su búsqueda. Facilita la construcción de ecuaciones y consultas. La herramienta gratuita ideal para su revisión sistemática, metaanálisis o guía de práctica clínica presentada por BIREME - Virtual Health Library (VHL)',
+    'minonelang' => 'Seleccione al menos un idioma',
+    'NotFound' => 'No Encontrados',
+    'TooMuch' => 'Demasiadas palabras clave para explorar [> 5]. Elimínelos e ingrese una consulta simple ',
+    'KeyX' => 'Palabras Clave Buscadas',
 ];

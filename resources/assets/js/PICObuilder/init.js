@@ -1,4 +1,4 @@
-import {ManageResultsNumber,EquationChanged,StartFunctions,BlockButton,UnBlockButton,ShowPICOinfo,setLanguagesFromModal,ReBuildStudyType,CheckExistantHREF,InfoNoResults,HideUnselectedDeCS,ExpandDeCSConfig} from "./initfunctions.js";
+import {SkipStepTwo,ChangeDeCSLanguages,ManageResultsNumber,StartFunctions,BlockButton,UnBlockButton,ShowPICOinfo,ReBuildStudyType,CheckExistantHREF,InfoNoResults,HideUnselectedDeCS,ExpandDeCSConfig} from "./initfunctions.js";
 import {ProcessResults} from "./newquerybuild.js";
 import {OnExpandDeCS} from "./decsmanager.js";
 import {IsLoading, CancelLoading} from "./loadingrequest.js";
@@ -16,7 +16,7 @@ export function initEvents() {
         }
         if ($(this).find('.startlanguage').is(":hover")) {
             e.preventDefault();
-            ExpandDeCSConfig();
+            $('#modallanguage').modal('show');
             UnBlockButton($(this));
             return;
         }
@@ -39,14 +39,27 @@ export function initEvents() {
             return;
         }
         $('#closemodal3').click();
-        $('#modal2').modal('show');
+        if(SkipStepTwo()===true){
+            $('#modal1').modal('show');
+        }else{
+            $('#modal2').modal('show');
+        }
         UnBlockButton($(this));
     });
     $('#modal1').find('.btn-continue').click(function () {
         BlockButton($(this));
         $('#closemodal1').click();
-        $('#modal2').modal('show');
+        if(SkipStepTwo()===true){
+            $('#modal3').modal('show');
+        }else{
+            $('#modal2').modal('show');
+        }
         HideUnselectedDeCS();
+        UnBlockButton($(this));
+    });
+    $('#modallanguage').find('.btn-continue').click(function () {
+        BlockButton($(this));
+        ChangeDeCSLanguages();
         UnBlockButton($(this));
     });
     $(modal2).find('.btn-continue').click(function () {
@@ -102,14 +115,8 @@ export function initEvents() {
         CheckExistantHREF($(this));
         UnBlockButton($(this));
     });
-    $(document).find('input[id^=datainput]').on('input', function () {
-        EquationChanged(($(this).attr('id')).substr(-1));
-    });
     $('#collapse5').find('.form-group').find('input').change(function () {
         ReBuildStudyType();
-    });
-    $(document).find('select[id^=FieldList]').change(function () {
-        EquationChanged(($(this).attr('id')).substr(-1));
     });
     $(document).find('a[id^=PICOinfo]').click(function (e) {
         BlockButton($(this));
@@ -119,7 +126,7 @@ export function initEvents() {
     });
     $(document).on('click', ".golanguage", function () {
         BlockButton($(this));
-        setLanguagesFromModal($(this).parent().parent());
+//
         UnBlockButton($(this));
     });
 

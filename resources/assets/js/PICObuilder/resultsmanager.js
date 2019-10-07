@@ -1,7 +1,8 @@
-import {getFieldListOptionNum} from "./commons.js";
+import {getFieldListOptionNum,setnewQuery} from "./datadictionary";
 import {translate} from "./translator.js";
 import {POSTrequest} from "./loadingrequest.js";
 import {showInfoMessage} from "./infomessage.js";
+import {UpdateLocalAfterResults,UpdateGlobalAfterResults} from "./changeseeker";
 
 ////PUBLIC FUNCTIONS
 
@@ -32,54 +33,33 @@ export function getResultsNumber(id) {
 ////PRIVATE FUNCTIONS
 
 function getAllInputFields() {
-    let results = {};
+    let results = [];
     let loop_i;
     for (loop_i = 1; loop_i < 6; loop_i++) {
         let valx = $('#datainput' + loop_i).val();
         let fieldx = getFieldListOptionNum(loop_i);
-        results['PICO' + loop_i] = {
+        let obj= {
             query: valx,
             field: fieldx
         };
+        results.push(obj);
     }
     return results;
 }
 
 function setResultsNumber(data, PICOnum) {
-    let localresultsnumber = data.local.ResultsNumber;
-    let localresultsurl = data.local.ResultsURL;
-    let globalresultsnumber = data.global.ResultsNumber;
-    let globalresultsurl = data.global.ResultsURL;
-    let ResNumLocalObj = $('#ResNumLocal' + PICOnum);
-    let ResNumGlobalObj = $('#ResNumGlobal' + PICOnum);
-    let spanObj;
-    if (PICOnum < 5) {
-        spanObj = ResNumLocalObj.find('span').first();
-        if (localresultsnumber === 0) {
-            addIconZeroResults(spanObj);
-        } else {
-            $(spanObj).text(localresultsnumber);
-        }
-        ResNumLocalObj.attr("href", localresultsurl);
+    setnewQuery(PICOnum,data.NewEquation);
+    if(PICOnum>1){
+        let globalresultsnumber = data.Results.global.ResultsNumber;
+        let globalresultsurl = data.Results.global.ResultsURL;
+        let globaltitle = data.GlobalTitle;
+        UpdateGlobalAfterResults(PICOnum,globalresultsnumber,globalresultsurl,globaltitle);
     }
-    if (PICOnum > 1 && PICOnum !== 5) {
-        spanObj = ResNumGlobalObj.find('span').first();
-        if (globalresultsnumber === 0) {
-            addIconZeroResults(spanObj);
-        } else {
-            $(spanObj).text(globalresultsnumber);
-        }
-        ResNumGlobalObj.attr("href", globalresultsurl);
+    if(PICOnum<6){
+        let localresultsnumber = data.Results.local.ResultsNumber;
+        let localresultsurl = data.Results.local.ResultsURL;
+        UpdateLocalAfterResults(PICOnum,localresultsnumber,localresultsurl);
     }
-    if (PICOnum === 6) {
-        $('#FinalSearchDetails').val(data.global.query);
-    }
-}
-
-
-function addIconZeroResults(obj) {
-    let iconHTML = '0 <a class="PICOiconzeroElement"><span>?</span></a>';
-    $(obj).html(iconHTML);
 }
 
 function eventResultsNumber(PICOnum, queryobject) {

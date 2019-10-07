@@ -40,30 +40,49 @@
                     $res = '';
                 }
                 ?>
-                <div class="tab-pane fade form-tab-cont {{ $res }}" id="{{$titleid.$count}}-cont" role="tabpanel" data-name="{{$tabtitle}}"
+                <div class="tab-pane fade form-tab-cont {{ $res }}" id="{{$titleid.$count}}-cont" role="tabpanel"
+                     data-name="{{$tabtitle}}"
                      aria-labelledby="{{$titleid.$count}}-tab">
                     <div class="container">
+                        @if($alternateText!==null)
+                            <div class="row">
+                                <div class="DontShowButton offset-md-1 secondary-info col-md-10 text-dark font-italic">
+                                    <span>{{$alternateText}}</span>
+                                </div>
+                                <br><br>
+                            </div>
+                        @endif
                         <div class="row">
                             @foreach($tabdata as $elementid => $elementData)
                                 <?php
                                 $counttwo++;
                                 ?>
                                 <div class="col-sm-12 col-md-6 col-lg-4 col-xl-3 tableModal table-hover">
-                                    <table style="height:100%">
-                                        <tbody>
-                                        <tr class="descriptorcheckboxrow">
-                                            <td><input id="{{$titleid.$counttwo}}" class="DescriptorCheckbox descriptorcheckboxclick" type="checkbox"
-                                                       @if($elementData['checked'])
-                                                           checked
-                                                       @endif
-                                                       name="{{$elementData['value']}}">
-                                            </td>
-                                            <td><label class="descriptorcheckboxclick"
-                                                       for="{{$titleid.$counttwo}}">{{$elementData['title']}}</label>
-                                            </td>
-                                        </tr>
-                                        </tbody>
-                                    </table>
+                                    @if($elementData['checked']!==-1)
+
+                                        <table style="height:100%">
+                                            <tbody>
+                                            <tr class="descriptorcheckboxrow">
+                                                <td>
+                                                    @if($elementData['checked']===1)
+                                                        <input id="{{$titleid.$counttwo}}"
+                                                               class="DescriptorCheckbox descriptorcheckboxclick"
+                                                               type="checkbox" checked="" name="{{$elementData['value']}}">
+                                                @else
+                                                    <input id="{{$titleid.$counttwo}}"
+                                                           class="DescriptorCheckbox descriptorcheckboxclick"
+                                                           type="checkbox" name="{{$elementData['value']}}">
+                                                @endif
+                                                </td>
+                                                <td><label class="descriptorcheckboxclick"
+                                                           for="{{$titleid.$counttwo}}">{{$elementData['title']}}</label>
+                                                </td>
+                                            </tr>
+                                            </tbody>
+                                        </table>
+                                    @else
+                                        <li><span>{{$elementData['value']}}</span></li>
+                                    @endif
                                 </div>
                             @endforeach
                         </div>

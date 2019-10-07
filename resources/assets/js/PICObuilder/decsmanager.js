@@ -1,26 +1,47 @@
-import {getPreviousResults, getLanguages} from "./commonsdecs.js";
 import {POSTrequest} from "./loadingrequest.js";
-
+import {getPreviousImproveQuery,getPICOnumFromObjId,getLanguages,getPreviousResults,getobjDataInputVal,getImproveSearchWords,getOldDescriptors,setPreviousResults,setModalContent} from "./datadictionary.js";
+import {hideBootstrapObj, showBootstrapObj} from "./hideshow";
 ////PUBLIC FUNCTIONS
 
 export function OnExpandDeCS(ExpandButton) {
-    let langs = getLanguages();
-    let PICOnum = ($(ExpandButton).attr('id')).substr(-1);
-    clearDeCSMenu();
-    let PICOval = '#datainput' + PICOnum;
-    let query = $(PICOval).val();
-    let ImprovedSearch = getImproveSearch(PICOnum);
-    eventdDeCSManager(query, langs, PICOnum,ImprovedSearch);
+    let PICOnum = getPICOnumFromObjId(ExpandButton);
+    console.log('DeCS EXpand PICO='+PICOnum);
+    eventDeCSManager(PICOnum);
 }
 
 ////PRIVATE FUNCTIONS
+function eventDeCSManager(PICOnum) {
+    clearDeCSMenu();
+    let url = "PICO/DeCSExplore";
+    let data = {
+        query: getobjDataInputVal(PICOnum),
+        OldSelectedDescriptors: getOldDescriptors(PICOnum),
+        ImproveSearchWords: getImproveSearchWords(PICOnum),
+        langs: getLanguages(),
+        PICOnum: parseInt(PICOnum),
+        SavedData: getPreviousResults(PICOnum),
+        PreviousImproveQuery:getPreviousImproveQuery(PICOnum),
+    };
+    POSTrequest(url, data, function (Data) {
+        createDeCSMenu(Data, PICOnum);
+    });
+}
 
-function setPreviousResults(results, PICOnum) {
-    $('#datainput' + PICOnum).attr('data-previous-decs', results);
+function createDeCSMenu(data, PICOnum) {
+    setPreviousResults(data.SavedData, PICOnum);
+    setModalContent(1,data.DescriptorsHTML);
+    setModalContent(2,data.DeCSHTML);
+    setModalContent(3,data.PreviousImproveQuery);
+    let modalone = $('#modal1');
+    if($(modalone).find('.DontShowButton').length){
+        hideBootstrapObj($(modalone).find('.btn-continue'))
+    }else{
+        showBootstrapObj($(modalone).find('.btn-continue'))
+    }
+    showDeCSMenu();
 }
 
 function showDeCSMenu() {
-    console.log('showing modal decs');
     $('#modal1').modal({
         show: true,
         keyboard: false,
@@ -28,41 +49,9 @@ function showDeCSMenu() {
     });
 }
 
-function getImproveSearch(PICOnum) {
-    return $('#datainput' + PICOnum).attr('data-improve');
-}
-
-
 function clearDeCSMenu() {
     let NoData = 'No Data';
-    $('#modal3').find('textarea').val(NoData);
-    $('#modal1').find('.modal-body').first().html(NoData);
-    $('#modal2').find('.modal-body').first().html(NoData);
-}
-
-function createDeCSMenu(data, PICOnum,Improved) {
-    let SavedData = data.SavedData;
-    let DescriptorsHTML = data.DescriptorsHTML;
-    let DeCSHTML = data.DeCSHTML;
-    $('#modal3').find('textarea').val(Improved);
-    setPreviousResults(SavedData, PICOnum);
-    $('#modal1').find('.modal-body').first().html(DescriptorsHTML);
-    $('#modal2').find('.modal-body').first().html(DeCSHTML);
-}
-
-function eventdDeCSManager(query, langs, PICOnum,ImprovedSearch) {
-    let url = "PICO/DeCSExplore";
-    let SavedData = getPreviousResults(PICOnum);
-    let data = {
-        SavedData: SavedData,
-        query: query,
-        ImprovedSearch: ImprovedSearch,
-        langs: langs,
-        PICOnum: parseInt(PICOnum),
-    };
-    POSTrequest(url, data, function (Data) {
-        console.log('Obtained SavedData... '+JSON.stringify(Data.SavedData));
-        createDeCSMenu(Data, PICOnum,ImprovedSearch);
-        showDeCSMenu();
-    });
+    setModalContent(1,NoData);
+    setModalContent(2,NoData);
+    setModalContent(3,NoData);
 }

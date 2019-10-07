@@ -63,4 +63,8 @@ return [
     'title' => 'Pesquisador PICO - BIREME',
     'back' => 'Atrás',
     'description' => 'Pesquisador PICO. Inclui População, Intervenção, Comparação, Tipo de estudo. Importa os descritores DeCS, MeSH / thesauri em inglês, português e espanhol para expandir suas palavras-chave e melhorar sua pesquisa. Facilita a equação e a construção de consultas. A ferramenta gratuita ideal para a sua pesquisa de Revisão Sistemática, Meta-análise ou Guia de Prática Clínica trazida pela BIREME - Biblioteca Virtual em Saúde (BVS)',
+    'minonelang' => 'Selecione pelo menos um idioma',
+    'NotFound' => 'Não encontrado',
+    'TooMuch' => 'Muitas palavras-chave para explorar [> 5]. Remova-os e insira uma consulta simples ',
+    'KeyX' => 'Palavras-chave pesquisadas',
 ];

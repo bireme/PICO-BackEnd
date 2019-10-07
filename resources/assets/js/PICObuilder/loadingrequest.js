@@ -21,9 +21,9 @@ export function POSTrequest(url, inidata, callback) {
     showLoading();
     inidata.mainLanguage = getMainLanguage();
     url = getBaseURL() + url;
-    let sentData=JSON.stringify(inidata);
     console.log('Sending...');
-    console.log(sentData);
+    console.log(inidata);
+    let sentData=JSON.stringify(inidata);
     currentrequest = $.ajax({
         url: url,
         type: 'post',

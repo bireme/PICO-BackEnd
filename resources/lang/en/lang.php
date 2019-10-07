@@ -19,7 +19,7 @@ return [
     'butres' => 'Results',
     'sdetails' => 'Search details',
     'keyas' => 'Keywords as',
-    'langimp' => 'Select the lenguages of the expanded terms that will be imported',
+    'langimp' => 'Select the languages of the expanded terms that will be imported',
     'sres' => 'Search results',
     'rights' => 'PICOS Search - All rights reserved',
     'upres' => 'Update results',
@@ -63,4 +63,8 @@ return [
     'title' => 'PICO Searcher - BIREME',
     'back' => 'Back',
     'description' => 'PICO Searcher. Includes Population, Intervention, Comparison, Type of study. Imports the DeCS, MeSH descriptors/thesauri in english, portuguese and spanish to expand your keywords and improve your search. Eases equation and query building. The ideal free tool for your Systematic Review, Meta-analysis or Clinical practice guide research brought to you by BIREME - Virtual Health Library (VHL)',
+    'minonelang' => 'Select at least one language',
+    'NotFound' => 'Not Found',
+    'TooMuch' => 'Too much keywords to explore [>5]. Please remove them and input a simple query',
+    'KeyX' => 'Searched Keywords',
 ];

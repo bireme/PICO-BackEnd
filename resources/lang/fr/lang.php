@@ -63,4 +63,8 @@ return [
     'title' => 'PICO Searcher - BIREME',
     'back' => 'Retour',
     'description' => 'PICO Searcher. Comprend Population, Intervention, Comparaison, Type d\'étude. Importe les descripteurs / thésaurus DeCS, MeSH en anglais, portugais et espagnol pour élargir vos mots-clés et améliorer votre recherche. Facilite la construction d\'équations et de requêtes. L\'outil gratuit et idéal pour votre recherche par Revue systématique, Méta-analyse ou Guide de pratique clinique, présenté par BIREME - Virtual Health Library (VHL)',
+    'minonelang' => 'Sélectionnez au moins une langue',
+    'NotFound' => 'Introuvable',
+    'TooMuch' => 'Trop de mots-clés à explorer [> 5]. Veuillez les supprimer et saisir une requête simple ',
+    'KeyX' => 'Mots-clés recherchés',
 ];

@@ -1,5 +1,5 @@
 import {showInfoMessage} from "./infomessage";
-import {getFieldListOptionNum} from "./commons.js";
+import {getFieldListOptionNum} from "./datadictionary.js";
 import {translate} from "./translator.js";
 
 ////PUBLIC FUNCTIONS

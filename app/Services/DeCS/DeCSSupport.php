@@ -2,6 +2,8 @@
 
 namespace PICOExplorer\Services\DeCS;
 
+use Illuminate\Support\Facades\Lang;
+use PICOExplorer\Exceptions\Exceptions\AppError\FaltaImplementarError;
 use PICOExplorer\Exceptions\Exceptions\AppError\PreviousDataCouldNotBeDecoded;
 use PICOExplorer\Exceptions\Exceptions\ClientError\NoContentFound;
 use PICOExplorer\Facades\UltraLoggerFacade;
@@ -16,7 +18,7 @@ abstract class DeCSSupport extends ServiceEntryPoint
 
     use BuildHTMLTrait;
 
-    protected function DecodePreviousData(DataTransferObject $DTO, string $undecodedPreviousData = null)
+    protected function DecodePreviousData(DataTransferObject $DTO, string $undecodedPreviousData = null, string $undecodedImproveSearchWords = null, string $undecodedOldSelectedDescriptors = null)
     {
         $decodedPrevious = null;
         if ($undecodedPreviousData) {
@@ -28,10 +30,30 @@ abstract class DeCSSupport extends ServiceEntryPoint
         } else {
             $decodedPrevious = [];
         }
-        $DTO->SaveToModel(get_class($this), ['PreviousData' => $decodedPrevious]);
+        $ImproveSearchWords = null;
+        if ($undecodedImproveSearchWords) {
+            try {
+                $ImproveSearchWords = json_decode($undecodedImproveSearchWords, true);
+            } catch (Throwable $ex) {
+                throw new PreviousDataCouldNotBeDecoded(['ImproveSearchWords' => json_encode($undecodedImproveSearchWords)], $ex);
+            }
+        } else {
+            $ImproveSearchWords = [];
+        }
+        $OldSelectedDescriptors = null;
+        if ($undecodedOldSelectedDescriptors) {
+            try {
+                $OldSelectedDescriptors = json_decode($undecodedOldSelectedDescriptors, true);
+            } catch (Throwable $ex) {
+                throw new PreviousDataCouldNotBeDecoded(['OldSelectedDescriptors' => json_encode($undecodedOldSelectedDescriptors)], $ex);
+            }
+        } else {
+            $OldSelectedDescriptors = [];
+        }
+        $DTO->SaveToModel(get_class($this), ['PreviousData' => $decodedPrevious, 'ImproveSearchWords' => $ImproveSearchWords, 'OldSelectedDescriptors' => $OldSelectedDescriptors]);
     }
 
-    protected function MixWithOldData(DataTransferObject $DTO, array $IntegrationData, UltraLoggerDevice $Log)
+    protected function MixWithOldData(DataTransferObject $DTO, array $IntegrationData, array $langs, UltraLoggerDevice $Log)
     {
         $SavedData = $DTO->getAttr('PreviousData');
         UltraLoggerFacade::MapArrayIntoUltraLogger($Log, 'Mixing new and old info', ['Previous Trees' => $SavedData, 'New Trees' => $IntegrationData], 3);
@@ -39,198 +61,240 @@ abstract class DeCSSupport extends ServiceEntryPoint
             if (!($keywordData)) {
                 continue;
             }
-            if (!(array_key_exists($keyword, $SavedData))) {
-                $SavedData[$keyword] = $IntegrationData[$keyword];
-            } else {
-                foreach ($keywordData as $lang => $content) {
-                    if (!(array_key_exists($lang, $SavedData[$keyword]))) {
-                        $SavedData[$keyword][$lang] = $content;
-                    } else {
-                        if (!($lang === 'descendants' || $lang === 'remaininglangs')) {
-                            if (!(array_key_exists('term', $SavedData[$keyword][$lang]))) {
-                                $SavedData[$keyword][$lang]['term'] = [];
-                                $SavedData[$keyword][$lang]['decs'] = [];
-                            }
-                            $SavedData[$keyword][$lang]['term'] = array_unique(array_merge($content['term'], $SavedData[$keyword][$lang]['term']));
-                            $SavedData[$keyword][$lang]['decs'] = array_unique(array_merge($content['decs'], $SavedData[$keyword][$lang]['decs']));
-                        } else {
-                            $SavedData[$keyword][$lang] = array_unique(array_merge($content, $SavedData[$keyword][$lang]));
-                        }
+            if ($SavedData[$keyword] ?? null === null) {
+                $SavedData[$keyword] = [];
+            }
+            foreach ($keywordData as $tree_id => $treeData) {
+                if ($SavedData[$keyword][$tree_id] ?? null === null) {
+                    $SavedData[$keyword][$tree_id] = [];
+                }
+                if (count($treeData['remaininglangs'] ?? [])) {
+                    UltraLoggerFacade::ErrorToUltraLogger($Log, 'ERROR STILL REMAINING LANGS: ' . $keyword . ' data:' . json_encode($treeData));
+                }
+                foreach ($treeData as $lang => $content) {
+                    if ($lang === 'descendants' || $lang === 'remaininglangs') {
+                        continue;
+                    }
+                    if ($SavedData[$keyword][$tree_id][$lang] ?? null === null) {
+                        $IntegrationTerm = $content['term'];
+                        $IntegrationDeCS = $content['decs'];
+                        $SavedData[$keyword][$tree_id][$lang] = [
+                            'term' => $IntegrationTerm,
+                            'decs' => $IntegrationDeCS,
+                        ];
                     }
                 }
             }
         }
-        UltraLoggerFacade::MapArrayIntoUltraLogger($Log, 'Mixed', ['Mixed Trees' => $SavedData], 3);
         $DTO->SaveToModel(get_class($this), ['SavedData' => $SavedData]);
     }
 
-    protected function BuildAsTerms(DataTransferObject $DTO, string $mainLanguage, UltraLoggerDevice $Log)
+    protected function BuildAsTerms(DataTransferObject $DTO, array $langs, string $mainLanguage, UltraLoggerDevice $Log)
     {
         $ProcessedDescriptors = [];
         $ProcessedDeCS = [];
+
+
+        if (in_array($mainLanguage, $langs)) {
+            $TitleLanguage = $mainLanguage;
+        } else {
+            if (in_array('en', $langs)) {
+                $TitleLanguage = 'en';
+            } else {
+                $TitleLanguage = $langs[0];
+            }
+        }
         $MixedData = $DTO->getAttr('SavedData');
         $AllKeywordList = $DTO->getAttr('AllKeywords');
+        $QuerySplit = $DTO->getAttr('QuerySplit');
 
+        $usedData = null;
+        $OldSelectedDescriptors = $DTO->getAttr('OldSelectedDescriptors');
+        if ($OldSelectedDescriptors !== null) {
+            $usedData = [];
+            foreach ($QuerySplit as $index => $arrayitem) {
+                $type = $arrayitem['type'] ?? null;
+                $value = $arrayitem['value'] ?? null;
+                if (!($type === 'op' || $type === 'sep' || $type === 'improve')) {
+                    array_push($usedData, $value);
+                }
+            }
+        }
+
+
+        $notFound = [];
+        foreach ($AllKeywordList as $keyword) {
+            if (!(in_array($keyword, array_keys($MixedData)))) {
+                array_push($notFound, $keyword);
+                continue;
+            }
+        }
+
+        $QuerySplitValuesToRemove = [];
         foreach ($MixedData as $keyword => $keywordData) {
             if (!(in_array($keyword, $AllKeywordList))) {
                 continue;
             }
-            $UsedTrees = [];
-            foreach ($keywordData as $tree_id => $TreeObject) {
-                $treedata1 = array('tree_id' => $tree_id, 'tree' => $TreeObject);
-                $treedata2 = NULL;
-                $langArr = array_keys($TreeObject);
-                $lang = $this->getCompLang($mainLanguage, $langArr);
-                $TermTitle = $this->CompareDescriptors($lang, $treedata1, $treedata2,$Log);
-                $this->AddToContent($TermTitle, $UsedTrees, $ProcessedDescriptors, $ProcessedDeCS, $TreeObject, $tree_id, $langArr, $keyword);
-                foreach ($keywordData as $tree_id2 => $TreeObject2) {
-                    if ($tree_id == $tree_id2) {
-                        continue;
-                    }
-                    $langArrtwo = array_keys($TreeObject2);
-                    $langtwo = $this->getCompLang($mainLanguage, $langArrtwo);
-                    $treedata1 = array('tree_id' => $tree_id, 'tree' => $TreeObject);
-                    $treedata2 = array('tree_id' => $tree_id2, 'tree' => $TreeObject2);
-                    $TermTitle = $this->CompareDescriptors($langtwo, $treedata1, $treedata2,$Log);
-                    $this->AddToContent($TermTitle, $UsedTrees, $ProcessedDescriptors, $ProcessedDeCS, $TreeObject2, $tree_id2, $langArrtwo, $keyword);
+            if ($OldSelectedDescriptors !== null) {
+                $isNewKeyword = true;
+            } else {
+                if (($OldSelectedDescriptors[ucfirst($keyword)] ?? null) === null) {
+                    $isNewKeyword = true;
+                } else {
+                    $isNewKeyword = false;
                 }
             }
+            $this->processKeywordDescriptors($Log, $keyword, $keywordData, $TitleLanguage, $langs, $ProcessedDescriptors, $ProcessedDeCS, $QuerySplitValuesToRemove, $isNewKeyword, $OldSelectedDescriptors, $usedData);
         }
-        UltraLoggerFacade::MapArrayIntoUltraLogger($Log, 'DeCS And Descriptors', ['ProcessedDescriptors' => $ProcessedDescriptors, 'ProcessedDeCS' => $ProcessedDeCS], 2);
+        if (count($notFound)) {
+            $txtNotFound = trans('Lang.NotFound');
+            $ProcessedDescriptors[$txtNotFound] = [];
+            foreach ($notFound as $word) {
+                $word=ucfirst($word);
+                array_push($ProcessedDescriptors[$txtNotFound], ['title' => $word, 'value' => $word, 'checked' => -1]);
+            }
+        }
 
-        $DTO->SaveToModel(get_class($this), ['ProcessedDescriptors' => $ProcessedDescriptors, 'ProcessedDeCS' => $ProcessedDeCS]);
+        $QuerySplitValuesToRemove = array_unique($QuerySplitValuesToRemove);
+        $QuerySplitValuesToRemove = array_map('strtolower', $QuerySplitValuesToRemove);
+        $NewQuerySplit = [];
+        foreach ($QuerySplit as $index => $arrayitem) {
+            $type = $arrayitem['type'] ?? null;
+            $value = $arrayitem['value'] ?? null;
+            if ($type === 'decs' || $type === 'term') {
+                if (!(in_array($value, $QuerySplitValuesToRemove))) {
+                    array_push($NewQuerySplit, $arrayitem);
+                }
+            } else {
+                array_push($NewQuerySplit, $arrayitem);
+            }
+        }
+
+//dd(['ProcessedDescriptors' => $ProcessedDescriptors, 'ProcessedDeCS' => $ProcessedDeCS]);
+        $DTO->SaveToModel(get_class($this), ['ProcessedDescriptors' => $ProcessedDescriptors, 'ProcessedDeCS' => $ProcessedDeCS, 'QuerySplit' => $NewQuerySplit]);
     }
 
-    protected function BuildDeCSHTML(DataTransferObject $DTO, int $PICOnum)
+    protected function processKeywordDescriptors(UltraLoggerDevice $Log, string $keyword, array $keywordData, String $TitleLanguage, array $langs, array &$ProcessedDescriptors, array &$ProcessedDeCS, array &$QuerySplitValuesToRemove, bool $isNewKeyword, array $OldSelectedDescriptors = null, array $usedData = null)
+    {
+        $UsedTerms = [];
+        foreach ($keywordData as $tree_id => $TreeObject) {
+            $Term = $TreeObject[$TitleLanguage]['term'] ?? null;
+            if (!($Term)) {
+                UltraLoggerFacade::ErrorToUltraLogger($Log, 'Tree_id ' . $tree_id . ' has no Term in language ' . $TitleLanguage);
+                continue;
+            }
+            if (in_array($Term, $UsedTerms)) {
+                continue;
+            }
+            $alldecsInTerm = [];
+            array_push($UsedTerms, $Term);
+            $this->AddToDeCSTotal($alldecsInTerm, $TreeObject, $langs);
+            foreach ($keywordData as $tree_idTwo => $TreeObjectTwo) {
+                if (!($Term)) {
+                    UltraLoggerFacade::ErrorToUltraLogger($Log, 'Tree_id ' . $tree_id . ' has no Term in language ' . $TitleLanguage);
+                    continue;
+                }
+                if ($tree_id === $tree_idTwo) {
+                    continue;
+                }
+                $TermTwo = $TreeObjectTwo[$TitleLanguage]['term'];
+                if ($Term !== $TermTwo) {
+                    continue;
+                }
+                $this->AddToDeCSTotal($alldecsInTerm, $TreeObjectTwo, $langs);
+            }
+            $this->AddToResults($keyword, $Term, $ProcessedDescriptors, $ProcessedDeCS, $QuerySplitValuesToRemove, $alldecsInTerm, $isNewKeyword, $OldSelectedDescriptors, $usedData);
+        }
+    }
+
+    private function AddToResults(String $keyword, String $Term, array &$ProcessedDescriptors, array &$ProcessedDeCS, array &$QuerySplitValuesToRemove, array $alldecsInTerm, bool $isNewKeyword, array $OldSelectedDescriptors = null, array $usedData = null)
+    {
+        $keyword = ucfirst($keyword);
+        $Term = ucfirst($Term);
+        $DeCSTitle = $Term . ' [' . $keyword . ']';
+        if ($isNewKeyword === 1) {
+            $CheckedTerm = 1;
+        } else {
+            $OldTerm = $OldSelectedDescriptors[$keyword][$Term] ?? null;
+            if (($OldTerm) !== null && count($OldTerm)) {
+                $CheckedTerm = 1;
+            } else {
+                $CheckedTerm = 0;
+            }
+        }
+
+
+        array_push($QuerySplitValuesToRemove, $Term);
+        $this->newHtmlArray($ProcessedDescriptors, $keyword, $Term, $Term, $CheckedTerm);
+
+        foreach ($alldecsInTerm as $DeCS) {
+            if ($isNewKeyword) {
+                $CheckedDeCS = 1;
+            } else {
+                if ($CheckedTerm === 0) {
+                    $CheckedDeCS = 0;
+                } else {
+                    if (in_array($DeCS, $usedData)) {
+                        $CheckedDeCS = 1;
+                    } else {
+                        $CheckedDeCS = 0;
+                    }
+                }
+            }
+            array_push($QuerySplitValuesToRemove, $DeCS);
+            $this->newHtmlArray($ProcessedDeCS, $DeCSTitle, $DeCS, $DeCS, $CheckedDeCS);
+        }
+
+    }
+
+    private function newHtmlArray(array &$array, String $mainKey, String $title, String $value, int $isChecked)
+    {
+        if (!($array[$mainKey] ?? null)) {
+            $array[$mainKey] = [];
+        }
+        array_push($array[$mainKey], ['title' => $title, 'value' => $value, 'checked' => $isChecked]);
+    }
+
+
+    private function AddToDeCSTotal(array &$alldecsInTerm, array $TreeObject, array $langs)
+    {
+        foreach ($TreeObject as $lang => $content) {
+            if (!(in_array($lang, $langs))) {
+                continue;
+            }
+            $term = $content['term'];
+            $decs = $content['decs'];
+            $alldecsInTerm = array_merge($alldecsInTerm, [$term], $decs);
+        }
+    }
+
+
+    protected function FalseBuildDeCSHTML(DataTransferObject $DTO,$arrayErrorMessageData){
+        $DescriptorsHTML = $this->BuildHTML('descriptorsform', $arrayErrorMessageData,Lang::get('lang.TooMuch'));
+        $DTO->SaveToModel(get_class($this), ['DescriptorsHTML' => $DescriptorsHTML, 'DeCSHTML' => '']);
+    }
+
+
+    protected
+    function BuildDeCSHTML(DataTransferObject $DTO, int $PICOnum)
     {
         $ProcessedDescriptors = $DTO->getAttr('ProcessedDescriptors');
         $ProcessedDeCS = $DTO->getAttr('ProcessedDeCS');
-        if(count($ProcessedDescriptors)===0){
-         throw new NoContentFound();
+        if (count($ProcessedDescriptors) === 0) {
+            throw new NoContentFound();
         }
         $QuerySplit = $DTO->getAttr('QuerySplit');
+        //dd($QuerySplit);
+        $DeCSHTML = $this->BuildHTML('decsform', $ProcessedDeCS);
         $DescriptorsHTML = $this->BuildHiddenField('descriptorsform', 'querysplit', $QuerySplit);
         $DescriptorsHTML = $DescriptorsHTML . $this->BuildHiddenField('descriptorsform', 'piconum', $PICOnum);
         $DescriptorsHTML = $DescriptorsHTML . $this->BuildHTML('descriptorsform', $ProcessedDescriptors);
-        $DeCSHTML = $this->BuildHTML('decsform', $ProcessedDeCS);
         $DTO->SaveToModel(get_class($this), ['DescriptorsHTML' => $DescriptorsHTML, 'DeCSHTML' => $DeCSHTML]);
     }
-
-
 
 ///////////////////////////////////////////////////////////////////
 //INNER FUNCTIONS
 ///////////////////////////////////////////////////////////////////
 
-
-    private
-    function getCompLang(string $mainlanguage, array $langArr)
-    {
-        $langArr=array_diff($langArr,['descendants','remaininglangs']);
-        if (count($langArr) == 1) {
-            return current((Array)$langArr);
-        }
-        if (in_array($mainlanguage, $langArr)) {
-            return $mainlanguage;
-        }
-        if (in_array('en', $langArr)) {
-            return 'en';
-        }
-        return current((Array)$langArr);
-    }
-
-    private
-    function AddToContent(string $TermTitle = null, array &$UsedTrees, array &$ProcessedDescriptors, &$ProcessedDeCS, array $TreeObject, string $tree_id, array $langArr, string $keyword)
-    {
-
-        if (!(isset($TermTitle)) ?: !(strlen($TermTitle) > 0)) {
-            return;
-        }
-        if (in_array($tree_id, $UsedTrees)) {
-            return;
-        }
-        array_push($UsedTrees, $tree_id);
-
-        if (!(array_key_exists($keyword, $ProcessedDescriptors))) {
-            $ProcessedDescriptors[$keyword] = [];
-        }
-        array_push($ProcessedDescriptors[$keyword], ['title' => $TermTitle, 'value' => $TermTitle, 'checked' => true]);
-        $tmp = [];
-        foreach ($TreeObject as $lang => $content) {
-            if ($lang === 'descendants' || $lang === 'remaininglangs' || (!(in_array($lang, $langArr)))) {
-                continue;
-            }
-            $term = $content['term'];
-            $decs = $content['decs'];
-            $tmp = array_merge($tmp, [$term], $decs);
-        }
-        $DeCSArr = [];
-        foreach ($tmp as $DeCS) {
-            array_push($DeCSArr, ['title' => $DeCS, 'value' => $DeCS, 'checked' => true]);
-        }
-        $ProcessedDeCS[$TermTitle . ' [' . $keyword . ']'] = $DeCSArr;
-    }
-
-    private
-    function getTermsArr(array $tree)
-    {
-        $results = [];
-        foreach ($tree['tree'] as $lang => $content) {
-            if (!($lang === 'descendants' || $lang === 'remaininglangs')) {
-                $results[$lang] = $content['term'];
-            }
-        }
-        return $results;
-    }
-
-
-    private
-    function CompareDescriptors(string $lang, array $tree1, array $tree2 = null,UltraLoggerDevice $Log)
-    {
-        $tree_id1 = $tree1['tree_id'];
-        $TermsArr1 = $this->getTermsArr($tree1);
-        $tree_id2 = NULL;
-        $TermsArr2 = NULL;
-        $msg = '</br></br>lang(' . $lang . ') not found in';
-        $alpha = 0;
-        if (!(in_array($lang, array_keys($TermsArr1)))) {
-            $msg = $msg . '  terms1(' . $tree_id1 . ')=' . json_encode($TermsArr1);
-            $alpha = 1;
-        }
-        if (isset($tree2)) {
-            $tree_id2 = $tree2['tree_id'];
-            $TermsArr2 = $this->getTermsArr($tree2);
-            if (!(in_array($lang, array_keys($TermsArr2)))) {
-                $msg = $msg . ' terms2(' . $tree_id2 . ')=' . json_encode($TermsArr2);
-                $alpha = 1;
-            }
-        }
-        if ($alpha == 1) {
-            UltraLoggerFacade::ErrorToUltraLogger($Log,$msg);
-            return 'Undefined';
-        }
-
-        if ($this->IsEmptyTermsArr($TermsArr1)) {
-            return 'Undefined';
-        }
-        if (!($this->IsEmptyTermsArr($TermsArr2))) {
-            if ($TermsArr1[$lang] == $TermsArr2[$lang]) {
-                return $TermsArr1[$lang];
-            } else {
-                return NULL;
-            }
-        } else {
-            return $TermsArr1[$lang];
-        }
-    }
-
-    private function IsEmptyTermsArr(array $TermsArr = null)
-    {
-        if (!(isset($TermsArr)) ?: !(is_array($TermsArr)) ?: count($TermsArr) == 0) {
-            return true;
-        } else {
-            return false;
-        }
-    }
 
 }

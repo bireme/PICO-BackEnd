@@ -39,21 +39,9 @@ class DeCSIntegrationProcess extends DeCSIntegrationSupport implements ServiceEn
             $this->ExploreSecondaryTrees($ServicePerformance, $DTO, $Log);
             UltraLoggerFacade::UltraLoggerSuccessfulAttempt($Log, $LogData);
 
-            $LogData = UltraLoggerFacade::UltraLoggerAttempt($Log, 'Step 5/5. Mixing descendant Trees into MainTree');
-            $this->MixDescendantTreesIntoMainTree($DTO, $Log);
-            UltraLoggerFacade::UltraLoggerSuccessfulAttempt($Log, $LogData);
-
-
             $MainTrees = $this->getMainTreeList($DTO);
-            $TmpResults = $this->getResultsOrderedByTreeId($DTO);
-            $ObtainedTreeIds=array_keys($TmpResults);
-
-            UltraLoggerFacade::InfoToUltraLogger($Log,'---------------');
-            UltraLoggerFacade::InfoToUltraLogger($Log,'Summary');
-            UltraLoggerFacade::InfoToUltraLogger($Log,count($MainTrees).' MaintTrees: '.json_encode($MainTrees));
-            UltraLoggerFacade::InfoToUltraLogger($Log,count($ObtainedTreeIds).' Total Trees: '.json_encode($ObtainedTreeIds));
-
-            $results = $this->getFinalResults($DTO);
+            $results = $this->getResultsOrderedByTreeId($DTO);
+            $ObtainedTreeIds=array_keys($results);
             if (count($results) === 0) {
                 $results = 'no-res';
             }
@@ -106,7 +94,7 @@ class DeCSIntegrationProcess extends DeCSIntegrationSupport implements ServiceEn
             $isMain=false;
         }
 
-        $this->ProcessImportResults($results, $isMain, $DTO, $title, $Log);
+        $this->ProcessImportResults($results, $isMain, $DTO, $Log);
         UltraLoggerFacade::InfoToUltraLogger($Log, '--------------');
         UltraLoggerFacade::UltraLoggerSuccessfulAttempt($Log, $LogData);
     }
