@@ -10,66 +10,20 @@ trait PICOQueryProcessorTrait
 
     protected function ProcessQuery(string $query)
     {
+        $query = strtolower($query);
         if ($query === null || strlen($query) === 0) {
             return [];
         }
-
         $query = str_replace('  ', ' ', $query);
         $query = str_replace("'", '"', $query);
-        $query = strtolower($query);
-        $InititalSplit = $this->SplitByQuotes($query);
-        $QuerySplitBySeparators = $this->SplitArrayByOps(' or ', $InititalSplit);
-        $QuerySplitBySeparators = $this->SplitArrayByOps(' and ', $QuerySplitBySeparators);
-        $QuerySplitBySeparators = $this->SplitArrayByOps('not ', $QuerySplitBySeparators);
-        $res=[];
-        foreach($QuerySplitBySeparators as $obj){
-            $inside = $obj['inside']??null;
-            $value = $obj['value']??null;
-            if($value!== null && strlen($value)){
-                if($inside===true){
-                    array_push($res,$value);
-                }else{
-                    $pattern = '/([()": ])/';
-                    $QuerySplitBySeparators = preg_split($pattern, $value, -1, PREG_SPLIT_DELIM_CAPTURE | PREG_SPLIT_NO_EMPTY);
-                    $res= array_merge($res,$QuerySplitBySeparators);
-                }
-            }
-        }
-        return $res;
+        $QuerySplitByQuotes = $this->SplitByQuotes($query);
+        return $QuerySplitByQuotes;
     }
 
     ///////////////////////////////////////////////////////////////////
     //INNER FUNCTIONS
     ///////////////////////////////////////////////////////////////////
 
-    private function SplitArrayByOps(string $delimiter, array $array)
-    {
-        $res = [];
-        foreach ($array as $obj) {
-            if (!($obj)) {
-                continue;
-            }
-            $inside = $obj['inside']??null;
-            $value = $obj['value']??null;
-            if ($inside === null) {
-                continue;
-            }
-            if ($inside === true) {
-                array_push($res, $obj);
-            }else{
-                $tmp = explode($delimiter,$value);
-                foreach($tmp as $index => $localvalue){
-                    if($localvalue!==null && strlen($localvalue)){
-                        array_push($res, ['inside'=>false,'value'=>$localvalue]);
-                        if($index<count($tmp)-1){
-                            array_push($res, ['inside'=>false,'value'=>$delimiter]);
-                        }
-                    }
-                }
-            }
-        }
-        return $res;
-    }
 
     private function SplitByQuotes(string $query)
     {
@@ -78,24 +32,50 @@ trait PICOQueryProcessorTrait
         if ($open !== $close) {
             throw new UnmatchingParentheses();
         }
-        $QuerySplitByComma = explode('"',$query);
+        $QuerySplitByComma = explode('"', $query);
         if (count($QuerySplitByComma) % 2 === 0) {
             throw new UnmatchingQuotes();
         }
-
-        $InParenthesis = false;
+        $OpsExtra = [' and ', ' or ', 'not '];
+        $Ops = ['and', 'or', 'not'];
+        $InQueryCluster = false;
         $res = [];
         foreach ($QuerySplitByComma as $value) {
-            if($InParenthesis){
-                $local=true;
-            }else{
-                $local=false;
+            if ($InQueryCluster) {
+                array_push($res, ucfirst($value));
+            } else {
+                $valuex = $this->SplitArrayByOps($value,$OpsExtra,$Ops);
+                $res = array_merge($res, $valuex);
             }
-            array_push($res, ['inside' => $local, 'value' => $value]);
-            $InParenthesis = !($InParenthesis);
+            $InQueryCluster = !($InQueryCluster);
         }
         return $res;
     }
 
-
+    private function SplitArrayByOps(string $value,array $OpsExtra,array $Ops)
+    {
+        $pattern = '/( and | or |not )/';
+        $Split = preg_split($pattern, $value, -1, PREG_SPLIT_DELIM_CAPTURE);
+        $res = [];
+        foreach ($Split as $localv) {
+            if(in_array($localv,$OpsExtra)){
+                $pattern = '/([ ])/';
+                $minisplit = preg_split($pattern, $localv, -1, PREG_SPLIT_DELIM_CAPTURE | PREG_SPLIT_NO_EMPTY);
+                $minisplit = array_map('strtoupper', $minisplit);
+            } else {
+                $pattern = '/([():])/';
+                $minisplit = preg_split($pattern, $localv, -1, PREG_SPLIT_DELIM_CAPTURE | PREG_SPLIT_NO_EMPTY);
+                $minisplit = array_map('ucfirst', $minisplit);
+            }
+            $res = array_merge($res, $minisplit);
+        }
+        foreach($res as $index => $val){
+            if(in_array($val,$Ops)){
+                $Ops[$index]=strtoupper($val);
+            }else{
+                $Ops[$index]=ucfirst($val);
+            }
+        }
+        return $res;
+    }
 }

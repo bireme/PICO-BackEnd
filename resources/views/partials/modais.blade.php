@@ -3,3 +3,4 @@
 @include('partials.modais.modais_3')
 @include('partials.modais.loading')
 @include('partials.modais.info')
+@include('partials.modais.language')

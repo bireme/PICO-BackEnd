@@ -1,5 +1,7 @@
 import {translate} from "./translator.js";
 import {getPICOElements} from "./commons.js";
+import {getPICOnumFromObjId} from "./datadictionary.js";
+
 
 ////PUBLIC FUNCTIONS
 
@@ -8,7 +10,6 @@ export function UpdateLanguageInfo() {
     setResNumAltTextGlobal();
     ChangeSearchDetailsInfo();
     CalcResLanguage();
-    setExpandDeCSLanguage();
 }
 
 ////PRIVATE FUNCTIONS
@@ -19,7 +20,7 @@ function setLocalButtonLanguage() {
         return ((x.charAt(0)).toUpperCase() + (x.slice(1)).toLowerCase());
     });
     $(document).find('[id^=ResNumLocal]').each(function () {
-        let PICOnum = ($(this).attr('id')).substr(-1);
+        let PICOnum = getPICOnumFromObjId($(this));
         $(this).find('label').first().text(PICOs[PICOnum - 1]);
     });
 }
@@ -50,13 +51,6 @@ function CalcResLanguage() {
             $(this).text(translate('butres'));
         }
         $(this).attr('data-original-title', translate('upres'));
-    });
-}
-
-function setExpandDeCSLanguage() {
-    $(document).find('button[id^=Exp]').each(function () {
-        let msg = '<span class="badge badge-light badgeM startlanguage"><i class="fas fa-cog"></i></span> ' + translate('butexp');
-        $(this).html(msg);
     });
 }
 

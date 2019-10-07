@@ -2,9 +2,12 @@
 
 namespace PICOExplorer\Services\DeCS;
 
+use Illuminate\Support\Facades\Lang;
+use PICOExplorer\Exceptions\Exceptions\ClientError\EmptyQuery;
 use PICOExplorer\Exceptions\Exceptions\ClientError\NoNewDataToExplore;
 use PICOExplorer\Exceptions\Exceptions\ClientError\WrongQueryFormat;
 use PICOExplorer\Facades\UltraLoggerFacade;
+use PICOExplorer\Http\Traits\CorrectQueryTrait;
 use PICOExplorer\Models\DataTransferObject;
 use PICOExplorer\Services\ServiceModels\PICOQueryProcessorTrait;
 use PICOExplorer\Services\AdvancedLogger\Services\UltraLoggerDevice;
@@ -13,37 +16,31 @@ abstract class DeCSQueryBuild extends DeCSSupport
 {
 
     use PICOQueryProcessorTrait;
+    use CorrectQueryTrait;
 
-    protected function ProcessInitialQuery(string $query, string $ImprovedSearch = null)
+    protected function ProcessInitialQuery(string $query)
     {
-        $QueryProcessed=[];
-        $ImprovedSearchProcessed=[];
-        if ($ImprovedSearch) {
-            $ImprovedSearchProcessed = $this->ProcessQuery($ImprovedSearch);
-        }
-        if($query){
+        if ($query && strlen($query)) {
+            $query = $this->FixEquation($query);
             $QueryProcessed = $this->ProcessQuery($query);
+            return $QueryProcessed;
+        } else {
+            throw new EmptyQuery();
         }
-        $infodata = [
-            'ImprovedSearchProcessed' => $ImprovedSearchProcessed,
-            'QueryProcessed' => $QueryProcessed,
-        ];
-        return $infodata;
     }
 
 
-    protected function BuildListsFromProcessedData(DataTransferObject $DTO, array $infodata, array $langArr, UltraLoggerDevice $Log)
+    protected function BuildListsFromProcessedData(DataTransferObject $DTO, array $ItemArray, array $langArr, UltraLoggerDevice $Log)
     {
-        $ItemArray = $infodata['QueryProcessed'];
-        $ImprovedArray = $infodata['ImprovedSearchProcessed'];
+        $ImproveSearchWords = $DTO->getAttr('ImproveSearchWords');
         $Ops = ['or', 'and', 'not'];
         $Seps = ['(', ')', ' ', ':'];
+        $arrayErrorMessageData = null;
         try {
-            $infoimprov = $this->BuildImproveList($ImprovedArray, $Ops, $Seps);
-            $infodata = $this->BuildKeywordList($DTO, $ItemArray, $langArr, $Ops, $Seps, $infoimprov, $Log);
+            $infodata = $this->BuildKeywordList($DTO, $ItemArray, $langArr, $Ops, $Seps, $ImproveSearchWords, $Log);
             $KeywordList = $infodata['KeywordList'];
-            $AllKeywords =$infodata['AllKeywords']??[];
-            $QuerySplit = $this->improveQuerySplit($infodata['QuerySplit'], $Ops, $Seps);
+            $AllKeywords = $infodata['AllKeywords'] ?? [];
+            $QuerySplit = $infodata['QuerySplit'];
         } catch (\Throwable $ex) {
             throw new WrongQueryFormat();
         }
@@ -53,37 +50,35 @@ abstract class DeCSQueryBuild extends DeCSSupport
 
         UltraLoggerFacade::MapArrayIntoUltraLogger($Log, 'KeywordList', ['KeywordList' => $KeywordList], 3);
         UltraLoggerFacade::MapArrayIntoUltraLogger($Log, 'QuerySplit', ['QuerySplit' => $QuerySplit], 1, 'value');
-        $DTO->SaveToModel(get_class($this), ['QuerySplit' => $QuerySplit, 'KeywordList' => $KeywordList,'AllKeywords'=>$AllKeywords]);
-
+        $DTO->SaveToModel(get_class($this), ['QuerySplit' => $QuerySplit, 'KeywordList' => $KeywordList, 'AllKeywords' => $AllKeywords]);
+        if(count($KeywordList)>5){
+            $arrayErrorMessageData=[];
+            $txtTooMuch=Lang::get('lang.KeyX');
+            $arrayErrorMessageData[$txtTooMuch] = [];
+            foreach ($KeywordList as $word =>$data) {
+                $word=ucfirst($word);
+                array_push($arrayErrorMessageData[$txtTooMuch], ['title' => $word, 'value' => $word, 'checked' => -1]);
+            }
+        }
+        return $arrayErrorMessageData;
     }
 
 ///////////////////////////////////////////////////////////////////
 //INNER FUNCTIONS
 ///////////////////////////////////////////////////////////////////
 
-    private function BuildImproveList(array $ItemArray, array $Ops, array $Seps)
-    {
-        $exclude = array_merge($Ops, $Seps);
-        $ImproveWords = [];
-        foreach ($ItemArray as $index => $value) {
-            if (!(in_array($value, $exclude))) {
-                array_push($ImproveWords, $value);
-            }
-        }
-        return $ImproveWords;
-    }
-
-    private function BuildKeywordList(DataTransferObject $DTO, array $ItemArray, array $langArr, array $Ops, array $Seps, array $infoimprov, UltraLoggerDevice $Log)
+    private function BuildKeywordList(DataTransferObject $DTO, array $ItemArray, array $langArr, array $Ops, array $Seps, array $ImproveSearchWords, UltraLoggerDevice $Log)
     {
         $level = 0;
         $PreviousData = $DTO->getAttr('PreviousData');
+        $ImproveSearchWords = array_map('strtolower', $ImproveSearchWords);
         $ItemArray = array_map('strtolower', $ItemArray);
         $KeywordsDeCSTerms = $this->getDeCSAndKeywords($PreviousData);
         $UsedKeyWords = [];
         $KeywordList = [];
         $QuerySplit = [];
         $localkeywords = [];
-        $AllKeywords=[];
+        $AllKeywords = [];
         $localkeywords[0] = [];
         array_push($localkeywords[0], []);
         foreach ($ItemArray as $index => $value) {
@@ -104,10 +99,10 @@ abstract class DeCSQueryBuild extends DeCSSupport
                 $level--;
                 $type = 'op';
             } else {
-                $type = $this->WordType($value, $KeywordsDeCSTerms, $UsedKeyWords, $Seps, $Ops, $infoimprov);
-                if ($type !== 'decs' && $type !== 'term' && $type !== 'improve' ) {
+                $type = $this->WordType($value, $KeywordsDeCSTerms, $UsedKeyWords, $Ops, $Seps, $ImproveSearchWords);
+                if ($type !== 'decs' && $type !== 'term' && $type !== 'improve') {
                     if ($type === 'keyexplored' || $type === 'keyword' || $type === 'keyrep') {
-                        array_push($AllKeywords,$value);
+                        array_push($AllKeywords, $value);
                         $kwindex = count($localkeywords[$level]) - 1;
                         if (in_array($value, $localkeywords[$level][$kwindex])) {
                             continue;
@@ -127,139 +122,13 @@ abstract class DeCSQueryBuild extends DeCSSupport
                     }
                 }
             }
+            if ($type === 'op') {
+                $value = strtoupper($value);
+            }
             array_push($QuerySplit, ['type' => $type, 'value' => $value]);
         }
-        $infodata = ['QuerySplit' => $QuerySplit, 'KeywordList' => $KeywordList,'AllKeywords'=>$AllKeywords];
+        $infodata = ['QuerySplit' => $QuerySplit, 'KeywordList' => $KeywordList, 'AllKeywords' => $AllKeywords];
         return $infodata;
-    }
-
-
-    private function improveQuerySplit(array $QuerySplit, array $Ops, array $Seps)
-    {
-
-        $error = true;
-        $previous = null;
-        $previousTwo = null;
-        while ($error) {
-            $error = false;
-            $totaldeleteindexes = [];
-            foreach ($QuerySplit as $index => $item) {
-                if (!($item)) {
-                    continue;
-                }
-                $type = $QuerySplit[$index]['type'];
-                $deleteindexes = null;
-
-                if ($previous) {
-                    if (!($type === 'keyexplored' || $type === 'keyword' || $type === 'keyrep' || $type === 'keypartial')) {
-                        $value = $QuerySplit[$index]['value'] ?? '';
-                        $previousValue = $QuerySplit[$previous]['value'] ?? '';
-                        $previousTwoValue = null;
-                        if ($previousTwo) {
-                            $previousTwoValue = $QuerySplit[$previousTwo]['value'] ?? null;
-                        }
-                        $deleteindexes = $this->CorrectErrors($Ops, $index, $previous, $value, $previousValue, $previousTwo, $previousTwoValue);
-                    }
-                }
-                if ($deleteindexes) {
-                    $totaldeleteindexes = array_merge($totaldeleteindexes, $deleteindexes);
-                    $previousTwo = null;
-                    $previous = null;
-                    $error = true;
-                } else {
-                    if ($previous) {
-                        $previousTwo = $previous;
-                    }
-                    $previous = $index;
-                }
-            }
-            $this->deleteErrors($QuerySplit, $totaldeleteindexes);
-            $show = [];
-            $this->reBuildWithoutNulls($QuerySplit, $show);
-            $this->removeBorders($QuerySplit, $Ops, $error);
-        }
-        return $QuerySplit;
-    }
-
-    private function CorrectErrors(array $Ops, int $index, int $previous, string $value, string $previousValue, int $previousTwo = null, string $previousTwoValue = null)
-    {
-        if ($previousTwo) {
-            if ((in_array($value, $Ops)) && (in_array($previousTwoValue, $Ops)) && ($previousValue === ' ') && ($previousTwoValue !== 'not')) {
-                return [$previousTwo, $previous, $index];
-            }
-            if ($previousTwoValue === '(' && $value === ')') {
-                return [$previousTwo, $index];
-            }
-            if ($previousTwoValue === '(' && $previousValue === ' ' && in_array($value, $Ops) && $value !== 'not') {
-                return [$previous, $index];
-            }
-            if (in_array($previousTwoValue, $Ops) && $previousValue === ' ' && $value === ')') {
-                return [$previousTwo, $previous];
-            }
-
-            if ($previousTwoValue === '(' && $value === ' ' && in_array($previousValue, $Ops) && $previousValue !== 'not') {
-                return [$previous, $index];
-            }
-            if (in_array($previousValue, $Ops) && $previousTwoValue === ' ' && $value === ')') {
-                return [$previousTwo, $previous];
-            }
-        }
-        if ($previousValue === ' ' && $value === ' ') {
-            return [$previous];
-        }
-        if ($previousValue === ' ' && $value === ')') {
-            return [$previous];
-        }
-        if ($previousValue === '(' && $value === ' ') {
-            return [$index];
-        }
-        if ($previousValue === '(' && $value === ')') {
-            return [$previous, $index];
-        }
-        return null;
-    }
-
-    private function deleteErrors(array &$QuerySplit, array $totaldeleteindexes)
-    {
-        if (count($totaldeleteindexes) > 0) {
-            rsort($totaldeleteindexes);
-
-            foreach ($totaldeleteindexes as $itemdelete) {
-                unset($QuerySplit[$itemdelete]);
-            }
-        }
-    }
-
-    private function reBuildWithoutNulls(array &$QuerySplit, array &$show)
-    {
-        $newQuerySplit = [];
-        foreach ($QuerySplit as $index => $item) {
-            if ($item) {
-                array_push($show, $item['value']);
-                array_push($newQuerySplit, $item);
-            }
-        }
-        $QuerySplit = $newQuerySplit;
-    }
-
-    private function removeBorders(array &$QuerySplit, array $Ops, bool &$error)
-    {
-        $tmperror = true;
-        while ($tmperror) {
-            $tmperror = false;
-            $firstval = $QuerySplit[0]['value'];
-            $lastval = $QuerySplit[count($QuerySplit) - 1]['value'];
-            if (in_array($lastval, $Ops) || $lastval === ' ') {
-                array_pop($QuerySplit);
-                $error = true;
-                $tmperror = true;
-            }
-            if (in_array($firstval, $Ops) || $firstval === ' ') {
-                array_shift($QuerySplit);
-                $error = true;
-                $tmperror = true;
-            }
-        }
     }
 
     private function getUnexploredLangs(string $keyword, array $PreviousData, array $langArr)
@@ -279,7 +148,7 @@ abstract class DeCSQueryBuild extends DeCSSupport
 
 
     private
-    function WordType(string $word, array $KeywordsDeCSTerms, array $UsedKeyWords, array $Ops, array $Seps, array $infoimprov)
+    function WordType(string $word, array $KeywordsDeCSTerms, array $UsedKeyWords, array $Ops, array $Seps, array $ImproveSearchWords)
     {
         if (in_array($word, $Seps)) {
             return 'sep';
@@ -287,7 +156,7 @@ abstract class DeCSQueryBuild extends DeCSSupport
         if (in_array($word, $Ops)) {
             return 'op';
         }
-        if (in_array($word, $infoimprov)) {
+        if (in_array($word, $ImproveSearchWords)) {
             return 'improve';
         }
         if (in_array($word, array_values($KeywordsDeCSTerms['decs']))) {

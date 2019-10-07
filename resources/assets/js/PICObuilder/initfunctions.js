@@ -1,50 +1,61 @@
-import {setLanguagesOfModal} from "./decslanguages.js";
 import {getPICOElements} from "./commons.js";
-import {getLanguages} from "./commonsdecs.js";
 import {translate} from "./translator.js";
 import {showInfoMessage} from "./infomessage.js";
 import {showBootstrapObj, hideBootstrapObj} from "./hideshow.js";
 import {UpdateLanguageInfo} from "./languagetoggler";
-import {ChangeSeekerStart, UpdateAfterResults,ChangeSeekerHandler} from "./changeseeker";
+import {ChangeSeekerStart} from "./changeseeker";
 import {AccordionAndTooltip} from "./AccordionTooltip";
-import {UpdateLanguageInfo} from "./languagetoggler.js";
-import {AccordionAndTooltip} from "./AccordionTooltip.js";
 import {getResultsNumber} from "./resultsmanager";
 
 
 ////PUBLIC FUNCTIONS
 
-export function ManageResultsNumber(PICOnum){
+export function ManageResultsNumber(PICOnum) {
     getResultsNumber(PICOnum);
-    UpdateAfterResults(PICOnum);
 }
 
-
-export function ExpandDeCSConfig() {
-    let msg = '<div id="LanguageSection" class="container "><div class="row"><div class="col-md-7 sidebar LanguageContainer"><label class="labelMain">';
-    msg = msg + translate("langimp") + '</label>\
-        </div>\
-        <div class="col-md-5 sidebar LanguageContainer text-left">\
-           <div class="LanguageInfoContainer">\
-                    <div class="CheckBoxRow" ><input type="checkbox" class="langCheck" name="Langs[]" value="en" checked /><label>English</label></div>\
-                    <div class="CheckBoxRow" ><input type="checkbox" class="langCheck" name="Langs[]" value="pt" /><label>Spanish</label></div>\
-                    <div class="CheckBoxRow" ><input type="checkbox" class="langCheck" name="Langs[]" value="es" /><label>Portuguese</label></div>\
-            </div>\
-        </div>\
-    </div>\
-    </div>';
-    let langs = getLanguages();
-    showInfoMessage('Config', msg, true, 'golanguage', setLanguagesOfModal, langs, true);
-}
-
-export function EquationChanged(PICOnum){
-    ChangeSeekerHandler(PICOnum);
-}
-
-export function StartFunctions(){
+export function StartFunctions() {
     UpdateLanguageInfo();
     ChangeSeekerStart();
     AccordionAndTooltip();
+    ReBuildConfButtonText();
+}
+
+function ReBuildConfButtonText(){
+    let tmp=[];
+    $('#LanguageSection').find('.languageCheckbox:checked').each(function(){
+        tmp.push($(this).attr('data-lang'));
+    });
+    let txt = '['+tmp.join(', ')+']';
+    let oldval = $('#Exp1').find('.startlanguage').first().text();
+    console.log('oldconftextval='+oldval);
+    if(oldval!==txt){
+        $(document).find('.startlanguage').each(function(){
+            $(this).text(txt);
+        });
+    }
+}
+
+export function SkipStepTwo(){
+    let selectnum = $('#modal1').find('.DescriptorCheckbox:checked').length;
+    if (selectnum === 0) {
+        return true;
+    }
+    return false;
+}
+
+export function ChangeDeCSLanguages() {
+    let selectnum = $('#LanguageSection').find('.languageCheckbox:checked').length;
+    console.log('langs selected = '+selectnum);
+    if (selectnum === 0) {
+        $('#languagenumberalert').removeClass('d-none');
+        setTimeout(function () {
+            $('#languagenumberalert').addClass('d-none');
+        }, 3000);
+    } else {
+        ReBuildConfButtonText();
+        $('#closemodallanguage').click();
+    }
 }
 
 export function InfoNoResults() {
@@ -90,17 +101,6 @@ export function ReBuildStudyType() {
         msg = '(' + msg + ')';
     }
     $('#datainput5').val(msg);
-    ChangeSeekerHandler(5);
-}
-
-export function setLanguagesFromModal(LangParent) {
-    let langs = [];
-    $(LangParent).find('.langCheck').each(function () {
-        if ($(this).is(':checked')) {
-            langs.push($(this).val());
-        }
-    });
-    setLanguages(langs);
 }
 
 export function HideUnselectedDeCS() {
@@ -126,19 +126,6 @@ export function HideUnselectedDeCS() {
 }
 
 ////PRIVATE FUNCTIONS
-
-function setLanguages(langArr) {
-    let count = 0;
-    $(document).find('.languageCheckbox').each(function () {
-        let index = langArr.indexOf($(this).val());
-        if (index > -1) {
-            $(this).attr('checked', true);
-        } else {
-            $(this).attr('checked', false);
-        }
-        count++;
-    });
-}
 
 function getPICOinfo() {
     return [translate('pico_info1'), translate('pico_info2'), translate('pico_info3'), translate('pico_info4'), translate('pico_info5')];

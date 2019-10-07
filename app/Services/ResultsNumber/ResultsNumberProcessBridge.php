@@ -15,24 +15,19 @@ class ResultsNumberProcessBridge extends ResultsNumberSupport implements Service
 
     protected final function Process(ServicePerformanceSV $ServicePerformance, DataTransferObject $DTO, $InitialData)
     {
-        $ResultsClusters = $this->buildGlobalAndLocalArrays($InitialData);
-        $ProcessedQueries = [];
-        foreach ($ResultsClusters as $key => $ResultsCluster) {
-            $ProcessedQueries[$key] = $this->BuildQuery($ResultsCluster);
-        }
-        return $this->Explore($ServicePerformance, $DTO,$ProcessedQueries);
+        $queries = $this->BuildQueries($DTO,$InitialData);
+        $IntegrationResults =  $this->Connect($ServicePerformance, $queries);
+        $results =  [
+            'Results' => $IntegrationResults,
+            'NewEquation' => $DTO->getAttr('NewEquation'),
+            'GlobalTitle' => $DTO->getAttr('GlobalTitle'),
+        ];
+        return $results;
     }
 
     ///////////////////////////////////////////////////////////////////
     //INNER FUNCTIONS
     ///////////////////////////////////////////////////////////////////
-
-    private function Explore(ServicePerformanceSV $ServicePerformance, DataTransferObject $DTO,$ProcessedQueries)
-    {
-        $DTO->SaveToModel(get_class($this), ['ProcessedQueries' => $ProcessedQueries]);
-        $results = $this->Connect($ServicePerformance, $ProcessedQueries);
-        return $results;
-    }
 
     private final function Connect(ServicePerformanceSV $ServicePerformance, $data)
     {

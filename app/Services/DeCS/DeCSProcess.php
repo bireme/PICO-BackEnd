@@ -26,28 +26,42 @@ class DeCSProcess extends DeCSQueryBuild implements ServiceEntryPointInterface
             $Log = UltraLoggerFacade::createUltraLogger('DeCSProcess', $InitialData);
 
             $LogData = UltraLoggerFacade::UltraLoggerAttempt($Log, 'Attempting to decode previous data');
-            $this->DecodePreviousData($DTO, $InitialData['SavedData'] ?? null);
+            $this->DecodePreviousData($DTO, $InitialData['SavedData'] ?? null,$InitialData['ImproveSearchWords'] ?? null,$InitialData['OldSelectedDescriptors'] ?? null);
             UltraLoggerFacade::UltraLoggerSuccessfulAttempt($Log, $LogData);
 
-
-
             $LogData = UltraLoggerFacade::UltraLoggerAttempt($Log, 'Attempting to process query and improved search');
-            $QueryProcessed = $this->ProcessInitialQuery($InitialData['query'], $InitialData['ImprovedSearch'] ?? null);
+            $QueryProcessed = $this->ProcessInitialQuery($InitialData['query']);
             UltraLoggerFacade::UltraLoggerSuccessfulAttempt($Log, $LogData);
 
             $LogData = UltraLoggerFacade::UltraLoggerAttempt($Log, 'Attempting to build Lists From proocessed queries');
-            $this->BuildListsFromProcessedData($DTO, $QueryProcessed, $InitialData['langs'], $Log);
+            $arrayErrorMessageData = $this->BuildListsFromProcessedData($DTO, $QueryProcessed, $InitialData['langs'], $Log);
             UltraLoggerFacade::UltraLoggerSuccessfulAttempt($Log, $LogData);
 
-            $this->Explore($ServicePerformance, $DTO, $InitialData['mainLanguage'], $Log);
+            $IntegrationResults=[];
+            if(!($arrayErrorMessageData)) {
+                $IntegrationResults = $this->Explore($ServicePerformance, $DTO, $Log);
+            }
+            UltraLoggerFacade::InfoToUltraLogger($Log, 'Processing KeywordList => Mixing Results With OldData');
+            $this->MixWithOldData($DTO, $IntegrationResults, $InitialData['langs'], $Log);
 
-            $LogData = UltraLoggerFacade::UltraLoggerAttempt($Log, 'Attempting to build html');
-            $this->BuildDeCSHTML($DTO, $InitialData['PICOnum']);
-            UltraLoggerFacade::UltraLoggerSuccessfulAttempt($Log, $LogData);
+            if($arrayErrorMessageData) {
+                UltraLoggerFacade::InfoToUltraLogger($Log, 'Generating Error message And skipping regular process');
+                $this->FalseBuildDeCSHTML($DTO, $arrayErrorMessageData);
+            }else{
+                UltraLoggerFacade::InfoToUltraLogger($Log, 'Processing KeywordList => Building as Terms');
+                $this->BuildAsTerms($DTO, $InitialData['langs'], $InitialData['mainLanguage'], $Log);
+
+                $LogData = UltraLoggerFacade::UltraLoggerAttempt($Log, 'Attempting to build html');
+                $this->BuildDeCSHTML($DTO, $InitialData['PICOnum']);
+                UltraLoggerFacade::UltraLoggerSuccessfulAttempt($Log, $LogData);
+            }
+
             $results = [
                 'SavedData' => json_encode($DTO->getAttr('SavedData')),
+                //QuerySplit is included in a hidden field inside HTML
                 'DescriptorsHTML' => $DTO->getAttr('DescriptorsHTML'),
                 'DeCSHTML' => $DTO->getAttr('DeCSHTML'),
+                'PreviousImproveQuery' => $InitialData['PreviousImproveQuery']??'',
             ];
             $wasSuccesful=true;
         } catch (DontCatchException $ex) {
@@ -61,7 +75,7 @@ class DeCSProcess extends DeCSQueryBuild implements ServiceEntryPointInterface
 
     }
 
-    protected function Explore(ServicePerformanceSV $ServicePerformance, DataTransferObject $DTO, string $mainLanguage, UltraLoggerDevice $Log)
+    protected function Explore(ServicePerformanceSV $ServicePerformance, DataTransferObject $DTO,UltraLoggerDevice $Log)
     {
 
         $KeywordList = $DTO->getAttr('KeywordList');
@@ -84,11 +98,7 @@ class DeCSProcess extends DeCSQueryBuild implements ServiceEntryPointInterface
             $IntegrationResults[$keyword] = $res;
             $index++;
         }
-        UltraLoggerFacade::InfoToUltraLogger($Log, 'Processing KeywordList => Step 2/3 Mixing Results With OldData');
-        $this->MixWithOldData($DTO, $IntegrationResults, $Log);
-
-        UltraLoggerFacade::InfoToUltraLogger($Log, 'Processing KeywordList => Step 3/3 Building as Terms');
-        $this->BuildAsTerms($DTO, $mainLanguage, $Log);
+        return $IntegrationResults;
     }
 
 

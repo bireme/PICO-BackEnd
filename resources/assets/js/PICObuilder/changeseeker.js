@@ -1,119 +1,82 @@
 import {
-    ShowExplodeButton,
-    hideGlobalButton,
-    hideLocalButton,
-    getLocalOldVal,
-    getLocalCompValue,
-    getGlobalOldVal,
-    getGlobalCompValue,
-    RemoveReDoButton,
-    hasReDoButton
+    ReturnToOldState,
+    MustRecalculate,
+    JustUpdated,
+    getComparisonCurrentLocal,
+    getComparisonLocalPreviouslySaved,
+    getComparisonGlobalPreviouslySaved,
+    isHiddenResNum,
+    setGlobalTitle,
 } from "./changebasic.js";
+
 
 ////PUBLIC FUNCTIONS
 
-export function ChangeSeekerHandler(PICOnum) {
-    ShowExplodeButton(PICOnum);
-    CompareNewOld(PICOnum)
-}
-
 export function ChangeSeekerStart() {
-    SetAllToReDoButton();
+    InitialButtonSet();
+    CheckIfChanged();
 }
 
-export function UpdateAfterResults(PICOnum) {
-
+function CheckIfChanged() {
+    setTimeout(function () {
+        ChangeSeekerHandler(false);
+        CheckIfChanged();
+    }, 1500);
 }
 
-function getObjects(PICOnum,isGlobal) {
-    let data={};
-    if(isGlobal){
-        data.objResNum = $('#ResNumGlobal' + PICOnum);
-    }else{
-        data.objResNum = $('#ResNumLocal' + PICOnum);
-    }
-    data.objSpan=$(data.objResNum).find('span').first();
-    return data;
-}
-
-
-
-function CompareNewOld(PICOnum, isGlobal) {
-    getObjects(PICOnum,isGlobal);
-    let localcomp = CompareLocalPICO(PICOnum);
-    let globalcomp = CompareGlobalPICO(PICOnum);
-
-    MustRecalculate(objResNum, objSpan)
-    ReturnToOldState(objResNum, objSpan)
-
-
-    if (!(ThishasReDo) && PICOnum !== 5) {
-        return;
-    }
-
-
-    if (localcomp.res) {
-        ShowLocal(PICOnum);
-    } else {
-        HideLocal(PICOnum);
-    }
-    for (let loop_i = 1; loop_i <= 6; loop_i++) {
-        if (globalcomp[loop_i].res) {
-            ShowGlobal(PICOnum);
+export function ChangeSeekerHandler(isfirst) {
+    let PICOnum = 1;
+    let focused = $(':focus');
+    if (isfirst === false) {
+        if (!(focused.hasClass('PICOchangeitem'))) {
+            return;
         } else {
-            HideGlobal(PICOnum);
+            PICOnum = $(focused).attr('data-PICO');
+        }
+    }
+    let tmptwo = '';
+    let tmp;
+    let ishiddenLocalResnum;
+    let ishiddenGlobalResnum;
+
+    for (let loop_i = PICOnum; loop_i < 7; loop_i++) {
+        tmp = getComparisonCurrentLocal(loop_i);
+        if (loop_i === PICOnum && loop_i < 5) {
+            ishiddenLocalResnum = isHiddenResNum(loop_i, false);
+            if (getComparisonLocalPreviouslySaved(PICOnum) === tmp) {
+                ReturnToOldState(PICOnum, false);
+            } else {
+                if (!(ishiddenLocalResnum)) {
+                    MustRecalculate(PICOnum, false);
+                }
+            }
+        }
+        tmptwo = tmptwo + tmp;
+        if (loop_i > 1) {
+            ishiddenGlobalResnum = isHiddenResNum(loop_i, true);
+            if (tmptwo === getComparisonGlobalPreviouslySaved(loop_i)) {
+                ReturnToOldState(loop_i, true);
+            } else {
+                if (!(ishiddenGlobalResnum)) {
+                    MustRecalculate(loop_i, true);
+                }
+            }
         }
     }
 }
 
-function CompareLocalPICO(PICOnum) {
-    let data = {};
-    data.current = getLocalOldVal(PICOnum);
-    data.comparison = getLocalCompValue(PICOnum)
-    if (data.current === data.comparison) {
-        data.res = true;
-    } else {
-        data.res = false;
-    }
-    return data;
+export function UpdateLocalAfterResults(PICOnum, resultsNumber, resultsURL) {
+    JustUpdated(PICOnum, false, false,resultsNumber, resultsURL);
 }
 
-function CompareGlobalPICO(PICOnum) {
-    let data = {};
-    for (let loop_i = PICOnum; loop_i < 5; loop_i--) {
-        data[loop_i] = {};
-        data[loop_i].current = getGlobalOldVal(PICOnum);
-        data[loop_i].comparison = getGlobalCompValue(PICOnum);
-        data[loop_i].res = false;
-        if (data[loop_i].current === data.comparison) {
-            data[loop_i].res = true;
-        }
-    }
-    return data;
+export function UpdateGlobalAfterResults(PICOnum, resultsNumber, resultsURL,globaltitle) {
+    setGlobalTitle(PICOnum,globaltitle);
+    JustUpdated(PICOnum, true, false,resultsNumber, resultsURL);
 }
 
-
-
-function ShowLocal(PICOnum) {
-
-}
-
-function HideLocal(PICOnum) {
-
-}
-
-function ShowGlobal(PICOnum) {
-
-}
-
-function HideGlobal(PICOnum) {
-
-}
-
-function SetAllToReDoButton() {
+function InitialButtonSet() {
     for (let loop_i = 1; loop_i <= 6; loop_i++) {
-        hideLocalButton(PICOnum)
-        hideGlobalButton(PICOnum)
+        JustUpdated(loop_i, true, true,null,null);
+        JustUpdated(loop_i, false, true,null,null);
     }
 }
-

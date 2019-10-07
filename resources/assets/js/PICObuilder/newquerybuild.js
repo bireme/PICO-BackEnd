@@ -1,25 +1,23 @@
 import {POSTrequest} from "./loadingrequest.js";
+import {
+    setPreviousImproveQuery,
+    setImproveSearchWords,
+    setOldDescriptors,
+    getQuerySplit,
+    setnewQuery,
+    getModalPICOnum,
+    getImproveSearchTextArea
+} from "./datadictionary.js";
 
 ////PUBLIC FUNCTIONS
 
 export function ProcessResults() {
-    let ImproveSearchQuery = $('#modal3').find('textarea').val();
-    let PICOnum = $('#modal1').find('.descriptorsform-piconum').first().val();
-    setImproveSearch(ImproveSearchQuery, PICOnum);
-    eventQueryBuild(ImproveSearchQuer);
-}
-
-function setImproveSearch(improve, PICOnum) {
-    $('#datainput' + PICOnum).attr('data-improve', improve);
+    let PICOnum = getModalPICOnum();
+    console.log('new query PICO=' + PICOnum);
+    eventQueryBuild(PICOnum);
 }
 
 ////PRIVATE FUNCTIONS
-
-function BuildImprovedQuery(data) {
-    let newQuery = data.newQuery;
-    let PICOnum = $('#modal1').find('.descriptorsform-piconum').first().val();
-    $('#datainput' + PICOnum).val(newQuery);
-}
 
 function getSelectedDescriptors() {
     let SelectedDescriptors = {};
@@ -29,35 +27,37 @@ function getSelectedDescriptors() {
             SelectedDescriptors[keyword] = {};
         }
         $($(this)).find('.DescriptorCheckbox').each(function () {
-            if ($(this).attr('checked')) {
-                let term = $(this).attr('name');
-                if (!(term in SelectedDescriptors[keyword])) {
-                    SelectedDescriptors[keyword][term] = [];
-                }
-                let num = $(this).attr('id').slice(15);
-                $('#decsform' + num + '-cont').find('.DescriptorCheckbox').each(function () {
-                    if ($(this).attr('checked')) {
-                        SelectedDescriptors[keyword][term].push($(this).attr('name'));
-                    }
+            let term = $(this).attr('name');
+            if (!(term in SelectedDescriptors[keyword])) {
+                SelectedDescriptors[keyword][term] = [];
+            }
+            if ($(this).is(':checked')) {
+                let preid = $(this).attr('id').replace('descriptorsform', 'decsform');
+                $('#' + preid + '-cont').find('.DescriptorCheckbox:checked').each(function () {
+                    SelectedDescriptors[keyword][term].push($(this).attr('name'));
                 });
             }
+
         });
     });
     return SelectedDescriptors;
 }
 
-function eventQueryBuild(ImproveSearchQuery) {
+function eventQueryBuild(PICOnum) {
     let url = "PICO/QueryBuild";
     let data = {
-        SelectedDescriptors: getSelectedDescriptors(),
-        ImproveSearchQuery: ImproveSearchQuery,
         QuerySplit: getQuerySplit(),
+        SelectedDescriptors: getSelectedDescriptors(),
+        ImproveSearchQuery: getImproveSearchTextArea(),
     };
     POSTrequest(url, data, function (Data) {
-        BuildImprovedQuery(Data);
+        BuildImprovedQuery(Data, PICOnum);
     });
 }
 
-function getQuerySplit() {
-    return $('#modal1').find('.descriptorsform-querysplit').first().val();
+function BuildImprovedQuery(data, PICOnum) {
+    setnewQuery(PICOnum, data.newQuery);
+    setImproveSearchWords(PICOnum, data.ImproveSearchWords);
+    setOldDescriptors(PICOnum, data.OldDescriptors);
+    setPreviousImproveQuery(PICOnum, data.ImproveSearchQuery);
 }

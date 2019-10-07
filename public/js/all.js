@@ -13393,7 +13393,7 @@ $(function () {
 });
 
 function checkDivLoaded() {
-  if ($('#footer').length == 0) {
+  if ($('#footer').length === 0) {
     $jquery.error('not ready');
   } else {
     startfunctions();
@@ -13433,245 +13433,339 @@ function getBaseURL() {
 
 /***/ }),
 
-/***/ "./resources/assets/js/PICObuilder/changeseeker.js":
-/*!*********************************************************!*\
-  !*** ./resources/assets/js/PICObuilder/changeseeker.js ***!
-  \*********************************************************/
-/*! exports provided: ChangeSeeker, SetAllToReDoButton, setCalcResAsSyncAlt */
+/***/ "./resources/assets/js/PICObuilder/changebasic.js":
+/*!********************************************************!*\
+  !*** ./resources/assets/js/PICObuilder/changebasic.js ***!
+  \********************************************************/
+/*! exports provided: isHiddenResNum, setGlobalTitle, getobjResNum, MustRecalculate, JustUpdated, ReturnToOldState, getComparisonCurrentLocal, getComparisonLocalPreviouslySaved, getQueryVal, getComparisonGlobalPreviouslySaved, resNumSetHREF, resNumSetNumber */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* WEBPACK VAR INJECTION */(function($) {/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ChangeSeeker", function() { return ChangeSeeker; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "SetAllToReDoButton", function() { return SetAllToReDoButton; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "setCalcResAsSyncAlt", function() { return setCalcResAsSyncAlt; });
-/* harmony import */ var _translator_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./translator.js */ "./resources/assets/js/PICObuilder/translator.js");
-/* harmony import */ var _commonschange_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./commonschange.js */ "./resources/assets/js/PICObuilder/commonschange.js");
-/* harmony import */ var _commons_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./commons.js */ "./resources/assets/js/PICObuilder/commons.js");
-/* harmony import */ var _hideshow_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./hideshow.js */ "./resources/assets/js/PICObuilder/hideshow.js");
+/* WEBPACK VAR INJECTION */(function($) {/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "isHiddenResNum", function() { return isHiddenResNum; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "setGlobalTitle", function() { return setGlobalTitle; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "getobjResNum", function() { return getobjResNum; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "MustRecalculate", function() { return MustRecalculate; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "JustUpdated", function() { return JustUpdated; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ReturnToOldState", function() { return ReturnToOldState; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "getComparisonCurrentLocal", function() { return getComparisonCurrentLocal; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "getComparisonLocalPreviouslySaved", function() { return getComparisonLocalPreviouslySaved; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "getQueryVal", function() { return getQueryVal; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "getComparisonGlobalPreviouslySaved", function() { return getComparisonGlobalPreviouslySaved; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "resNumSetHREF", function() { return resNumSetHREF; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "resNumSetNumber", function() { return resNumSetNumber; });
+/* harmony import */ var _commons_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./commons.js */ "./resources/assets/js/PICObuilder/commons.js");
+/* harmony import */ var _hideshow__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./hideshow */ "./resources/assets/js/PICObuilder/hideshow.js");
+/* harmony import */ var _translator__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./translator */ "./resources/assets/js/PICObuilder/translator.js");
+/* harmony import */ var _datadictionary__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./datadictionary */ "./resources/assets/js/PICObuilder/datadictionary.js");
 
 
 
  ////PUBLIC FUNCTIONS
 
-function ChangeSeeker(PICOnum) {
-  var LocalObj = $('#ResNumLocal' + PICOnum);
-  var LocalSpan = LocalObj.find('span').first();
-  var LocalField = $('#FieldList' + PICOnum);
-  ShowExplodeButton(PICOnum);
-  var ThishasReDo = Object(_commonschange_js__WEBPACK_IMPORTED_MODULE_1__["hasReDoButton"])(LocalSpan);
+function isHiddenResNum(PICOnum, isGlobal) {
+  return Object(_hideshow__WEBPACK_IMPORTED_MODULE_1__["isHiddenBootstrapObj"])(getobjResNum(PICOnum, isGlobal));
+}
+function setGlobalTitle(PICOnum, globaltitle) {
+  var globalresnum = getobjResNum(PICOnum, true);
+  $(globalresnum).find('label').first().text(globaltitle);
+}
+function getobjResNum(PICOnum, isGlobal) {
+  var objResNum = null;
 
-  if (CompareNewOld(PICOnum, false) === 1) {
-    ReturnToOldState(PICOnum, LocalObj, LocalSpan, LocalField, ThishasReDo);
+  if (isGlobal) {
+    objResNum = $('#ResNumGlobal' + PICOnum).first();
   } else {
-    ChangeToMustUpdate(PICOnum, LocalObj, LocalSpan, LocalField, ThishasReDo);
+    objResNum = $('#ResNumLocal' + PICOnum).first();
   }
-}
-function SetAllToReDoButton() {
-  $(document).find('a[id^=ResNum]').each(function () {
-    var objSpan = $(this).find('span').first();
-    var num = $(this).attr('id').substr(-1);
 
-    if (num === 6) {} else {
-      SetToReDoButton(objSpan);
-      Object(_hideshow_js__WEBPACK_IMPORTED_MODULE_3__["hideBootstrapObj"])($(this));
-    }
-  });
+  return objResNum;
 }
-function setCalcResAsSyncAlt(PICOnum) {
-  var CalcResObj = $('#CalcRes' + PICOnum);
-  $(CalcResObj).html('<i class="fas fa-sync-alt"></i>');
-  $(CalcResObj).addClass(getCalcResColorClass(PICOnum));
-  $(CalcResObj).removeClass(getCalcResColorClass(-1));
+function MustRecalculate(PICOnum, isGlobal) {
+  var obj = getObjects(PICOnum, isGlobal);
+
+  if (Object(_hideshow__WEBPACK_IMPORTED_MODULE_1__["isHiddenBootstrapObj"])(obj.Span)) {
+    return;
+  }
+
+  if (hasReDoButton(obj.Span)) {
+    return;
+  }
+
+  hideDataButton(obj.ResNum);
+  ChangeLogger(PICOnum, isGlobal, 0);
+  removeHREF(obj.ResNum);
+  AddReDoButton(obj.Span);
+  CalcResAsMustUpdate(obj.CalcRes);
+}
+function JustUpdated(PICOnum, isGlobal, initial, resultsNumber, resultsURL) {
+  var obj = getObjects(PICOnum, isGlobal);
+
+  if (initial === true) {
+    hideDataButton(obj.ResNum);
+  } else {
+    resNumSetHREF(obj.ResNum, resultsURL);
+    resNumSetNumber(obj.Span, resultsNumber);
+    showDataButton(obj.ResNum);
+  }
+
+  ChangeLogger(PICOnum, isGlobal, -1);
+  saveToComparisonLocal(PICOnum);
+  saveToComparisonGlobal(PICOnum);
+  RemoveReDoButton(obj.Span);
+  CalcResAsReady(obj.CalcRes);
+}
+
+function addIconZeroResults(spanObj) {
+  var iconHTML = '0 <a class="PICOiconzeroElement"><span>?</span></a>';
+  $(spanObj).html(iconHTML);
+}
+
+function ReturnToOldState(PICOnum, isGlobal) {
+  var obj = getObjects(PICOnum, isGlobal);
+
+  if (!hasReDoButton(obj.Span)) {
+    return;
+  }
+
+  showDataButton(obj.ResNum);
+  ChangeLogger(PICOnum, isGlobal, 1);
+  recoverHREF(obj.ResNum);
+  RemoveReDoButton(obj.Span);
+  CalcResAsReady(obj.CalcRes);
+}
+
+function ChangeLogger(PICOnum, isGlobal, isReturnToOldState) {
+  var txt = '';
+
+  if (isReturnToOldState === 1) {
+    txt = txt + 'ToOldState: ';
+  } else {
+    if (isReturnToOldState === 0) {
+      txt = txt + 'ToBeUpdated: ';
+    } else {
+      txt = txt + 'JustUpdated: ';
+    }
+  }
+
+  if (isGlobal) {
+    txt = txt + 'Global-';
+  } else {
+    txt = txt + 'Local-';
+  }
+
+  txt = txt + PICOnum;
+  console.log('Changeseeker: ' + txt);
+} /// SEEK COMPARISONS
+
+
+function getComparisonCurrentLocal(PICOnum) {
+  var FieldData = Object(_datadictionary__WEBPACK_IMPORTED_MODULE_3__["getFieldListOptionNum"])(PICOnum);
+  var queryVal = getQueryVal(PICOnum);
+  return queryVal + FieldData;
+}
+function getComparisonLocalPreviouslySaved(PICOnum) {
+  return $(getobjResNum(PICOnum, false)).attr('data-comparison');
+}
+function getQueryVal(PICOnum) {
+  return $('#datainput' + PICOnum).val();
+}
+function getComparisonGlobalPreviouslySaved(PICOnum) {
+  return $(getobjResNum(PICOnum, true)).attr('data-comparison');
+}
+function resNumSetHREF(objResNum, value) {
+  objResNum.attr('href', value);
+}
+function resNumSetNumber(objSpan, value) {
+  if (value === 0) {
+    addIconZeroResults(objSpan);
+  } else {
+    objSpan.text(value);
+  }
 } ////PRIVATE FUNCTIONS
 
-function getCalcResColorClass(PICOnum) {
-  if (PICOnum === -1) {
+function saveToComparisonLocal(PICOnum) {
+  var value = getComparisonCurrentLocal(PICOnum);
+  $(getobjResNum(PICOnum, false)).attr('data-comparison', value);
+}
+
+function saveToComparisonGlobal(PICOnum) {
+  var txt = '';
+
+  for (var loop_i = 1; loop_i <= 6; loop_i++) {
+    txt = txt + $(getobjResNum(PICOnum, false)).attr('data-comparison');
+  }
+
+  $(getobjResNum(PICOnum, false)).attr('data-comparison', txt);
+}
+
+function hideDataButton(objResNum) {
+  Object(_hideshow__WEBPACK_IMPORTED_MODULE_1__["hideBootstrapObj"])(objResNum);
+}
+
+function showDataButton(objResNum) {
+  Object(_hideshow__WEBPACK_IMPORTED_MODULE_1__["showBootstrapObj"])(objResNum);
+}
+
+function removeHREF(objResNum) {
+  objResNum.attr('data-oldhref', objResNum.attr('href'));
+  objResNum.removeAttr('href');
+}
+
+function recoverHREF(objResNum) {
+  objResNum.attr('href', objResNum.attr('data-oldhref'));
+} /// RE-DO BUTTON
+
+
+function AddReDoButton(objSpan) {
+  $(objSpan).addClass('fas fa-redo');
+  $(objSpan).text(' ');
+  Object(_commons_js__WEBPACK_IMPORTED_MODULE_0__["setResNumAltText"])(objSpan, true);
+}
+
+function hasReDoButton(objSpan) {
+  return objSpan.hasClass('fa-redo');
+}
+
+function RemoveReDoButton(objSpan) {
+  $(objSpan).removeClass('fas fa-redo');
+  Object(_commons_js__WEBPACK_IMPORTED_MODULE_0__["setResNumAltText"])(objSpan, false);
+} //////////////////////////////////
+///CALC RES AKA EXPAND BUTTON
+/////////////////////////////////
+
+
+function getCalcResColorClass(choice) {
+  if (choice === -1) {
     return 'btn-info';
   }
 
-  if (PICOnum === 1) {
+  if (choice === 1) {
     return 'btn-outline-info';
   }
 
   return 'btn-outline-warning';
 }
 
-function setCalcResAsResult(PICOnum) {
-  var CalcResObj = $('#CalcRes' + PICOnum);
-  $(CalcResObj).html(Object(_translator_js__WEBPACK_IMPORTED_MODULE_0__["translate"])('butres'));
-  $(CalcResObj).addClass(getCalcResColorClass(-1));
-  $(CalcResObj).removeClass(getCalcResColorClass(PICOnum));
-}
-/*
-* @returns {boolean} true if equal
-*/
-
-
-function CompareNewOldLocal(oldval, currentval) {
-  if (oldval.local === currentval.local) {
-    return true;
-  } else {
-    return false;
-  }
-}
-/*
-* @returns {boolean} true if equal
-*/
-
-
-function CompareNewOldGlobal(oldval, currentval) {
-  if (oldval.global === currentval.global) {
-    return true;
-  } else {
-    return false;
-  }
+function CalcResAsReady(objCalcRes) {
+  $(objCalcRes).html(Object(_translator__WEBPACK_IMPORTED_MODULE_2__["translate"])('butres'));
+  $(objCalcRes).addClass(getCalcResColorClass(-1));
+  $(objCalcRes).removeClass(getCalcResColorClass(objCalcRes));
 }
 
-function CompareNewOld(PICOnum, onlyGlobal) {
-  var obj = $('#datainput' + PICOnum).attr('data-oldval');
+function CalcResAsMustUpdate(objCalcRes) {
+  $(objCalcRes).html('<i class="fas fa-sync-alt"></i>');
+  $(objCalcRes).addClass(getCalcResColorClass(objCalcRes));
+  $(objCalcRes).removeClass(getCalcResColorClass(-1));
+}
 
-  try {
-    var oldval = JSON.parse(obj);
-    var currentval = JSON.parse(Object(_commonschange_js__WEBPACK_IMPORTED_MODULE_1__["getGlobalSpanJSON"])(PICOnum));
-    var global = CompareNewOldGlobal(oldval, currentval);
+function getObjects(PICOnum, isGlobal) {
+  var data = {};
+  data.ResNum = getobjResNum(PICOnum, isGlobal);
+  data.Span = getobjSpan(PICOnum, isGlobal);
+  data.CalcRes = getobjCalcRes(PICOnum);
+  return data;
+}
 
-    if (onlyGlobal === true) {
-      return global;
-    }
+function getobjCalcRes(PICOnum) {
+  return $('#CalcRes' + PICOnum).first();
+}
 
-    var local = CompareNewOldLocal(oldval, currentval);
+function getobjSpan(PICOnum, isGlobal) {
+  var objResNum = getobjResNum(PICOnum, isGlobal).first();
+  return objResNum.find('span').first();
+}
+/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! jquery */ "./node_modules/jquery/dist/jquery.js")))
 
-    if (global === true && local === true) {
-      return 1;
+/***/ }),
+
+/***/ "./resources/assets/js/PICObuilder/changeseeker.js":
+/*!*********************************************************!*\
+  !*** ./resources/assets/js/PICObuilder/changeseeker.js ***!
+  \*********************************************************/
+/*! exports provided: ChangeSeekerStart, ChangeSeekerHandler, UpdateLocalAfterResults, UpdateGlobalAfterResults */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* WEBPACK VAR INJECTION */(function($) {/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ChangeSeekerStart", function() { return ChangeSeekerStart; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ChangeSeekerHandler", function() { return ChangeSeekerHandler; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "UpdateLocalAfterResults", function() { return UpdateLocalAfterResults; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "UpdateGlobalAfterResults", function() { return UpdateGlobalAfterResults; });
+/* harmony import */ var _changebasic_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./changebasic.js */ "./resources/assets/js/PICObuilder/changebasic.js");
+ ////PUBLIC FUNCTIONS
+
+function ChangeSeekerStart() {
+  InitialButtonSet();
+  CheckIfChanged();
+}
+
+function CheckIfChanged() {
+  setTimeout(function () {
+    ChangeSeekerHandler(false);
+    CheckIfChanged();
+  }, 1500);
+}
+
+function ChangeSeekerHandler(isfirst) {
+  var PICOnum = 1;
+  var focused = $(':focus');
+
+  if (isfirst === false) {
+    if (!focused.hasClass('PICOchangeitem')) {
+      return;
     } else {
-      if (local !== true) {
-        return -1;
+      PICOnum = $(focused).attr('data-PICO');
+    }
+  }
+
+  var tmptwo = '';
+  var tmp;
+  var ishiddenLocalResnum;
+  var ishiddenGlobalResnum;
+
+  for (var loop_i = PICOnum; loop_i < 7; loop_i++) {
+    tmp = Object(_changebasic_js__WEBPACK_IMPORTED_MODULE_0__["getComparisonCurrentLocal"])(loop_i);
+
+    if (loop_i === PICOnum && loop_i < 5) {
+      ishiddenLocalResnum = Object(_changebasic_js__WEBPACK_IMPORTED_MODULE_0__["isHiddenResNum"])(loop_i, false);
+
+      if (Object(_changebasic_js__WEBPACK_IMPORTED_MODULE_0__["getComparisonLocalPreviouslySaved"])(PICOnum) === tmp) {
+        Object(_changebasic_js__WEBPACK_IMPORTED_MODULE_0__["ReturnToOldState"])(PICOnum, false);
       } else {
-        return 0;
+        if (!ishiddenLocalResnum) {
+          Object(_changebasic_js__WEBPACK_IMPORTED_MODULE_0__["MustRecalculate"])(PICOnum, false);
+        }
       }
     }
-  } catch (e) {
-    return -1;
-  }
-}
 
-function ChangeToMustUpdate(PICOnum, LocalObj, LocalSpan, LocalField, ThishasReDo) {
-  objResNumSetMustUpdate(LocalObj);
-  hideLocalButton(PICOnum);
-  SetToReDoButton(LocalSpan);
-  console.log('Changning to mustupdate pico' + PICOnum);
-  var loop_i;
+    tmptwo = tmptwo + tmp;
 
-  for (loop_i = PICOnum; loop_i <= 6; loop_i++) {
-    var GlobalObj = $('#ResNumGlobal' + loop_i);
-    var GlobalSpan = GlobalObj.find('span').first();
-    hideGlobalButton(loop_i);
-    objResNumSetMustUpdate(GlobalObj);
-    SetToReDoButton(GlobalSpan);
+    if (loop_i > 1) {
+      ishiddenGlobalResnum = Object(_changebasic_js__WEBPACK_IMPORTED_MODULE_0__["isHiddenResNum"])(loop_i, true);
 
-    if (loop_i === 6) {
-      if (!Object(_hideshow_js__WEBPACK_IMPORTED_MODULE_3__["isHiddenBootstrapObj"])(GlobalSpan)) {
-        setCalcResAsResult(loop_i);
+      if (tmptwo === Object(_changebasic_js__WEBPACK_IMPORTED_MODULE_0__["getComparisonGlobalPreviouslySaved"])(loop_i)) {
+        Object(_changebasic_js__WEBPACK_IMPORTED_MODULE_0__["ReturnToOldState"])(loop_i, true);
+      } else {
+        if (!ishiddenGlobalResnum) {
+          Object(_changebasic_js__WEBPACK_IMPORTED_MODULE_0__["MustRecalculate"])(loop_i, true);
+        }
       }
-    } else {
-      setCalcResAsResult(loop_i);
     }
   }
-
-  var FinalSearchDetailsObj = $('#FinalSearchDetails');
-  FinalSearchDetailsObj.attr('data-oldval', FinalSearchDetailsObj.val());
-  FinalSearchDetailsObj.val(Object(_translator_js__WEBPACK_IMPORTED_MODULE_0__["translate"])('emptyq'));
+}
+function UpdateLocalAfterResults(PICOnum, resultsNumber, resultsURL) {
+  Object(_changebasic_js__WEBPACK_IMPORTED_MODULE_0__["JustUpdated"])(PICOnum, false, false, resultsNumber, resultsURL);
+}
+function UpdateGlobalAfterResults(PICOnum, resultsNumber, resultsURL, globaltitle) {
+  Object(_changebasic_js__WEBPACK_IMPORTED_MODULE_0__["setGlobalTitle"])(PICOnum, globaltitle);
+  Object(_changebasic_js__WEBPACK_IMPORTED_MODULE_0__["JustUpdated"])(PICOnum, true, false, resultsNumber, resultsURL);
 }
 
-function ReturnToOldState(PICOnum, LocalObj, LocalSpan, LocalField, ThishasReDo) {
-  if (!ThishasReDo && PICOnum !== 5) {
-    return;
-  }
-
-  console.log('Returning to oldstate pico' + PICOnum);
-  objResNumSetOldResult(LocalObj);
-  objSpanSetOldResult(LocalSpan);
-  showLocalButton(PICOnum);
-  Object(_commonschange_js__WEBPACK_IMPORTED_MODULE_1__["RemoveReDoButton"])(LocalSpan);
-
+function InitialButtonSet() {
   for (var loop_i = 1; loop_i <= 6; loop_i++) {
-    var GlobalObj = $('#ResNumGlobal' + loop_i);
-    var GlobalSpan = GlobalObj.find('span').first();
-    objResNumSetOldResult(GlobalObj);
-    objSpanSetOldResult(GlobalSpan);
-    showGlobalButton(loop_i);
-    Object(_commonschange_js__WEBPACK_IMPORTED_MODULE_1__["RemoveReDoButton"])(GlobalSpan);
-    var objdata = $('#datainput' + loop_i).val();
-
-    if (objdata) {
-      if (objdata.length > 0) {
-        setCalcResAsSyncAlt(loop_i);
-      }
-    } else {
-      if (loop_i === 6) {
-        setCalcResAsSyncAlt(loop_i);
-      }
-    }
-
-    var FinalSearchDetailsObj = $('#FinalSearchDetails');
-    FinalSearchDetailsObj.val(FinalSearchDetailsObj.attr('data-oldval'));
-  }
-}
-
-function objResNumSetMustUpdate(objResNum) {
-  objResNum.attr('data-oldval', objResNum.attr('href'));
-  objResNum.removeAttr('href');
-}
-
-function ShowExplodeButton(PICOnum) {
-  var explodebutton = $('#Exp' + PICOnum);
-
-  if ($('#datainput' + PICOnum).val().length > 0) {
-    Object(_hideshow_js__WEBPACK_IMPORTED_MODULE_3__["showBootstrapObj"])(explodebutton);
-
-    if (objResNumHasoldval(PICOnum)) {
-      setCalcResAsSyncAlt(PICOnum);
-    }
-  } else {
-    setCalcResAsResult(PICOnum);
-    Object(_hideshow_js__WEBPACK_IMPORTED_MODULE_3__["hideBootstrapObj"])(explodebutton);
-  }
-}
-
-function hideLocalButton(PICOnum) {
-  Object(_hideshow_js__WEBPACK_IMPORTED_MODULE_3__["hideBootstrapObj"])($('#ResNumLocal' + PICOnum));
-}
-
-function hideGlobalButton(PICOnum) {
-  Object(_hideshow_js__WEBPACK_IMPORTED_MODULE_3__["hideBootstrapObj"])($('#ResNumGlobal' + PICOnum));
-}
-
-function showLocalButton(PICOnum) {
-  Object(_hideshow_js__WEBPACK_IMPORTED_MODULE_3__["showBootstrapObj"])($('#ResNumLocal' + PICOnum));
-}
-
-function showGlobalButton(PICOnum) {
-  Object(_hideshow_js__WEBPACK_IMPORTED_MODULE_3__["showBootstrapObj"])($('#ResNumGlobal' + PICOnum));
-}
-
-function objSpanSetOldResult(objSpan) {
-  objSpan.text(objSpan.attr('data-oldval'));
-}
-
-function objResNumSetOldResult(objResNum) {
-  objResNum.attr('href', objResNum.attr('data-oldval'));
-}
-
-function objResNumHasoldval(PICOnum) {
-  return !!$('#ResNumLocal' + PICOnum).attr('data-oldval');
-}
-
-function SetToReDoButton(objSpan) {
-  if (!Object(_commonschange_js__WEBPACK_IMPORTED_MODULE_1__["hasReDoButton"])(objSpan)) {
-    $(objSpan).addClass('fas fa-redo');
-    $(objSpan).text(' ');
-    Object(_commons_js__WEBPACK_IMPORTED_MODULE_2__["setResNumAltText"])(objSpan, true);
+    Object(_changebasic_js__WEBPACK_IMPORTED_MODULE_0__["JustUpdated"])(loop_i, true, true, null, null);
+    Object(_changebasic_js__WEBPACK_IMPORTED_MODULE_0__["JustUpdated"])(loop_i, false, true, null, null);
   }
 }
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! jquery */ "./node_modules/jquery/dist/jquery.js")))
@@ -13708,93 +13802,106 @@ function setResNumAltText(objSpan, hasReDo) {
 
 /***/ }),
 
-/***/ "./resources/assets/js/PICObuilder/commonschange.js":
-/*!**********************************************************!*\
-  !*** ./resources/assets/js/PICObuilder/commonschange.js ***!
-  \**********************************************************/
-/*! exports provided: getGlobalSpanJSON, getFieldListOptionNum, RemoveReDoButton, hasReDoButton */
+/***/ "./resources/assets/js/PICObuilder/datadictionary.js":
+/*!***********************************************************!*\
+  !*** ./resources/assets/js/PICObuilder/datadictionary.js ***!
+  \***********************************************************/
+/*! exports provided: getPICOnumFromObjId, setImproveSearchWords, setOldDescriptors, setPreviousImproveQuery, setnewQuery, setPreviousResults, getobjDataInputVal, getobjDataInput, getPreviousResults, getFieldListOptionNum, getOldDescriptors, getPreviousImproveQuery, getImproveSearchWords, getQuerySplit, queryinputvalue, getImproveSearchTextArea, setModalContent, getModalPICOnum, getLanguages */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* WEBPACK VAR INJECTION */(function($) {/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "getGlobalSpanJSON", function() { return getGlobalSpanJSON; });
+/* WEBPACK VAR INJECTION */(function($) {/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "getPICOnumFromObjId", function() { return getPICOnumFromObjId; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "setImproveSearchWords", function() { return setImproveSearchWords; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "setOldDescriptors", function() { return setOldDescriptors; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "setPreviousImproveQuery", function() { return setPreviousImproveQuery; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "setnewQuery", function() { return setnewQuery; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "setPreviousResults", function() { return setPreviousResults; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "getobjDataInputVal", function() { return getobjDataInputVal; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "getobjDataInput", function() { return getobjDataInput; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "getPreviousResults", function() { return getPreviousResults; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "getFieldListOptionNum", function() { return getFieldListOptionNum; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "RemoveReDoButton", function() { return RemoveReDoButton; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "hasReDoButton", function() { return hasReDoButton; });
-/* harmony import */ var _commons_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./commons.js */ "./resources/assets/js/PICObuilder/commons.js");
- ////PUBLIC FUNCTIONS
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "getOldDescriptors", function() { return getOldDescriptors; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "getPreviousImproveQuery", function() { return getPreviousImproveQuery; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "getImproveSearchWords", function() { return getImproveSearchWords; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "getQuerySplit", function() { return getQuerySplit; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "queryinputvalue", function() { return queryinputvalue; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "getImproveSearchTextArea", function() { return getImproveSearchTextArea; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "setModalContent", function() { return setModalContent; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "getModalPICOnum", function() { return getModalPICOnum; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "getLanguages", function() { return getLanguages; });
+function getPICOnumFromObjId(obj) {
+  return $(obj).attr('id').substr(-1);
+} ///////////////////////////////////////////////
 
-function getGlobalSpanJSON(PICOnum) {
+function setImproveSearchWords(PICOnum, value) {
+  $('#datainput' + PICOnum).attr('data-improve', value);
+}
+function setOldDescriptors(PICOnum, value) {
+  $('#datainput' + PICOnum).attr('data-olddescriptors', value);
+}
+function setPreviousImproveQuery(PICOnum, value) {
+  $('#datainput' + PICOnum).attr('data-previous-improve-query', value);
+}
+function setnewQuery(PICOnum, newQuery) {
   if (PICOnum === 6) {
-    PICOnum = 5;
+    $('#FinalSearchDetails').val(newQuery);
+  } else {
+    $('#datainput' + PICOnum).val(newQuery);
   }
-
-  var global = [];
-  var local = [];
-
-  for (var loop_i = 1; loop_i <= PICOnum; loop_i++) {
-    var datainputVal = $('#datainput' + loop_i).val();
-    global.push();
-
-    if (loop_i < 5) {
-      global.push(getFieldListOptionNum(loop_i));
-    }
-
-    if (loop_i === PICOnum) {
-      local.push(datainputVal);
-
-      if (loop_i < 5) {
-        local.push(getFieldListOptionNum(loop_i));
-      }
-    }
-  }
-
-  var Result = {
-    local: JSON.stringify(local),
-    global: JSON.stringify(global)
-  };
-  return JSON.stringify(Result);
+}
+function setPreviousResults(results, PICOnum) {
+  $('#datainput' + PICOnum).attr('data-previous-decs', results);
+}
+function getobjDataInputVal(PICOnum) {
+  return $('#datainput' + PICOnum).val();
+}
+function getobjDataInput(PICOnum) {
+  return $('#datainput' + PICOnum);
+}
+function getPreviousResults(PICOnum) {
+  return $('#datainput' + PICOnum).attr('data-previous-decs');
 }
 function getFieldListOptionNum(PICOnum) {
   return $('#FieldList' + PICOnum).children("option:selected").index();
 }
-function RemoveReDoButton(objSpan) {
-  if (hasReDoButton(objSpan)) {
-    $(objSpan).removeClass('fas fa-redo');
-    Object(_commons_js__WEBPACK_IMPORTED_MODULE_0__["setResNumAltText"])(objSpan, false);
+function getOldDescriptors(PICOnum) {
+  return $('#datainput' + PICOnum).attr('data-olddescriptors');
+}
+function getPreviousImproveQuery(PICOnum) {
+  return $('#datainput' + PICOnum).attr('data-previous-improve-query');
+}
+function getImproveSearchWords(PICOnum) {
+  return $('#datainput' + PICOnum).attr('data-improve');
+} //MODAL DATA
+
+function getQuerySplit() {
+  return $('#modal1').find('.descriptorsform-querysplit').first().val();
+}
+function queryinputvalue() {
+  return $('#modal1').find('.descriptorsform-querysplit').first().val();
+}
+function getImproveSearchTextArea() {
+  return $('#modal3').find('textarea').val();
+}
+function setModalContent(num, content) {
+  if (num === 3) {
+    $('#modal3').find('textarea').val(content);
+  } else {
+    $('#modal' + num).find('.modal-body').first().html(content);
   }
 }
-function hasReDoButton(objSpan) {
-  return objSpan.hasClass('fa-redo');
-} ////PRIVATE FUNCTIONS
-/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! jquery */ "./node_modules/jquery/dist/jquery.js")))
+function getModalPICOnum() {
+  return $('#modal1').find('.descriptorsform-piconum').first().val();
+} //OTHER
 
-/***/ }),
-
-/***/ "./resources/assets/js/PICObuilder/commonsdecs.js":
-/*!********************************************************!*\
-  !*** ./resources/assets/js/PICObuilder/commonsdecs.js ***!
-  \********************************************************/
-/*! exports provided: getPreviousResults, getLanguages */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* WEBPACK VAR INJECTION */(function($) {/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "getPreviousResults", function() { return getPreviousResults; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "getLanguages", function() { return getLanguages; });
-////PUBLIC FUNCTIONS
-function getPreviousResults(PICOnum) {
-  return $('#datainput' + PICOnum).attr('data-previous-decs');
-}
 function getLanguages() {
   var langs = [];
-  $(document).find('.languageCheckbox').each(function () {
-    if ($(this).is(':checked')) {
-      langs.push($(this).val());
-    }
+  $(document).find('.languageCheckbox:checked').each(function () {
+    langs.push($(this).attr('data-lang'));
   });
   return langs;
-} ////PRIVATE FUNCTIONS
+}
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! jquery */ "./node_modules/jquery/dist/jquery.js")))
 
 /***/ }),
@@ -13832,44 +13939,10 @@ function OpenInNewTab(url) {
 /*!**********************************************************!*\
   !*** ./resources/assets/js/PICObuilder/decslanguages.js ***!
   \**********************************************************/
-/*! exports provided: setLanguagesOfModal */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
+/*! no static exports found */
+/***/ (function(module, exports) {
 
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* WEBPACK VAR INJECTION */(function($) {/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "setLanguagesOfModal", function() { return setLanguagesOfModal; });
-/* harmony import */ var _translator_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./translator.js */ "./resources/assets/js/PICObuilder/translator.js");
- ////PUBLIC FUNCTIONS
 
-function setLanguagesOfModal(langArr) {
-  var count = 0;
-  $(document).find('.langCheck').each(function () {
-    var index = langArr.indexOf($(this).val());
-
-    if (index > -1) {
-      $(this).attr('checked', true);
-    } else {
-      $(this).attr('checked', false);
-    }
-
-    count++;
-  });
-  DeCSMenuLanguages();
-} ////PRIVATE FUNCTIONS
-
-function DeCSMenuLanguages() {
-  var langs = getLanguagesInGlobalLang();
-  var count = 0;
-  $('#modalinfo').find('.LanguageInfoContainer').first().find('label').each(function () {
-    $(this).text(langs[count]);
-    count++;
-  });
-}
-
-function getLanguagesInGlobalLang() {
-  return [Object(_translator_js__WEBPACK_IMPORTED_MODULE_0__["translate"])('langen'), Object(_translator_js__WEBPACK_IMPORTED_MODULE_0__["translate"])('langpt'), Object(_translator_js__WEBPACK_IMPORTED_MODULE_0__["translate"])('langes'), Object(_translator_js__WEBPACK_IMPORTED_MODULE_0__["translate"])('langfr')];
-}
-/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! jquery */ "./node_modules/jquery/dist/jquery.js")))
 
 /***/ }),
 
@@ -13883,28 +13956,53 @@ function getLanguagesInGlobalLang() {
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* WEBPACK VAR INJECTION */(function($) {/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "OnExpandDeCS", function() { return OnExpandDeCS; });
-/* harmony import */ var _commonsdecs_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./commonsdecs.js */ "./resources/assets/js/PICObuilder/commonsdecs.js");
-/* harmony import */ var _loadingrequest_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./loadingrequest.js */ "./resources/assets/js/PICObuilder/loadingrequest.js");
+/* harmony import */ var _loadingrequest_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./loadingrequest.js */ "./resources/assets/js/PICObuilder/loadingrequest.js");
+/* harmony import */ var _datadictionary_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./datadictionary.js */ "./resources/assets/js/PICObuilder/datadictionary.js");
+/* harmony import */ var _hideshow__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./hideshow */ "./resources/assets/js/PICObuilder/hideshow.js");
+
 
  ////PUBLIC FUNCTIONS
 
 function OnExpandDeCS(ExpandButton) {
-  var langs = Object(_commonsdecs_js__WEBPACK_IMPORTED_MODULE_0__["getLanguages"])();
-  var PICOnum = $(ExpandButton).attr('id').substr(-1);
-  clearDeCSMenu(PICOnum);
-  var PICOval = '#datainput' + PICOnum;
-  var query = $(PICOval).val();
-  var ImprovedSearch = getImproveSearch(PICOnum);
-  console.log('ImprovedSearch: ' + ImprovedSearch);
-  eventdDeCSManager(query, langs, PICOnum, ImprovedSearch);
+  var PICOnum = Object(_datadictionary_js__WEBPACK_IMPORTED_MODULE_1__["getPICOnumFromObjId"])(ExpandButton);
+  console.log('DeCS EXpand PICO=' + PICOnum);
+  eventDeCSManager(PICOnum);
 } ////PRIVATE FUNCTIONS
 
-function setPreviousResults(results, PICOnum) {
-  $('#datainput' + PICOnum).attr('data-previous-decs', results);
+function eventDeCSManager(PICOnum) {
+  clearDeCSMenu();
+  var url = "PICO/DeCSExplore";
+  var data = {
+    query: Object(_datadictionary_js__WEBPACK_IMPORTED_MODULE_1__["getobjDataInputVal"])(PICOnum),
+    OldSelectedDescriptors: Object(_datadictionary_js__WEBPACK_IMPORTED_MODULE_1__["getOldDescriptors"])(PICOnum),
+    ImproveSearchWords: Object(_datadictionary_js__WEBPACK_IMPORTED_MODULE_1__["getImproveSearchWords"])(PICOnum),
+    langs: Object(_datadictionary_js__WEBPACK_IMPORTED_MODULE_1__["getLanguages"])(),
+    PICOnum: parseInt(PICOnum),
+    SavedData: Object(_datadictionary_js__WEBPACK_IMPORTED_MODULE_1__["getPreviousResults"])(PICOnum),
+    PreviousImproveQuery: Object(_datadictionary_js__WEBPACK_IMPORTED_MODULE_1__["getPreviousImproveQuery"])(PICOnum)
+  };
+  Object(_loadingrequest_js__WEBPACK_IMPORTED_MODULE_0__["POSTrequest"])(url, data, function (Data) {
+    createDeCSMenu(Data, PICOnum);
+  });
+}
+
+function createDeCSMenu(data, PICOnum) {
+  Object(_datadictionary_js__WEBPACK_IMPORTED_MODULE_1__["setPreviousResults"])(data.SavedData, PICOnum);
+  Object(_datadictionary_js__WEBPACK_IMPORTED_MODULE_1__["setModalContent"])(1, data.DescriptorsHTML);
+  Object(_datadictionary_js__WEBPACK_IMPORTED_MODULE_1__["setModalContent"])(2, data.DeCSHTML);
+  Object(_datadictionary_js__WEBPACK_IMPORTED_MODULE_1__["setModalContent"])(3, data.PreviousImproveQuery);
+  var modalone = $('#modal1');
+
+  if ($(modalone).find('.DontShowButton').length) {
+    Object(_hideshow__WEBPACK_IMPORTED_MODULE_2__["hideBootstrapObj"])($(modalone).find('.btn-continue'));
+  } else {
+    Object(_hideshow__WEBPACK_IMPORTED_MODULE_2__["showBootstrapObj"])($(modalone).find('.btn-continue'));
+  }
+
+  showDeCSMenu();
 }
 
 function showDeCSMenu() {
-  console.log('showing modal decs');
   $('#modal1').modal({
     show: true,
     keyboard: false,
@@ -13912,42 +14010,11 @@ function showDeCSMenu() {
   });
 }
 
-function getImproveSearch(PICOnum) {
-  return $('#datainput' + PICOnum).attr('data-improve');
-}
-
-function clearDeCSMenu(PICOnum) {
+function clearDeCSMenu() {
   var NoData = 'No Data';
-  $('#modal3').find('textarea').val(NoData);
-  $('#modal1').find('.modal-body').first().html(NoData);
-  $('#modal2').find('.modal-body').first().html(NoData);
-}
-
-function createDeCSMenu(data, PICOnum, Improved) {
-  var SavedData = data.SavedData;
-  var DescriptorsHTML = data.DescriptorsHTML;
-  var DeCSHTML = data.DeCSHTML;
-  $('#modal3').find('textarea').val(Improved);
-  setPreviousResults(SavedData, PICOnum);
-  $('#modal1').find('.modal-body').first().html(DescriptorsHTML);
-  $('#modal2').find('.modal-body').first().html(DeCSHTML);
-}
-
-function eventdDeCSManager(query, langs, PICOnum, ImprovedSearch) {
-  var url = "PICO/DeCSExplore";
-  var SavedData = Object(_commonsdecs_js__WEBPACK_IMPORTED_MODULE_0__["getPreviousResults"])(PICOnum);
-  var data = {
-    SavedData: SavedData,
-    query: query,
-    ImprovedSearch: ImprovedSearch,
-    langs: langs,
-    PICOnum: parseInt(PICOnum)
-  };
-  Object(_loadingrequest_js__WEBPACK_IMPORTED_MODULE_1__["POSTrequest"])(url, data, function (Data) {
-    console.log('Obtained SavedData... ' + JSON.stringify(Data.SavedData));
-    createDeCSMenu(Data, PICOnum, ImprovedSearch);
-    showDeCSMenu();
-  });
+  Object(_datadictionary_js__WEBPACK_IMPORTED_MODULE_1__["setModalContent"])(1, NoData);
+  Object(_datadictionary_js__WEBPACK_IMPORTED_MODULE_1__["setModalContent"])(2, NoData);
+  Object(_datadictionary_js__WEBPACK_IMPORTED_MODULE_1__["setModalContent"])(3, NoData);
 }
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! jquery */ "./node_modules/jquery/dist/jquery.js")))
 
@@ -14151,19 +14218,11 @@ function getMessageTitles() {
 __webpack_require__.r(__webpack_exports__);
 /* WEBPACK VAR INJECTION */(function($) {/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "initEvents", function() { return initEvents; });
 /* harmony import */ var _initfunctions_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./initfunctions.js */ "./resources/assets/js/PICObuilder/initfunctions.js");
-/* harmony import */ var _languagetoggler_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./languagetoggler.js */ "./resources/assets/js/PICObuilder/languagetoggler.js");
-/* harmony import */ var _newquerybuild_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./newquerybuild.js */ "./resources/assets/js/PICObuilder/newquerybuild.js");
-/* harmony import */ var _resultsmanager_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./resultsmanager.js */ "./resources/assets/js/PICObuilder/resultsmanager.js");
-/* harmony import */ var _decsmanager_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./decsmanager.js */ "./resources/assets/js/PICObuilder/decsmanager.js");
-/* harmony import */ var _changeseeker_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./changeseeker.js */ "./resources/assets/js/PICObuilder/changeseeker.js");
-/* harmony import */ var _loadingrequest_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./loadingrequest.js */ "./resources/assets/js/PICObuilder/loadingrequest.js");
-/* harmony import */ var _hideshow_js__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./hideshow.js */ "./resources/assets/js/PICObuilder/hideshow.js");
-/* harmony import */ var _AccordionTooltip_js__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./AccordionTooltip.js */ "./resources/assets/js/PICObuilder/AccordionTooltip.js");
-/* harmony import */ var _localepreservedata_js__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ./localepreservedata.js */ "./resources/assets/js/PICObuilder/localepreservedata.js");
-
-
-
-
+/* harmony import */ var _newquerybuild_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./newquerybuild.js */ "./resources/assets/js/PICObuilder/newquerybuild.js");
+/* harmony import */ var _decsmanager_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./decsmanager.js */ "./resources/assets/js/PICObuilder/decsmanager.js");
+/* harmony import */ var _loadingrequest_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./loadingrequest.js */ "./resources/assets/js/PICObuilder/loadingrequest.js");
+/* harmony import */ var _hideshow_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./hideshow.js */ "./resources/assets/js/PICObuilder/hideshow.js");
+/* harmony import */ var _localepreservedata_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./localepreservedata.js */ "./resources/assets/js/PICObuilder/localepreservedata.js");
 
 
 
@@ -14175,79 +14234,98 @@ function initEvents() {
   $('button.ExpandDeCS').click(function (e) {
     Object(_initfunctions_js__WEBPACK_IMPORTED_MODULE_0__["BlockButton"])($(this));
 
-    if (Object(_loadingrequest_js__WEBPACK_IMPORTED_MODULE_6__["IsLoading"])()) {
+    if (Object(_loadingrequest_js__WEBPACK_IMPORTED_MODULE_3__["IsLoading"])()) {
       Object(_initfunctions_js__WEBPACK_IMPORTED_MODULE_0__["UnBlockButton"])($(this));
       return;
     }
 
     if ($(this).find('.startlanguage').is(":hover")) {
       e.preventDefault();
-      Object(_initfunctions_js__WEBPACK_IMPORTED_MODULE_0__["ExpandDeCSConfig"])();
+      $('#modallanguage').modal('show');
       Object(_initfunctions_js__WEBPACK_IMPORTED_MODULE_0__["UnBlockButton"])($(this));
       return;
     }
 
-    Object(_decsmanager_js__WEBPACK_IMPORTED_MODULE_4__["OnExpandDeCS"])($(this));
+    Object(_decsmanager_js__WEBPACK_IMPORTED_MODULE_2__["OnExpandDeCS"])($(this));
     Object(_initfunctions_js__WEBPACK_IMPORTED_MODULE_0__["UnBlockButton"])($(this));
   });
-  $('#modal2').find('.btn-back').click(function () {
+  var modal2 = $('#modal2');
+  var modal3 = $('#modal3');
+  modal2.find('.btn-back').click(function () {
     Object(_initfunctions_js__WEBPACK_IMPORTED_MODULE_0__["BlockButton"])($(this));
     $('#closemodal2').click();
     $('#modal1').modal('show');
     Object(_initfunctions_js__WEBPACK_IMPORTED_MODULE_0__["UnBlockButton"])($(this));
   });
-  $('#modal3').find('.btn-back').click(function () {
+  $(modal3).find('.btn-back').click(function () {
     Object(_initfunctions_js__WEBPACK_IMPORTED_MODULE_0__["BlockButton"])($(this));
 
-    if (Object(_loadingrequest_js__WEBPACK_IMPORTED_MODULE_6__["IsLoading"])()) {
+    if (Object(_loadingrequest_js__WEBPACK_IMPORTED_MODULE_3__["IsLoading"])()) {
       Object(_initfunctions_js__WEBPACK_IMPORTED_MODULE_0__["UnBlockButton"])($(this));
       return;
     }
 
     $('#closemodal3').click();
-    $('#modal2').modal('show');
+
+    if (Object(_initfunctions_js__WEBPACK_IMPORTED_MODULE_0__["SkipStepTwo"])() === true) {
+      $('#modal1').modal('show');
+    } else {
+      $('#modal2').modal('show');
+    }
+
     Object(_initfunctions_js__WEBPACK_IMPORTED_MODULE_0__["UnBlockButton"])($(this));
   });
   $('#modal1').find('.btn-continue').click(function () {
     Object(_initfunctions_js__WEBPACK_IMPORTED_MODULE_0__["BlockButton"])($(this));
     $('#closemodal1').click();
-    $('#modal2').modal('show');
+
+    if (Object(_initfunctions_js__WEBPACK_IMPORTED_MODULE_0__["SkipStepTwo"])() === true) {
+      $('#modal3').modal('show');
+    } else {
+      $('#modal2').modal('show');
+    }
+
     Object(_initfunctions_js__WEBPACK_IMPORTED_MODULE_0__["HideUnselectedDeCS"])();
     Object(_initfunctions_js__WEBPACK_IMPORTED_MODULE_0__["UnBlockButton"])($(this));
   });
-  $('#modal2').find('.btn-continue').click(function () {
+  $('#modallanguage').find('.btn-continue').click(function () {
+    Object(_initfunctions_js__WEBPACK_IMPORTED_MODULE_0__["BlockButton"])($(this));
+    Object(_initfunctions_js__WEBPACK_IMPORTED_MODULE_0__["ChangeDeCSLanguages"])();
+    Object(_initfunctions_js__WEBPACK_IMPORTED_MODULE_0__["UnBlockButton"])($(this));
+  });
+  $(modal2).find('.btn-continue').click(function () {
     Object(_initfunctions_js__WEBPACK_IMPORTED_MODULE_0__["BlockButton"])($(this));
     $('#closemodal2').click();
     $('#modal3').modal('show');
     Object(_initfunctions_js__WEBPACK_IMPORTED_MODULE_0__["UnBlockButton"])($(this));
   });
-  $('#modal3').find('.btn-continue').click(function () {
+  $(modal3).find('.btn-continue').click(function () {
     Object(_initfunctions_js__WEBPACK_IMPORTED_MODULE_0__["BlockButton"])($(this));
-    Object(_newquerybuild_js__WEBPACK_IMPORTED_MODULE_2__["ProcessResults"])();
+    Object(_newquerybuild_js__WEBPACK_IMPORTED_MODULE_1__["ProcessResults"])();
     $('#closemodal3').click();
     Object(_initfunctions_js__WEBPACK_IMPORTED_MODULE_0__["UnBlockButton"])($(this));
   });
   $(document).find('button[id^=CalcRes]').click(function () {
     Object(_initfunctions_js__WEBPACK_IMPORTED_MODULE_0__["BlockButton"])($(this));
 
-    if (Object(_loadingrequest_js__WEBPACK_IMPORTED_MODULE_6__["IsLoading"])()) {
+    if (Object(_loadingrequest_js__WEBPACK_IMPORTED_MODULE_3__["IsLoading"])()) {
       Object(_initfunctions_js__WEBPACK_IMPORTED_MODULE_0__["UnBlockButton"])($(this));
       return;
     }
 
     var PICOnum = $(this).attr('id').substr(-1);
-    Object(_resultsmanager_js__WEBPACK_IMPORTED_MODULE_3__["getResultsNumber"])(PICOnum);
+    Object(_initfunctions_js__WEBPACK_IMPORTED_MODULE_0__["ManageResultsNumber"])(PICOnum);
     Object(_initfunctions_js__WEBPACK_IMPORTED_MODULE_0__["UnBlockButton"])($(this));
   });
   $(document).find('button[id^= page-lang]').click(function () {
     Object(_initfunctions_js__WEBPACK_IMPORTED_MODULE_0__["BlockButton"])($(this));
     var locale = $(this).attr('name');
-    Object(_localepreservedata_js__WEBPACK_IMPORTED_MODULE_9__["ChangeLocale"])(locale);
+    Object(_localepreservedata_js__WEBPACK_IMPORTED_MODULE_5__["ChangeLocale"])(locale);
     Object(_initfunctions_js__WEBPACK_IMPORTED_MODULE_0__["UnBlockButton"])($(this));
   });
   $(document).find('#modal4').find('.btn-info').click(function () {
     Object(_initfunctions_js__WEBPACK_IMPORTED_MODULE_0__["BlockButton"])($(this));
-    Object(_loadingrequest_js__WEBPACK_IMPORTED_MODULE_6__["CancelLoading"])();
+    Object(_loadingrequest_js__WEBPACK_IMPORTED_MODULE_3__["CancelLoading"])();
     Object(_initfunctions_js__WEBPACK_IMPORTED_MODULE_0__["UnBlockButton"])($(this));
   });
   $(document).find('a[id^=ResNum]').click(function (e) {
@@ -14257,8 +14335,8 @@ function initEvents() {
     if (PICOnum === 6) {
       var obj = $(this).find('span').first();
 
-      if (Object(_hideshow_js__WEBPACK_IMPORTED_MODULE_7__["isHiddenBootstrapObj"])(obj)) {
-        Object(_resultsmanager_js__WEBPACK_IMPORTED_MODULE_3__["getResultsNumber"])(6);
+      if (Object(_hideshow_js__WEBPACK_IMPORTED_MODULE_4__["isHiddenBootstrapObj"])(obj)) {
+        Object(_initfunctions_js__WEBPACK_IMPORTED_MODULE_0__["ManageResultsNumber"])(6);
         Object(_initfunctions_js__WEBPACK_IMPORTED_MODULE_0__["UnBlockButton"])($(this));
         return;
       }
@@ -14274,14 +14352,8 @@ function initEvents() {
     Object(_initfunctions_js__WEBPACK_IMPORTED_MODULE_0__["CheckExistantHREF"])($(this));
     Object(_initfunctions_js__WEBPACK_IMPORTED_MODULE_0__["UnBlockButton"])($(this));
   });
-  $(document).find('input[id^=datainput]').on('input', function () {
-    Object(_changeseeker_js__WEBPACK_IMPORTED_MODULE_5__["ChangeSeeker"])($(this).attr('id').substr(-1));
-  });
   $('#collapse5').find('.form-group').find('input').change(function () {
     Object(_initfunctions_js__WEBPACK_IMPORTED_MODULE_0__["ReBuildStudyType"])();
-  });
-  $(document).find('select[id^=FieldList]').change(function () {
-    Object(_changeseeker_js__WEBPACK_IMPORTED_MODULE_5__["ChangeSeeker"])($(this).attr('id').substr(-1));
   });
   $(document).find('a[id^=PICOinfo]').click(function (e) {
     Object(_initfunctions_js__WEBPACK_IMPORTED_MODULE_0__["BlockButton"])($(this));
@@ -14290,8 +14362,8 @@ function initEvents() {
     Object(_initfunctions_js__WEBPACK_IMPORTED_MODULE_0__["UnBlockButton"])($(this));
   });
   $(document).on('click', ".golanguage", function () {
-    Object(_initfunctions_js__WEBPACK_IMPORTED_MODULE_0__["BlockButton"])($(this));
-    Object(_initfunctions_js__WEBPACK_IMPORTED_MODULE_0__["setLanguagesFromModal"])($(this).parent().parent());
+    Object(_initfunctions_js__WEBPACK_IMPORTED_MODULE_0__["BlockButton"])($(this)); //
+
     Object(_initfunctions_js__WEBPACK_IMPORTED_MODULE_0__["UnBlockButton"])($(this));
   });
   $.ajaxSetup({
@@ -14301,9 +14373,7 @@ function initEvents() {
       }
     }
   });
-  Object(_languagetoggler_js__WEBPACK_IMPORTED_MODULE_1__["UpdateLanguageInfo"])();
-  Object(_changeseeker_js__WEBPACK_IMPORTED_MODULE_5__["SetAllToReDoButton"])();
-  Object(_AccordionTooltip_js__WEBPACK_IMPORTED_MODULE_8__["AccordionAndTooltip"])();
+  Object(_initfunctions_js__WEBPACK_IMPORTED_MODULE_0__["StartFunctions"])();
 }
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! jquery */ "./node_modules/jquery/dist/jquery.js")))
 
@@ -14313,27 +14383,31 @@ function initEvents() {
 /*!**********************************************************!*\
   !*** ./resources/assets/js/PICObuilder/initfunctions.js ***!
   \**********************************************************/
-/*! exports provided: ExpandDeCSConfig, InfoNoResults, CheckExistantHREF, ShowPICOinfo, ReBuildStudyType, setLanguagesFromModal, HideUnselectedDeCS, BlockButton, UnBlockButton */
+/*! exports provided: ManageResultsNumber, StartFunctions, SkipStepTwo, ChangeDeCSLanguages, InfoNoResults, CheckExistantHREF, ShowPICOinfo, ReBuildStudyType, HideUnselectedDeCS, BlockButton, UnBlockButton */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* WEBPACK VAR INJECTION */(function($) {/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ExpandDeCSConfig", function() { return ExpandDeCSConfig; });
+/* WEBPACK VAR INJECTION */(function($) {/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ManageResultsNumber", function() { return ManageResultsNumber; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "StartFunctions", function() { return StartFunctions; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "SkipStepTwo", function() { return SkipStepTwo; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ChangeDeCSLanguages", function() { return ChangeDeCSLanguages; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "InfoNoResults", function() { return InfoNoResults; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "CheckExistantHREF", function() { return CheckExistantHREF; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ShowPICOinfo", function() { return ShowPICOinfo; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ReBuildStudyType", function() { return ReBuildStudyType; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "setLanguagesFromModal", function() { return setLanguagesFromModal; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "HideUnselectedDeCS", function() { return HideUnselectedDeCS; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "BlockButton", function() { return BlockButton; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "UnBlockButton", function() { return UnBlockButton; });
-/* harmony import */ var _decslanguages_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./decslanguages.js */ "./resources/assets/js/PICObuilder/decslanguages.js");
-/* harmony import */ var _changeseeker_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./changeseeker.js */ "./resources/assets/js/PICObuilder/changeseeker.js");
-/* harmony import */ var _commons_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./commons.js */ "./resources/assets/js/PICObuilder/commons.js");
-/* harmony import */ var _commonsdecs_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./commonsdecs.js */ "./resources/assets/js/PICObuilder/commonsdecs.js");
-/* harmony import */ var _translator_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./translator.js */ "./resources/assets/js/PICObuilder/translator.js");
-/* harmony import */ var _infomessage_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./infomessage.js */ "./resources/assets/js/PICObuilder/infomessage.js");
-/* harmony import */ var _hideshow_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./hideshow.js */ "./resources/assets/js/PICObuilder/hideshow.js");
+/* harmony import */ var _commons_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./commons.js */ "./resources/assets/js/PICObuilder/commons.js");
+/* harmony import */ var _translator_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./translator.js */ "./resources/assets/js/PICObuilder/translator.js");
+/* harmony import */ var _infomessage_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./infomessage.js */ "./resources/assets/js/PICObuilder/infomessage.js");
+/* harmony import */ var _hideshow_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./hideshow.js */ "./resources/assets/js/PICObuilder/hideshow.js");
+/* harmony import */ var _languagetoggler__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./languagetoggler */ "./resources/assets/js/PICObuilder/languagetoggler.js");
+/* harmony import */ var _changeseeker__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./changeseeker */ "./resources/assets/js/PICObuilder/changeseeker.js");
+/* harmony import */ var _AccordionTooltip__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./AccordionTooltip */ "./resources/assets/js/PICObuilder/AccordionTooltip.js");
+/* harmony import */ var _resultsmanager__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./resultsmanager */ "./resources/assets/js/PICObuilder/resultsmanager.js");
+
 
 
 
@@ -14342,31 +14416,64 @@ __webpack_require__.r(__webpack_exports__);
 
  ////PUBLIC FUNCTIONS
 
-function ExpandDeCSConfig() {
-  var msg = '<div id="LanguageSection" class="container "><div class="row"><div class="col-md-7 sidebar LanguageContainer"><label class="labelMain">';
-  msg = msg + Object(_translator_js__WEBPACK_IMPORTED_MODULE_4__["translate"])("langimp") + '</label>\
-        </div>\
-        <div class="col-md-5 sidebar LanguageContainer text-left">\
-           <div class="LanguageInfoContainer">\
-                    <div class="CheckBoxRow" ><input type="checkbox" class="langCheck" name="Langs[]" value="en" checked /><label>English</label></div>\
-                    <div class="CheckBoxRow" ><input type="checkbox" class="langCheck" name="Langs[]" value="pt" /><label>Spanish</label></div>\
-                    <div class="CheckBoxRow" ><input type="checkbox" class="langCheck" name="Langs[]" value="es" /><label>Portuguese</label></div>\
-            </div>\
-        </div>\
-    </div>\
-    </div>';
-  var langs = Object(_commonsdecs_js__WEBPACK_IMPORTED_MODULE_3__["getLanguages"])();
-  Object(_infomessage_js__WEBPACK_IMPORTED_MODULE_5__["showInfoMessage"])('Config', msg, true, 'golanguage', _decslanguages_js__WEBPACK_IMPORTED_MODULE_0__["setLanguagesOfModal"], langs, true);
+function ManageResultsNumber(PICOnum) {
+  Object(_resultsmanager__WEBPACK_IMPORTED_MODULE_7__["getResultsNumber"])(PICOnum);
+}
+function StartFunctions() {
+  Object(_languagetoggler__WEBPACK_IMPORTED_MODULE_4__["UpdateLanguageInfo"])();
+  Object(_changeseeker__WEBPACK_IMPORTED_MODULE_5__["ChangeSeekerStart"])();
+  Object(_AccordionTooltip__WEBPACK_IMPORTED_MODULE_6__["AccordionAndTooltip"])();
+  ReBuildConfButtonText();
+}
+
+function ReBuildConfButtonText() {
+  var tmp = [];
+  $('#LanguageSection').find('.languageCheckbox:checked').each(function () {
+    tmp.push($(this).attr('data-lang'));
+  });
+  var txt = '[' + tmp.join(', ') + ']';
+  var oldval = $('#Exp1').find('.startlanguage').first().text();
+  console.log('oldconftextval=' + oldval);
+
+  if (oldval !== txt) {
+    $(document).find('.startlanguage').each(function () {
+      $(this).text(txt);
+    });
+  }
+}
+
+function SkipStepTwo() {
+  var selectnum = $('#modal1').find('.DescriptorCheckbox:checked').length;
+
+  if (selectnum === 0) {
+    return true;
+  }
+
+  return false;
+}
+function ChangeDeCSLanguages() {
+  var selectnum = $('#LanguageSection').find('.languageCheckbox:checked').length;
+  console.log('langs selected = ' + selectnum);
+
+  if (selectnum === 0) {
+    $('#languagenumberalert').removeClass('d-none');
+    setTimeout(function () {
+      $('#languagenumberalert').addClass('d-none');
+    }, 3000);
+  } else {
+    ReBuildConfButtonText();
+    $('#closemodallanguage').click();
+  }
 }
 function InfoNoResults() {
-  Object(_infomessage_js__WEBPACK_IMPORTED_MODULE_5__["showInfoMessage"])('Info', Object(_translator_js__WEBPACK_IMPORTED_MODULE_4__["translate"])('zerores'), false);
+  Object(_infomessage_js__WEBPACK_IMPORTED_MODULE_2__["showInfoMessage"])('Info', Object(_translator_js__WEBPACK_IMPORTED_MODULE_1__["translate"])('zerores'), false);
 }
 function CheckExistantHREF(Obj) {
   if (!$(Obj).attr('href')) {
     if (!$(Obj).attr('data-oldval')) {
-      Object(_infomessage_js__WEBPACK_IMPORTED_MODULE_5__["showInfoMessage"])('Info', Object(_translator_js__WEBPACK_IMPORTED_MODULE_4__["translate"])('mustrecalc'), false);
+      Object(_infomessage_js__WEBPACK_IMPORTED_MODULE_2__["showInfoMessage"])('Info', Object(_translator_js__WEBPACK_IMPORTED_MODULE_1__["translate"])('mustrecalc'), false);
     } else {
-      Object(_infomessage_js__WEBPACK_IMPORTED_MODULE_5__["showInfoMessage"])('Info', Object(_translator_js__WEBPACK_IMPORTED_MODULE_4__["translate"])('pleaseupd'), false);
+      Object(_infomessage_js__WEBPACK_IMPORTED_MODULE_2__["showInfoMessage"])('Info', Object(_translator_js__WEBPACK_IMPORTED_MODULE_1__["translate"])('pleaseupd'), false);
     }
   } else {
     var win = window.open(Obj.attr('href'), '_blank');
@@ -14374,17 +14481,17 @@ function CheckExistantHREF(Obj) {
     if (win) {
       win.focus();
     } else {
-      Object(_infomessage_js__WEBPACK_IMPORTED_MODULE_5__["showInfoMessage"])('Error', Object(_translator_js__WEBPACK_IMPORTED_MODULE_4__["translate"])('mustcalc'), false);
+      Object(_infomessage_js__WEBPACK_IMPORTED_MODULE_2__["showInfoMessage"])('Error', Object(_translator_js__WEBPACK_IMPORTED_MODULE_1__["translate"])('mustcalc'), false);
     }
   }
 }
 function ShowPICOinfo(PICOnum) {
-  var title = Object(_commons_js__WEBPACK_IMPORTED_MODULE_2__["getPICOElements"])()[PICOnum - 1];
+  var title = Object(_commons_js__WEBPACK_IMPORTED_MODULE_0__["getPICOElements"])()[PICOnum - 1];
   var msg = getPICOinfo()[PICOnum - 1];
   var example = getPICOPlaceHolder(PICOnum);
   var placeholder = getPICOHelpInfo(PICOnum);
   var secondary = '</br></br>' + example + '</br>' + placeholder;
-  Object(_infomessage_js__WEBPACK_IMPORTED_MODULE_5__["showInfoMessage"])('Info', msg, true, null, null, null, false, title, secondary);
+  Object(_infomessage_js__WEBPACK_IMPORTED_MODULE_2__["showInfoMessage"])('Info', msg, true, null, null, null, false, title, secondary);
 }
 function ReBuildStudyType() {
   var CheckArr = [];
@@ -14401,16 +14508,6 @@ function ReBuildStudyType() {
   }
 
   $('#datainput5').val(msg);
-  Object(_changeseeker_js__WEBPACK_IMPORTED_MODULE_1__["ChangeSeeker"])(5);
-}
-function setLanguagesFromModal(LangParent) {
-  var langs = [];
-  $(LangParent).find('.langCheck').each(function () {
-    if ($(this).is(':checked')) {
-      langs.push($(this).val());
-    }
-  });
-  setLanguages(langs);
 }
 function HideUnselectedDeCS() {
   $('#modal1').find('.DescriptorCheckbox').each(function () {
@@ -14420,14 +14517,14 @@ function HideUnselectedDeCS() {
     var status = $(this).prop("checked");
 
     if (status === true) {
-      Object(_hideshow_js__WEBPACK_IMPORTED_MODULE_6__["showBootstrapObj"])(tab);
-      Object(_hideshow_js__WEBPACK_IMPORTED_MODULE_6__["showBootstrapObj"])(cont);
+      Object(_hideshow_js__WEBPACK_IMPORTED_MODULE_3__["showBootstrapObj"])(tab);
+      Object(_hideshow_js__WEBPACK_IMPORTED_MODULE_3__["showBootstrapObj"])(cont);
       tab.find('.DescriptorCheckbox').each(function () {
         $(this).attr("checked", true);
       });
     } else {
-      Object(_hideshow_js__WEBPACK_IMPORTED_MODULE_6__["hideBootstrapObj"])(tab);
-      Object(_hideshow_js__WEBPACK_IMPORTED_MODULE_6__["hideBootstrapObj"])(cont);
+      Object(_hideshow_js__WEBPACK_IMPORTED_MODULE_3__["hideBootstrapObj"])(tab);
+      Object(_hideshow_js__WEBPACK_IMPORTED_MODULE_3__["hideBootstrapObj"])(cont);
       tab.find('.DescriptorCheckbox').each(function () {
         $(this).attr("checked", false);
       });
@@ -14435,35 +14532,20 @@ function HideUnselectedDeCS() {
   });
 } ////PRIVATE FUNCTIONS
 
-function setLanguages(langArr) {
-  var count = 0;
-  $(document).find('.languageCheckbox').each(function () {
-    var index = langArr.indexOf($(this).val());
-
-    if (index > -1) {
-      $(this).attr('checked', true);
-    } else {
-      $(this).attr('checked', false);
-    }
-
-    count++;
-  });
-}
-
 function getPICOinfo() {
-  return [Object(_translator_js__WEBPACK_IMPORTED_MODULE_4__["translate"])('pico_info1'), Object(_translator_js__WEBPACK_IMPORTED_MODULE_4__["translate"])('pico_info2'), Object(_translator_js__WEBPACK_IMPORTED_MODULE_4__["translate"])('pico_info3'), Object(_translator_js__WEBPACK_IMPORTED_MODULE_4__["translate"])('pico_info4'), Object(_translator_js__WEBPACK_IMPORTED_MODULE_4__["translate"])('pico_info5')];
+  return [Object(_translator_js__WEBPACK_IMPORTED_MODULE_1__["translate"])('pico_info1'), Object(_translator_js__WEBPACK_IMPORTED_MODULE_1__["translate"])('pico_info2'), Object(_translator_js__WEBPACK_IMPORTED_MODULE_1__["translate"])('pico_info3'), Object(_translator_js__WEBPACK_IMPORTED_MODULE_1__["translate"])('pico_info4'), Object(_translator_js__WEBPACK_IMPORTED_MODULE_1__["translate"])('pico_info5')];
 }
 
 function getPICOHelpInfo(PICOnum) {
-  var PHarr = [Object(_translator_js__WEBPACK_IMPORTED_MODULE_4__["translate"])('pico_exinfo1'), Object(_translator_js__WEBPACK_IMPORTED_MODULE_4__["translate"])('pico_exinfo2'), Object(_translator_js__WEBPACK_IMPORTED_MODULE_4__["translate"])('pico_exinfo3'), Object(_translator_js__WEBPACK_IMPORTED_MODULE_4__["translate"])('pico_exinfo4')];
+  var PHarr = [Object(_translator_js__WEBPACK_IMPORTED_MODULE_1__["translate"])('pico_exinfo1'), Object(_translator_js__WEBPACK_IMPORTED_MODULE_1__["translate"])('pico_exinfo2'), Object(_translator_js__WEBPACK_IMPORTED_MODULE_1__["translate"])('pico_exinfo3'), Object(_translator_js__WEBPACK_IMPORTED_MODULE_1__["translate"])('pico_exinfo4')];
 
   if (PICOnum < 5) {
-    return Object(_translator_js__WEBPACK_IMPORTED_MODULE_4__["translate"])('keyas') + ': ' + PHarr[PICOnum - 1];
+    return Object(_translator_js__WEBPACK_IMPORTED_MODULE_1__["translate"])('keyas') + ': ' + PHarr[PICOnum - 1];
   }
 }
 
 function getPICOPlaceHolder(PICOnum) {
-  var PHarr = [Object(_translator_js__WEBPACK_IMPORTED_MODULE_4__["translate"])('pico_ex1'), Object(_translator_js__WEBPACK_IMPORTED_MODULE_4__["translate"])('pico_ex2'), Object(_translator_js__WEBPACK_IMPORTED_MODULE_4__["translate"])('pico_ex3'), Object(_translator_js__WEBPACK_IMPORTED_MODULE_4__["translate"])('pico_ex4')];
+  var PHarr = [Object(_translator_js__WEBPACK_IMPORTED_MODULE_1__["translate"])('pico_ex1'), Object(_translator_js__WEBPACK_IMPORTED_MODULE_1__["translate"])('pico_ex2'), Object(_translator_js__WEBPACK_IMPORTED_MODULE_1__["translate"])('pico_ex3'), Object(_translator_js__WEBPACK_IMPORTED_MODULE_1__["translate"])('pico_ex4')];
 
   if (PICOnum < 5) {
     return 'Ex: ' + PHarr[PICOnum - 1];
@@ -14494,6 +14576,8 @@ __webpack_require__.r(__webpack_exports__);
 /* WEBPACK VAR INJECTION */(function($) {/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "UpdateLanguageInfo", function() { return UpdateLanguageInfo; });
 /* harmony import */ var _translator_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./translator.js */ "./resources/assets/js/PICObuilder/translator.js");
 /* harmony import */ var _commons_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./commons.js */ "./resources/assets/js/PICObuilder/commons.js");
+/* harmony import */ var _datadictionary_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./datadictionary.js */ "./resources/assets/js/PICObuilder/datadictionary.js");
+
 
  ////PUBLIC FUNCTIONS
 
@@ -14502,7 +14586,6 @@ function UpdateLanguageInfo() {
   setResNumAltTextGlobal();
   ChangeSearchDetailsInfo();
   CalcResLanguage();
-  setExpandDeCSLanguage();
 } ////PRIVATE FUNCTIONS
 
 function setLocalButtonLanguage() {
@@ -14511,7 +14594,7 @@ function setLocalButtonLanguage() {
     return x.charAt(0).toUpperCase() + x.slice(1).toLowerCase();
   });
   $(document).find('[id^=ResNumLocal]').each(function () {
-    var PICOnum = $(this).attr('id').substr(-1);
+    var PICOnum = Object(_datadictionary_js__WEBPACK_IMPORTED_MODULE_2__["getPICOnumFromObjId"])($(this));
     $(this).find('label').first().text(PICOs[PICOnum - 1]);
   });
 }
@@ -14544,13 +14627,6 @@ function CalcResLanguage() {
     }
 
     $(this).attr('data-original-title', Object(_translator_js__WEBPACK_IMPORTED_MODULE_0__["translate"])('upres'));
-  });
-}
-
-function setExpandDeCSLanguage() {
-  $(document).find('button[id^=Exp]').each(function () {
-    var msg = '<span class="badge badge-light badgeM startlanguage"><i class="fas fa-cog"></i></span> ' + Object(_translator_js__WEBPACK_IMPORTED_MODULE_0__["translate"])('butexp');
-    $(this).html(msg);
   });
 }
 
@@ -14595,9 +14671,9 @@ function POSTrequest(url, inidata, callback) {
   showLoading();
   inidata.mainLanguage = getMainLanguage();
   url = Object(_baseurl_js__WEBPACK_IMPORTED_MODULE_1__["getBaseURL"])() + url;
-  var sentData = JSON.stringify(inidata);
   console.log('Sending...');
-  console.log(sentData);
+  console.log(inidata);
+  var sentData = JSON.stringify(inidata);
   currentrequest = $.ajax({
     url: url,
     type: 'post',
@@ -14746,7 +14822,7 @@ function getMainLanguage() {
 __webpack_require__.r(__webpack_exports__);
 /* WEBPACK VAR INJECTION */(function($) {/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ChangeLocale", function() { return ChangeLocale; });
 /* harmony import */ var _infomessage__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./infomessage */ "./resources/assets/js/PICObuilder/infomessage.js");
-/* harmony import */ var _commonschange_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./commonschange.js */ "./resources/assets/js/PICObuilder/commonschange.js");
+/* harmony import */ var _datadictionary_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./datadictionary.js */ "./resources/assets/js/PICObuilder/datadictionary.js");
 /* harmony import */ var _translator_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./translator.js */ "./resources/assets/js/PICObuilder/translator.js");
 
 
@@ -14768,7 +14844,7 @@ function ChangeLocale(locale) {
     error: function error(xhr, status, _error) {
       FailLanguage(locale, xhr, status, _error);
     },
-    success: function success(response) {
+    success: function success() {
       window.location.href = locale;
     }
   });
@@ -14789,7 +14865,7 @@ function ObtainOldData() {
     var querysplit = $(this).attr('data-query-split');
     var PICOnum = $(this).attr('id').substr(-1);
     var fieldoldval = $('#FieldList' + PICOnum).attr('data-oldVal');
-    var fieldselection = Object(_commonschange_js__WEBPACK_IMPORTED_MODULE_1__["getFieldListOptionNum"])(PICOnum);
+    var fieldselection = Object(_datadictionary_js__WEBPACK_IMPORTED_MODULE_1__["getFieldListOptionNum"])(PICOnum);
     PICOData[PICOnum] = {
       'oldval': oldval,
       'query': query,
@@ -14829,26 +14905,15 @@ function ObtainOldData() {
 __webpack_require__.r(__webpack_exports__);
 /* WEBPACK VAR INJECTION */(function($) {/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ProcessResults", function() { return ProcessResults; });
 /* harmony import */ var _loadingrequest_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./loadingrequest.js */ "./resources/assets/js/PICObuilder/loadingrequest.js");
+/* harmony import */ var _datadictionary_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./datadictionary.js */ "./resources/assets/js/PICObuilder/datadictionary.js");
+
  ////PUBLIC FUNCTIONS
 
 function ProcessResults() {
-  var ImproveSearchQuery = $('#modal3').find('textarea').val();
-  var PICOnum = $('#modal1').find('.descriptorsform-piconum').first().val();
-  setImproveSearch(ImproveSearchQuery, PICOnum);
-  eventQueryBuild(ImproveSearchQuery, PICOnum);
-}
-
-function setImproveSearch(improve, PICOnum) {
-  $('#datainput' + PICOnum).attr('data-improve', improve);
+  var PICOnum = Object(_datadictionary_js__WEBPACK_IMPORTED_MODULE_1__["getModalPICOnum"])();
+  console.log('new query PICO=' + PICOnum);
+  eventQueryBuild(PICOnum);
 } ////PRIVATE FUNCTIONS
-
-
-function BuildImprovedQuery(data) {
-  var newQuery = data.newQuery;
-  var PICOnum = $('#modal1').find('.descriptorsform-piconum').first().val();
-  setOldSelectedDescriptors(data.OldSelectedDescriptors, PICOnum);
-  $('#datainput' + PICOnum).val(newQuery);
-}
 
 function getSelectedDescriptors() {
   var SelectedDescriptors = {};
@@ -14860,18 +14925,16 @@ function getSelectedDescriptors() {
     }
 
     $($(this)).find('.DescriptorCheckbox').each(function () {
-      if ($(this).attr('checked')) {
-        var term = $(this).attr('name');
+      var term = $(this).attr('name');
 
-        if (!(term in SelectedDescriptors[keyword])) {
-          SelectedDescriptors[keyword][term] = [];
-        }
+      if (!(term in SelectedDescriptors[keyword])) {
+        SelectedDescriptors[keyword][term] = [];
+      }
 
-        var num = $(this).attr('id').slice(15);
-        $('#decsform' + num + '-cont').find('.DescriptorCheckbox').each(function () {
-          if ($(this).attr('checked')) {
-            SelectedDescriptors[keyword][term].push($(this).attr('name'));
-          }
+      if ($(this).is(':checked')) {
+        var preid = $(this).attr('id').replace('descriptorsform', 'decsform');
+        $('#' + preid + '-cont').find('.DescriptorCheckbox:checked').each(function () {
+          SelectedDescriptors[keyword][term].push($(this).attr('name'));
         });
       }
     });
@@ -14879,29 +14942,23 @@ function getSelectedDescriptors() {
   return SelectedDescriptors;
 }
 
-function eventQueryBuild(ImproveSearchQuery, PICOnum) {
+function eventQueryBuild(PICOnum) {
   var url = "PICO/QueryBuild";
   var data = {
+    QuerySplit: Object(_datadictionary_js__WEBPACK_IMPORTED_MODULE_1__["getQuerySplit"])(),
     SelectedDescriptors: getSelectedDescriptors(),
-    ImproveSearchQuery: ImproveSearchQuery,
-    OldSelectedDescriptors: getOldSelectedDescriptors(PICOnum),
-    QuerySplit: getQuerySplit()
+    ImproveSearchQuery: Object(_datadictionary_js__WEBPACK_IMPORTED_MODULE_1__["getImproveSearchTextArea"])()
   };
   Object(_loadingrequest_js__WEBPACK_IMPORTED_MODULE_0__["POSTrequest"])(url, data, function (Data) {
-    BuildImprovedQuery(Data);
+    BuildImprovedQuery(Data, PICOnum);
   });
 }
 
-function getQuerySplit() {
-  return $('#modal1').find('.descriptorsform-querysplit').first().val();
-}
-
-function setOldSelectedDescriptors(OldSelectedDescriptors, PICOnum) {
-  $('#datainput' + PICOnum).attr('data-old-selected-descriptors', OldSelectedDescriptors);
-}
-
-function getOldSelectedDescriptors(PICOnum) {
-  return $('#datainput' + PICOnum).attr('data-old-selected-descriptors');
+function BuildImprovedQuery(data, PICOnum) {
+  Object(_datadictionary_js__WEBPACK_IMPORTED_MODULE_1__["setnewQuery"])(PICOnum, data.newQuery);
+  Object(_datadictionary_js__WEBPACK_IMPORTED_MODULE_1__["setImproveSearchWords"])(PICOnum, data.ImproveSearchWords);
+  Object(_datadictionary_js__WEBPACK_IMPORTED_MODULE_1__["setOldDescriptors"])(PICOnum, data.OldDescriptors);
+  Object(_datadictionary_js__WEBPACK_IMPORTED_MODULE_1__["setPreviousImproveQuery"])(PICOnum, data.ImproveSearchQuery);
 }
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! jquery */ "./node_modules/jquery/dist/jquery.js")))
 
@@ -14917,15 +14974,11 @@ function getOldSelectedDescriptors(PICOnum) {
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* WEBPACK VAR INJECTION */(function($) {/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "getResultsNumber", function() { return getResultsNumber; });
-/* harmony import */ var _changeseeker_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./changeseeker.js */ "./resources/assets/js/PICObuilder/changeseeker.js");
-/* harmony import */ var _commonschange_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./commonschange.js */ "./resources/assets/js/PICObuilder/commonschange.js");
-/* harmony import */ var _commons_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./commons.js */ "./resources/assets/js/PICObuilder/commons.js");
-/* harmony import */ var _translator_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./translator.js */ "./resources/assets/js/PICObuilder/translator.js");
-/* harmony import */ var _loadingrequest_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./loadingrequest.js */ "./resources/assets/js/PICObuilder/loadingrequest.js");
-/* harmony import */ var _infomessage_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./infomessage.js */ "./resources/assets/js/PICObuilder/infomessage.js");
-/* harmony import */ var _hideshow_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./hideshow.js */ "./resources/assets/js/PICObuilder/hideshow.js");
-
-
+/* harmony import */ var _datadictionary__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./datadictionary */ "./resources/assets/js/PICObuilder/datadictionary.js");
+/* harmony import */ var _translator_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./translator.js */ "./resources/assets/js/PICObuilder/translator.js");
+/* harmony import */ var _loadingrequest_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./loadingrequest.js */ "./resources/assets/js/PICObuilder/loadingrequest.js");
+/* harmony import */ var _infomessage_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./infomessage.js */ "./resources/assets/js/PICObuilder/infomessage.js");
+/* harmony import */ var _changeseeker__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./changeseeker */ "./resources/assets/js/PICObuilder/changeseeker.js");
 
 
 
@@ -14937,7 +14990,7 @@ function getResultsNumber(id) {
     var cont = $('#datainput' + id).val();
 
     if (cont.length === 0) {
-      Object(_infomessage_js__WEBPACK_IMPORTED_MODULE_5__["showInfoMessage"])('Info', Object(_translator_js__WEBPACK_IMPORTED_MODULE_3__["translate"])('allemptyq'), false);
+      Object(_infomessage_js__WEBPACK_IMPORTED_MODULE_3__["showInfoMessage"])('Info', Object(_translator_js__WEBPACK_IMPORTED_MODULE_1__["translate"])('allemptyq'), false);
       return;
     }
   } else {
@@ -14951,7 +15004,7 @@ function getResultsNumber(id) {
     }
 
     if (newid === 0) {
-      Object(_infomessage_js__WEBPACK_IMPORTED_MODULE_5__["showInfoMessage"])('Info', Object(_translator_js__WEBPACK_IMPORTED_MODULE_3__["translate"])('numresupd'), false);
+      Object(_infomessage_js__WEBPACK_IMPORTED_MODULE_3__["showInfoMessage"])('Info', Object(_translator_js__WEBPACK_IMPORTED_MODULE_1__["translate"])('numresupd'), false);
       return;
     }
   }
@@ -14961,90 +15014,36 @@ function getResultsNumber(id) {
 } ////PRIVATE FUNCTIONS
 
 function getAllInputFields() {
-  var results = {};
+  var results = [];
   var loop_i;
 
   for (loop_i = 1; loop_i < 6; loop_i++) {
     var valx = $('#datainput' + loop_i).val();
-    var fieldx = Object(_commonschange_js__WEBPACK_IMPORTED_MODULE_1__["getFieldListOptionNum"])(loop_i);
-    results['PICO' + loop_i] = {
+    var fieldx = Object(_datadictionary__WEBPACK_IMPORTED_MODULE_0__["getFieldListOptionNum"])(loop_i);
+    var obj = {
       query: valx,
       field: fieldx
     };
+    results.push(obj);
   }
 
   return results;
 }
 
 function setResultsNumber(data, PICOnum) {
-  console.log('initialdata in resultsnumber');
-  console.log(data);
-  var spanObj;
-  Object(_changeseeker_js__WEBPACK_IMPORTED_MODULE_0__["setCalcResAsSyncAlt"])(PICOnum);
-  var ResNumLocalObj = $('#ResNumLocal' + PICOnum);
-  var ResNumGlobalObj = $('#ResNumGlobal' + PICOnum);
-  var localresultsnumber = data.local.ResultsNumber;
-  var localresultsurl = data.local.ResultsURL;
-  var globalresultsnumber = data.global.ResultsNumber;
-  var globalresultsurl = data.global.ResultsURL;
-  console.log('localresultsnumber');
-  console.log(localresultsnumber);
-  console.log('localresultsurl');
-  console.log(localresultsurl);
-  console.log('globalresultsnumber');
-  console.log(globalresultsnumber);
-  console.log('globalresultsurl');
-  console.log(globalresultsurl);
+  Object(_datadictionary__WEBPACK_IMPORTED_MODULE_0__["setnewQuery"])(PICOnum, data.NewEquation);
 
-  if (PICOnum < 5) {
-    spanObj = ResNumLocalObj.find('span').first();
-    Object(_hideshow_js__WEBPACK_IMPORTED_MODULE_6__["showBootstrapObj"])(spanObj.parent());
-    Object(_commonschange_js__WEBPACK_IMPORTED_MODULE_1__["RemoveReDoButton"])(spanObj);
-
-    if (localresultsnumber === 0) {
-      addIconZeroResults(spanObj);
-    } else {
-      $(spanObj).text(localresultsnumber);
-    }
-
-    $(spanObj).attr('data-oldval', localresultsnumber);
-    ResNumLocalObj.attr("href", localresultsurl);
+  if (PICOnum > 1) {
+    var globalresultsnumber = data.Results.global.ResultsNumber;
+    var globalresultsurl = data.Results.global.ResultsURL;
+    var globaltitle = data.GlobalTitle;
+    Object(_changeseeker__WEBPACK_IMPORTED_MODULE_4__["UpdateGlobalAfterResults"])(PICOnum, globalresultsnumber, globalresultsurl, globaltitle);
   }
 
-  if (PICOnum > 1 && PICOnum !== 5) {
-    spanObj = ResNumGlobalObj.find('span').first();
-    Object(_hideshow_js__WEBPACK_IMPORTED_MODULE_6__["showBootstrapObj"])(spanObj.parent());
-    Object(_commonschange_js__WEBPACK_IMPORTED_MODULE_1__["RemoveReDoButton"])(spanObj);
-
-    if (globalresultsnumber === 0) {
-      addIconZeroResults(spanObj);
-    } else {
-      $(spanObj).text(globalresultsnumber);
-
-      if (PICOnum === 6) {
-        Object(_hideshow_js__WEBPACK_IMPORTED_MODULE_6__["showBootstrapObj"])(spanObj);
-      }
-    }
-
-    $(spanObj).attr('data-oldval', globalresultsnumber);
-    ResNumGlobalObj.attr("href", globalresultsurl);
-  }
-
-  if (PICOnum === 6) {
-    var FinalSearchDetailsObj = $('#FinalSearchDetails');
-    FinalSearchDetailsObj.val(data.global.query);
-    FinalSearchDetailsObj.attr('data-oldval', data.global.query);
-  }
-
-  var oldvalJSON = Object(_commonschange_js__WEBPACK_IMPORTED_MODULE_1__["getGlobalSpanJSON"])(PICOnum);
-  $('#datainput' + PICOnum).attr('data-oldval', oldvalJSON);
-
-  if (PICOnum === 6) {
-    PICOnum = 5;
-  }
-
-  if (PICOnum < 5) {
-    FieldListSetoldval(PICOnum);
+  if (PICOnum < 6) {
+    var localresultsnumber = data.Results.local.ResultsNumber;
+    var localresultsurl = data.Results.local.ResultsURL;
+    Object(_changeseeker__WEBPACK_IMPORTED_MODULE_4__["UpdateLocalAfterResults"])(PICOnum, localresultsnumber, localresultsurl);
   }
 }
 
@@ -15054,19 +15053,9 @@ function eventResultsNumber(PICOnum, queryobject) {
     PICOnum: PICOnum,
     queryobject: queryobject
   };
-  Object(_loadingrequest_js__WEBPACK_IMPORTED_MODULE_4__["POSTrequest"])(url, data, function (Data) {
+  Object(_loadingrequest_js__WEBPACK_IMPORTED_MODULE_2__["POSTrequest"])(url, data, function (Data) {
     setResultsNumber(Data, PICOnum);
   });
-}
-
-function addIconZeroResults(obj) {
-  var iconHTML = '0 <a class="PICOiconzeroElement"><span>?</span></a>';
-  $(obj).html(iconHTML);
-}
-
-function FieldListSetoldval(PICOnum) {
-  var objFieldList = $('#FieldList' + PICOnum);
-  objFieldList.attr('data-oldval', Object(_commonschange_js__WEBPACK_IMPORTED_MODULE_1__["getFieldListOptionNum"])(PICOnum));
 }
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! jquery */ "./node_modules/jquery/dist/jquery.js")))
 
@@ -38219,9 +38208,9 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 /***/ }),
 
 /***/ 0:
-/*!***************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************!*\
-  !*** multi ./resources/assets/js/popper.js ./resources/assets/js/app.js ./resources/assets/js/bootstrap.js ./resources/assets/js/PICObuilder/PICObuilder.js ./resources/assets/js/PICObuilder/AccordionTooltip.js ./resources/assets/js/PICObuilder/baseurl.js ./resources/assets/js/PICObuilder/changeseeker.js ./resources/assets/js/PICObuilder/commons.js ./resources/assets/js/PICObuilder/commonschange.js ./resources/assets/js/PICObuilder/commonsdecs.js ./resources/assets/js/PICObuilder/debug.js ./resources/assets/js/PICObuilder/decslanguages.js ./resources/assets/js/PICObuilder/decsmanager.js ./resources/assets/js/PICObuilder/localepreservedata.js ./resources/assets/js/PICObuilder/hideshow.js ./resources/assets/js/PICObuilder/infomessage.js ./resources/assets/js/PICObuilder/init.js ./resources/assets/js/PICObuilder/initfunctions.js ./resources/assets/js/PICObuilder/languagetoggler.js ./resources/assets/js/PICObuilder/loadingrequest.js ./resources/assets/js/PICObuilder/newquerybuild.js ./resources/assets/js/PICObuilder/resultsmanager.js ./resources/assets/js/PICObuilder/translator.js ***!
-  \***************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************/
+/*!****************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************!*\
+  !*** multi ./resources/assets/js/popper.js ./resources/assets/js/app.js ./resources/assets/js/bootstrap.js ./resources/assets/js/PICObuilder/PICObuilder.js ./resources/assets/js/PICObuilder/AccordionTooltip.js ./resources/assets/js/PICObuilder/baseurl.js ./resources/assets/js/PICObuilder/changeseeker.js ./resources/assets/js/PICObuilder/commons.js ./resources/assets/js/PICObuilder/changebasic.js ./resources/assets/js/PICObuilder/datadictionary.js ./resources/assets/js/PICObuilder/debug.js ./resources/assets/js/PICObuilder/decslanguages.js ./resources/assets/js/PICObuilder/decsmanager.js ./resources/assets/js/PICObuilder/localepreservedata.js ./resources/assets/js/PICObuilder/hideshow.js ./resources/assets/js/PICObuilder/infomessage.js ./resources/assets/js/PICObuilder/init.js ./resources/assets/js/PICObuilder/initfunctions.js ./resources/assets/js/PICObuilder/languagetoggler.js ./resources/assets/js/PICObuilder/loadingrequest.js ./resources/assets/js/PICObuilder/newquerybuild.js ./resources/assets/js/PICObuilder/resultsmanager.js ./resources/assets/js/PICObuilder/translator.js ***!
+  \****************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -38233,8 +38222,8 @@ __webpack_require__(/*! C:\xampp\htdocs\home\apps\bvsalud.org\pesquisa\htdocs\pi
 __webpack_require__(/*! C:\xampp\htdocs\home\apps\bvsalud.org\pesquisa\htdocs\pico\PICO-BackEnd\resources\assets\js\PICObuilder\baseurl.js */"./resources/assets/js/PICObuilder/baseurl.js");
 __webpack_require__(/*! C:\xampp\htdocs\home\apps\bvsalud.org\pesquisa\htdocs\pico\PICO-BackEnd\resources\assets\js\PICObuilder\changeseeker.js */"./resources/assets/js/PICObuilder/changeseeker.js");
 __webpack_require__(/*! C:\xampp\htdocs\home\apps\bvsalud.org\pesquisa\htdocs\pico\PICO-BackEnd\resources\assets\js\PICObuilder\commons.js */"./resources/assets/js/PICObuilder/commons.js");
-__webpack_require__(/*! C:\xampp\htdocs\home\apps\bvsalud.org\pesquisa\htdocs\pico\PICO-BackEnd\resources\assets\js\PICObuilder\commonschange.js */"./resources/assets/js/PICObuilder/commonschange.js");
-__webpack_require__(/*! C:\xampp\htdocs\home\apps\bvsalud.org\pesquisa\htdocs\pico\PICO-BackEnd\resources\assets\js\PICObuilder\commonsdecs.js */"./resources/assets/js/PICObuilder/commonsdecs.js");
+__webpack_require__(/*! C:\xampp\htdocs\home\apps\bvsalud.org\pesquisa\htdocs\pico\PICO-BackEnd\resources\assets\js\PICObuilder\changebasic.js */"./resources/assets/js/PICObuilder/changebasic.js");
+__webpack_require__(/*! C:\xampp\htdocs\home\apps\bvsalud.org\pesquisa\htdocs\pico\PICO-BackEnd\resources\assets\js\PICObuilder\datadictionary.js */"./resources/assets/js/PICObuilder/datadictionary.js");
 __webpack_require__(/*! C:\xampp\htdocs\home\apps\bvsalud.org\pesquisa\htdocs\pico\PICO-BackEnd\resources\assets\js\PICObuilder\debug.js */"./resources/assets/js/PICObuilder/debug.js");
 __webpack_require__(/*! C:\xampp\htdocs\home\apps\bvsalud.org\pesquisa\htdocs\pico\PICO-BackEnd\resources\assets\js\PICObuilder\decslanguages.js */"./resources/assets/js/PICObuilder/decslanguages.js");
 __webpack_require__(/*! C:\xampp\htdocs\home\apps\bvsalud.org\pesquisa\htdocs\pico\PICO-BackEnd\resources\assets\js\PICObuilder\decsmanager.js */"./resources/assets/js/PICObuilder/decsmanager.js");

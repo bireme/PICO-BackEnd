@@ -1,68 +1,144 @@
-import {setResNumAltText, getFieldListOptionNum} from "./commons.js";
-import {hideBootstrapObj, showBootstrapObj} from "./hideshow";
+import {setResNumAltText} from "./commons.js";
+import {hideBootstrapObj, isHiddenBootstrapObj, showBootstrapObj} from "./hideshow";
 import {translate} from "./translator";
+import {getFieldListOptionNum} from "./datadictionary";
 
 ////PUBLIC FUNCTIONS
 
-///STATE OF BUTTONS
-
-
-export function ShowExplodeButton(PICOnum) {
-    let explodebutton = $('#Exp' + PICOnum);
-    if ($('#datainput' + PICOnum).val().length > 0) {
-        showBootstrapObj(explodebutton);
-        if (objResNumHasoldval(PICOnum)) {
-            CalcResAsMustUpdate(PICOnum);
-        }
-    } else {
-        CalcResAsReady(objCalcRes);
-        hideBootstrapObj(explodebutton);
-    }
+export function isHiddenResNum(PICOnum, isGlobal) {
+    return isHiddenBootstrapObj(getobjResNum(PICOnum, isGlobal));
 }
+
+export function setGlobalTitle(PICOnum,globaltitle){
+    let globalresnum = getobjResNum(PICOnum, true)
+    $(globalresnum).find('label').first().text(globaltitle);
+}
+
+export function getobjResNum(PICOnum, isGlobal) {
+    let objResNum = null;
+    if (isGlobal) {
+        objResNum = $('#ResNumGlobal' + PICOnum).first();
+    } else {
+        objResNum = $('#ResNumLocal' + PICOnum).first();
+    }
+    return objResNum;
+}
+
+export function MustRecalculate(PICOnum, isGlobal) {
+    let obj = getObjects(PICOnum, isGlobal);
+    if (isHiddenBootstrapObj(obj.Span)) {
+        return;
+    }
+    if (hasReDoButton(obj.Span)) {
+        return
+    }
+    hideDataButton(obj.ResNum);
+    ChangeLogger(PICOnum, isGlobal, 0);
+    removeHREF(obj.ResNum);
+    AddReDoButton(obj.Span);
+    CalcResAsMustUpdate(obj.CalcRes)
+}
+
+export function JustUpdated(PICOnum, isGlobal,initial,resultsNumber, resultsURL) {
+    let obj = getObjects(PICOnum, isGlobal);
+    if(initial===true){
+        hideDataButton(obj.ResNum);
+    }else{
+        resNumSetHREF(obj.ResNum,resultsURL);
+        resNumSetNumber(obj.Span,resultsNumber);
+        showDataButton(obj.ResNum);
+    }
+    ChangeLogger(PICOnum, isGlobal, -1);
+    saveToComparisonLocal(PICOnum);
+    saveToComparisonGlobal(PICOnum);
+    RemoveReDoButton(obj.Span);
+    CalcResAsReady(obj.CalcRes)
+}
+
+function addIconZeroResults(spanObj) {
+    let iconHTML = '0 <a class="PICOiconzeroElement"><span>?</span></a>';
+    $(spanObj).html(iconHTML);
+}
+
+export function ReturnToOldState(PICOnum, isGlobal) {
+    let obj = getObjects(PICOnum, isGlobal);
+    if (!(hasReDoButton(obj.Span))) {
+        return
+    }
+    showDataButton(obj.ResNum);
+    ChangeLogger(PICOnum, isGlobal, 1);
+    recoverHREF(obj.ResNum);
+    RemoveReDoButton(obj.Span);
+    CalcResAsReady(obj.CalcRes)
+}
+
+function ChangeLogger(PICOnum, isGlobal, isReturnToOldState) {
+    let txt = '';
+    if (isReturnToOldState === 1) {
+        txt = txt + 'ToOldState: ';
+    } else {
+        if (isReturnToOldState === 0) {
+            txt = txt + 'ToBeUpdated: ';
+        } else {
+            txt = txt + 'JustUpdated: ';
+        }
+    }
+    if (isGlobal) {
+        txt = txt + 'Global-';
+    } else {
+        txt = txt + 'Local-';
+    }
+    txt = txt + PICOnum;
+    console.log('Changeseeker: ' + txt);
+}
+
 
 /// SEEK COMPARISONS
 
-export function getGlobalCompValue(PICOnum) {
-    let txt = '';
-    for (let loop_i = PICOnum; loop_i >= 1; loop_i--) {
-        let localval =  getResNumOldVal(PICOnum,false);
-        txt = txt + localval;
-    }
-    return txt;
-}
-
-export function getLocalCompValue(PICOnum) {
+export function getComparisonCurrentLocal(PICOnum) {
     let FieldData = getFieldListOptionNum(PICOnum);
-    let queryVal = $('#datainput' + PICOnum).val();
+    let queryVal = getQueryVal(PICOnum);
     return queryVal + FieldData;
 }
 
-export function getResNumOldVal(PICOnum,isGlobal) {
-    let objResNum = null;
-    if(isGlobal){
-        objResNum = $('#ResNumGlobal' + PICOnum);
+export function getComparisonLocalPreviouslySaved(PICOnum) {
+    return $(getobjResNum(PICOnum, false)).attr('data-comparison');
+}
+
+export function getQueryVal(PICOnum) {
+    return $('#datainput' + PICOnum).val();
+}
+
+export function getComparisonGlobalPreviouslySaved(PICOnum) {
+    return $(getobjResNum(PICOnum, true)).attr('data-comparison');
+}
+
+export function resNumSetHREF(objResNum,value) {
+    objResNum.attr('href', value);
+}
+
+export function resNumSetNumber(objSpan,value) {
+    if(value===0){
+        addIconZeroResults(objSpan);
     }else{
-        objResNum = $('#ResNumLocal' + PICOnum);
+        objSpan.text(value);
     }
-    return $(objResNum).attr('data-oldval');
-}
-
-
-export function MustRecalculate(objResNum, objSpan) {
-    removeHREF(objResNum);
-    hideDataButton(objResNum);
-    AddReDoButton(objSpan);
-    CalcResAsMustUpdate(objCalcRes)
-}
-
-export function ReturnToOldState(objResNum, objSpan) {
-    recoverHREF(objResNum);
-    RemoveReDoButton(objSpan);
-    showDataButton(objResNum);
-    CalcResAsReady(objCalcRes)
 }
 
 ////PRIVATE FUNCTIONS
+
+function saveToComparisonLocal(PICOnum) {
+    let value = getComparisonCurrentLocal(PICOnum);
+    $(getobjResNum(PICOnum, false)).attr('data-comparison', value);
+}
+
+function saveToComparisonGlobal(PICOnum) {
+    let txt = '';
+    for (let loop_i = 1; loop_i <= 6; loop_i++) {
+        txt = txt + ($(getobjResNum(PICOnum, false)).attr('data-comparison'));
+    }
+    $(getobjResNum(PICOnum, false)).attr('data-comparison', txt);
+}
 
 function hideDataButton(objResNum) {
     hideBootstrapObj(objResNum);
@@ -72,27 +148,22 @@ function showDataButton(objResNum) {
     showBootstrapObj(objResNum);
 }
 
-function objResNumHasoldval(objResNum) {
-    return !!$(objResNum).attr('data-oldval')
-}
-
 function removeHREF(objResNum) {
     objResNum.attr('data-oldhref', (objResNum.attr('href')));
     objResNum.removeAttr('href');
 }
 
 function recoverHREF(objResNum) {
-    objResNum.attr('data-href', (objResNum.attr('data-oldhref')));
+    objResNum.attr('href', (objResNum.attr('data-oldhref')));
 }
+
 
 /// RE-DO BUTTON
 
 function AddReDoButton(objSpan) {
-    if (!(hasReDoButton(objSpan))) {
-        $(objSpan).addClass('fas fa-redo');
-        $(objSpan).text(' ');
-        setResNumAltText(objSpan, true);
-    }
+    $(objSpan).addClass('fas fa-redo');
+    $(objSpan).text(' ');
+    setResNumAltText(objSpan, true);
 }
 
 function hasReDoButton(objSpan) {
@@ -100,10 +171,8 @@ function hasReDoButton(objSpan) {
 }
 
 function RemoveReDoButton(objSpan) {
-    if ((hasReDoButton(objSpan))) {
-        $(objSpan).removeClass('fas fa-redo');
-        setResNumAltText(objSpan, false);
-    }
+    $(objSpan).removeClass('fas fa-redo');
+    setResNumAltText(objSpan, false);
 }
 
 //////////////////////////////////
@@ -111,7 +180,7 @@ function RemoveReDoButton(objSpan) {
 /////////////////////////////////
 
 function getCalcResColorClass(choice) {
-    if (cgoice === -1) {
+    if (choice === -1) {
         return 'btn-info';
     }
     if (choice === 1) {
@@ -130,5 +199,25 @@ function CalcResAsMustUpdate(objCalcRes) {
     $(objCalcRes).html('<i class="fas fa-sync-alt"></i>');
     $(objCalcRes).addClass(getCalcResColorClass(objCalcRes));
     $(objCalcRes).removeClass(getCalcResColorClass(-1));
+}
+
+function getObjects(PICOnum, isGlobal) {
+    let data = {};
+    data.ResNum = getobjResNum(PICOnum, isGlobal);
+    data.Span = getobjSpan(PICOnum, isGlobal);
+    data.CalcRes = getobjCalcRes(PICOnum);
+    return data;
+}
+
+
+
+function getobjCalcRes(PICOnum) {
+    return $('#CalcRes' + PICOnum).first();
+}
+
+
+function getobjSpan(PICOnum, isGlobal) {
+    let objResNum = getobjResNum(PICOnum, isGlobal).first();
+    return objResNum.find('span').first();
 }
 
