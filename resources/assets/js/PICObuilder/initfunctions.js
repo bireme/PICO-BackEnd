@@ -82,46 +82,55 @@ export function CheckExistantHREF(Obj) {
 export function ShowPICOinfo(PICOnum) {
     let title = getPICOElements()[PICOnum - 1];
     let msg = getPICOinfo()[PICOnum - 1];
-    let example = getPICOPlaceHolder(PICOnum);
-    let placeholder = getPICOHelpInfo(PICOnum);
-    let secondary = '</br></br>' + example + '</br>' + placeholder;
+    let secondary = null;
+    if(PICOnum<5) {
+        let example = getPICOPlaceHolder(PICOnum);
+        let placeholder = getPICOHelpInfo(PICOnum);
+        secondary = '</br></br>' + example + '</br>' + placeholder;
+    }
     showInfoMessage('Info', msg, true, null, null, null, false, title, secondary);
 }
 
 export function ReBuildStudyType() {
     let CheckArr = [];
-    $('#collapse5').find('.form-group').each(function () {
-        if ($(this).find('input').first().is(':checked')) {
-            let txt = $(this).find('label').first().text();
-            CheckArr.push(txt);
-        }
+    $('#collapse5').find('.studytypecheckbox:checked').each(function () {
+            let txt = $(this).attr('name');
+            CheckArr.push('"'+txt+'"');
     });
     let msg = CheckArr.join(' OR ');
-    if (msg.length > 0) {
-        msg = '(' + msg + ')';
-    }
     $('#datainput5').val(msg);
 }
 
 export function HideUnselectedDeCS() {
+    let countvisible=0;
     $('#modal1').find('.DescriptorCheckbox').each(function () {
         let tmp = $(this).attr('id').slice(15);
         let tab = $('#decsform' + tmp + '-tab');
         let cont = $('#decsform' + tmp + '-cont');
-        let status = $(this).prop("checked");
-        if (status === true) {
+        let isactive=false;
+        if ($(this).is(':checked')) {
+            if(countvisible===0){
+                isactive=true;
+            }
             showBootstrapObj(tab);
             showBootstrapObj(cont);
-            tab.find('.DescriptorCheckbox').each(function () {
-                $(this).attr("checked", true);
-            });
+            countvisible++;
         } else {
             hideBootstrapObj(tab);
             hideBootstrapObj(cont);
-            tab.find('.DescriptorCheckbox').each(function () {
-                $(this).attr("checked", false);
-            });
         }
+        if(isactive){
+            if(!(tab.hasClass('active show'))){
+                tab.addClass('active show');
+                cont.addClass('active show');
+            }
+        }else{
+            if(tab.hasClass('active show')){
+                tab.removeClass('active show');
+                cont.removeClass('active show');
+            }
+        }
+
     });
 }
 
@@ -136,7 +145,8 @@ function getPICOHelpInfo(PICOnum) {
     let PHarr = [translate('pico_exinfo1'),
         translate('pico_exinfo2'),
         translate('pico_exinfo3'),
-        translate('pico_exinfo4')
+        translate('pico_exinfo4'),
+        translate('pico_exinfo5')
     ];
     if (PICOnum < 5) {
         return translate('keyas') + ': ' + PHarr[PICOnum - 1];
@@ -147,7 +157,8 @@ function getPICOPlaceHolder(PICOnum) {
     let PHarr = [translate('pico_ex1'),
         translate('pico_ex2'),
         translate('pico_ex3'),
-        translate('pico_ex4')
+        translate('pico_ex4'),
+        translate('pico_ex5')
     ];
     if (PICOnum < 5) {
         return 'Ex: ' + PHarr[PICOnum - 1];

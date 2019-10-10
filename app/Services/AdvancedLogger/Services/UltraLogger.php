@@ -14,7 +14,9 @@ class UltraLogger
     {
         try {
             $logger = new UltraLoggerDevice($title);
-            $this->MapArrayIntoUltraLogger($logger, 'InitialData', ['InitialData' => $InitialData], 3);
+            if(!($this->isInProduction())){
+                $this->MapArrayIntoUltraLogger($logger, 'InitialData', ['InitialData' => $InitialData], 3);
+            }
             return $logger;
         } catch (Throwable $ex) {
             throw new ErrorInUltraLogger(['Error' => $ex->getMessage(), 'place' => 'crreation'], $ex);
@@ -24,6 +26,9 @@ class UltraLogger
     public function UltraLoggerAttempt(UltraLoggerDevice &$logger, string $AttemptText)
     {
         try {
+            if($this->isInProduction()){
+                return -1;
+            }
             $index = $logger->AddToUltraLogger($AttemptText, -1);
             return $index;
         } catch (Throwable $ex) {
@@ -34,6 +39,9 @@ class UltraLogger
     public function UltraLoggerSuccessfulAttempt(UltraLoggerDevice &$logger, int $index = null, String $PostText = null)
     {
         try {
+            if($this->isInProduction()){
+                return null;
+            }
             if ($index !== null) {
                 $logger->SuccessfulAttempt($index, $PostText);
             }
@@ -45,6 +53,9 @@ class UltraLogger
     public function MapArrayIntoUltraLogger(UltraLoggerDevice &$logger, string $title, array $MultiData, int $maxprintdepth, String $ShownInternalKeycontent = null, int $level = 0, bool $MapIndd = false)
     {
         try {
+            if($this->isInProduction()){
+                return null;
+            }
             $text = '===========' . PHP_EOL . '[Array Map] ' . $title . PHP_EOL;
             $text = $text . $this->MultiKeyMapper($MultiData, $maxprintdepth, $ShownInternalKeycontent, $MapIndd);
             $logger->AddToUltraLogger($text, $level);
@@ -57,6 +68,9 @@ class UltraLogger
     public function InfoToUltraLogger(UltraLoggerDevice &$logger, string $text)
     {
         try {
+            if($this->isInProduction()){
+                return null;
+            }
             $logger->AddToUltraLogger($text, 0);
 
         } catch (Throwable $ex) {
@@ -88,7 +102,6 @@ class UltraLogger
     {
         try {
             $logger->AddToUltraLogger($text, 2);
-
         } catch (Throwable $ex) {
             throw new ErrorInUltraLogger(['Error' => $ex->getMessage(), 'text' => $text], $ex);
         }
@@ -247,6 +260,12 @@ class UltraLogger
             $info = $info . $local;
         }
         return $info;
+    }
+
+    private function isInProduction(){
+        if(app()->environment()==='production'){
+            return true;
+        }
     }
 
 }

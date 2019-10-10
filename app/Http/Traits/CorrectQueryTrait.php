@@ -90,7 +90,7 @@ trait CorrectQueryTrait
             $query = str_replace(' )', ')', $query);
             $query = str_replace('( )', '()', $query);
             $query = str_replace('()', '', $query);
-            $query = str_replace(')(', ') (', $query);
+            $query = str_replace(')(', ') OR (', $query);
             $query = str_replace('( (', '((', $query);
             $query = str_replace(') )', '))', $query);
             $query = str_replace(') (', ') OR (', $query);

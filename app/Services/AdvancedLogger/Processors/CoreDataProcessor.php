@@ -101,7 +101,6 @@ class CoreDataProcessor extends BaseDataProcessors
         ];
         foreach ($loopdata as $key => $domixsep) {
             $MainData[$key] = $MainData[$key] ?? null;
-            //$this->LogTest('beggining: '.$key.PHP_EOL.json_encode(['data'=>['current'=>$MainData[$key], 'domix'=>$domixsep['domix'], 'sep'=>$domixsep['sep'],'previous'=>$MainData['previousdata'][$key]]]));
             $MainData[$key] = $this->StringDifferenceResolver($domixsep['domix'], $domixsep['sep'], $MainData[$key], ($MainData['previousdata'][$key] ?? null));
         }
 

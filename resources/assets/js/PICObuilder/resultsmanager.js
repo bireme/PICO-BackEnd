@@ -9,20 +9,16 @@ import {UpdateLocalAfterResults,UpdateGlobalAfterResults} from "./changeseeker";
 export function getResultsNumber(id) {
     if (id < 5) {
         let cont = $('#datainput' + id).val();
+        console.log('cont='+cont);
         if (cont.length === 0) {
-            showInfoMessage('Info', translate('allemptyq'), false);
+            showInfoMessage('Info', translate('emptyq'), false);
             return;
         }
-    } else {
-        let newid = 0;
-        for (let loop_i = 5; loop_i >= 1; loop_i--) {
-            if ($('#datainput' + loop_i).val().length > 0) {
-                newid = loop_i;
-                break;
-            }
-        }
-        if (newid === 0) {
-            showInfoMessage('Info', translate('numresupd'), false);
+    }else{
+        let cont = ($('#datainput1').val())+($('#datainput2').val())+($('#datainput3').val())+($('#datainput4').val());
+        console.log('cont='+cont);
+        if (cont.length === 0) {
+            showInfoMessage('Info', translate('allemptyq'), false);
             return;
         }
     }
@@ -55,7 +51,7 @@ function setResultsNumber(data, PICOnum) {
         let globaltitle = data.GlobalTitle;
         UpdateGlobalAfterResults(PICOnum,globalresultsnumber,globalresultsurl,globaltitle);
     }
-    if(PICOnum<6){
+    if(PICOnum<5){
         let localresultsnumber = data.Results.local.ResultsNumber;
         let localresultsurl = data.Results.local.ResultsURL;
         UpdateLocalAfterResults(PICOnum,localresultsnumber,localresultsurl);

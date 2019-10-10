@@ -123,15 +123,6 @@ class AdvancedLogger extends BaseLoggers
         }
     }
 
-    public function LogTest($info)
-    {
-        try{
-        $this->innerLogger('Emergency', $info, 'info');
-        } catch (Throwable $ex) {
-            throw new ErrorInAdvancerLoggerService(['Error' => $ex->getMessage()]);
-        }
-    }
-
     public function AdvancedLog(string $channel, string $level, array $MainData)
     {
         try{
@@ -144,18 +135,7 @@ class AdvancedLogger extends BaseLoggers
 
     public function AuxiliarLog($exception, string $channel, string $level, $isLogException, $MainData = null)
     {
-        $erres = false;
-        try {
-            $AuxiliaryData = $this->AuxiliaryLoggerData($exception, $MainData);
-            $this->AuxiliaryLogger($AuxiliaryData, $channel, $level, $isLogException);
-            $erres = true;
-        } catch (Throwable $AuxiliaryLoggerError) {
-            $this->ZeroLoggerHandler($AuxiliaryLoggerError);
-        } finally {
-            if ($erres === false) {
-                $this->ZeroLoggerHandler($exception, $MainData);
-            }
-        }
+        $this->AuxiliarLogInner($exception, $channel, $level, $isLogException, $MainData);
     }
 
 }

@@ -9,7 +9,10 @@ export function isHiddenResNum(PICOnum, isGlobal) {
     return isHiddenBootstrapObj(getobjResNum(PICOnum, isGlobal));
 }
 
-export function setGlobalTitle(PICOnum,globaltitle){
+export function setGlobalTitle(PICOnum, globaltitle) {
+    if (PICOnum === 5) {
+        return;
+    }
     let globalresnum = getobjResNum(PICOnum, true)
     $(globalresnum).find('label').first().text(globaltitle);
 }
@@ -39,13 +42,32 @@ export function MustRecalculate(PICOnum, isGlobal) {
     CalcResAsMustUpdate(obj.CalcRes)
 }
 
-export function JustUpdated(PICOnum, isGlobal,initial,resultsNumber, resultsURL) {
+export function MustRecalculateFinal() {
+    $('#FinalSearchDetails').text(translate('pleaseupd'));
+    ChangeLogger(5, true, 0);
+    removeHREF($('#FinalGlobal'));
+    showBootstrapObj($('#finalmustupdate'));
+    hideBootstrapObj($('#finalupdated'));
+}
+
+export function JustUpdatedFinal(resultsNumber, resultsURL) {
+    hideBootstrapObj($('#finalmustupdate'));
+    showBootstrapObj($('#finalupdated'));
+    $('#FinalGlobal').attr('data-href',resultsURL);
+    resNumSetNumber($('#finalupdated'), resultsNumber);
+    ChangeLogger(5, true, -1);
+    saveToComparisonLocal(5);
+    saveToComparisonGlobal(5);
+
+}
+
+export function JustUpdated(PICOnum, isGlobal, initial, resultsNumber, resultsURL) {
     let obj = getObjects(PICOnum, isGlobal);
-    if(initial===true){
+    if (initial === true) {
         hideDataButton(obj.ResNum);
-    }else{
-        resNumSetHREF(obj.ResNum,resultsURL);
-        resNumSetNumber(obj.Span,resultsNumber);
+    } else {
+        resNumSetHREF(obj.ResNum, resultsURL);
+        resNumSetNumber(obj.Span, resultsNumber);
         showDataButton(obj.ResNum);
     }
     ChangeLogger(PICOnum, isGlobal, -1);
@@ -59,6 +81,15 @@ function addIconZeroResults(spanObj) {
     let iconHTML = '0 <a class="PICOiconzeroElement"><span>?</span></a>';
     $(spanObj).html(iconHTML);
 }
+
+export function ReturnToOldStateFinal(PICOnum, isGlobal) {
+    let obj = getObjects(PICOnum, isGlobal);
+    ChangeLogger(5, true, 1);
+    recoverHREF(obj.ResNum);
+    hideBootstrapObj($('#finalmustupdate'));
+    showBootstrapObj($('#finalupdated'));
+}
+
 
 export function ReturnToOldState(PICOnum, isGlobal) {
     let obj = getObjects(PICOnum, isGlobal);
@@ -113,14 +144,14 @@ export function getComparisonGlobalPreviouslySaved(PICOnum) {
     return $(getobjResNum(PICOnum, true)).attr('data-comparison');
 }
 
-export function resNumSetHREF(objResNum,value) {
+export function resNumSetHREF(objResNum, value) {
     objResNum.attr('href', value);
 }
 
-export function resNumSetNumber(objSpan,value) {
-    if(value===0){
+export function resNumSetNumber(objSpan, value) {
+    if (value === 0) {
         addIconZeroResults(objSpan);
-    }else{
+    } else {
         objSpan.text(value);
     }
 }
@@ -208,7 +239,6 @@ function getObjects(PICOnum, isGlobal) {
     data.CalcRes = getobjCalcRes(PICOnum);
     return data;
 }
-
 
 
 function getobjCalcRes(PICOnum) {

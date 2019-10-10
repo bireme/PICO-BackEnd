@@ -12,6 +12,6 @@ export function debugfunctions() {
 
 ////PRIVATE FUNCTIONS
 
-function OpenInNewTab(url) {
+export function OpenInNewTab(url) {
     window.open(url, "_blank");
 }

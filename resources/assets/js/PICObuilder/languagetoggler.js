@@ -41,7 +41,7 @@ function ChangeSearchDetailsInfo() {
     let prev = FinalSearchDetailsObj.val();
     let index = Arr.indexOf(prev);
     if (index > -1) {
-        FinalSearchDetailsObj.val(translate('emptyq'));
+        FinalSearchDetailsObj.text(translate('emptyq'));
     }
 }
 

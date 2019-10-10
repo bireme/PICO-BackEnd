@@ -13,13 +13,13 @@ class QueryBuildProcess extends QueryBuildSupport implements ServiceEntryPointIn
     {
         $InitialData = $DTO->getInitialData();
         $this->decodeQuerySplit($DTO, $InitialData['QuerySplit']);
-        $this->BuildBaseEquation($DTO, $InitialData['SelectedDescriptors']);
-        $this->ImproveBasicEquation($DTO,$InitialData['ImproveSearchQuery']);
+        $this->getImproveEquation($DTO,$InitialData['ImproveSearchQuery']);
+        $this->BuildnewEquation($DTO, $InitialData['SelectedDescriptors']);
         $results = [
             'newQuery' => $DTO->getAttr('newQuery'),
             'OldSelectedDescriptors' => json_encode($InitialData['SelectedDescriptors']),
             'ImproveSearchWords' =>json_encode($DTO->getAttr('ImproveSearchWords')),
-            'ImproveSearchQuery' =>json_encode($DTO->getAttr('ImproveSearchQuery')),
+            'ImproveSearchQuery' =>$DTO->getAttr('ImproveSearchQuery'),
         ];
         return $results;
     }

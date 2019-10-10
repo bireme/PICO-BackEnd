@@ -73,7 +73,7 @@ abstract class ResultsNumberSupport extends ServiceEntryPoint
             }
             $ToExplore['global'] = $tmp;
         }
-        if ($PICOnum === 6) {
+        if ($PICOnum === 5) {
             $NewEquation = $ToExplore['global'];
         } else {
             $NewEquation = $QueryObject[$PICOnum - 1]['query'];

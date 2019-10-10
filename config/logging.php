@@ -43,72 +43,72 @@ return [
             'driver' => 'daily',
             'path' => storage_path('logs/Emergency/Emergency.log'),
             'level' => 'debug',
-            'days' => 1204,
+            'days' => 60,
         ],
         'Performance' => [
             'driver' => 'daily',
             'path' => storage_path('logs/Performance/Performance.log'),
             'level' => 'info',
-            'days' => 1204,
+            'days' => 5,
         ],
         'DTO' => [
             'driver' => 'daily',
             'path' => storage_path('logs/DTO/DTO.log'),
             'level' => 'info',
-            'days' => 1204,
+            'days' => 3,
         ],
         'AppDebug' => [
             'driver' => 'daily',
             'path' => storage_path('logs/AppDebug/AppDebug.log'),
             'level' => 'debug',
-            'days' => 60,
+            'days' => 30,
         ],
 
         'ClientDebug' => [
             'driver' => 'daily',
             'path' => storage_path('logs/ClientDebug/ClientDebug.log'),
             'level' => 'debug',
-            'days' => 14,
+            'days' => 3,
         ],
 
         'AppInfo' => [
             'driver' => 'daily',
             'path' => storage_path('logs/AppInfo/AppInfo.log'),
             'level' => 'debug',
-            'days' => 7,
+            'days' => 1,
         ],
 
         'Connections-In' => [
             'driver' => 'daily',
             'path' => storage_path('logs/Connections-In/Connections-In.log'),
             'level' => 'debug',
-            'days' => 1204,
+            'days' => 2,
         ],
 
         'Connections-Out' => [
             'driver' => 'daily',
             'path' => storage_path('logs/Connections-Out/Connections-Out.log'),
             'level' => 'debug',
-            'days' => 1204,
+            'days' => 2,
         ],
         'DeCS' => [
             'driver' => 'daily',
             'path' => storage_path('logs/DeCS/DeCS.log'),
             'level' => 'debug',
-            'days' => 1204,
+            'days' => 2,
         ],
         'DeCSImporter' => [
             'driver' => 'daily',
             'path' => storage_path('logs/DeCSImporter/DeCSImporter.log'),
             'level' => 'debug',
-            'days' => 1204,
+            'days' => 2,
         ],
 
         'Console' => [
             'driver' => 'daily',
             'path' => storage_path('logs/Console/Console.log'),
             'level' => 'debug',
-            'days' => 1204,
+            'days' => 60,
         ],
 
     ],

@@ -190,9 +190,9 @@ La app debe ser capaz de:
 #### Funcionalidad
 
 ```
-Adecuación ++
+Adecuación
 Exactitud ++
-Interoperabilidad ++
+Interoperabilidad +
 Seguridad
 ```
 
@@ -217,13 +217,13 @@ Atractividad +
 
 ```
 Comportamiento en el tiempo
-Comportamiento de recursos +
+Comportamiento de recursos
 ```
 	
 #### Mantenibilidad
 
 ```
-Estabilidad +
+Estabilidad
 Facilidad de análisis +
 Facilidad de cambio
 Facilidad de pruebas +

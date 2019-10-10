@@ -10,11 +10,15 @@ use Throwable;
 class BaseLoggers extends CoreDataProcessor
 {
 
-    public function SimpleLog(string $channel, string $level, string $title, string $info = null, array $data = null, string $StackTrace = null)
+    protected function SimpleLog(string $channel, string $level, string $title, string $info = null, array $data = null, string $StackTrace = null)
     {
         $title = str_replace('</br>', ' - ', $title);
         $title = str_replace('\\r\\n', ' - ', $title);
         $title = str_replace(PHP_EOL, ' - ', $title);
+        if($this->isInProduction()){
+            $data=null;
+            $info=null;
+        }
         $basedata = [
             'stack' => $StackTrace,
             'data' => $data,
@@ -25,11 +29,37 @@ class BaseLoggers extends CoreDataProcessor
         $this->innerLogger($channel, $message, $level);
     }
 
+    protected function AuxiliarLogInner($exception, string $channel, string $level, $isLogException, $MainData = null)
+    {
+        $erres = false;
+        if($this->isInProduction()){
+            $MainData=null;
+        }
+        try {
+            $AuxiliaryData = $this->AuxiliaryLoggerData($exception, $MainData);
+            $this->AuxiliaryLogger($AuxiliaryData, $channel, $level, $isLogException);
+            $erres = true;
+        } catch (Throwable $AuxiliaryLoggerError) {
+            $this->ZeroLoggerHandler($AuxiliaryLoggerError);
+        } finally {
+            if ($erres === false) {
+                $this->ZeroLoggerHandler($exception, $MainData);
+            }
+        }
+    }
+
     ////////////////////////////////////////////
     /// PROTECTED FUNCTIONS
     ////////////////////////////////////////////
 
-    protected function ZeroLoggerHandler($exception,$MainData=null)
+    private function isInProduction(){
+        if(app()->environment()==='production'){
+            return true;
+        }
+    }
+
+
+    private function ZeroLoggerHandler($exception,$MainData=null)
     {
         $errestwo = false;
         try {
@@ -45,14 +75,14 @@ class BaseLoggers extends CoreDataProcessor
         }
     }
 
-    protected function AuxiliaryLogger(array $AuxiliaryData,string $channel,string $level,bool $isLogException)
+    private function AuxiliaryLogger(array $AuxiliaryData,string $channel,string $level,bool $isLogException)
     {
         $loggermsg = 'THIS IS AUXILIARY LOGGER. SOME FATAL ERROR OCURRED IN MAIN LOGGER - ';
         $errdata=$this->AuxiliarDataProcessor($AuxiliaryData,$loggermsg,$isLogException);
         $this->SimpleLog($channel,$level, $errdata['title'] , $errdata['info'] , $errdata['data'] , $errdata['stack']);
     }
 
-    protected function EmergencyLogger(array $AuxiliaryData)
+    private function EmergencyLogger(array $AuxiliaryData)
     {
         $loggermsg = 'THIS IS EMERGENCY LOGGER. SOME FATAL ERROR OCURRED IN MAIN LOGGER AND IN AUXILIARY LOGGER - ';
         $errdata=$this->AuxiliarDataProcessor($AuxiliaryData,$loggermsg);
@@ -61,7 +91,7 @@ class BaseLoggers extends CoreDataProcessor
         $this->innerLogger('Emergency', $title.PHP_EOL.json_encode($errdata), 'critical');
     }
 
-    protected function ZeroLogger($ex,$MainData=null)
+    private function ZeroLogger($ex,$MainData=null)
     {
         $loggermsg = 'THIS IS ZERO LOGGER. EVERY OTHER LOGGER FAILED - ';
         $title = ($loggermsg.get_class($ex))??'Unknown Error';
@@ -75,7 +105,7 @@ class BaseLoggers extends CoreDataProcessor
         $this->innerLogger('Emergency', $title.PHP_EOL.json_encode($errdata), 'emergency');
     }
 
-    protected function innerLogger(string $channel, string $message, string $level)
+    private function innerLogger(string $channel, string $message, string $level)
     {
         $AvailableChannels = array_keys(config()->get('logging')['channels']);
         if (in_array($channel, $AvailableChannels)) {

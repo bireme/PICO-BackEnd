@@ -23,21 +23,17 @@ class DeCSIntegrationProcess extends DeCSIntegrationSupport implements ServiceEn
         $wasSuccesful = false;
         try {
             $Log = UltraLoggerFacade::createUltraLogger('DeCSIntegrationProcess', $InitialData);
-            $LogData = UltraLoggerFacade::UltraLoggerAttempt($Log, 'Step 1/5. Setting initial vars');
+            UltraLoggerFacade::InfoToUltraLogger($Log, 'Step 1/5. Setting initial vars');
             $this->setInitialVars($DTO);
-            UltraLoggerFacade::UltraLoggerSuccessfulAttempt($Log, $LogData);
 
-            $LogData = UltraLoggerFacade::UltraLoggerAttempt($Log, 'Step 2/5. Primary Main Trees');
+            UltraLoggerFacade::InfoToUltraLogger($Log, 'Step 2/5. Primary Main Trees');
             $this->ExploreMainTrees($ServicePerformance, $DTO, $Log);
-            UltraLoggerFacade::UltraLoggerSuccessfulAttempt($Log, $LogData);
 
-            $LogData = UltraLoggerFacade::UltraLoggerAttempt($Log, 'Step 3/5. Exploring other languages in Primary Main Trees');
+            UltraLoggerFacade::InfoToUltraLogger($Log, 'Step 3/5. Exploring other languages in Primary Main Trees');
             $this->ExploreLanguagesOfMainTrees($ServicePerformance, $DTO, $Log);
-            UltraLoggerFacade::UltraLoggerSuccessfulAttempt($Log, $LogData);
 
-            $LogData = UltraLoggerFacade::UltraLoggerAttempt($Log, 'Step 4/5. Exploring secondary trees');
+            UltraLoggerFacade::InfoToUltraLogger($Log, 'Step 4/5. Exploring secondary trees');
             $this->ExploreSecondaryTrees($ServicePerformance, $DTO, $Log);
-            UltraLoggerFacade::UltraLoggerSuccessfulAttempt($Log, $LogData);
 
             $MainTrees = $this->getMainTreeList($DTO);
             $results = $this->getResultsOrderedByTreeId($DTO);
@@ -82,12 +78,11 @@ class DeCSIntegrationProcess extends DeCSIntegrationSupport implements ServiceEn
                 $FirstArgument => $key,
                 'lang' => $lang,
             ];
-            $LogData = UltraLoggerFacade::UltraLoggerAttempt($Log, '('.($index+1). '/' .(count($langs). ') Attempting Connection:' . json_encode($data)));
+            UltraLoggerFacade::InfoToUltraLogger($Log, '('.($index+1). '/' .(count($langs). ') Attempting Connection:' . json_encode($data)));
             $results[$lang] = $this->Connect($ServicePerformance, $data, $Log);
-            UltraLoggerFacade::UltraLoggerSuccessfulAttempt($Log, $LogData);
         }
 
-        $LogData = UltraLoggerFacade::UltraLoggerAttempt($Log, $title . 'Step 2/2 Processing results');
+        UltraLoggerFacade::InfoToUltraLogger($Log, $title . 'Step 2/2 Processing results');
         if($TreeType===1 || $TreeType===-1){
             $isMain=true;
         }else{
@@ -96,7 +91,6 @@ class DeCSIntegrationProcess extends DeCSIntegrationSupport implements ServiceEn
 
         $this->ProcessImportResults($results, $isMain, $DTO, $Log);
         UltraLoggerFacade::InfoToUltraLogger($Log, '--------------');
-        UltraLoggerFacade::UltraLoggerSuccessfulAttempt($Log, $LogData);
     }
 
     ///////////////////////////////////////////////////////////////////

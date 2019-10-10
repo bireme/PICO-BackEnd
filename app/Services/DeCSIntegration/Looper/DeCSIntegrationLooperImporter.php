@@ -39,13 +39,11 @@ class DeCSIntegrationLooperImporter extends DeCSIntegrationLooperSupport impleme
             $Log = UltraLoggerFacade::createUltraLogger('DeCSIntegrationLooper', $InitialData);
             UltraLoggerFacade::setSubTitle($Log,json_encode(array_diff($InitialData,[$url])));
             UltraLoggerFacade::InfoToUltraLogger($Log, 'Full URL: ' . $url);
-            $LogData = UltraLoggerFacade::UltraLoggerAttempt($Log, 'Attempting to process data imported from BIREME');
+            UltraLoggerFacade::InfoToUltraLogger($Log, 'Attempting to process data imported from BIREME');
             $statusNode = $DOMXpath->query("//decsvmx");
             if (!($statusNode) || (!count($statusNode))) {
                 UltraLoggerFacade::ErrorToUltraLogger($Log, 'Wrong XML');
                 Throw new ErrorInDeCSLoopXMLExtraction(['Wrong XML']);
-            } else {
-                UltraLoggerFacade::UltraLoggerSuccessfulAttempt($Log, $LogData);
             }
 
             $decswsResults = $DOMXpath->query("//decsws_response");

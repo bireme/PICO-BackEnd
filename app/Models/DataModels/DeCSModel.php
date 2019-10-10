@@ -35,12 +35,13 @@ class DeCSModel extends MainModelsModel
 
     public final function ControllerTestData()
     {
-        return $this->DataWithExtremelyAbnormalError();
+        return $this->FullDataSimpleQuery();
     }
 
     public static final function AttributeRules()
     {
         return [
+            'PreviousImproveQueryFound' => ['required|string|min:1'],
             'decodedKeywordList' => ['required|array|min:0'],
             'PreviousData' => ['required|array|min:0'],
             'SavedData' => ['required|array|min:0'],
@@ -54,6 +55,24 @@ class DeCSModel extends MainModelsModel
             'DescriptorsHTML' => ['required|string|min:1'],
             'DeCSHTML' => ['required|string|min:1'],
         ];
+    }
+
+    private function FullDataSimpleQuery()
+    {
+        return json_encode([
+            "query" => 'DEngue',
+            "OldSelectedDescriptors" => "",
+            "ImproveSearchWords" => "[]",
+            "langs" => [
+                0 => "en",
+                1 => "pt",
+                2 => "es",
+            ],
+            "PICOnum" => 1,
+            "SavedData" => '{"dengue":{"C02.081.270":{"en":{"term":"Dengue","decs":["Dengue","Break Bone Fever","Break-Bone Fever","Breakbone Fever","Classical Dengue","Classical Dengue Fever","Classical Dengue Fevers","Classical Dengues","Dengue Fever"]},"es":{"term":"Dengue","decs":["Dengue","Fiebre Dengue"]},"pt":{"term":"Dengue","decs":["Dengue","Febre Quebra-Ossos","Febre da Dengue","Infec\u00e7\u00e3o pelo V\u00edrus da Dengue","Infec\u00e7\u00e3o por V\u00edrus da Dengue","Infec\u00e7\u00e3o por V\u00edrus de Dengue"]}},"B04.820.250.350.270":{"en":{"term":"Dengue Virus","decs":["Dengue Virus","Breakbone Fever Virus","Breakbone Fever Viruses","Dengue Viruses"]},"es":{"term":"Virus del Dengue","decs":["Virus del Dengue","Virus de la Fiebre Rompehuesos"]},"pt":{"term":"V\u00edrus da Dengue","decs":["V\u00edrus da Dengue","V\u00edrus da Febre Quebra-Ossos"]}},"C02.081.270.200":{"en":{"term":"Severe Dengue","decs":{"0":"Severe Dengue","1":"Dengue Hemorrhagic Fever","2":"Dengue Shock Syndrome","4":"Severe Dengues","5":"Philippine Hemorrhagic Fever","6":"Singapore Hemorrhagic Fever","7":"Thai Hemorrhagic Fever","8":"Hemorrhagic Dengue","9":"Hemorrhagic Dengues"}},"es":{"term":"Dengue Grave","decs":["Dengue Grave","Dengue Hemorr\u00e1gico","Fiebre Dengue Hemorr\u00e1gica","Fiebre Hemorr\u00e1gica Dengue","Fiebre Hemorr\u00e1gica de Dengue","S\u00edndrome de Choque por Dengue","S\u00edndrome de Shock por Dengue"]},"pt":{"term":"Dengue Grave","decs":["Dengue Grave","Dengue Hemorr\u00e1gica","Febre Hemorr\u00e1gica Dengue","Febre Hemorr\u00e1gica da Dengue","Febre Hemorr\u00e1gica devida ao V\u00edrus do Dengue","Febre Hemorr\u00e1gica pelo V\u00edrus da Dengue","Febre Hemorr\u00e1gica pelo V\u00edrus do Dengue","S\u00edndrome de Choque da Dengue"]}},"D20.215.894.899.162":{"en":{"term":"Dengue Vaccines","decs":["Dengue Vaccines"]},"es":{"term":"Vacunas contra el Dengue","decs":["Vacunas contra el Dengue"]},"pt":{"term":"Vacinas contra Dengue","decs":["Vacinas contra Dengue","Vacinas contra a Dengue","Vacinas contra o V\u00edrus da Dengue"]}}},"zika":{"B04.820.250.350.995":{"en":{"term":"Zika Virus","decs":{"0":"Zika Virus","2":"ZikV"}},"es":{"term":"Virus Zika","decs":["Virus Zika","Virus de Zika","Virus de la Fiebre Zika","Virus del Zika","ZIKV","ZikV","Zika virus","Zikavirus"]},"pt":{"term":"Zika virus","decs":["Zika virus","V\u00edrus Zika","V\u00edrus da Febre Zika","V\u00edrus da Zika","V\u00edrus de Zika","ZIKV","ZikV","Zikavirus"]}},"C02.081.990":{"en":{"term":"Zika Virus Infection","decs":["Zika Virus Infection","Zika Virus Disease","Zika Fever","ZikV Infection"]},"es":{"term":"Infecci\u00f3n por el Virus Zika","decs":["Infecci\u00f3n por el Virus Zika","Enfermedad del Virus Zika","Enfermedad por Virus Zika","Enfermedad por ZIKV","Enfermedad por Zika","Enfermedad por Zika virus","Enfermedad por el Virus Zika","Enfermedad por el Virus de Zika","Enfermedad por el Virus del Zika","Enfermedad por el Zikavirus","Fiebre Zika","Fiebre por Virus Zika","Fiebre por el Virus Zika","Infecci\u00f3n del Virus Zika","Infecci\u00f3n por Virus Zika","Infecci\u00f3n por Vzika","Infecci\u00f3n por ZIKV","Infecci\u00f3n por Zika virus","Infecci\u00f3n por Zikavirus","Infecci\u00f3n por el Virus de Zika","Infecci\u00f3n por el Virus del Zika"]},"pt":{"term":"Infec\u00e7\u00e3o por Zika virus","decs":["Infec\u00e7\u00e3o por Zika virus","Doen\u00e7a pelo V\u00edrus Zika","Doen\u00e7a pelo Zika virus","Doen\u00e7a pelo Zikavirus","Doen\u00e7a por V\u00edrus Zika","Doen\u00e7a por Zika virus","Febre Zika","Febre pelo V\u00edrus Zika","Febre por V\u00edrus Zika","Febre por Zika","Febre por Zika virus","Infecc\u00e7\u00e3o por ZIKV","Infec\u00e7\u00e3o pelo Zika virus","Infec\u00e7\u00e3o pelo Zikavirus","Infec\u00e7\u00e3o por V\u00edrus Zika","Infec\u00e7\u00e3o por Zika","Infec\u00e7\u00e3o por Zikavirus"]}}}}',
+            "PreviousImproveQuery" => "",
+            "mainLanguage" => "en",
+        ]);
     }
 
     private function FullData()
@@ -164,5 +183,22 @@ class DeCSModel extends MainModelsModel
     }
 
 
+    private function DataWithSelectedDescriptors()
+    {
+        return json_encode([
+            'ImproveSearchWords' => "[]",
+            'OldSelectedDescriptors' => "",
+            'PICOnum' => 1,
+            'PreviousImproveQuery' => "",
+            'SavedData' => '',
+            'langs' => [
+                0 => "en",
+                1 => "pt",
+                2 => "es",
+            ],
+            'mainLanguage' => "en",
+            'query' => "if($(modalone).find('.DontShowButton'))",
+        ]);
+    }
 
 }

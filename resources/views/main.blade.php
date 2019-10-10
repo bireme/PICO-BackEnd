@@ -7,14 +7,10 @@
             <div>
                 <h3 class="result text-center">
                     <div class="btn-group">
-                        <b><a id="ResNumGlobal6" class="btn btn-lg btn-success" data-toggle="tooltip"
-                              data-placement="top" title="" target="_blank"
-                              data-original-title="{{ __('lang.clickres') }}"><label
-                                    class="nomargin">{{ __('lang.sres') }}</label> <span
-                                    class="badge badge-light badgeM d-none">10</span></a></b>
-                        <button id="CalcRes6" class="btn btn-outline-info d-none" data-toggle="tooltip"
-                                data-placement="top" title="{{ __('lang.upres') }}"><i class="fas fa-sync-alt"></i>
-                        </button>
+                        <b><button id="FinalGlobal" class="btn btn-lg btn-success" data-toggle="tooltip"
+                              data-placement="top" title="" target="_blank" data-piconum="5"
+                              data-original-title="{{ __('lang.clickres') }}"><label class="nomargin">{{ __('lang.sres') }}</label><span
+                                    id="finalupdated" class="badge badge-light badgeM d-none" style="margin-left:15px;"></span><span id="finalmustupdate" style="margin-left:15px;"><i class="fas fa-sync-alt"></i></span></button></b>
                     </div>
                 </h3>
             </div>
