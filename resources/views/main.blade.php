@@ -3,7 +3,7 @@
 
     <section class="padding1">
         <div class="container">
-            @include('partials.PICOelements.PICO',['PreviousData'=>$PreviousData??array()])
+            @include('partials.PICOelements.PICO')
             <div>
                 <h3 class="result text-center">
                     <div class="btn-group">
