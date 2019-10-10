@@ -24,9 +24,9 @@
         </div>
         <div id="collapse{{ $PICOiterative }}" class="collapse{{ $txt2 }}" aria-labelledby="heading{{ $PICOiterative }}">
             @if($PICOiterative<5)
-                @include('partials.PICOelements.PICOelement',['PICOiterative'=>$PICOiterative,'FieldNames'=>$FieldNames,'olddata'=>$olddata])
+                @include('partials.PICOelements.PICOelement',['PICOiterative'=>$PICOiterative,'FieldNames'=>$FieldNames])
             @else
-                @include('partials.PICOelements.PICOtypeofstudy',['PICOiterative'=>$PICOiterative,'TOS'=>$TOS,'olddata'=>$olddata, 'TmpCookieElement'=>$TmpCookieElement,'oldTOS'=>$oldTOS])
+                @include('partials.PICOelements.PICOtypeofstudy',['PICOiterative'=>$PICOiterative,'TOS'=>$TOS])
             @endif
         </div>
 </div>

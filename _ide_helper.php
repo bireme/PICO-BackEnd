@@ -3,7 +3,7 @@
 
 /**
  * A helper file for Laravel 5, to provide autocomplete information to your IDE
- * Generated for Laravel 5.8.34 on 2019-10-01 15:10:02.
+ * Generated for Laravel 5.8.34 on 2019-10-10 14:31:15.
  *
  * This file should not be included in your code, only analyzed by your IDE!
  *
@@ -14742,17 +14742,6 @@ namespace PICOExplorer\Facades {
          *
          * @static 
          */ 
-        public static function LogTest($info)
-        {
-                        /** @var \PICOExplorer\Services\AdvancedLogger\AdvancedLogger $instance */
-                        return $instance->LogTest($info);
-        }
-        
-        /**
-         * 
-         *
-         * @static 
-         */ 
         public static function AdvancedLog($channel, $level, $MainData)
         {
                         /** @var \PICOExplorer\Services\AdvancedLogger\AdvancedLogger $instance */
@@ -14768,18 +14757,6 @@ namespace PICOExplorer\Facades {
         {
                         /** @var \PICOExplorer\Services\AdvancedLogger\AdvancedLogger $instance */
                         return $instance->AuxiliarLog($exception, $channel, $level, $isLogException, $MainData);
-        }
-        
-        /**
-         * 
-         *
-         * @static 
-         */ 
-        public static function SimpleLog($channel, $level, $title, $info = null, $data = null, $StackTrace = null)
-        {
-            //Method inherited from \PICOExplorer\Services\AdvancedLogger\Processors\BaseLoggers            
-                        /** @var \PICOExplorer\Services\AdvancedLogger\AdvancedLogger $instance */
-                        return $instance->SimpleLog($channel, $level, $title, $info, $data, $StackTrace);
         }
          
     }
@@ -14914,18 +14891,6 @@ namespace PICOExplorer\Facades {
          *
          * @static 
          */ 
-        public static function LogTest($info)
-        {
-            //Method inherited from \PICOExplorer\Services\AdvancedLogger\AdvancedLogger            
-                        /** @var \PICOExplorer\Services\AdvancedLogger\Exceptions\Handlers\WarningsHandler $instance */
-                        return $instance->LogTest($info);
-        }
-        
-        /**
-         * 
-         *
-         * @static 
-         */ 
         public static function AdvancedLog($channel, $level, $MainData)
         {
             //Method inherited from \PICOExplorer\Services\AdvancedLogger\AdvancedLogger            
@@ -14943,18 +14908,6 @@ namespace PICOExplorer\Facades {
             //Method inherited from \PICOExplorer\Services\AdvancedLogger\AdvancedLogger            
                         /** @var \PICOExplorer\Services\AdvancedLogger\Exceptions\Handlers\WarningsHandler $instance */
                         return $instance->AuxiliarLog($exception, $channel, $level, $isLogException, $MainData);
-        }
-        
-        /**
-         * 
-         *
-         * @static 
-         */ 
-        public static function SimpleLog($channel, $level, $title, $info = null, $data = null, $StackTrace = null)
-        {
-            //Method inherited from \PICOExplorer\Services\AdvancedLogger\Processors\BaseLoggers            
-                        /** @var \PICOExplorer\Services\AdvancedLogger\Exceptions\Handlers\WarningsHandler $instance */
-                        return $instance->SimpleLog($channel, $level, $title, $info, $data, $StackTrace);
         }
          
     }
@@ -15055,18 +15008,6 @@ namespace PICOExplorer\Facades {
          *
          * @static 
          */ 
-        public static function LogTest($info)
-        {
-            //Method inherited from \PICOExplorer\Services\AdvancedLogger\AdvancedLogger            
-                        /** @var \PICOExplorer\Services\AdvancedLogger\Services\ExceptionLogger $instance */
-                        return $instance->LogTest($info);
-        }
-        
-        /**
-         * 
-         *
-         * @static 
-         */ 
         public static function AdvancedLog($channel, $level, $MainData)
         {
             //Method inherited from \PICOExplorer\Services\AdvancedLogger\AdvancedLogger            
@@ -15084,18 +15025,6 @@ namespace PICOExplorer\Facades {
             //Method inherited from \PICOExplorer\Services\AdvancedLogger\AdvancedLogger            
                         /** @var \PICOExplorer\Services\AdvancedLogger\Services\ExceptionLogger $instance */
                         return $instance->AuxiliarLog($exception, $channel, $level, $isLogException, $MainData);
-        }
-        
-        /**
-         * 
-         *
-         * @static 
-         */ 
-        public static function SimpleLog($channel, $level, $title, $info = null, $data = null, $StackTrace = null)
-        {
-            //Method inherited from \PICOExplorer\Services\AdvancedLogger\Processors\BaseLoggers            
-                        /** @var \PICOExplorer\Services\AdvancedLogger\Services\ExceptionLogger $instance */
-                        return $instance->SimpleLog($channel, $level, $title, $info, $data, $StackTrace);
         }
         
         /**
@@ -16668,83 +16597,6 @@ namespace Collective\Html {
         {
                         /** @var \Collective\Html\HtmlBuilder $instance */
                         return $instance->componentCall($method, $parameters);
-        }
-         
-    }
- 
-}
-
-namespace PragmaRX\Yaml\Package { 
-
-    /**
-     * 
-     *
-     */ 
-    class Facade {
-        
-        /**
-         * Load yaml files from directory and add to Laravel config.
-         *
-         * @param string $path
-         * @param string $configKey
-         * @return \PragmaRX\Yaml\Package\Collection 
-         * @static 
-         */ 
-        public static function loadToConfig($path, $configKey)
-        {
-                        /** @var \PragmaRX\Yaml\Package\Yaml $instance */
-                        return $instance->loadToConfig($path, $configKey);
-        }
-        
-        /**
-         * Load all yaml files from a directory.
-         *
-         * @param $path
-         * @return \Illuminate\Support\Collection 
-         * @static 
-         */ 
-        public static function loadFromDirectory($path)
-        {
-                        /** @var \PragmaRX\Yaml\Package\Yaml $instance */
-                        return $instance->loadFromDirectory($path);
-        }
-        
-        /**
-         * Load yaml file.
-         *
-         * @param $file
-         * @return mixed|string 
-         * @static 
-         */ 
-        public static function loadFile($file)
-        {
-                        /** @var \PragmaRX\Yaml\Package\Yaml $instance */
-                        return $instance->loadFile($file);
-        }
-        
-        /**
-         * Remove extension from file name.
-         *
-         * @param $dirty
-         * @return \Illuminate\Support\Collection|mixed 
-         * @static 
-         */ 
-        public static function cleanArrayKeysRecursive($dirty)
-        {
-                        /** @var \PragmaRX\Yaml\Package\Yaml $instance */
-                        return $instance->cleanArrayKeysRecursive($dirty);
-        }
-        
-        /**
-         * Get this object instance.
-         *
-         * @return \PragmaRX\Yaml\Package\Yaml 
-         * @static 
-         */ 
-        public static function instance()
-        {
-                        /** @var \PragmaRX\Yaml\Package\Yaml $instance */
-                        return $instance->instance();
         }
          
     }
@@ -19582,8 +19434,6 @@ namespace  {
     class Form extends \Collective\Html\FormFacade {}
 
     class Html extends \Collective\Html\HtmlFacade {}
-
-    class Yaml extends \PragmaRX\Yaml\Package\Facade {}
  
 }
 

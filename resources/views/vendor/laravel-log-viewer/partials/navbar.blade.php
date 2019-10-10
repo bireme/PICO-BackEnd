@@ -10,7 +10,7 @@
             <div class="col-md-4" style="display:flex;justify-content:center;align-items: center;flex-flow: column;padding:0;margin:0;">
                 @if(\PICOExplorer\Facades\AuthHandlerFacade::isAdmin()>0)
                     <a class="btn btn-primary btn-block" href="{{ URL::to('admin/logout') }}">Logout</a>
-                    <a class="btn btn-primary btn-block" href="{{ URL::to('health/panel') }}">Components Health</a>
+                    <a class="btn btn-primary btn-disabled">Components Health</a>
                 @endif
             </div>
         </div>

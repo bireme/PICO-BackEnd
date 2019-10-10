@@ -1,26 +1,17 @@
+<?php
+
+use \PICOExplorer\Http\Controllers\RepositoriesControllers\SearchFieldsRepositoryController;
+use \PICOExplorer\Http\Controllers\RepositoriesControllers\StudiesRepositoryController;
+$TOS = (new StudiesRepositoryController())->TypeOfStudies() ?? array();
+$FieldNames = (new SearchFieldsRepositoryController())->SearchFields() ?? array();
+
+?>
 <div class="accordion" id="accordionPicos">
-
-    <?php
-    use \PICOExplorer\Http\Controllers\RepositoriesControllers\SearchFieldsRepositoryController;
-    use \PICOExplorer\Http\Controllers\RepositoriesControllers\StudiesRepositoryController;
-
-    $TOS = (new StudiesRepositoryController())->TypeOfStudies() ?? array();
-    $FieldNames = (new SearchFieldsRepositoryController())->SearchFields() ?? array();
-    $globaloldpicodata = $PreviousData['PICOData'] ?? array();
-    $oldTOS = $PreviousData['TOS'] ?? array();
-    $TmpCookieElement = $PreviousData['TmpCookieElement'] ?? '';
-    ?>
-
     @for($PICOiterative=1;$PICOiterative<6;$PICOiterative++)
-
-        @php
-            $olddata = $globaloldpicodata[$PICOiterative] ?? null;
-        @endphp
         @if($PICOiterative<5)
-            @include('layout.PICOelementlayout',['PICOiterative' => $PICOiterative,'FieldsNames'=>$FieldNames,'olddata'=>$olddata])
+            @include('layout.PICOelementlayout',['FieldNames'=>$FieldNames,'PICOiterative'=>$PICOiterative])
         @else
-            @include('layout.PICOelementlayout',['PICOiterative' => $PICOiterative,'TOS'=>$TOS,'olddata'=>$olddata,'oldTOS' => $oldTOS, 'TmpCookieElement' => $TmpCookieElement])
+            @include('layout.PICOelementlayout',['TOS'=>$TOS,'PICOiterative'=>$PICOiterative])
         @endif
     @endfor
-
 </div>

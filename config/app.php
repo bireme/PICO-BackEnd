@@ -177,7 +177,6 @@ return [
         PICOExplorer\Providers\EventServiceProvider::class,
         PICOExplorer\Providers\RouteServiceProvider::class,
         Rap2hpoutre\LaravelLogViewer\LaravelLogViewerServiceProvider::class,
-        PragmaRX\Health\ServiceProvider::class,
         Ixudra\Curl\CurlServiceProvider::class,
 
         /*

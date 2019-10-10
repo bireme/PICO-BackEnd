@@ -1,19 +1,14 @@
 <div class="card-body">
     <div class="row">
         <div class="col-md-8 margin2M">
-            <input type="text" data-olddescriptors="" data-PICO="{{ $PICOiterative }}" id="datainput{{ $PICOiterative }}" data-improve="" data-previous-decs="{{ (!!($olddata) ? $olddata['previousdata'] : '')  }}"  data-previous-improve-query=""
-                   data-oldVal="{{ (!!($olddata) ? $olddata['oldval'] : '')  }}"
-                   class="form-control PICOchangeitem" placeholder="{{ __('lang.pico_ex'.$PICOiterative) }}"
-                   value="{{ (!!($olddata) ? $olddata['query'] : '')  }}" />
+            <input type="text" data-olddescriptors="" data-PICO="" id="datainput{{ $PICOiterative }}" data-improve="" data-previous-decs=""  data-previous-improve-query=""
+                   data-oldVal="" class="form-control PICOchangeitem" placeholder="" value="" />
         </div>
         <div class="col-md-4">
-            @php
-            $selval = (int)(!!($olddata) ? $olddata['fieldselection'] : 0);
-            @endphp
-            <select name="" class="form-control black PICOchangeitem" data-PICO="{{ $PICOiterative }}" id="FieldList{{ $PICOiterative }}" data-oldVal="{{ (!!($olddata) ? $olddata['fieldoldval'] : '')  }}" class="form-control formSelect">
+            <select name="" class="form-control black PICOchangeitem" data-PICO="{{ $PICOiterative }}" id="FieldList{{ $PICOiterative }}" data-oldVal="" class="form-control formSelect">
                 @foreach($FieldNames as $FieldName)
                     <option class="PICOchangeitem" data-PICO="{{ $PICOiterative }}" value="{{ $FieldName }}"
-                        @if ( $loop->iteration=== $selval) )
+                        @if ( $loop->iteration=== 0) )
                          selected
                         @endif
                         >{{ $FieldName }}</option>

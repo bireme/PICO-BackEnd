@@ -52,28 +52,21 @@ class installPICO extends Command
     {
 
         try {
-            echo PHP_EOL . '1. Clearing cache... ';
+            echo PHP_EOL . '1. clearing cache... ';
             Artisan::call('cache:clear');
             echo 'Success';
         } catch (DontCatchException $ex) {
             echo 'Failed';
         }
         try {
-            echo PHP_EOL . '2. caching config... ';
-            Artisan::call('view:clear');
+            echo PHP_EOL . '2. clearing config cache... ';
+            Artisan::call('config:clear');
             echo 'Success';
         } catch (DontCatchException $ex) {
             echo 'Failed';
         }
         try {
-            echo PHP_EOL . '3. caching config... ';
-            Artisan::call('config:cache');
-            echo 'Success';
-        } catch (DontCatchException $ex) {
-            echo 'Failed';
-        }
-        try {
-            echo PHP_EOL . '4. Autoloading dump... ';
+            echo PHP_EOL . '3. Autoloading dump... ';
             $this->composer->dumpAutoloads();
             $this->composer->dumpOptimized();
             echo 'Success';
@@ -81,7 +74,21 @@ class installPICO extends Command
             echo 'Failed';
         }
         try {
-            echo PHP_EOL . '5. Generating ide helper...';
+            echo PHP_EOL . '4. clearing views... ';
+            Artisan::call('view:clear');
+            echo 'Success';
+        } catch (DontCatchException $ex) {
+            echo 'Failed';
+        }
+        try {
+            echo PHP_EOL . '5. clearing routes... ';
+            Artisan::call('route:clear');
+            echo 'Success';
+        } catch (DontCatchException $ex) {
+            echo 'Failed';
+        }
+        try {
+            echo PHP_EOL . '6. Generating ide helper...';
             Artisan::call('ide-helper:generate');
             echo 'Success';
         } catch (DontCatchException $ex) {

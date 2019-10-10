@@ -85,17 +85,6 @@
       0 => 'NunoMaduro\\Collision\\Adapters\\Laravel\\CollisionServiceProvider',
     ),
   ),
-  'pragmarx/yaml' => 
-  array (
-    'providers' => 
-    array (
-      0 => 'PragmaRX\\Yaml\\Package\\ServiceProvider',
-    ),
-    'aliases' => 
-    array (
-      'Yaml' => 'PragmaRX\\Yaml\\Package\\Facade',
-    ),
-  ),
   'rap2hpoutre/laravel-log-viewer' => 
   array (
     'providers' => 
@@ -108,24 +97,6 @@
     'providers' => 
     array (
       0 => 'Spatie\\Activitylog\\ActivitylogServiceProvider',
-    ),
-  ),
-  'spatie/laravel-analytics' => 
-  array (
-    'providers' => 
-    array (
-      0 => 'Spatie\\Analytics\\AnalyticsServiceProvider',
-    ),
-    'aliases' => 
-    array (
-      'Analytics' => 'Spatie\\Analytics\\AnalyticsFacade',
-    ),
-  ),
-  'thepinecode/i18n' => 
-  array (
-    'providers' => 
-    array (
-      0 => 'Pine\\I18n\\I18nServiceProvider',
     ),
   ),
 );
