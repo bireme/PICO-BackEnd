@@ -2,7 +2,6 @@
 
 namespace PICOExplorer\Services\DeCSIntegration;
 
-use PICOExplorer\Exceptions\Exceptions\AppError\DeCSExploringError;
 use PICOExplorer\Facades\UltraLoggerFacade;
 use PICOExplorer\Models\DataTransferObject;
 use ServicePerformanceSV;
@@ -21,15 +20,19 @@ abstract class DeCSIntegrationSupport extends DeCSIntegrationDataProcessor
     protected function ExploreLanguagesOfMainTrees(ServicePerformanceSV $ServicePerformance, DataTransferObject $DTO, UltraLoggerDevice $Log)
     {
         $title = $this->getTitle($DTO);
-        $MainTreesToExplore = $this->getExploredProcessed($DTO,$Log,true);
-        if(!($MainTreesToExplore)){
-            UltraLoggerFacade::InfoToUltraLogger($Log, $title . '. All the languages of MainTrees were already explored');
-        }else{
-            foreach ($MainTreesToExplore as $itemArray) {
-                $tree_id = $itemArray['key'];
-                $langs = $itemArray['langs'];
-                $this->Explore($ServicePerformance, $tree_id, -1, $DTO, $Log, $langs);
+        $MainTreeList =$this->getMainTreeList($DTO);
+        $results = $this->getResultsOrderedByTreeId($DTO);
+        $countx=0;
+        foreach ($MainTreeList as $tree_id) {
+            $langs=$results[$tree_id]['remaininglangs'];
+            if(count($langs)===0){
+                continue;
             }
+            $this->Explore($ServicePerformance, $tree_id, -1, $DTO, $Log, $langs);
+            $countx++;
+        }
+        if($countx===0){
+            UltraLoggerFacade::InfoToUltraLogger($Log, $title . '. All the languages of MainTrees were already explored');
         }
     }
 
@@ -40,7 +43,6 @@ abstract class DeCSIntegrationSupport extends DeCSIntegrationDataProcessor
         $blocked = false;
         $countx = 0;
         $this->ExploreSecondaryTreesLooper($ServicePerformance, $DTO, $title, $MaxLoops, $Log, $countx, $blocked);
-        $this->SummarySecondaryTreesExploring($DTO, $Log, $title, $blocked, $MaxLoops, $countx);
     }
 
     abstract protected function Explore(ServicePerformanceSV $ServicePerformance, string $key, int $IsMainTree, DataTransferObject $DTO, UltraLoggerDevice $Log, array $langs);
@@ -57,51 +59,18 @@ abstract class DeCSIntegrationSupport extends DeCSIntegrationDataProcessor
                 $blocked = true;
                 break;
             }
-            $TreesWithUnexploredLanguages = $this->getExploredProcessed($DTO, $Log, false);
-            if (!($TreesWithUnexploredLanguages)) {
+            $TreeToExplore = $this->getSecondaryTreeToExplore($DTO);
+            if ($TreeToExplore===null) {
                 UltraLoggerFacade::InfoToUltraLogger($Log, 'There are no trees left to explore. Done!');
                 break;
             }
-            $currentTreeToExplore = $TreesWithUnexploredLanguages[0];
-            $tree_id = $currentTreeToExplore['key'];
-            $langs = $currentTreeToExplore['langs'];
+            $tree_id = $TreeToExplore['key'];
+            $langs = $TreeToExplore['langs'];
             $subtitle = '. Loop #' . $countx . ': ' . $tree_id;
             UltraLoggerFacade::InfoToUltraLogger($Log, $title . $subtitle);
             $this->Explore($ServicePerformance, $tree_id, false, $DTO, $Log, $langs); //Antes esto terminaba en false
         }
         return $countx;
-    }
-
-    private function getExploredProcessed(DataTransferObject $DTO, UltraLoggerDevice $Log, bool $onlyMain)
-    {
-        $TreesToExplore = $this->getExploreList($DTO, $onlyMain);
-        if ($TreesToExplore===null || (!(is_array($TreesToExplore)))) {
-            UltraLoggerFacade::ErrorToUltraLogger($Log, 'TreesToExplore Is Not Array');
-            throw new DeCSExploringError(['Error' => 'TreesToExploreIsNotArray', 'ExploredTrees' => $TreesToExplore]);
-        } elseif (count($TreesToExplore) === 0) {
-            return null;
-        }
-        return $TreesToExplore;
-    }
-
-    private function SummarySecondaryTreesExploring(DataTransferObject $DTO, UltraLoggerDevice $Log, String $title, bool $blocked, int $MaxLoops, int $countx)
-    {
-        $TreesToExplore = $this->getExploredProcessed($DTO, $Log, false);
-        if ($blocked) {
-            $summary = '. Finished: Interrumpted. (' . $MaxLoops . '/' . $MaxLoops . ' Loops)';
-        } else {
-            $summary = '. Finished After ' . $countx . 'loops (Max ' . $MaxLoops . ')';
-        }
-        UltraLoggerFacade::InfoToUltraLogger($Log, $title . $summary);
-        if ($TreesToExplore) {
-            $res = [];
-            foreach ($TreesToExplore as $item) {
-                $res[$item['key']] = $item['langs'];
-            }
-            UltraLoggerFacade::MapArrayIntoUltraLogger($Log, $title . '. These Remaining Trees were not explored', ['TreesToExplore' => $res], 1);
-        } else {
-            UltraLoggerFacade::InfoToUltraLogger($Log, $title . '. All trees were explored');
-        }
     }
 
     private function getTitle(DataTransferObject $DTO)

@@ -7,6 +7,9 @@ import {
     getComparisonGlobalPreviouslySaved,
     isHiddenResNum,
     setGlobalTitle,
+    MustRecalculateFinal,
+    ReturnToOldStateFinal,
+    JustUpdatedFinal,
 } from "./changebasic.js";
 
 
@@ -39,7 +42,7 @@ export function ChangeSeekerHandler(isfirst) {
     let ishiddenLocalResnum;
     let ishiddenGlobalResnum;
 
-    for (let loop_i = PICOnum; loop_i < 7; loop_i++) {
+    for (let loop_i = PICOnum; loop_i < 6; loop_i++) {
         tmp = getComparisonCurrentLocal(loop_i);
         if (loop_i === PICOnum && loop_i < 5) {
             ishiddenLocalResnum = isHiddenResNum(loop_i, false);
@@ -52,7 +55,7 @@ export function ChangeSeekerHandler(isfirst) {
             }
         }
         tmptwo = tmptwo + tmp;
-        if (loop_i > 1) {
+        if (loop_i > 1 && loop_i < 5) {
             ishiddenGlobalResnum = isHiddenResNum(loop_i, true);
             if (tmptwo === getComparisonGlobalPreviouslySaved(loop_i)) {
                 ReturnToOldState(loop_i, true);
@@ -62,21 +65,33 @@ export function ChangeSeekerHandler(isfirst) {
                 }
             }
         }
+        if (loop_i === 5) {
+            if (tmptwo === getComparisonGlobalPreviouslySaved(5)) {
+                ReturnToOldStateFinal();
+            } else {
+                MustRecalculateFinal();
+            }
+        }
     }
 }
 
 export function UpdateLocalAfterResults(PICOnum, resultsNumber, resultsURL) {
-    JustUpdated(PICOnum, false, false,resultsNumber, resultsURL);
+    JustUpdated(PICOnum, false, false, resultsNumber, resultsURL);
 }
 
-export function UpdateGlobalAfterResults(PICOnum, resultsNumber, resultsURL,globaltitle) {
-    setGlobalTitle(PICOnum,globaltitle);
-    JustUpdated(PICOnum, true, false,resultsNumber, resultsURL);
+export function UpdateGlobalAfterResults(PICOnum, resultsNumber, resultsURL, globaltitle) {
+    setGlobalTitle(PICOnum, globaltitle);
+    if(PICOnum>4){
+        JustUpdatedFinal(resultsNumber, resultsURL)
+    }else{
+        JustUpdated(PICOnum, true, false, resultsNumber, resultsURL);
+    }
 }
 
 function InitialButtonSet() {
-    for (let loop_i = 1; loop_i <= 6; loop_i++) {
-        JustUpdated(loop_i, true, true,null,null);
-        JustUpdated(loop_i, false, true,null,null);
+    JustUpdated(1, false, true, null, null);
+    for (let loop_i = 2; loop_i <= 4; loop_i++) {
+        JustUpdated(loop_i, true, true, null, null);
+        JustUpdated(loop_i, false, true, null, null);
     }
 }

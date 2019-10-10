@@ -56,7 +56,6 @@ abstract class DeCSSupport extends ServiceEntryPoint
     protected function MixWithOldData(DataTransferObject $DTO, array $IntegrationData, array $langs, UltraLoggerDevice $Log)
     {
         $SavedData = $DTO->getAttr('PreviousData');
-        UltraLoggerFacade::MapArrayIntoUltraLogger($Log, 'Mixing new and old info', ['Previous Trees' => $SavedData, 'New Trees' => $IntegrationData], 3);
         foreach ($IntegrationData as $keyword => $keywordData) {
             if (!($keywordData)) {
                 continue;
@@ -110,16 +109,7 @@ abstract class DeCSSupport extends ServiceEntryPoint
 
         $usedData = null;
         $OldSelectedDescriptors = $DTO->getAttr('OldSelectedDescriptors');
-        if ($OldSelectedDescriptors !== null) {
-            $usedData = [];
-            foreach ($QuerySplit as $index => $arrayitem) {
-                $type = $arrayitem['type'] ?? null;
-                $value = $arrayitem['value'] ?? null;
-                if (!($type === 'op' || $type === 'sep' || $type === 'improve')) {
-                    array_push($usedData, $value);
-                }
-            }
-        }
+
 
 
         $notFound = [];
@@ -130,51 +120,53 @@ abstract class DeCSSupport extends ServiceEntryPoint
             }
         }
 
+        if ($OldSelectedDescriptors !== null) {
+            $usedData = [];
+            foreach ($QuerySplit as $index => $arrayitem) {
+                $type = $arrayitem['type'] ?? null;
+                $value = $arrayitem['value'] ?? null;
+                if (!($type === 'op' || $type === 'sep' || $type === 'improve')) {
+                    if(($type==='keyword' || $type==='keyrep') && in_array($value,$notFound)){
+                        $QuerySplit[$index]['type']='free';
+                    }
+                    array_push($usedData, $value);
+                }
+            }
+        }
+
+
+
         $QuerySplitValuesToRemove = [];
         foreach ($MixedData as $keyword => $keywordData) {
             if (!(in_array($keyword, $AllKeywordList))) {
                 continue;
             }
+            $keyword = ucwords(strtolower($keyword));
             if ($OldSelectedDescriptors !== null) {
                 $isNewKeyword = true;
             } else {
-                if (($OldSelectedDescriptors[ucfirst($keyword)] ?? null) === null) {
+                if (($OldSelectedDescriptors[$keyword] ?? null) === null) {
                     $isNewKeyword = true;
                 } else {
                     $isNewKeyword = false;
                 }
             }
-            $this->processKeywordDescriptors($Log, $keyword, $keywordData, $TitleLanguage, $langs, $ProcessedDescriptors, $ProcessedDeCS, $QuerySplitValuesToRemove, $isNewKeyword, $OldSelectedDescriptors, $usedData);
+            $this->processKeywordDescriptors($Log, $keyword, $keywordData, $TitleLanguage, $langs, $ProcessedDescriptors, $ProcessedDeCS, $isNewKeyword, $OldSelectedDescriptors, $usedData);
         }
         if (count($notFound)) {
-            $txtNotFound = trans('Lang.NotFound');
+            $txtNotFound = Lang::get('Lang.NotFound');
             $ProcessedDescriptors[$txtNotFound] = [];
             foreach ($notFound as $word) {
-                $word=ucfirst($word);
+                $word = ucwords(strtolower($word));
                 array_push($ProcessedDescriptors[$txtNotFound], ['title' => $word, 'value' => $word, 'checked' => -1]);
             }
         }
 
-        $QuerySplitValuesToRemove = array_unique($QuerySplitValuesToRemove);
-        $QuerySplitValuesToRemove = array_map('strtolower', $QuerySplitValuesToRemove);
-        $NewQuerySplit = [];
-        foreach ($QuerySplit as $index => $arrayitem) {
-            $type = $arrayitem['type'] ?? null;
-            $value = $arrayitem['value'] ?? null;
-            if ($type === 'decs' || $type === 'term') {
-                if (!(in_array($value, $QuerySplitValuesToRemove))) {
-                    array_push($NewQuerySplit, $arrayitem);
-                }
-            } else {
-                array_push($NewQuerySplit, $arrayitem);
-            }
-        }
-
 //dd(['ProcessedDescriptors' => $ProcessedDescriptors, 'ProcessedDeCS' => $ProcessedDeCS]);
-        $DTO->SaveToModel(get_class($this), ['ProcessedDescriptors' => $ProcessedDescriptors, 'ProcessedDeCS' => $ProcessedDeCS, 'QuerySplit' => $NewQuerySplit]);
+        $DTO->SaveToModel(get_class($this), ['ProcessedDescriptors' => $ProcessedDescriptors, 'ProcessedDeCS' => $ProcessedDeCS, 'QuerySplit' => $QuerySplit]);
     }
 
-    protected function processKeywordDescriptors(UltraLoggerDevice $Log, string $keyword, array $keywordData, String $TitleLanguage, array $langs, array &$ProcessedDescriptors, array &$ProcessedDeCS, array &$QuerySplitValuesToRemove, bool $isNewKeyword, array $OldSelectedDescriptors = null, array $usedData = null)
+    protected function processKeywordDescriptors(UltraLoggerDevice $Log, string $keyword, array $keywordData, String $TitleLanguage, array $langs, array &$ProcessedDescriptors, array &$ProcessedDeCS, bool $isNewKeyword, array $OldSelectedDescriptors = null, array $usedData = null)
     {
         $UsedTerms = [];
         foreach ($keywordData as $tree_id => $TreeObject) {
@@ -186,6 +178,7 @@ abstract class DeCSSupport extends ServiceEntryPoint
             if (in_array($Term, $UsedTerms)) {
                 continue;
             }
+            $alldecsInTerm = null;
             $alldecsInTerm = [];
             array_push($UsedTerms, $Term);
             $this->AddToDeCSTotal($alldecsInTerm, $TreeObject, $langs);
@@ -203,29 +196,37 @@ abstract class DeCSSupport extends ServiceEntryPoint
                 }
                 $this->AddToDeCSTotal($alldecsInTerm, $TreeObjectTwo, $langs);
             }
-            $this->AddToResults($keyword, $Term, $ProcessedDescriptors, $ProcessedDeCS, $QuerySplitValuesToRemove, $alldecsInTerm, $isNewKeyword, $OldSelectedDescriptors, $usedData);
+            $this->AddToResults($keyword, $Term, $ProcessedDescriptors, $ProcessedDeCS, $alldecsInTerm, $isNewKeyword, $OldSelectedDescriptors, $usedData);
         }
     }
 
-    private function AddToResults(String $keyword, String $Term, array &$ProcessedDescriptors, array &$ProcessedDeCS, array &$QuerySplitValuesToRemove, array $alldecsInTerm, bool $isNewKeyword, array $OldSelectedDescriptors = null, array $usedData = null)
+    private function AddToResults(String $keyword, String $Term, array &$ProcessedDescriptors, array &$ProcessedDeCS, array $alldecsInTerm, bool $isNewKeyword, array $OldSelectedDescriptors = null)
     {
-        $keyword = ucfirst($keyword);
-        $Term = ucfirst($Term);
+        $Term = ucwords(strtolower($Term));
+        $OldTerm=[];
         $DeCSTitle = $Term . ' [' . $keyword . ']';
         if ($isNewKeyword === 1) {
             $CheckedTerm = 1;
         } else {
             $OldTerm = $OldSelectedDescriptors[$keyword][$Term] ?? null;
-            if (($OldTerm) !== null && count($OldTerm)) {
+            if ($OldTerm === null) {
                 $CheckedTerm = 1;
             } else {
-                $CheckedTerm = 0;
+                if (count($OldTerm)) {
+                    $CheckedTerm = 1;
+                } else {
+                    $CheckedTerm = 0;
+                }
             }
         }
 
-
-        array_push($QuerySplitValuesToRemove, $Term);
         $this->newHtmlArray($ProcessedDescriptors, $keyword, $Term, $Term, $CheckedTerm);
+
+
+        $alldecsInTerm = array_map('strtolower', $alldecsInTerm);
+        $alldecsInTerm = array_map('ucwords', $alldecsInTerm);
+        $alldecsInTerm = array_unique($alldecsInTerm);
+        $alldecsInTerm = array_diff($alldecsInTerm, [$keyword, $Term]);
 
         foreach ($alldecsInTerm as $DeCS) {
             if ($isNewKeyword) {
@@ -234,14 +235,14 @@ abstract class DeCSSupport extends ServiceEntryPoint
                 if ($CheckedTerm === 0) {
                     $CheckedDeCS = 0;
                 } else {
-                    if (in_array($DeCS, $usedData)) {
+                    if (in_array($DeCS, $OldTerm)) {
                         $CheckedDeCS = 1;
                     } else {
                         $CheckedDeCS = 0;
                     }
                 }
             }
-            array_push($QuerySplitValuesToRemove, $DeCS);
+
             $this->newHtmlArray($ProcessedDeCS, $DeCSTitle, $DeCS, $DeCS, $CheckedDeCS);
         }
 
@@ -269,8 +270,9 @@ abstract class DeCSSupport extends ServiceEntryPoint
     }
 
 
-    protected function FalseBuildDeCSHTML(DataTransferObject $DTO,$arrayErrorMessageData){
-        $DescriptorsHTML = $this->BuildHTML('descriptorsform', $arrayErrorMessageData,Lang::get('lang.TooMuch'));
+    protected function FalseBuildDeCSHTML(DataTransferObject $DTO, $arrayErrorMessageData)
+    {
+        $DescriptorsHTML = $this->BuildHTML('descriptorsform', $arrayErrorMessageData, Lang::get('lang.TooMuch'));
         $DTO->SaveToModel(get_class($this), ['DescriptorsHTML' => $DescriptorsHTML, 'DeCSHTML' => '']);
     }
 

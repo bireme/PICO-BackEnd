@@ -58,6 +58,6 @@ function eventQueryBuild(PICOnum) {
 function BuildImprovedQuery(data, PICOnum) {
     setnewQuery(PICOnum, data.newQuery);
     setImproveSearchWords(PICOnum, data.ImproveSearchWords);
-    setOldDescriptors(PICOnum, data.OldDescriptors);
+    setOldDescriptors(PICOnum, data.OldSelectedDescriptors);
     setPreviousImproveQuery(PICOnum, data.ImproveSearchQuery);
 }

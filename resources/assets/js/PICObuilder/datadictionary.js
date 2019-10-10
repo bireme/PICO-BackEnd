@@ -17,8 +17,8 @@ export function setPreviousImproveQuery(PICOnum, value) {
 }
 
 export function setnewQuery(PICOnum, newQuery) {
-    if (PICOnum === 6) {
-        $('#FinalSearchDetails').val(newQuery);
+    if (PICOnum === 5) {
+        $('#FinalSearchDetails').text(newQuery);
     } else {
         $('#datainput' + PICOnum).val(newQuery);
     }

@@ -4,6 +4,7 @@ import {OnExpandDeCS} from "./decsmanager.js";
 import {IsLoading, CancelLoading} from "./loadingrequest.js";
 import {isHiddenBootstrapObj} from "./hideshow.js";
 import {ChangeLocale} from "./localepreservedata.js";
+import {OpenInNewTab} from "./debug.js";
 
 ////PUBLIC FUNCTIONS
 
@@ -74,16 +75,17 @@ export function initEvents() {
         $('#closemodal3').click();
         UnBlockButton($(this));
     });
-    $(document).find('button[id^=CalcRes]').click(function () {
+    $(document).find('.calcresbut').click(function () {
         BlockButton($(this));
         if (IsLoading()) {
             UnBlockButton($(this));
             return;
         }
-        let PICOnum = ($(this).attr('id')).substr(-1);
+        let PICOnum = $(this).attr('data-piconum');
         ManageResultsNumber(PICOnum);
         UnBlockButton($(this));
     });
+
     $(document).find('button[id^= page-lang]').click(function () {
         BlockButton($(this));
         let locale = $(this).attr('name');
@@ -101,7 +103,7 @@ export function initEvents() {
         if (PICOnum === 6) {
             let obj = $(this).find('span').first();
             if (isHiddenBootstrapObj(obj)) {
-                ManageResultsNumber(6);
+                ManageResultsNumber(5);
                 UnBlockButton($(this));
                 return;
             }
@@ -115,7 +117,30 @@ export function initEvents() {
         CheckExistantHREF($(this));
         UnBlockButton($(this));
     });
-    $('#collapse5').find('.form-group').find('input').change(function () {
+    $(document).find('#FinalGlobal').click(function () {
+        if(isHiddenBootstrapObj($('#finalupdated'))){
+            console.log('calculating data');
+            BlockButton($(this));
+            if (IsLoading()) {
+                UnBlockButton($(this));
+                return;
+            }
+            ManageResultsNumber(5);
+            UnBlockButton($(this));
+        }else{
+            console.log('opening href');
+            BlockButton($(this));
+            if (IsLoading()) {
+                UnBlockButton($(this));
+                return;
+            }
+            OpenInNewTab($(this).attr('data-href'));
+            UnBlockButton($(this));
+        }
+    });
+
+
+    $('#collapse5').find('.studytypecheckbox').click(function () {
         ReBuildStudyType();
     });
     $(document).find('a[id^=PICOinfo]').click(function (e) {

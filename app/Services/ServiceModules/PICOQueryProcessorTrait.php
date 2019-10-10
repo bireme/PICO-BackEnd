@@ -15,7 +15,6 @@ trait PICOQueryProcessorTrait
             return [];
         }
         $query = str_replace('  ', ' ', $query);
-        $query = str_replace("'", '"', $query);
         $QuerySplitByQuotes = $this->SplitByQuotes($query);
         return $QuerySplitByQuotes;
     }
@@ -30,7 +29,7 @@ trait PICOQueryProcessorTrait
         $open = substr_count($query, '(');
         $close = substr_count($query, ')');
         if ($open !== $close) {
-            throw new UnmatchingParentheses();
+            throw new UnmatchingParentheses(['$query'=>$query]);
         }
         $QuerySplitByComma = explode('"', $query);
         if (count($QuerySplitByComma) % 2 === 0) {
@@ -42,7 +41,7 @@ trait PICOQueryProcessorTrait
         $res = [];
         foreach ($QuerySplitByComma as $value) {
             if ($InQueryCluster) {
-                array_push($res, ucfirst($value));
+                array_push($res, ucwords(strtolower($value)));
             } else {
                 $valuex = $this->SplitArrayByOps($value,$OpsExtra,$Ops);
                 $res = array_merge($res, $valuex);
@@ -65,7 +64,8 @@ trait PICOQueryProcessorTrait
             } else {
                 $pattern = '/([():])/';
                 $minisplit = preg_split($pattern, $localv, -1, PREG_SPLIT_DELIM_CAPTURE | PREG_SPLIT_NO_EMPTY);
-                $minisplit = array_map('ucfirst', $minisplit);
+                $minisplit = array_map('strtolower', $minisplit);
+                $minisplit = array_map('ucwords', $minisplit);
             }
             $res = array_merge($res, $minisplit);
         }
@@ -73,7 +73,7 @@ trait PICOQueryProcessorTrait
             if(in_array($val,$Ops)){
                 $Ops[$index]=strtoupper($val);
             }else{
-                $Ops[$index]=ucfirst($val);
+                $Ops[$index]=ucwords(strtolower(($val)));
             }
         }
         return $res;

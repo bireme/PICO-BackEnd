@@ -28,7 +28,7 @@ class IntegrationDeCSModel extends MainModelsModel
     public final function ControllerTestData()
     {
         return json_encode([
-            'keyword' => 'yellow fever',
+            'keyword' => 'heart',
             'langs' => ['en'],
         ]);
     }
@@ -44,6 +44,9 @@ class IntegrationDeCSModel extends MainModelsModel
             'ResultsByTreeId'=>['array|min:0'],
             'FinalResults' =>['array|min:0'],
             'LevelList' =>['required|array|min:0'],
+            'TotalCount'=>['integer|min:0'],
+            'Queue'=>['array|min:0'],
+            'TotalList' =>['array|min:0'],
         ];
     }
 

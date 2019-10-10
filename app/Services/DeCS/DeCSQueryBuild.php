@@ -18,26 +18,35 @@ abstract class DeCSQueryBuild extends DeCSSupport
     use PICOQueryProcessorTrait;
     use CorrectQueryTrait;
 
-    protected function ProcessInitialQuery(string $query)
+    protected function ProcessInitialQuery(string $query, string $ImproveQuery)
     {
         if ($query && strlen($query)) {
+            if ($ImproveQuery && strlen($ImproveQuery)) {
+                $ImproveProcessed = $this->ProcessQuery($ImproveQuery);
+            } else {
+                $ImproveProcessed = [];
+            }
             $query = $this->FixEquation($query);
             $QueryProcessed = $this->ProcessQuery($query);
-            return $QueryProcessed;
+            $QueryProcessedData = ['QueryProcessed' => $QueryProcessed,
+                'ImproveProcessed' => $ImproveProcessed,
+            ];
+
+            return $QueryProcessedData;
         } else {
             throw new EmptyQuery();
         }
     }
 
 
-    protected function BuildListsFromProcessedData(DataTransferObject $DTO, array $ItemArray, array $langArr, UltraLoggerDevice $Log)
+    protected function BuildListsFromProcessedData(DataTransferObject $DTO, array $ItemArray, array $ImproveProcessed, array $langArr, UltraLoggerDevice $Log)
     {
         $ImproveSearchWords = $DTO->getAttr('ImproveSearchWords');
         $Ops = ['or', 'and', 'not'];
         $Seps = ['(', ')', ' ', ':'];
         $arrayErrorMessageData = null;
         try {
-            $infodata = $this->BuildKeywordList($DTO, $ItemArray, $langArr, $Ops, $Seps, $ImproveSearchWords, $Log);
+            $infodata = $this->BuildKeywordList($DTO, $ItemArray, $langArr, $Ops, $Seps, $ImproveProcessed, $ImproveSearchWords, $Log);
             $KeywordList = $infodata['KeywordList'];
             $AllKeywords = $infodata['AllKeywords'] ?? [];
             $QuerySplit = $infodata['QuerySplit'];
@@ -47,16 +56,13 @@ abstract class DeCSQueryBuild extends DeCSSupport
         if (count($KeywordList ?? []) === 0) {
             throw new NoNewDataToExplore(['TreesToExplore' => null]);
         }
-
-        UltraLoggerFacade::MapArrayIntoUltraLogger($Log, 'KeywordList', ['KeywordList' => $KeywordList], 3);
-        UltraLoggerFacade::MapArrayIntoUltraLogger($Log, 'QuerySplit', ['QuerySplit' => $QuerySplit], 1, 'value');
         $DTO->SaveToModel(get_class($this), ['QuerySplit' => $QuerySplit, 'KeywordList' => $KeywordList, 'AllKeywords' => $AllKeywords]);
-        if(count($KeywordList)>5){
-            $arrayErrorMessageData=[];
-            $txtTooMuch=Lang::get('lang.KeyX');
+        if (count($KeywordList) > 5) {
+            $arrayErrorMessageData = [];
+            $txtTooMuch = Lang::get('lang.KeyX');
             $arrayErrorMessageData[$txtTooMuch] = [];
-            foreach ($KeywordList as $word =>$data) {
-                $word=ucfirst($word);
+            foreach ($KeywordList as $word => $data) {
+                $word = ucwords(strtolower(($word)));
                 array_push($arrayErrorMessageData[$txtTooMuch], ['title' => $word, 'value' => $word, 'checked' => -1]);
             }
         }
@@ -67,7 +73,7 @@ abstract class DeCSQueryBuild extends DeCSSupport
 //INNER FUNCTIONS
 ///////////////////////////////////////////////////////////////////
 
-    private function BuildKeywordList(DataTransferObject $DTO, array $ItemArray, array $langArr, array $Ops, array $Seps, array $ImproveSearchWords, UltraLoggerDevice $Log)
+    private function BuildKeywordList(DataTransferObject $DTO, array $ItemArray, array $langArr, array $Ops, array $Seps, array $ImproveProcessed, array $ImproveSearchWords, UltraLoggerDevice $Log)
     {
         $level = 0;
         $PreviousData = $DTO->getAttr('PreviousData');
@@ -87,7 +93,6 @@ abstract class DeCSQueryBuild extends DeCSSupport
                 continue;
             }
             $value = str_replace('"', '', $value);
-            $value = str_replace("'", '', $value);
             if ($value === '(') {
                 $type = 'op';
                 $level++;
@@ -100,7 +105,11 @@ abstract class DeCSQueryBuild extends DeCSSupport
                 $type = 'op';
             } else {
                 $type = $this->WordType($value, $KeywordsDeCSTerms, $UsedKeyWords, $Ops, $Seps, $ImproveSearchWords);
-                if ($type !== 'decs' && $type !== 'term' && $type !== 'improve') {
+                if ($type === 'improved') {
+                    if (($key = array_search($value, $ImproveProcessed)) !== false) {
+                        $ImproveProcessed[$key] = '';
+                    }
+                } elseif ($type !== 'decs' && $type !== 'term') {
                     if ($type === 'keyexplored' || $type === 'keyword' || $type === 'keyrep') {
                         array_push($AllKeywords, $value);
                         $kwindex = count($localkeywords[$level]) - 1;
@@ -127,6 +136,8 @@ abstract class DeCSQueryBuild extends DeCSSupport
             }
             array_push($QuerySplit, ['type' => $type, 'value' => $value]);
         }
+        $PreviousImproveQueryFound = join('', $ImproveProcessed);
+        $DTO->SaveToModel(get_class($this), ['PreviousImproveQueryFound' => $PreviousImproveQueryFound]);
         $infodata = ['QuerySplit' => $QuerySplit, 'KeywordList' => $KeywordList, 'AllKeywords' => $AllKeywords];
         return $infodata;
     }
@@ -156,9 +167,6 @@ abstract class DeCSQueryBuild extends DeCSSupport
         if (in_array($word, $Ops)) {
             return 'op';
         }
-        if (in_array($word, $ImproveSearchWords)) {
-            return 'improve';
-        }
         if (in_array($word, array_values($KeywordsDeCSTerms['decs']))) {
             return 'decs';
         }
@@ -171,11 +179,13 @@ abstract class DeCSQueryBuild extends DeCSSupport
         if (in_array($word, array_values($KeywordsDeCSTerms['keyword']))) {
             return 'keyexplored';
         }
+        if (in_array($word, $ImproveSearchWords)) {
+            return 'improve';
+        }
         return 'keyword';
     }
 
-    private
-    function getDeCSAndKeywords(array $PreviousData = null)
+    private function getDeCSAndKeywords(array $PreviousData = null)
     {
         $Keywords = [];
         $DeCS = [];

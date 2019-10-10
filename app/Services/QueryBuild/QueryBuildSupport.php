@@ -15,6 +15,8 @@ abstract class QueryBuildSupport extends ServiceEntryPoint
     use PICOQueryProcessorTrait;
     use CorrectQueryTrait;
 
+    private $Exclude = ['(', ')', ' ', 'OR', 'AND', 'NOT'];
+
     ///////////////////////////////////////////////////////////////////
     //protected FUNCTIONS
     ///////////////////////////////////////////////////////////////////
@@ -34,54 +36,60 @@ abstract class QueryBuildSupport extends ServiceEntryPoint
         $DTO->SaveToModel(get_class($this), ['QuerySplit' => $decodedQuerySplit]);
     }
 
-    protected function BuildBaseEquation(DataTransferObject $DTO, array $SelectedDescriptors)
+    protected function getImproveEquation(DataTransferObject $DTO, string $ImproveSearchQuery)
     {
-        $QuerySplit = $DTO->getAttr('QuerySplit');
-        $keytypes = ['keyexplored', 'keypartial', 'keyword', 'keyrep'];
-
-        $info = $this->getExcludedKeywordsAndImprove($QuerySplit, $keytypes);
-        $DontAdd = $info['DontAdd'];
-        $ImproveSearchWords = $info['ImproveSearchWords'];
-
-        $KeywordEquations = $this->BuildEquationsForEachKeyword($SelectedDescriptors, $DontAdd);
-        $QuerySplit = $this->PutKeyWordEquationsInQuerySplit($QuerySplit, $keytypes, $KeywordEquations);
-        $newQuery = $this->BuildNewEquation($QuerySplit);
-        if(strlen($newQuery)){
-            $newQuery='('.$newQuery.')';
+        if (strlen($ImproveSearchQuery)) {
+            $ImproveSearchSplit = $this->ProcessQuery($ImproveSearchQuery);
+            $ImproveSearchWords = array_diff($ImproveSearchSplit, $this->Exclude);
+            $ImproveSearchWords = array_map('strtolower', $ImproveSearchWords);
+            $ImproveSearchWords = array_map('ucwords', $ImproveSearchWords);
+        } else {
+            $ImproveSearchSplit = [];
+            $ImproveSearchWords = [];
         }
-
-        $DTO->SaveToModel(get_class($this), ['newQuery' => $newQuery, 'ImproveSearchWords' => $ImproveSearchWords]);
+        $DTO->SaveToModel(get_class($this), ['ImproveSearchSplit' => $ImproveSearchSplit, 'ImproveSearchWords' => $ImproveSearchWords]);
     }
 
-    protected function ImproveBasicEquation(DataTransferObject $DTO, string $ImproveSearchQuery)
+    protected function BuildnewEquation(DataTransferObject $DTO, array $SelectedDescriptors)
     {
-        $newQuery = $DTO->getAttr('newQuery');
-        if (strlen($ImproveSearchQuery) === 0) {
-            $DTO->SaveToModel(get_class($this), ['newQuery' => $newQuery]);
-        }
-        $improvesplit = $this->ProcessQuery($ImproveSearchQuery);
+        $QuerySplit = $DTO->getAttr('QuerySplit');
         $ImproveSearchWords = $DTO->getAttr('ImproveSearchWords');
-        $ImproveSearchWords = array_map('ucfirst', $ImproveSearchWords);
-        $Exclude = ['(', ')', ' ', 'OR', 'AND', 'NOT'];
-        foreach ($improvesplit as $index => $item) {
-            if (!(in_array($item, $Exclude))) {
-                array_push($ImproveSearchWords, ucfirst($item));
-                $improvesplit[$index] = ucfirst($improvesplit[$index]);
-            }
+        $keytypes = ['keypartial', 'keyword', 'keyrep'];
+
+        $KeywordsDeCSTerms = $this->getDeCSAndKeywords($SelectedDescriptors);
+
+        $QuerySplit = $this->PutKeyWordEquationsInQuerySplit($QuerySplit, $keytypes, $SelectedDescriptors, $KeywordsDeCSTerms, $ImproveSearchWords);
+        $newQuery = $this->JoinIntoNewEquation($QuerySplit);
+
+        if (strlen($newQuery)) {
+            $newQuery = '(' . $newQuery . ')';
         }
-        $ImproveSearchQuery = join('', $improvesplit);
-        if(strlen($ImproveSearchQuery)){
-            $newQuery = $newQuery . ' OR (' . $ImproveSearchQuery . ')';
-        }
+        $newQuery = $this->ImproveBasicEquation($DTO, $newQuery);
         $newQuery = $this->FixEquation($newQuery);
-        $DTO->SaveToModel(get_class($this), ['newQuery' => $newQuery,'ImproveSearchQuery'=>$ImproveSearchQuery,'ImproveSearchWords' => $ImproveSearchWords]);
+        $DTO->SaveToModel(get_class($this), ['newQuery' => $newQuery]);
     }
 
     /////////////////////////////////////
     /// INNER
     /// ///////////////////////////
 
-    private function BuildNewEquation(array $QuerySplit)
+    private function ImproveBasicEquation(DataTransferObject $DTO, String $newQuery)
+    {
+        $ImproveSearchWords = $DTO->getAttr('ImproveSearchWords');
+        if (count($ImproveSearchWords) === 0) {
+            $ImproveSearchQuery = '';
+        } else {
+            $ImproveSearchSplit = $DTO->getAttr('ImproveSearchSplit');
+            $ImproveSearchQuery = join('', $ImproveSearchSplit);
+            if (strlen($ImproveSearchQuery)) {
+                $newQuery = $newQuery . ' OR (' . $ImproveSearchQuery . ')';
+            }
+        }
+        $DTO->SaveToModel(get_class($this), ['ImproveSearchQuery' => $ImproveSearchQuery]);
+        return $newQuery;
+    }
+
+    private function JoinIntoNewEquation(array $QuerySplit)
     {
         $vals = array_column($QuerySplit, 'value');
         $newQuery = join('', $vals);
@@ -96,8 +104,9 @@ abstract class QueryBuildSupport extends ServiceEntryPoint
         return $value;
     }
 
-    private function PutKeyWordEquationsInQuerySplit(array $QuerySplit, array $keytypes, array $KeywordEquations)
+    private function PutKeyWordEquationsInQuerySplit(array $QuerySplit, array $keytypes, array $SelectedDescriptors, array $KeywordsDeCSTerms, array $ImproveSearchWords)
     {
+        $KeywordEquations = [];
         foreach ($QuerySplit as $index => $itemArray) {
             $type = $itemArray['type'];
             $value = strtolower($itemArray['value']);
@@ -105,14 +114,20 @@ abstract class QueryBuildSupport extends ServiceEntryPoint
             if ($type === 'op') {
                 $QuerySplit[$index]['value'] = strtoupper($value);
             } else {
-                if ($type !== 'sep') {
-                    $value = ucfirst($value);
+                if ($type === 'improve') {
+                    if (!(in_array($value, $ImproveSearchWords))) {
+                        $QuerySplit[$index]['value'] = '';
+                    }
+                } elseif ($type !== 'sep') {
+                    $value = ucwords(strtolower($value));
                     if (in_array($type, $keytypes)) {
-                        $content = $KeywordEquations[ucfirst($value)] ?? null;
-                        if ($content !== null) {
-                            $QuerySplit[$index]['value'] = $content;
-                            $changed = true;
+                        $content = $KeywordEquations[$value]??null;
+                        if ($content === null) {
+                            $content = $this->BuildKeywordEquation($value, $SelectedDescriptors);
+                            $KeywordEquations[$value] = $content;
                         }
+                        $QuerySplit[$index]['value'] = $content;
+                        $changed = true;
                     }
                     if ($changed === false) {
                         $value = $this->AddQuotesIfNecesary($value);
@@ -124,42 +139,11 @@ abstract class QueryBuildSupport extends ServiceEntryPoint
         return $QuerySplit;
     }
 
-    private function getExcludedKeywordsAndImprove(array $QuerySplit, array $keytypes)
+    private function BuildKeywordEquation(string $keyword, array $SelectedDescriptors)
     {
-        $DontAdd = [];
-        $DoAdd = [];
-        $dont = ['decs', 'term', 'improve'];
-        $ImproveSearchWords = [];
-        foreach ($QuerySplit as $itemArray) {
-            $type = $itemArray['type'];
-            $value = strtolower($itemArray['value']);
-            if ($type === 'improve') {
-                array_push($ImproveSearchWords, $value);
-            }
-            if (in_array($type, $dont)) {
-                array_push($DontAdd, $value);
-            }
-            if (in_array($type, $keytypes)) {
-                array_push($DoAdd, $value);
-            }
-        }
-        $DontAdd = array_diff($DontAdd, $DoAdd);
-        return ['DontAdd' => $DontAdd, 'ImproveSearchWords' => $ImproveSearchWords];
-    }
-
-    private function BuildEquationsForEachKeyword(array $SelectedDescriptors, array $DontAdd)
-    {
-        $KeywordEquations = [];
-        foreach ($SelectedDescriptors as $keyword => $keywordData) {
-            $KeywordEquations[$keyword] = $this->BuildKeywordEquation($keyword, $keywordData, $DontAdd);;
-        }
-        return $KeywordEquations;
-    }
-
-
-    private function BuildKeywordEquation(string $keyword, array $KeywordData, array $DontAdd)
-    {
+        $KeywordData=$SelectedDescriptors[ucwords(strtolower($keyword))];
         $TermEquation = '';
+        $DontAdd = [];
         array_push($DontAdd, strtolower($keyword));
         foreach ($KeywordData as $term => $DeCSArr) {
             if (count($DeCSArr) === 0) {
@@ -168,7 +152,7 @@ abstract class QueryBuildSupport extends ServiceEntryPoint
             $term = strtolower($term);
             if (!(in_array($term, $DontAdd))) {
                 array_push($DontAdd, $term);
-                $localterm = ucfirst($term);
+                $localterm = ucwords(strtolower($term));
                 if (strpos($localterm, ' ') !== false) {
                     $localterm = '"' . $localterm . '"';
                 }
@@ -192,11 +176,11 @@ abstract class QueryBuildSupport extends ServiceEntryPoint
             $TermEquation = $TermEquation . ' OR (' . $equation . ')';
         }
         if (strlen($TermEquation)) {
-            $keyword = ucfirst($keyword);
+            $keyword = ucwords(strtolower($keyword));
             if (strpos($keyword, ' ') !== false) {
                 $keyword = '"' . $keyword . '"';
             }
-            $TermEquation = '('.$keyword . $TermEquation.')';
+            $TermEquation = '(' . $keyword . $TermEquation . ')';
         }
         return $TermEquation;
     }
@@ -206,7 +190,7 @@ abstract class QueryBuildSupport extends ServiceEntryPoint
 
         $DeCSArr = array_map('strtolower', $DeCSArr);
         $DeCSArr = array_diff($DeCSArr, $DontAdd);
-        $DeCSArr = array_map('ucfirst', $DeCSArr);
+        $DeCSArr = array_map('ucwords', $DeCSArr);
         if (count($DeCSArr)) {
             foreach ($DeCSArr as $id => $DeCS) {
                 if (strpos($DeCS, ' ') !== false) {
@@ -219,5 +203,35 @@ abstract class QueryBuildSupport extends ServiceEntryPoint
         }
     }
 
+    private function getDeCSAndKeywords(array $Data = null)
+    {
+        $Keywords = [];
+        $DeCS = [];
+        $terms = [];
+        if ($Data && is_array($Data)) {
+            foreach ($Data as $keyword => $KeywordData) {
+                array_push($Keywords, $keyword);
+                foreach ($KeywordData as $Term => $TermData) {
+                    array_push($terms, $Term);
+                    $DeCS = array_merge($DeCS, $TermData);
+                }
+            }
+            $Keywords = array_map('strtolower', $Keywords);
+            $DeCS = array_map('strtolower', $DeCS);
+            $terms = array_map('strtolower', $terms);
+            $Keywords = array_unique($Keywords);
+            $DeCS = array_unique($DeCS);
+            $terms = array_unique($terms);
+            $DeCS = array_diff($DeCS, $terms);
+            $DeCS = array_diff($DeCS, $Keywords);
+            $terms = array_diff($terms, $Keywords);
+        }
+        $KeywordsDeCSTerms = [
+            'keyword' => $Keywords,
+            'decs' => $DeCS,
+            'term' => $terms,
+        ];
+        return $KeywordsDeCSTerms;
+    }
 
 }

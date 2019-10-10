@@ -26,6 +26,7 @@ abstract class DeCSIntegrationDataProcessor extends DTOManager
                 }
             }
         }
+        $cut=[];
         if ($IsMainTree) {
             if (count($TreeList) === 0) {
                 UltraLoggerFacade::WarningToUltraLogger($Log, 'There were no trees found to be processed');
@@ -44,7 +45,6 @@ abstract class DeCSIntegrationDataProcessor extends DTOManager
                 }
             }
         }
-
         $CurrentResults = $this->getResultsOrderedByTreeId($DTO);
         $OfficialLangs = $this->getLangs($DTO);
 

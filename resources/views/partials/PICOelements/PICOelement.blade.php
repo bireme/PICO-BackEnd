@@ -36,7 +36,7 @@
                        title="{{ __('lang.clickres') }}"><label></label><span
                             class="badge badge-light badgeM" style="margin-left:15px;"></span></a>
                 @endif
-                <button id="CalcRes{{ $PICOiterative }}" class="btn btn-info" data-toggle="tooltip"
+                <button id="CalcRes{{ $PICOiterative }}" data-piconum="{{ $PICOiterative }}" class="calcresbut btn btn-info" data-toggle="tooltip"
                         data-placement="top" title="{{ __('lang.upres') }}">{{ __('lang.butres') }}</button>
             </div>
         </div>

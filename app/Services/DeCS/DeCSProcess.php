@@ -25,17 +25,17 @@ class DeCSProcess extends DeCSQueryBuild implements ServiceEntryPointInterface
             $InitialData = $DTO->getInitialData();
             $Log = UltraLoggerFacade::createUltraLogger('DeCSProcess', $InitialData);
 
-            $LogData = UltraLoggerFacade::UltraLoggerAttempt($Log, 'Attempting to decode previous data');
+            UltraLoggerFacade::InfoToUltraLogger($Log, 'Attempting to decode previous data');
             $this->DecodePreviousData($DTO, $InitialData['SavedData'] ?? null,$InitialData['ImproveSearchWords'] ?? null,$InitialData['OldSelectedDescriptors'] ?? null);
-            UltraLoggerFacade::UltraLoggerSuccessfulAttempt($Log, $LogData);
 
-            $LogData = UltraLoggerFacade::UltraLoggerAttempt($Log, 'Attempting to process query and improved search');
-            $QueryProcessed = $this->ProcessInitialQuery($InitialData['query']);
-            UltraLoggerFacade::UltraLoggerSuccessfulAttempt($Log, $LogData);
 
-            $LogData = UltraLoggerFacade::UltraLoggerAttempt($Log, 'Attempting to build Lists From proocessed queries');
-            $arrayErrorMessageData = $this->BuildListsFromProcessedData($DTO, $QueryProcessed, $InitialData['langs'], $Log);
-            UltraLoggerFacade::UltraLoggerSuccessfulAttempt($Log, $LogData);
+            UltraLoggerFacade::InfoToUltraLogger($Log, 'Attempting to process query and improved search');
+            $QueryProcessedData = $this->ProcessInitialQuery($InitialData['query'],$InitialData['PreviousImproveQuery']??'');
+
+
+            UltraLoggerFacade::InfoToUltraLogger($Log, 'Attempting to build Lists From proocessed queries');
+            $arrayErrorMessageData = $this->BuildListsFromProcessedData($DTO, $QueryProcessedData['QueryProcessed'],$QueryProcessedData['ImproveProcessed'], $InitialData['langs'], $Log);
+
 
             $IntegrationResults=[];
             if(!($arrayErrorMessageData)) {
@@ -51,9 +51,9 @@ class DeCSProcess extends DeCSQueryBuild implements ServiceEntryPointInterface
                 UltraLoggerFacade::InfoToUltraLogger($Log, 'Processing KeywordList => Building as Terms');
                 $this->BuildAsTerms($DTO, $InitialData['langs'], $InitialData['mainLanguage'], $Log);
 
-                $LogData = UltraLoggerFacade::UltraLoggerAttempt($Log, 'Attempting to build html');
+                UltraLoggerFacade::InfoToUltraLogger($Log, 'Attempting to build html');
                 $this->BuildDeCSHTML($DTO, $InitialData['PICOnum']);
-                UltraLoggerFacade::UltraLoggerSuccessfulAttempt($Log, $LogData);
+
             }
 
             $results = [
@@ -61,7 +61,7 @@ class DeCSProcess extends DeCSQueryBuild implements ServiceEntryPointInterface
                 //QuerySplit is included in a hidden field inside HTML
                 'DescriptorsHTML' => $DTO->getAttr('DescriptorsHTML'),
                 'DeCSHTML' => $DTO->getAttr('DeCSHTML'),
-                'PreviousImproveQuery' => $InitialData['PreviousImproveQuery']??'',
+                'PreviousImproveQuery' => $DTO->getAttr('PreviousImproveQueryFound'),
             ];
             $wasSuccesful=true;
         } catch (DontCatchException $ex) {
@@ -88,9 +88,9 @@ class DeCSProcess extends DeCSQueryBuild implements ServiceEntryPointInterface
             if (count($langs) === 0) {
                 continue;
             }
-            $LogData = UltraLoggerFacade::UltraLoggerAttempt($Log, '('.($index+1). '/' .(count($langs). ') Attempting Connection:' . json_encode(['keyword'=>$keyword,'langs'=>$langs])));
+            UltraLoggerFacade::InfoToUltraLogger($Log, '('.($index+1). '/' .(count($langs). ') Attempting Connection:' . json_encode(['keyword'=>$keyword,'langs'=>$langs])));
             $res = $this->Connect($ServicePerformance, $keyword, $langs, $Log);
-            UltraLoggerFacade::UltraLoggerSuccessfulAttempt($Log, $LogData);
+
 
             if($res==='no-res'){
                 $res=null;
