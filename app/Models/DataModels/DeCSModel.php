@@ -35,7 +35,7 @@ class DeCSModel extends MainModelsModel
 
     public final function ControllerTestData()
     {
-        return $this->FullDataSimpleQuery();
+        return $this->Issue39();
     }
 
     public static final function AttributeRules()
@@ -198,6 +198,24 @@ class DeCSModel extends MainModelsModel
             ],
             'mainLanguage' => "en",
             'query' => "if($(modalone).find('.DontShowButton'))",
+        ]);
+    }
+
+    private function Issue39()
+    {
+        return json_encode([
+            'ImproveSearchWords' => "[]",
+            'OldSelectedDescriptors' => '{"Dengue":{"Dengue":[],"Dengue Virus":[],"Severe Dengue":[],"Dengue Vaccines":["Vacunas Contra El Dengue","Vacinas Contra Dengue","Vacinas Contra A Dengue","Vacinas Contra O V\u00edrus Da Dengue"]}}',
+            'PICOnum' => 1,
+            'PreviousImproveQuery' => '',
+            'SavedData' => '{"dengue":{"C02.081.270":{"en":{"term":"Dengue","decs":["Dengue","Break Bone Fever","Break-Bone Fever","Breakbone Fever","Classical Dengue","Classical Dengue Fever","Classical Dengue Fevers","Classical Dengues","Dengue Fever"]},"es":{"term":"Dengue","decs":["Dengue","Fiebre Dengue"]},"pt":{"term":"Dengue","decs":["Dengue","Febre Quebra-Ossos","Febre da Dengue","Infec\u00e7\u00e3o pelo V\u00edrus da Dengue","Infec\u00e7\u00e3o por V\u00edrus da Dengue","Infec\u00e7\u00e3o por V\u00edrus de Dengue"]}},"B04.820.250.350.270":{"en":{"term":"Dengue Virus","decs":["Dengue Virus","Breakbone Fever Virus","Breakbone Fever Viruses","Dengue Viruses"]},"es":{"term":"Virus del Dengue","decs":["Virus del Dengue","Virus de la Fiebre Rompehuesos"]},"pt":{"term":"V\u00edrus da Dengue","decs":["V\u00edrus da Dengue","V\u00edrus da Febre Quebra-Ossos"]}},"C02.081.270.200":{"en":{"term":"Severe Dengue","decs":{"0":"Severe Dengue","1":"Dengue Hemorrhagic Fever","2":"Dengue Shock Syndrome","4":"Severe Dengues","5":"Philippine Hemorrhagic Fever","6":"Singapore Hemorrhagic Fever","7":"Thai Hemorrhagic Fever","8":"Hemorrhagic Dengue","9":"Hemorrhagic Dengues"}},"es":{"term":"Dengue Grave","decs":["Dengue Grave","Dengue Hemorr\u00e1gico","Fiebre Dengue Hemorr\u00e1gica","Fiebre Hemorr\u00e1gica Dengue","Fiebre Hemorr\u00e1gica de Dengue","S\u00edndrome de Choque por Dengue","S\u00edndrome de Shock por Dengue"]},"pt":{"term":"Dengue Grave","decs":["Dengue Grave","Dengue Hemorr\u00e1gica","Febre Hemorr\u00e1gica Dengue","Febre Hemorr\u00e1gica da Dengue","Febre Hemorr\u00e1gica devida ao V\u00edrus do Dengue","Febre Hemorr\u00e1gica pelo V\u00edrus da Dengue","Febre Hemorr\u00e1gica pelo V\u00edrus do Dengue","S\u00edndrome de Choque da Dengue"]}},"D20.215.894.899.162":{"en":{"term":"Dengue Vaccines","decs":["Dengue Vaccines"]},"es":{"term":"Vacunas contra el Dengue","decs":["Vacunas contra el Dengue"]},"pt":{"term":"Vacinas contra Dengue","decs":["Vacinas contra Dengue","Vacinas contra a Dengue","Vacinas contra o V\u00edrus da Dengue"]}}}}',
+            'langs' => [
+                0 => "en",
+                1 => "pt",
+                2 => "es",
+            ],
+            'mainLanguage' => "en",
+            'query' => '((Dengue OR ("Dengue Vaccines" OR "Vacunas Contra El Dengue")))',
         ]);
     }
 

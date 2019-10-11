@@ -107,9 +107,7 @@ abstract class DeCSSupport extends ServiceEntryPoint
         $AllKeywordList = $DTO->getAttr('AllKeywords');
         $QuerySplit = $DTO->getAttr('QuerySplit');
 
-        $usedData = null;
         $OldSelectedDescriptors = $DTO->getAttr('OldSelectedDescriptors');
-
 
 
         $notFound = [];
@@ -120,29 +118,27 @@ abstract class DeCSSupport extends ServiceEntryPoint
             }
         }
 
-        if ($OldSelectedDescriptors !== null) {
-            $usedData = [];
-            foreach ($QuerySplit as $index => $arrayitem) {
-                $type = $arrayitem['type'] ?? null;
-                $value = $arrayitem['value'] ?? null;
-                if (!($type === 'op' || $type === 'sep' || $type === 'improve')) {
-                    if(($type==='keyword' || $type==='keyrep') && in_array($value,$notFound)){
-                        $QuerySplit[$index]['type']='free';
-                    }
-                    array_push($usedData, $value);
+
+        $WordsInQuerySplit = [];
+        foreach ($QuerySplit as $index => $arrayitem) {
+            $type = $arrayitem['type'] ?? null;
+            $value = $arrayitem['value'] ?? null;
+            if ($type === 'decs' || $type === 'term') {
+                array_push($WordsInQuerySplit, ucwords($value));
+            } elseif (!($type === 'op' || $type === 'sep' || $type === 'improve')) {
+                if (($type === 'keyword' || $type === 'keyrep') && in_array($value, $notFound)) {
+                    $QuerySplit[$index]['type'] = 'free';
                 }
+
             }
         }
 
-
-
-        $QuerySplitValuesToRemove = [];
         foreach ($MixedData as $keyword => $keywordData) {
             if (!(in_array($keyword, $AllKeywordList))) {
                 continue;
             }
             $keyword = ucwords(strtolower($keyword));
-            if ($OldSelectedDescriptors !== null) {
+            if ($OldSelectedDescriptors === null) {
                 $isNewKeyword = true;
             } else {
                 if (($OldSelectedDescriptors[$keyword] ?? null) === null) {
@@ -151,7 +147,8 @@ abstract class DeCSSupport extends ServiceEntryPoint
                     $isNewKeyword = false;
                 }
             }
-            $this->processKeywordDescriptors($Log, $keyword, $keywordData, $TitleLanguage, $langs, $ProcessedDescriptors, $ProcessedDeCS, $isNewKeyword, $OldSelectedDescriptors, $usedData);
+
+            $this->processKeywordDescriptors($Log, $keyword, $keywordData, $TitleLanguage, $langs, $ProcessedDescriptors, $ProcessedDeCS, $isNewKeyword, $WordsInQuerySplit, $OldSelectedDescriptors);
         }
         if (count($notFound)) {
             $txtNotFound = Lang::get('Lang.NotFound');
@@ -162,11 +159,11 @@ abstract class DeCSSupport extends ServiceEntryPoint
             }
         }
 
-//dd(['ProcessedDescriptors' => $ProcessedDescriptors, 'ProcessedDeCS' => $ProcessedDeCS]);
+        //dd(['ProcessedDescriptors' => $ProcessedDescriptors, 'ProcessedDeCS' => $ProcessedDeCS]);
         $DTO->SaveToModel(get_class($this), ['ProcessedDescriptors' => $ProcessedDescriptors, 'ProcessedDeCS' => $ProcessedDeCS, 'QuerySplit' => $QuerySplit]);
     }
 
-    protected function processKeywordDescriptors(UltraLoggerDevice $Log, string $keyword, array $keywordData, String $TitleLanguage, array $langs, array &$ProcessedDescriptors, array &$ProcessedDeCS, bool $isNewKeyword, array $OldSelectedDescriptors = null, array $usedData = null)
+    protected function processKeywordDescriptors(UltraLoggerDevice $Log, string $keyword, array $keywordData, String $TitleLanguage, array $langs, array &$ProcessedDescriptors, array &$ProcessedDeCS, bool $isNewKeyword, array $WordsInQuerySplit, array $OldSelectedDescriptors = null)
     {
         $UsedTerms = [];
         foreach ($keywordData as $tree_id => $TreeObject) {
@@ -178,10 +175,10 @@ abstract class DeCSSupport extends ServiceEntryPoint
             if (in_array($Term, $UsedTerms)) {
                 continue;
             }
-            $alldecsInTerm = null;
-            $alldecsInTerm = [];
+            $DeCSFoundInSavedData = null;
+            $DeCSFoundInSavedData = [];
             array_push($UsedTerms, $Term);
-            $this->AddToDeCSTotal($alldecsInTerm, $TreeObject, $langs);
+            $this->AddToDeCSTotal($DeCSFoundInSavedData, $TreeObject, $langs);
             foreach ($keywordData as $tree_idTwo => $TreeObjectTwo) {
                 if (!($Term)) {
                     UltraLoggerFacade::ErrorToUltraLogger($Log, 'Tree_id ' . $tree_id . ' has no Term in language ' . $TitleLanguage);
@@ -194,70 +191,76 @@ abstract class DeCSSupport extends ServiceEntryPoint
                 if ($Term !== $TermTwo) {
                     continue;
                 }
-                $this->AddToDeCSTotal($alldecsInTerm, $TreeObjectTwo, $langs);
+                $this->AddToDeCSTotal($DeCSFoundInSavedData, $TreeObjectTwo, $langs);
             }
-            $this->AddToResults($keyword, $Term, $ProcessedDescriptors, $ProcessedDeCS, $alldecsInTerm, $isNewKeyword, $OldSelectedDescriptors, $usedData);
+            $this->AddToResults($keyword, $Term, $ProcessedDescriptors, $ProcessedDeCS, $DeCSFoundInSavedData, $isNewKeyword, $WordsInQuerySplit, $OldSelectedDescriptors);
         }
     }
 
-    private function AddToResults(String $keyword, String $Term, array &$ProcessedDescriptors, array &$ProcessedDeCS, array $alldecsInTerm, bool $isNewKeyword, array $OldSelectedDescriptors = null)
+    private function AddToResults(String $keyword, String $Term, array &$ProcessedDescriptors, array &$ProcessedDeCS, array $DeCSFoundInSavedData, bool $isNewKeyword, array $WordsInQuerySplit, array $OldSelectedDescriptors = null)
     {
         $Term = ucwords(strtolower($Term));
-        $OldTerm=[];
+        $TermOldSelectedData = null;
         $DeCSTitle = $Term . ' [' . $keyword . ']';
-        if ($isNewKeyword === 1) {
+        if (($ProcessedDescriptors[$keyword] ?? null) === null) {
+            $ProcessedDescriptors[$keyword] = [];
+        }
+        if (($ProcessedDeCS[$DeCSTitle] ?? null) === null) {
+            $ProcessedDeCS[$DeCSTitle] = [];
+        }
+
+        if ($isNewKeyword === true) {
             $CheckedTerm = 1;
         } else {
-            $OldTerm = $OldSelectedDescriptors[$keyword][$Term] ?? null;
-            if ($OldTerm === null) {
-                $CheckedTerm = 1;
-            } else {
-                if (count($OldTerm)) {
+            if (in_array($Term, array_keys($OldSelectedDescriptors[$keyword]))) {
+                $TermOldSelectedData = $OldSelectedDescriptors[$keyword][$Term];
+                if (count($TermOldSelectedData)) {
                     $CheckedTerm = 1;
                 } else {
                     $CheckedTerm = 0;
                 }
+            } else {
+                $TermOldSelectedData = null;
+                $CheckedTerm = 0;
             }
         }
-
         $this->newHtmlArray($ProcessedDescriptors, $keyword, $Term, $Term, $CheckedTerm);
 
 
-        $alldecsInTerm = array_map('strtolower', $alldecsInTerm);
-        $alldecsInTerm = array_map('ucwords', $alldecsInTerm);
-        $alldecsInTerm = array_unique($alldecsInTerm);
-        $alldecsInTerm = array_diff($alldecsInTerm, [$keyword, $Term]);
+        $DeCSFoundInSavedData = array_diff(($DeCSFoundInSavedData), [$Term]);
+        $DeCSFoundInSavedData = array_map('strtolower', $DeCSFoundInSavedData);
+        $DeCSFoundInSavedData = array_map('ucwords', $DeCSFoundInSavedData);
+        $DeCSFoundInSavedData=array_unique($DeCSFoundInSavedData);
 
-        foreach ($alldecsInTerm as $DeCS) {
+
+        //dd($DeCSFoundInSavedData, $AvailableDeCS, array_intersect($DeCSFoundInSavedData, $AvailableDeCS));
+        $Available = array_intersect($DeCSFoundInSavedData, $WordsInQuerySplit);
+
+        foreach ($DeCSFoundInSavedData as $DeCS) {
             if ($isNewKeyword) {
                 $CheckedDeCS = 1;
             } else {
-                if ($CheckedTerm === 0) {
-                    $CheckedDeCS = 0;
-                } else {
-                    if (in_array($DeCS, $OldTerm)) {
+                if($CheckedTerm === 0){
+                    $CheckedDeCS = 1;
+                }else{
+                    if (in_array($DeCS, $Available)) {
                         $CheckedDeCS = 1;
                     } else {
                         $CheckedDeCS = 0;
                     }
                 }
             }
-
             $this->newHtmlArray($ProcessedDeCS, $DeCSTitle, $DeCS, $DeCS, $CheckedDeCS);
         }
-
     }
 
     private function newHtmlArray(array &$array, String $mainKey, String $title, String $value, int $isChecked)
     {
-        if (!($array[$mainKey] ?? null)) {
-            $array[$mainKey] = [];
-        }
         array_push($array[$mainKey], ['title' => $title, 'value' => $value, 'checked' => $isChecked]);
     }
 
 
-    private function AddToDeCSTotal(array &$alldecsInTerm, array $TreeObject, array $langs)
+    private function AddToDeCSTotal(array &$DeCSFoundInSavedData, array $TreeObject, array $langs)
     {
         foreach ($TreeObject as $lang => $content) {
             if (!(in_array($lang, $langs))) {
@@ -265,7 +268,7 @@ abstract class DeCSSupport extends ServiceEntryPoint
             }
             $term = $content['term'];
             $decs = $content['decs'];
-            $alldecsInTerm = array_merge($alldecsInTerm, [$term], $decs);
+            $DeCSFoundInSavedData = array_merge($DeCSFoundInSavedData, [$term], $decs);
         }
     }
 
