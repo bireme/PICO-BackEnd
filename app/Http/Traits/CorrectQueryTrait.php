@@ -17,6 +17,8 @@ trait CorrectQueryTrait
             $query = $this->FixPars($query);
             $query = $this->FixParsOps($query);
             $query = $this->FixPars($query);
+
+
             if ($query !== $iniquery) {
                 $error = true;
                 $iniquery = $query;
@@ -66,6 +68,7 @@ trait CorrectQueryTrait
             $query = str_replace(' OR OR ', ' OR ', $query);
             $query = str_replace(' AND AND ', ' AND ', $query);
             $query = str_replace(' NOT NOT ', ' NOT ', $query);
+            $query = str_replace('" "', '" OR "', $query);
             $query = str_replace('  ', ' ', $query);
             $query = trim($query, ' ');
 
@@ -89,6 +92,9 @@ trait CorrectQueryTrait
             $query = str_replace('( ', '(', $query);
             $query = str_replace(' )', ')', $query);
             $query = str_replace('( )', '()', $query);
+            $query = str_replace('::', ':', $query);
+            $query = str_replace('(:', '(', $query);
+            $query = str_replace(':)', ')', $query);
             $query = str_replace('()', '', $query);
             $query = str_replace(')(', ') OR (', $query);
             $query = str_replace('( (', '((', $query);

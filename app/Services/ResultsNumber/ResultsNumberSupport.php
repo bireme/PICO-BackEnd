@@ -14,7 +14,7 @@ abstract class ResultsNumberSupport extends ServiceEntryPoint
     /**
      * @var array
      */
-    private $fields = ['', 'ti', 'tw', 'mh'];
+    private $fields = ['', 'ti', 'mh'];
     private $piconames =['P','I','C','0'];
 
     use PICOQueryProcessorTrait;
