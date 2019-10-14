@@ -1,5 +1,4 @@
 import {
-    ReturnToOldState,
     MustRecalculate,
     JustUpdated,
     getComparisonCurrentLocal,
@@ -8,7 +7,7 @@ import {
     isHiddenResNum,
     setGlobalTitle,
     MustRecalculateFinal,
-    ReturnToOldStateFinal,
+    getComparisonCurrentGlobal,
     JustUpdatedFinal,
 } from "./changebasic.js";
 
@@ -20,54 +19,59 @@ export function ChangeSeekerStart() {
     CheckIfChanged();
 }
 
+
 function CheckIfChanged() {
     setTimeout(function () {
-        ChangeSeekerHandler(false);
+        ChangeSeekerTimer();
         CheckIfChanged();
     }, 1500);
 }
 
-export function ChangeSeekerHandler(isfirst) {
-    let PICOnum = 1;
+export function ChangeSeekerTimer() {
     let focused = $(':focus');
-    if (isfirst === false) {
-        if (!(focused.hasClass('PICOchangeitem'))) {
-            return;
-        } else {
-            PICOnum = $(focused).attr('data-PICO');
-        }
+    let PICOnum = -1;
+    if (focused.hasClass('PICOchangeitem')) {
+        PICOnum = $(focused).attr('data-pico');
     }
-    let tmptwo = '';
-    let tmp;
-    let ishiddenLocalResnum;
-    let ishiddenGlobalResnum;
+    if (PICOnum > 0 && PICOnum < 5) {
+        console.log("timercall");
+        ChangeSeekerHandler(PICOnum);
+    }
+}
 
-    for (let loop_i = PICOnum; loop_i < 6; loop_i++) {
-        tmp = getComparisonCurrentLocal(loop_i);
-        if (loop_i === PICOnum && loop_i < 5) {
-            ishiddenLocalResnum = isHiddenResNum(loop_i, false);
-            if (getComparisonLocalPreviouslySaved(PICOnum) === tmp) {
-                ReturnToOldState(PICOnum, false);
-            } else {
-                if (!(ishiddenLocalResnum)) {
-                    MustRecalculate(PICOnum, false);
-                }
-            }
+export function ChangeSeekerHandler(PICOnum) {
+    let ishiddenlocalResnum = isHiddenResNum(PICOnum, true);
+    let currentlocal = getComparisonCurrentLocal(PICOnum);
+    let savedlocal = getComparisonLocalPreviouslySaved(PICOnum);
+    console.log("CHANGESEEKERPICONUM..." + PICOnum + '...savedlocal=' + savedlocal);
+    if (PICOnum < 5 && (savedlocal === undefined || savedlocal.length < 2)) {
+        return;
+    }
+    if (currentlocal !== savedlocal) {
+        MustRecalculate(PICOnum, false);
+    } else {
+        return;
+    }
+    let ishiddenGlobalResnum;
+    let currentglobal = null;
+    let savedglobal = null;
+    let loop_i = PICOnum;
+    if (loop_i === 1) {
+        loop_i = 2;
+    }
+
+    for (loop_i; loop_i < 6; loop_i++) {
+        ishiddenGlobalResnum = isHiddenResNum(loop_i, true);
+        currentglobal = getComparisonCurrentGlobal(loop_i);
+        savedglobal = getComparisonGlobalPreviouslySaved(loop_i);
+        let savedlocal = getComparisonLocalPreviouslySaved(loop_i);
+        if (loop_i < 5 && (savedlocal === undefined || savedlocal.length < 2)) {
+            console.log(loop_i+'...not has global')
+            continue;
         }
-        tmptwo = tmptwo + tmp;
-        if (loop_i > 1 && loop_i < 5) {
-            ishiddenGlobalResnum = isHiddenResNum(loop_i, true);
-            if (tmptwo === getComparisonGlobalPreviouslySaved(loop_i)) {
-                ReturnToOldState(loop_i, true);
-            } else {
-                if (!(ishiddenGlobalResnum)) {
-                    MustRecalculate(loop_i, true);
-                }
-            }
-        }
-        if (loop_i === 5) {
-            if (tmptwo === getComparisonGlobalPreviouslySaved(5)) {
-                ReturnToOldStateFinal();
+        if (currentglobal !== savedglobal) {
+            if (loop_i < 5) {
+                MustRecalculate(loop_i, true);
             } else {
                 MustRecalculateFinal();
             }
@@ -81,17 +85,17 @@ export function UpdateLocalAfterResults(PICOnum, resultsNumber, resultsURL) {
 
 export function UpdateGlobalAfterResults(PICOnum, resultsNumber, resultsURL, globaltitle) {
     setGlobalTitle(PICOnum, globaltitle);
-    if(PICOnum>4){
+    if (PICOnum > 4) {
         JustUpdatedFinal(resultsNumber, resultsURL)
-    }else{
+    } else {
         JustUpdated(PICOnum, true, false, resultsNumber, resultsURL);
     }
 }
 
 function InitialButtonSet() {
     JustUpdated(1, false, true, null, null);
-    for (let loop_i = 2; loop_i <= 4; loop_i++) {
-        JustUpdated(loop_i, true, true, null, null);
-        JustUpdated(loop_i, false, true, null, null);
+    for (let loop_w = 2; loop_w <= 4; loop_w++) {
+        JustUpdated(loop_w, true, true, null, null);
+        JustUpdated(loop_w, false, true, null, null);
     }
 }

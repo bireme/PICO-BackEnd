@@ -39,7 +39,7 @@ class ddController extends Controller
                     'code' => 500,
                     'message' => 'Key: ' . $key . ' could not be decoded',
                 ];
-                return view('errortxt')->with(['data' => $data]);
+                return view('vendor.laravel-log-viewer.errortxt')->with(['data' => $data]);
             }
         } else {
             $info = [

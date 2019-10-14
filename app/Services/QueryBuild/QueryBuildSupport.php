@@ -111,12 +111,17 @@ abstract class QueryBuildSupport extends ServiceEntryPoint
                 }
             }
         }
+
         $selectedwordlist = array_unique($selectedwordlist);
         $availableList = [];
 
         $QuerySplit = $this->RemoveDeCSNotFound($QuerySplit, $ImproveSearchWords, $keytypes, $selectedwordlist, $availableList);
 
-        $NewSelectedDescriptors = $this->BuildNewSelectedDescriptors($SelectedDescriptors, $availableList);
+        $NewSelectedDescriptors=null;
+        if(count($availableList)){
+            $NewSelectedDescriptors = $this->BuildNewSelectedDescriptors($SelectedDescriptors, $availableList);
+        }
+
         $QuerySplit = $this->ReBuildQuerySplit($QuerySplit, $keytypes, $SelectedDescriptors, $NewSelectedDescriptors);
 
         return $QuerySplit;
@@ -128,7 +133,6 @@ abstract class QueryBuildSupport extends ServiceEntryPoint
         foreach ($QuerySplit as $index => $itemArray) {
             $type = $itemArray['type'];
             $value = strtolower($itemArray['value']);
-            $changed = false;
             if ($type === 'op') {
                 $QuerySplit[$index]['value'] = strtoupper($value);
             } else {
@@ -140,14 +144,13 @@ abstract class QueryBuildSupport extends ServiceEntryPoint
                 } elseif ($type !== 'sep') {
                     if (in_array($type, $keytypes)) {
                         if (in_array($value, $selectedwordlist)) {
-                            if (!(in_array($value, $RepeatMaster))) {
+                            if (!(in_array($value, array_keys($RepeatMaster)))) {
                                 $RepeatMaster[$value] = false;
                             }
                             if (($RepeatMaster[$value] === false)) {
                                 $RepeatMaster[$value] = true;
                             } else {
                                 $QuerySplit[$index]['type'] = 'decs';
-                                $changed = true;
                             }
                         }
 
@@ -155,21 +158,15 @@ abstract class QueryBuildSupport extends ServiceEntryPoint
                     if ($type === 'decs') {
                         if (!(in_array($value, $selectedwordlist))) {
                             $QuerySplit[$index]['value'] = '';
-                            $changed = true;
                         } else {
                             array_push($availableList, $value);
                         }
                     } elseif ($type === 'term') {
                         if (!(in_array($value, $selectedwordlist))) {
                             $QuerySplit[$index]['value'] = '';
-                            $changed = true;
                         } else {
                             array_push($availableList, $value);
                         }
-                    }
-                    if ($changed === false) {
-                        $value = $this->AddQuotesIfNecesary($value);
-                        $QuerySplit[$index]['value'] = $value;
                     }
                 }
             }
@@ -204,11 +201,12 @@ abstract class QueryBuildSupport extends ServiceEntryPoint
         return $NewSelectedDescriptors;
     }
 
-    private function ReBuildQuerySplit(array $QuerySplit, array $keytypes, array $SelectedDescriptors, array $NewSelectedDescriptors)
+    private function ReBuildQuerySplit(array $QuerySplit, array $keytypes, array $SelectedDescriptors, array $NewSelectedDescriptors=null)
     {
         $KeywordEquations = [];
         foreach ($QuerySplit as $index => $itemArray) {
             $type = $itemArray['type'];
+            $changed=false;
             $value = strtolower($itemArray['value'] ?? '');
             if (strlen($value) === 0) {
                 continue;
@@ -217,11 +215,7 @@ abstract class QueryBuildSupport extends ServiceEntryPoint
             if (in_array($type, $keytypes)) {
                 $content = $KeywordEquations[$value] ?? null;
                 if ($content === null) {
-                    if ($type === 'keyword') {
-                        $DescriptorsToProcess = $SelectedDescriptors[$value];
-                    } else {
-                        $DescriptorsToProcess = $NewSelectedDescriptors[$value];
-                    }
+                    $DescriptorsToProcess = $NewSelectedDescriptors[$value]??$SelectedDescriptors[$value];
                     if ($DescriptorsToProcess !== -1) {
                         $content = $this->BuildKeywordEquation($value, $DescriptorsToProcess);
                     } else {
@@ -229,9 +223,14 @@ abstract class QueryBuildSupport extends ServiceEntryPoint
                     }
                     $KeywordEquations[$value] = $content;
                 }
-                if (strlen($content)) {
+                if (strlen($content)>0) {
                     $QuerySplit[$index]['value'] = $content;
+                    $changed=true;
                 }
+            }
+            if ($type!=='op' && $type!="sep" && $changed===false) {
+                $value = $this->AddQuotesIfNecesary($value);
+                $QuerySplit[$index]['value'] = $value;
             }
         }
         return $QuerySplit;

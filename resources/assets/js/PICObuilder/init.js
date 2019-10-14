@@ -1,10 +1,11 @@
-import {SkipStepTwo,ChangeDeCSLanguages,ManageResultsNumber,StartFunctions,BlockButton,UnBlockButton,ShowPICOinfo,ReBuildStudyType,CheckExistantHREF,InfoNoResults,HideUnselectedDeCS,ExpandDeCSConfig} from "./initfunctions.js";
+import {SkipStepTwo,ChangeDeCSLanguages,ManageResultsNumber,StartFunctions,BlockButton,UnBlockButton,ShowPICOinfo,ReBuildStudyType,CheckExistantHREF,InfoNoResults,HideUnselectedDeCS} from "./initfunctions.js";
 import {ProcessResults} from "./newquerybuild.js";
 import {OnExpandDeCS} from "./decsmanager.js";
 import {IsLoading, CancelLoading} from "./loadingrequest.js";
 import {isHiddenBootstrapObj} from "./hideshow.js";
 import {ChangeLocale} from "./localepreservedata.js";
 import {OpenInNewTab} from "./debug.js";
+import {ChangeSeekerHandler} from "./changeseeker.js";
 
 ////PUBLIC FUNCTIONS
 
@@ -96,6 +97,12 @@ export function initEvents() {
         BlockButton($(this));
         CancelLoading();
         UnBlockButton($(this));
+    });
+    $(document).find('.PICOchangeitem').blur(function() {
+        ChangeSeekerHandler($(this).attr('data-pico'));
+    });
+    $(document).find('.studytypecheckbox').change(function() {
+        ChangeSeekerHandler(5);
     });
     $(document).find('a[id^=ResNum]').click(function (e) {
         BlockButton($(this));

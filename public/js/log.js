@@ -13909,6 +13909,9 @@ function initEvents() {
   $('.exploredd').on('click', function () {
     Object(_initfunctions_js__WEBPACK_IMPORTED_MODULE_0__["RedirectToExploredd"])($(this));
   });
+  $('.exploreinput').on('click', function () {
+    Object(_initfunctions_js__WEBPACK_IMPORTED_MODULE_0__["RedirectToExploreinput"])($(this));
+  });
 }
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! jquery */ "./node_modules/jquery/dist/jquery.js")))
 
@@ -13918,12 +13921,13 @@ function initEvents() {
 /*!**********************************************************!*\
   !*** ./resources/assets/js/AdvancedLog/initfunctions.js ***!
   \**********************************************************/
-/*! exports provided: TableLogSave, RedirectToExploredd */
+/*! exports provided: TableLogSave, RedirectToExploreinput, RedirectToExploredd */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* WEBPACK VAR INJECTION */(function($) {/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "TableLogSave", function() { return TableLogSave; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "RedirectToExploreinput", function() { return RedirectToExploreinput; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "RedirectToExploredd", function() { return RedirectToExploredd; });
 function TableLogSave() {
   $('#table-log').DataTable({
@@ -13936,6 +13940,29 @@ function TableLogSave() {
       var data = JSON.parse(window.localStorage.getItem("datatable"));
       if (data) data.start = 0;
       return data;
+    }
+  });
+}
+function RedirectToExploreinput(ExploreDDObj) {
+  var name = $(ExploreDDObj).attr('name');
+  var data = $(ExploreDDObj).attr('data-content');
+  var datadd = {};
+  datadd[name] = data;
+  var sendData = JSON.stringify(datadd);
+  console.log('Sending to server..' + sendData);
+  $.ajax({
+    type: "POST",
+    headers: {
+      'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+    },
+    url: 'exploreinput',
+    data: sendData,
+    error: function error(xhr, status, _error) {
+      console.error(status + ': ' + _error);
+      alert('Error in operation');
+    },
+    success: function success(response) {
+      window.open('exploreinput', "_blank");
     }
   });
 }
@@ -13953,8 +13980,8 @@ function RedirectToExploredd(ExploreDDObj) {
     },
     url: 'dd',
     data: sendData,
-    error: function error(xhr, status, _error) {
-      console.error(status + ': ' + _error);
+    error: function error(xhr, status, _error2) {
+      console.error(status + ': ' + _error2);
       alert('Error in operation');
     },
     success: function success(response) {

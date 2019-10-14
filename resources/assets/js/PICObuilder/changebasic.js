@@ -56,7 +56,6 @@ export function JustUpdatedFinal(resultsNumber, resultsURL) {
     $('#FinalGlobal').attr('data-href',resultsURL);
     resNumSetNumber($('#finalupdated'), resultsNumber);
     ChangeLogger(5, true, -1);
-    saveToComparisonLocal(5);
     saveToComparisonGlobal(5);
 
 }
@@ -69,10 +68,13 @@ export function JustUpdated(PICOnum, isGlobal, initial, resultsNumber, resultsUR
         resNumSetHREF(obj.ResNum, resultsURL);
         resNumSetNumber(obj.Span, resultsNumber);
         showDataButton(obj.ResNum);
+        if(isGlobal){
+            saveToComparisonGlobal(PICOnum);
+        }else {
+            saveToComparisonLocal(PICOnum);
+        }
     }
     ChangeLogger(PICOnum, isGlobal, -1);
-    saveToComparisonLocal(PICOnum);
-    saveToComparisonGlobal(PICOnum);
     RemoveReDoButton(obj.Span);
     CalcResAsReady(obj.CalcRes)
 }
@@ -163,12 +165,19 @@ function saveToComparisonLocal(PICOnum) {
     $(getobjResNum(PICOnum, false)).attr('data-comparison', value);
 }
 
-function saveToComparisonGlobal(PICOnum) {
+export function getComparisonCurrentGlobal(PICOnum) {
     let txt = '';
     for (let loop_i = 1; loop_i <= 6; loop_i++) {
-        txt = txt + ($(getobjResNum(PICOnum, false)).attr('data-comparison'));
+        txt = txt + getComparisonCurrentLocal(PICOnum);
     }
-    $(getobjResNum(PICOnum, false)).attr('data-comparison', txt);
+    return txt;
+}
+
+
+function saveToComparisonGlobal(PICOnum) {
+    let txt = getComparisonCurrentGlobal(4);
+    txt=txt+$('#datainput5').val();
+    $(getobjResNum(PICOnum, true)).attr('data-comparison', txt);
 }
 
 function hideDataButton(objResNum) {

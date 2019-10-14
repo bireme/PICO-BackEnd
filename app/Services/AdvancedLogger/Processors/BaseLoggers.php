@@ -55,6 +55,8 @@ class BaseLoggers extends CoreDataProcessor
     private function isInProduction(){
         if(app()->environment()==='production'){
             return true;
+        }else{
+            return false;
         }
     }
 

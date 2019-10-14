@@ -51,14 +51,17 @@ Route::group(['prefix' => 'admin', 'middleware' => ['throttle:60,1']], function 
         'as' => 'auth.adminlogin.logout',
         'uses' => 'Admin\AdminLogin@doLogout'
     ]);
+
     Route::get('/', function () {
         return redirect('admin/home');
     });
     Route::group(['middleware' => ['IsAdmin']], function () {
         Route::get('home', 'Admin\CustomLogController@index');
-        Route::get('test', 'Test\TestController@index');
+        Route::get('test', 'EquationTestController@tester');
         Route::post('dd', 'Test\ddController@savePreviousInfo');
         Route::get('dd', 'Test\ddController@index');
+        Route::post('exploreinput', 'Test\exploreinputController@savePreviousInfo');
+        Route::get('exploreinput', 'Test\exploreinputController@index');
     });
 });
 

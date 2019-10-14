@@ -56,6 +56,11 @@ class DataTransferObject
         $this->SaveModelToList($model, 'main');
     }
 
+    public function getAllDebug(string $modelAlias = null)
+    {
+        $this->TmpModelAlias($modelAlias);
+        return $this->currentModel->getAllDebug();
+    }
 
     public function getAttr(string $name, string $modelAlias = null)
     {
