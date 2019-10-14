@@ -36,7 +36,7 @@ return [
     'info' => 'INFORMATION',
     'conf' => 'CONFIGURATION',
     'errcon' => 'Error while trying to connect to the server',
-    'errunknown' => 'Unknown error in the server while request was being processed',
+    'errunknown' => 'An error occurred while processing your request, please try a simpler search!',
     'popallow' => 'Please allow popups for this website',
     'mustcalc' => 'You must calculate the results first. Press the Refresh button',
     'mustrecalc' => 'The query was changed. You must recalculate results first',

@@ -1,4 +1,4 @@
-import {TableLogSave,RedirectToExploredd} from "./initfunctions.js";
+import {TableLogSave,RedirectToExploredd,RedirectToExploreinput} from "./initfunctions.js";
 
 export function initEvents() {
     $(document).find('.expandinfo').on('click', function () {
@@ -11,5 +11,8 @@ export function initEvents() {
     });
     $('.exploredd').on('click', function () {
         RedirectToExploredd($(this));
+    });
+    $('.exploreinput').on('click', function () {
+        RedirectToExploreinput($(this));
     });
 }

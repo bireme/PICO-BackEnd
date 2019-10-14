@@ -45,6 +45,15 @@ abstract class ControllerModel
         return $this->RequestCore($JSONdata);
     }
 
+    public function inputtest(string $JSONdata)
+    {
+        $this->setOriginRefererAndDTO('index');
+        return [
+            'response' => $this->RequestCore($JSONdata),
+            'modeldata' => $this->DTO->getAllDebug(),
+        ];
+    }
+
     public function info()
     {
         $this->setOriginRefererAndDTO('info');
@@ -147,21 +156,21 @@ abstract class ControllerModel
     {
         $DTO->setInitialData(__METHOD__ . '@' . get_class($this), $data, 'main');
         $results = null;
-        $connectionTimer=null;
+        $connectionTimer = null;
         $wasSuccessful = false;
         try {
-            $connectionTimer = $this->ServicePerformance->newConnectionTimer(get_class($this).'toservice-' . get_class($this) . '-timer');
-            $this->Service::get($DTO,null);
+            $connectionTimer = $this->ServicePerformance->newConnectionTimer(get_class($this) . 'toservice-' . get_class($this) . '-timer');
+            $this->Service::get($DTO, null);
             $results = $DTO->getResults('main');
             $wasSuccessful = true;
         } catch (Exception $ex) {
-            if($ex instanceof ClientError){
+            if ($ex instanceof ClientError) {
                 throw $ex;
-            }else{
+            } else {
                 ExceptionLoggerFacade::ReportException($ex);
                 throw new ExceptionInsideService(['caller' => get_class($this), 'target' => get_class($this->Service), 'ErrorInTarget' => $ex->getMessage()], $ex);
             }
-        }finally{
+        } finally {
             $info = 'Connection Failed';
             if ($wasSuccessful) {
                 $info = 'Connection Success. result.size=' . strlen(json_encode($results));

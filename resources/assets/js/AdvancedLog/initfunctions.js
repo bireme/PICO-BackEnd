@@ -13,6 +13,32 @@ export function TableLogSave() {
     });
 }
 
+export function RedirectToExploreinput(ExploreDDObj) {
+    let name = $(ExploreDDObj).attr('name');
+    let data = $(ExploreDDObj).attr('data-content')
+    let datadd = {};
+    datadd[name]=data;
+    let sendData=JSON.stringify(datadd);
+    console.log('Sending to server..' + sendData);
+    $.ajax({
+        type: "POST",
+        headers: {
+            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content'),
+        },
+        url: 'exploreinput',
+        data: sendData,
+        error: function (xhr, status, error) {
+            console.error(status + ': ' + error);
+            alert('Error in operation');
+        },
+        success: function (response) {
+            window.open('exploreinput', "_blank");
+        }
+    });
+}
+
+
+
 export function RedirectToExploredd(ExploreDDObj) {
     let name = $(ExploreDDObj).attr('name');
     let data = $(ExploreDDObj).attr('data-content')

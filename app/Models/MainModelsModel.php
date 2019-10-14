@@ -61,4 +61,15 @@ abstract class MainModelsModel extends Model
         $this->locked=true;
     }
 
+    final public function getAllDebug(){
+        $res = $this->getAttributes();
+        $newres=[];
+        foreach($res as $index => $value){
+            if(!(is_integer($index))){
+                $newres[$index]=$value;
+            }
+        }
+        return $newres;
+    }
+
 }

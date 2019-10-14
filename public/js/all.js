@@ -13437,7 +13437,7 @@ function getBaseURL() {
 /*!********************************************************!*\
   !*** ./resources/assets/js/PICObuilder/changebasic.js ***!
   \********************************************************/
-/*! exports provided: isHiddenResNum, setGlobalTitle, getobjResNum, MustRecalculate, MustRecalculateFinal, JustUpdatedFinal, JustUpdated, ReturnToOldStateFinal, ReturnToOldState, getComparisonCurrentLocal, getComparisonLocalPreviouslySaved, getQueryVal, getComparisonGlobalPreviouslySaved, resNumSetHREF, resNumSetNumber */
+/*! exports provided: isHiddenResNum, setGlobalTitle, getobjResNum, MustRecalculate, MustRecalculateFinal, JustUpdatedFinal, JustUpdated, ReturnToOldStateFinal, ReturnToOldState, getComparisonCurrentLocal, getComparisonLocalPreviouslySaved, getQueryVal, getComparisonGlobalPreviouslySaved, resNumSetHREF, resNumSetNumber, getComparisonCurrentGlobal */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -13457,6 +13457,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "getComparisonGlobalPreviouslySaved", function() { return getComparisonGlobalPreviouslySaved; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "resNumSetHREF", function() { return resNumSetHREF; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "resNumSetNumber", function() { return resNumSetNumber; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "getComparisonCurrentGlobal", function() { return getComparisonCurrentGlobal; });
 /* harmony import */ var _commons_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./commons.js */ "./resources/assets/js/PICObuilder/commons.js");
 /* harmony import */ var _hideshow__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./hideshow */ "./resources/assets/js/PICObuilder/hideshow.js");
 /* harmony import */ var _translator__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./translator */ "./resources/assets/js/PICObuilder/translator.js");
@@ -13518,7 +13519,6 @@ function JustUpdatedFinal(resultsNumber, resultsURL) {
   $('#FinalGlobal').attr('data-href', resultsURL);
   resNumSetNumber($('#finalupdated'), resultsNumber);
   ChangeLogger(5, true, -1);
-  saveToComparisonLocal(5);
   saveToComparisonGlobal(5);
 }
 function JustUpdated(PICOnum, isGlobal, initial, resultsNumber, resultsURL) {
@@ -13530,11 +13530,15 @@ function JustUpdated(PICOnum, isGlobal, initial, resultsNumber, resultsURL) {
     resNumSetHREF(obj.ResNum, resultsURL);
     resNumSetNumber(obj.Span, resultsNumber);
     showDataButton(obj.ResNum);
+
+    if (isGlobal) {
+      saveToComparisonGlobal(PICOnum);
+    } else {
+      saveToComparisonLocal(PICOnum);
+    }
   }
 
   ChangeLogger(PICOnum, isGlobal, -1);
-  saveToComparisonLocal(PICOnum);
-  saveToComparisonGlobal(PICOnum);
   RemoveReDoButton(obj.Span);
   CalcResAsReady(obj.CalcRes);
 }
@@ -13619,14 +13623,20 @@ function saveToComparisonLocal(PICOnum) {
   $(getobjResNum(PICOnum, false)).attr('data-comparison', value);
 }
 
-function saveToComparisonGlobal(PICOnum) {
+function getComparisonCurrentGlobal(PICOnum) {
   var txt = '';
 
   for (var loop_i = 1; loop_i <= 6; loop_i++) {
-    txt = txt + $(getobjResNum(PICOnum, false)).attr('data-comparison');
+    txt = txt + getComparisonCurrentLocal(PICOnum);
   }
 
-  $(getobjResNum(PICOnum, false)).attr('data-comparison', txt);
+  return txt;
+}
+
+function saveToComparisonGlobal(PICOnum) {
+  var txt = getComparisonCurrentGlobal(4);
+  txt = txt + $('#datainput5').val();
+  $(getobjResNum(PICOnum, true)).attr('data-comparison', txt);
 }
 
 function hideDataButton(objResNum) {
@@ -13713,12 +13723,13 @@ function getobjSpan(PICOnum, isGlobal) {
 /*!*********************************************************!*\
   !*** ./resources/assets/js/PICObuilder/changeseeker.js ***!
   \*********************************************************/
-/*! exports provided: ChangeSeekerStart, ChangeSeekerHandler, UpdateLocalAfterResults, UpdateGlobalAfterResults */
+/*! exports provided: ChangeSeekerStart, ChangeSeekerTimer, ChangeSeekerHandler, UpdateLocalAfterResults, UpdateGlobalAfterResults */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* WEBPACK VAR INJECTION */(function($) {/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ChangeSeekerStart", function() { return ChangeSeekerStart; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ChangeSeekerTimer", function() { return ChangeSeekerTimer; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ChangeSeekerHandler", function() { return ChangeSeekerHandler; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "UpdateLocalAfterResults", function() { return UpdateLocalAfterResults; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "UpdateGlobalAfterResults", function() { return UpdateGlobalAfterResults; });
@@ -13732,60 +13743,64 @@ function ChangeSeekerStart() {
 
 function CheckIfChanged() {
   setTimeout(function () {
-    ChangeSeekerHandler(false);
+    ChangeSeekerTimer();
     CheckIfChanged();
   }, 1500);
 }
 
-function ChangeSeekerHandler(isfirst) {
-  var PICOnum = 1;
+function ChangeSeekerTimer() {
   var focused = $(':focus');
+  var PICOnum = -1;
 
-  if (isfirst === false) {
-    if (!focused.hasClass('PICOchangeitem')) {
-      return;
-    } else {
-      PICOnum = $(focused).attr('data-PICO');
-    }
+  if (focused.hasClass('PICOchangeitem')) {
+    PICOnum = $(focused).attr('data-pico');
   }
 
-  var tmptwo = '';
-  var tmp;
-  var ishiddenLocalResnum;
+  if (PICOnum > 0 && PICOnum < 5) {
+    console.log("timercall");
+    ChangeSeekerHandler(PICOnum);
+  }
+}
+function ChangeSeekerHandler(PICOnum) {
+  var ishiddenlocalResnum = Object(_changebasic_js__WEBPACK_IMPORTED_MODULE_0__["isHiddenResNum"])(PICOnum, true);
+  var currentlocal = Object(_changebasic_js__WEBPACK_IMPORTED_MODULE_0__["getComparisonCurrentLocal"])(PICOnum);
+  var savedlocal = Object(_changebasic_js__WEBPACK_IMPORTED_MODULE_0__["getComparisonLocalPreviouslySaved"])(PICOnum);
+  console.log("CHANGESEEKERPICONUM..." + PICOnum + '...savedlocal=' + savedlocal);
+
+  if (PICOnum < 5 && (savedlocal === undefined || savedlocal.length < 2)) {
+    return;
+  }
+
+  if (currentlocal !== savedlocal) {
+    Object(_changebasic_js__WEBPACK_IMPORTED_MODULE_0__["MustRecalculate"])(PICOnum, false);
+  } else {
+    return;
+  }
+
   var ishiddenGlobalResnum;
+  var currentglobal = null;
+  var savedglobal = null;
+  var loop_i = PICOnum;
 
-  for (var loop_i = PICOnum; loop_i < 6; loop_i++) {
-    tmp = Object(_changebasic_js__WEBPACK_IMPORTED_MODULE_0__["getComparisonCurrentLocal"])(loop_i);
+  if (loop_i === 1) {
+    loop_i = 2;
+  }
 
-    if (loop_i === PICOnum && loop_i < 5) {
-      ishiddenLocalResnum = Object(_changebasic_js__WEBPACK_IMPORTED_MODULE_0__["isHiddenResNum"])(loop_i, false);
+  for (loop_i; loop_i < 6; loop_i++) {
+    ishiddenGlobalResnum = Object(_changebasic_js__WEBPACK_IMPORTED_MODULE_0__["isHiddenResNum"])(loop_i, true);
+    currentglobal = Object(_changebasic_js__WEBPACK_IMPORTED_MODULE_0__["getComparisonCurrentGlobal"])(loop_i);
+    savedglobal = Object(_changebasic_js__WEBPACK_IMPORTED_MODULE_0__["getComparisonGlobalPreviouslySaved"])(loop_i);
 
-      if (Object(_changebasic_js__WEBPACK_IMPORTED_MODULE_0__["getComparisonLocalPreviouslySaved"])(PICOnum) === tmp) {
-        Object(_changebasic_js__WEBPACK_IMPORTED_MODULE_0__["ReturnToOldState"])(PICOnum, false);
-      } else {
-        if (!ishiddenLocalResnum) {
-          Object(_changebasic_js__WEBPACK_IMPORTED_MODULE_0__["MustRecalculate"])(PICOnum, false);
-        }
-      }
+    var _savedlocal = Object(_changebasic_js__WEBPACK_IMPORTED_MODULE_0__["getComparisonLocalPreviouslySaved"])(loop_i);
+
+    if (loop_i < 5 && (_savedlocal === undefined || _savedlocal.length < 2)) {
+      console.log(loop_i + '...not has global');
+      continue;
     }
 
-    tmptwo = tmptwo + tmp;
-
-    if (loop_i > 1 && loop_i < 5) {
-      ishiddenGlobalResnum = Object(_changebasic_js__WEBPACK_IMPORTED_MODULE_0__["isHiddenResNum"])(loop_i, true);
-
-      if (tmptwo === Object(_changebasic_js__WEBPACK_IMPORTED_MODULE_0__["getComparisonGlobalPreviouslySaved"])(loop_i)) {
-        Object(_changebasic_js__WEBPACK_IMPORTED_MODULE_0__["ReturnToOldState"])(loop_i, true);
-      } else {
-        if (!ishiddenGlobalResnum) {
-          Object(_changebasic_js__WEBPACK_IMPORTED_MODULE_0__["MustRecalculate"])(loop_i, true);
-        }
-      }
-    }
-
-    if (loop_i === 5) {
-      if (tmptwo === Object(_changebasic_js__WEBPACK_IMPORTED_MODULE_0__["getComparisonGlobalPreviouslySaved"])(5)) {
-        Object(_changebasic_js__WEBPACK_IMPORTED_MODULE_0__["ReturnToOldStateFinal"])();
+    if (currentglobal !== savedglobal) {
+      if (loop_i < 5) {
+        Object(_changebasic_js__WEBPACK_IMPORTED_MODULE_0__["MustRecalculate"])(loop_i, true);
       } else {
         Object(_changebasic_js__WEBPACK_IMPORTED_MODULE_0__["MustRecalculateFinal"])();
       }
@@ -13808,9 +13823,9 @@ function UpdateGlobalAfterResults(PICOnum, resultsNumber, resultsURL, globaltitl
 function InitialButtonSet() {
   Object(_changebasic_js__WEBPACK_IMPORTED_MODULE_0__["JustUpdated"])(1, false, true, null, null);
 
-  for (var loop_i = 2; loop_i <= 4; loop_i++) {
-    Object(_changebasic_js__WEBPACK_IMPORTED_MODULE_0__["JustUpdated"])(loop_i, true, true, null, null);
-    Object(_changebasic_js__WEBPACK_IMPORTED_MODULE_0__["JustUpdated"])(loop_i, false, true, null, null);
+  for (var loop_w = 2; loop_w <= 4; loop_w++) {
+    Object(_changebasic_js__WEBPACK_IMPORTED_MODULE_0__["JustUpdated"])(loop_w, true, true, null, null);
+    Object(_changebasic_js__WEBPACK_IMPORTED_MODULE_0__["JustUpdated"])(loop_w, false, true, null, null);
   }
 }
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! jquery */ "./node_modules/jquery/dist/jquery.js")))
@@ -14270,6 +14285,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _hideshow_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./hideshow.js */ "./resources/assets/js/PICObuilder/hideshow.js");
 /* harmony import */ var _localepreservedata_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./localepreservedata.js */ "./resources/assets/js/PICObuilder/localepreservedata.js");
 /* harmony import */ var _debug_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./debug.js */ "./resources/assets/js/PICObuilder/debug.js");
+/* harmony import */ var _changeseeker_js__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./changeseeker.js */ "./resources/assets/js/PICObuilder/changeseeker.js");
+
 
 
 
@@ -14375,6 +14392,12 @@ function initEvents() {
     Object(_initfunctions_js__WEBPACK_IMPORTED_MODULE_0__["BlockButton"])($(this));
     Object(_loadingrequest_js__WEBPACK_IMPORTED_MODULE_3__["CancelLoading"])();
     Object(_initfunctions_js__WEBPACK_IMPORTED_MODULE_0__["UnBlockButton"])($(this));
+  });
+  $(document).find('.PICOchangeitem').blur(function () {
+    Object(_changeseeker_js__WEBPACK_IMPORTED_MODULE_7__["ChangeSeekerHandler"])($(this).attr('data-pico'));
+  });
+  $(document).find('.studytypecheckbox').change(function () {
+    Object(_changeseeker_js__WEBPACK_IMPORTED_MODULE_7__["ChangeSeekerHandler"])(5);
   });
   $(document).find('a[id^=ResNum]').click(function (e) {
     Object(_initfunctions_js__WEBPACK_IMPORTED_MODULE_0__["BlockButton"])($(this));

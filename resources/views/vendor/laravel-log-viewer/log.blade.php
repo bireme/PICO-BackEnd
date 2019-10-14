@@ -45,6 +45,8 @@
                              style="display: none; white-space: pre-wrap;">
                             <div class="row" style="padding-top:15px;padding-bottom:15px;">
                                 @spaceless
+
+
                                 @if(($decoded = json_decode($log['stack'],true))??null)
                                 @endif
                                 @if(!($log['stack']))
@@ -65,7 +67,7 @@
                         </div>
                     </td>
                     <td class="text-center">
-                        @include('vendor.laravel-log-viewer.partials.databutton',['value'=>$decoded['data']??null])
+                        @include('vendor.laravel-log-viewer.partials.databutton',['value'=>$decoded['data']??null,'current_folder'=>$current_folder,'title'=>$log['text']])
                     </td>
                 </tr>
             @endforeach
