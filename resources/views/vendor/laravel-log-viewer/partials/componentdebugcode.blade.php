@@ -51,19 +51,6 @@
         </div>
     </div>
 </div>
-<div class="row align-middle" style="color:#2d3e50">
-    <div class="col-md-12 text-center align-middle">
-        <div class="container-fluid text-justify">
-            <hr style="height:3px;" class="btn-dark btn-outline-dark">
-            <div class="row text-left">
-                <p class="h6">Web Service Response</p><br>
-            </div>
-            <p  style="font-size: 6px;">
-            {{json_encode($result)}}
-            </p>
-        </div>
-    </div>
-</div>
 </div>
 <footer id="footer">
     <div class="d-none">loaded</div>

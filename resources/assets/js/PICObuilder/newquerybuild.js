@@ -6,8 +6,9 @@ import {
     getQuerySplit,
     setnewQuery,
     getModalPICOnum,
-    getImproveSearchTextArea
+    getImproveSearchTextArea,
 } from "./datadictionary.js";
+import {ChangeSeekerHandler} from "./changeseeker.js";
 
 ////PUBLIC FUNCTIONS
 
@@ -60,4 +61,5 @@ function BuildImprovedQuery(data, PICOnum) {
     setImproveSearchWords(PICOnum, data.ImproveSearchWords);
     setOldDescriptors(PICOnum, data.OldSelectedDescriptors);
     setPreviousImproveQuery(PICOnum, data.ImproveSearchQuery);
+    ChangeSeekerHandler(PICOnum)
 }

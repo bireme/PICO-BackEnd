@@ -12,7 +12,3 @@ Homestead.json
 Homestead.yaml
 npm-debug.log
 yarn-error.log
-resources/views/vendor/laravel-log-viewer/partials/FinalStringInDebugEncoded.blade.php
-resources/views/vendor/laravel-log-viewer/partials/StringInDebugEncoded.blade.php
-app/Http/Controllers/Test/exploreinputController.php
-resources/views/vendor/laravel-log-viewer/componentdebug.blade.php

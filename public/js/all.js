@@ -15012,6 +15012,8 @@ __webpack_require__.r(__webpack_exports__);
 /* WEBPACK VAR INJECTION */(function($) {/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ProcessResults", function() { return ProcessResults; });
 /* harmony import */ var _loadingrequest_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./loadingrequest.js */ "./resources/assets/js/PICObuilder/loadingrequest.js");
 /* harmony import */ var _datadictionary_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./datadictionary.js */ "./resources/assets/js/PICObuilder/datadictionary.js");
+/* harmony import */ var _changeseeker_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./changeseeker.js */ "./resources/assets/js/PICObuilder/changeseeker.js");
+
 
  ////PUBLIC FUNCTIONS
 
@@ -15065,6 +15067,7 @@ function BuildImprovedQuery(data, PICOnum) {
   Object(_datadictionary_js__WEBPACK_IMPORTED_MODULE_1__["setImproveSearchWords"])(PICOnum, data.ImproveSearchWords);
   Object(_datadictionary_js__WEBPACK_IMPORTED_MODULE_1__["setOldDescriptors"])(PICOnum, data.OldSelectedDescriptors);
   Object(_datadictionary_js__WEBPACK_IMPORTED_MODULE_1__["setPreviousImproveQuery"])(PICOnum, data.ImproveSearchQuery);
+  Object(_changeseeker_js__WEBPACK_IMPORTED_MODULE_2__["ChangeSeekerHandler"])(PICOnum);
 }
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! jquery */ "./node_modules/jquery/dist/jquery.js")))
 

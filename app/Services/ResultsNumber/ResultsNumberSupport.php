@@ -67,7 +67,7 @@ abstract class ResultsNumberSupport extends ServiceEntryPoint
                     if (strlen($tmp)) {
                         $tmp = $tmp . ' AND (' . $txt . ')';
                     } else {
-                        $tmp = $txt;
+                        $tmp = '('.$txt.')';
                     }
                 }
             }

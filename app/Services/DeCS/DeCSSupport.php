@@ -187,7 +187,10 @@ abstract class DeCSSupport extends ServiceEntryPoint
                 if ($tree_id === $tree_idTwo) {
                     continue;
                 }
-                $TermTwo = $TreeObjectTwo[$TitleLanguage]['term'];
+                $TermTwo = $TreeObjectTwo[$TitleLanguage]['term']??null;
+                if(!($TermTwo)){
+                    continue;
+                }
                 if ($Term !== $TermTwo) {
                     continue;
                 }
