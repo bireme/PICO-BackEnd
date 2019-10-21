@@ -68,6 +68,8 @@ trait CorrectQueryTrait
             $query = str_replace(' OR OR ', ' OR ', $query);
             $query = str_replace(' AND AND ', ' AND ', $query);
             $query = str_replace(' NOT NOT ', ' NOT ', $query);
+            $query = str_replace(' OR"', ' OR "', $query);
+            $query = str_replace('"OR ', '" OR ', $query);
             $query = str_replace('" "', '" OR "', $query);
             $query = str_replace('  ', ' ', $query);
             $query = trim($query, ' ');

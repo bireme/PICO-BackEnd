@@ -214,7 +214,7 @@ abstract class DeCSSupport extends ServiceEntryPoint
         } else {
             if (in_array($Term, array_keys($OldSelectedDescriptors[$keyword]))) {
                 $TermOldSelectedData = $OldSelectedDescriptors[$keyword][$Term];
-                if (count($TermOldSelectedData)) {
+                if (count($TermOldSelectedData)>0) {
                     $CheckedTerm = 1;
                 } else {
                     $CheckedTerm = 0;
@@ -224,8 +224,6 @@ abstract class DeCSSupport extends ServiceEntryPoint
                 $CheckedTerm = 0;
             }
         }
-        $this->newHtmlArray($ProcessedDescriptors, $keyword, $Term, $Term, $CheckedTerm);
-
 
         $DeCSFoundInSavedData = array_diff(($DeCSFoundInSavedData), [$Term]);
         $DeCSFoundInSavedData = array_map('strtolower', $DeCSFoundInSavedData);
@@ -236,15 +234,22 @@ abstract class DeCSSupport extends ServiceEntryPoint
         //dd($DeCSFoundInSavedData, $AvailableDeCS, array_intersect($DeCSFoundInSavedData, $AvailableDeCS));
         $Available = array_intersect($DeCSFoundInSavedData, $WordsInQuerySplit);
 
+        $addedcount=0;
         foreach ($DeCSFoundInSavedData as $DeCS) {
+            if($DeCS===$Term){
+                continue;
+            }
             if ($isNewKeyword) {
                 $CheckedDeCS = 1;
+                $addedcount++;
             } else {
                 if($CheckedTerm === 0){
                     $CheckedDeCS = 1;
+                    $addedcount++;
                 }else{
                     if (in_array($DeCS, $Available)) {
                         $CheckedDeCS = 1;
+                        $addedcount++;
                     } else {
                         $CheckedDeCS = 0;
                     }
@@ -252,6 +257,13 @@ abstract class DeCSSupport extends ServiceEntryPoint
             }
             $this->newHtmlArray($ProcessedDeCS, $DeCSTitle, $DeCS, $DeCS, $CheckedDeCS);
         }
+        if($CheckedTerm==1){
+            if($addedcount===0){
+                $CheckedTerm=0;
+            }
+        }
+        $this->newHtmlArray($ProcessedDescriptors, $keyword, $Term, $Term, $CheckedTerm);
+
     }
 
     private function newHtmlArray(array &$array, String $mainKey, String $title, String $value, int $isChecked)

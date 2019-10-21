@@ -105,9 +105,9 @@ abstract class QueryBuildSupport extends ServiceEntryPoint
         $selectedwordlist = [];
         foreach ($SelectedDescriptors as $keyword => $keywordData) {
             foreach ($keywordData as $Term => $DeCSArr) {
-                array_push($selectedwordlist, $Term);
                 if (count($DeCSArr)) {
                     $selectedwordlist = array_merge($selectedwordlist, $DeCSArr);
+                    array_push($selectedwordlist, $Term);
                 }
             }
         }
