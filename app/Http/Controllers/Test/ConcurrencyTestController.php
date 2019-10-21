@@ -8,7 +8,7 @@ use PICOExplorer\Http\Controllers\Controller;
 use Exception;
 use PICOExplorer\Http\Controllers\PICO\ControllerModel;
 
-class exploreinputController extends Controller
+class ConcurrencyTestController extends Controller
 {
 
     public function index()

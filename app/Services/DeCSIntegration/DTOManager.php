@@ -140,9 +140,18 @@ abstract class DTOManager extends ServiceEntryPoint
 
     protected function addToMainTreeList(array $tree_ids, DataTransferObject $DTO)
     {
+        $mainTreeList  = $DTO->getAttr('MainTreeList');
+        $newtree_ids = array_diff($tree_ids,$mainTreeList);
+        if(count($newtree_ids)===0){
+            $info = [
+                'added' => [],
+                'cut' => array_diff($newtree_ids,$tree_ids),
+            ];
+            return $info;
+        }
         $remainingmaintrees = $this->getRemainingMainTreesToAdd($DTO);
-        if ($remainingmaintrees) {
-            $added = array_slice($tree_ids, 0, $remainingmaintrees, true);
+        if ($remainingmaintrees>0) {
+            $added = array_slice($newtree_ids, 0, $remainingmaintrees, true);
         } else {
             $added = [];
         }
@@ -155,7 +164,7 @@ abstract class DTOManager extends ServiceEntryPoint
         $levellist = [
             0 => $added,
         ];
-        $DTO->SaveToModel(get_class($this), ['MainTreeList' => $added, 'LevelList' => $levellist]);
+        $DTO->SaveToModel(get_class($this), ['MainTreeList' => array_merge($mainTreeList,$added), 'LevelList' => $levellist]);
         $this->addToCount($DTO, count($added));
         return $info;
     }
@@ -190,13 +199,15 @@ abstract class DTOManager extends ServiceEntryPoint
         $new_ids = array_diff($tree_ids, $oldTotal);
         $Queue = $DTO->getAttr('Queue');
 
+
         $levellist = $DTO->getAttr('LevelList');
         if (($levellist[$depthlevel] ?? null) === null) {
             $levellist[$depthlevel] = [];
         }
         $Queue = array_merge($Queue, $new_ids);
         $levellist[$depthlevel] = array_merge($levellist[$depthlevel], $new_ids);
-        $DTO->SaveToModel(get_class($this), ['Queue' => $Queue, 'LevelList' => $levellist]);
+        $oldTotal = array_merge($oldTotal,$new_ids);
+        $DTO->SaveToModel(get_class($this), ['TotalList'=>$oldTotal,'Queue' => $Queue, 'LevelList' => $levellist]);
         $info = [
             'added' => $new_ids,
         ];
