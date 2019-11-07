@@ -38,6 +38,10 @@ Route::middleware(['throttle:60,1'])->prefix('PICO')->group(function () {
     Route::get('ResultsNumberIntegration', 'PICO\IntegrationResultsNumberController@info');
 });
 
+Route::post('Results', 'BIREMEIntegrationController@index');
+
+Route::get('Results', 'BIREMEIntegrationController@explore');
+
 Route::group(['prefix' => 'admin', 'middleware' => ['throttle:60,1']], function () {
     Route::get('login', [
         'as' => 'auth.adminlogin.login',

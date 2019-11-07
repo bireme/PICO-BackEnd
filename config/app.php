@@ -1,5 +1,6 @@
 <?php
 
+
 return [
 
     /*
@@ -179,6 +180,7 @@ return [
         Rap2hpoutre\LaravelLogViewer\LaravelLogViewerServiceProvider::class,
         Ixudra\Curl\CurlServiceProvider::class,
 
+
         /*
          * PICO Service Providers...
          */
@@ -192,6 +194,7 @@ return [
         PICOExplorer\Providers\AdvancedServiceProviders\DeCSServiceProvider::class,
         PICOExplorer\Providers\AdvancedServiceProviders\DeCSIntegrationServiceProvider::class,
         PICOExplorer\Providers\AdvancedServiceProviders\QueryBuildServiceProvider::class,
+        PICOExplorer\Providers\AdvancedServiceProviders\BIREMESearchIntegrationProvider::class,
     ],
 
     /*
@@ -268,6 +271,7 @@ return [
         'DeCSFacade' => PICOExplorer\Facades\DeCSFacade::class,
         'DeCSLooperFacade' => PICOExplorer\Facades\DeCSLooperFacade::class,
         'QueryBuildFacade' => PICOExplorer\Facades\QueryBuildFacade::class,
+        'BIREMESearchIntegration' => PICOExplorer\Facades\BIREMESearchIntegrationFacade::class,
     ],
 
 ];

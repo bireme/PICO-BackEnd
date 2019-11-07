@@ -7,13 +7,13 @@ use PICOExplorer\Exceptions\Exceptions\AppError\ErrorInDeCSLoopXMLExtraction;
 use PICOExplorer\Facades\UltraLoggerFacade;
 use PICOExplorer\Services\AdvancedLogger\Exceptions\DontCatchException;
 use PICOExplorer\Services\ServiceModels\ParallelServiceEntryPointInterface;
-use PICOExplorer\Services\ServiceModels\ToExternalSourceTrait;
+use PICOExplorer\Services\ServiceModels\ToExternalXMLTrait;
 use ServicePerformanceSV;
 
 class DeCSIntegrationLooperImporter extends DeCSIntegrationLooperSupport implements ParallelServiceEntryPointInterface
 {
 
-    use ToExternalSourceTrait;
+    use ToExternalXMLTrait;
 
     protected final function Process(ServicePerformanceSV $ServicePerformance, $InitialData = null)
     {

@@ -21,13 +21,13 @@
             <button class="btn btn-primary margin2M ExpandDeCS"
                     id="Exp{{ $PICOiterative }}">{{ __('lang.butexp') }}<span class="badge badge-light badgeM startlanguage" style="margin-left:15px;"></span></button>
             <div class="btn-group">
-                <a id="ResNumLocal{{ $PICOiterative }}" target="_blank" class="btn colorO d-none"
+                <a id="ResNumLocal{{ $PICOiterative }}" target="_blank" class="btn colorO d-none ResNumBtn" data-href=""
                    data-toggle="tooltip" data-placement="top" title="{{ __('lang.clickres') }}"><label></label>
                     <span class="badge badge-light badgeM" style="margin-left:15px;"></span></a>
 
                 @if($PICOiterative>1)
-                    <a id="ResNumGlobal{{ $PICOiterative }}" target="_blank" class="btn colorP d-none"
-                       data-toggle="tooltip" data-placement="top"
+                    <a id="ResNumGlobal{{ $PICOiterative }}" target="_blank" class="btn colorP d-none ResNumBtn"
+                       data-toggle="tooltip" data-placement="top" data-href=""
                        title="{{ __('lang.clickres') }}"><label></label><span
                             class="badge badge-light badgeM" style="margin-left:15px;"></span></a>
                 @endif

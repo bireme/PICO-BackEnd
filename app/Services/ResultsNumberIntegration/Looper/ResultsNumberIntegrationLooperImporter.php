@@ -9,13 +9,13 @@ use PICOExplorer\Exceptions\Exceptions\AppError\XMLImportantElementNotFound;
 use Exception;
 use PICOExplorer\Services\ServiceModels\ParallelServiceEntryPoint;
 use PICOExplorer\Services\ServiceModels\ParallelServiceEntryPointInterface;
-use PICOExplorer\Services\ServiceModels\ToExternalSourceTrait;
+use PICOExplorer\Services\ServiceModels\ToExternalXMLTrait;
 use ServicePerformanceSV;
 
 class ResultsNumberIntegrationLooperImporter extends ParallelServiceEntryPoint implements ParallelServiceEntryPointInterface
 {
 
-    use ToExternalSourceTrait;
+    use ToExternalXMLTrait;
 
     protected final function Process(ServicePerformanceSV $ServicePerformance, $InitialData=null)
     {

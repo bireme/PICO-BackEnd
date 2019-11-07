@@ -25,9 +25,6 @@ class ServicePerformance
     protected $monitoredObject;
 
 
-    /**
-     * @return AdvancedTimer
-     */
     public function newConnectionTimer(string $name)
     {
         try {
@@ -42,7 +39,9 @@ class ServicePerformance
     public function ServicePerformanceStart(DataTransferObject $DTO, string $monitoredObject)
     {
         try {
-            $this->operationTimer = $this->Timer(get_class($this) . ':Operation');
+            if (!($this->isInProduction())) {
+                $this->operationTimer = $this->Timer(get_class($this) . ':Operation');
+            }
             $this->DTO = $DTO;
             $this->monitoredObject = $monitoredObject;
             return $this;
@@ -54,28 +53,36 @@ class ServicePerformance
     public function ServicePerformanceSummary(bool $wasSuccess)
     {
         try {
-            if ($wasSuccess) {
-                $info = 'Success ';
-                $level = 'info';
-            } else {
-                $info = 'Error ';
-                $level = 'error';
+            if ((!($this->isInProduction())) || $wasSuccess == false) {
+                if ($wasSuccess) {
+                    $info = 'Success ';
+                    $level = 'info';
+                } else {
+                    $info = 'Error ';
+                    $level = 'error';
+                }
+                $InputOutput = [
+                    'Input' => $this->DTO->getInitialData(null, true),
+                    'Output' => $this->DTO->getResults(null, true),
+                ];
+                $data = [
+                    'Success' => $wasSuccess,
+                    'InputOutput' => $InputOutput,
+
+                ];
+
+                if (!($this->isInProduction())) {
+                    $Adecuability = $this->ValidateInterfaces($InputOutput);
+                    $data['Adecuability'] = $Adecuability;
+                }
+                if (!($this->isInProduction())) {
+                    $this->operationTimer->Stop();
+                    $Timers = $this->getTimers();
+                    $data['Timers'] = $Timers;
+                }
+                $title = $info . ': ' . $this->monitoredObject;
+                $this->LogMessage('Performance', $level, $title, $info, $data, null);
             }
-            $InputOutput = [
-                'Input' => $this->DTO->getInitialData(null, true),
-                'Output' => $this->DTO->getResults(null, true),
-            ];
-            $Adecuability = $this->ValidateInterfaces($InputOutput);
-            $this->operationTimer->Stop();
-            $Timers = $this->getTimers();
-            $data = [
-                'Success' => $wasSuccess,
-                'Timers' => $Timers,
-                'InputOutput' => $InputOutput,
-                'Adecuability' => $Adecuability,
-            ];
-            $title = $info . ': ' . $this->monitoredObject;
-            $this->LogMessage('Performance', $level, $title, $info, $data, null);
         } catch (Throwable $ex) {
             throw new ErrorInServicePerformanceService(['errors' => $ex->getMessage()], $ex);
         }
@@ -153,6 +160,13 @@ class ServicePerformance
         $timer = new AdvancedTimer();
         $timer->Start($TimerName);
         return $timer;
+    }
+
+    private function isInProduction()
+    {
+        if (app()->environment() === 'production') {
+            return true;
+        }
     }
 
 }
