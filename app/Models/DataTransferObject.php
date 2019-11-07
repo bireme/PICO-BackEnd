@@ -15,6 +15,7 @@ use PICOExplorer\Exceptions\Exceptions\AppError\TheModelIsNotInstanceOfMainModel
 use PICOExplorer\Exceptions\Exceptions\AppError\TheModelIsNull;
 use PICOExplorer\Facades\AdvancedLoggerFacade;
 use PICOExplorer\Facades\SpecialValidatorFacade;
+use PICOExplorer\Models\DataModels\BasicModel;
 use PICOExplorer\Models\DataModels\DeCSModel;
 use PICOExplorer\Models\DataModels\IntegrationDeCSModel;
 use PICOExplorer\Models\DataModels\IntegrationResultsNumberModel;
@@ -45,8 +46,7 @@ class DataTransferObject
             case 'QueryBuild':
                 return new QueryBuildModel();
             default:
-                throw new ModelNameDoesNotExistInDTOBinds(['modelName' => $modelName]);
-                break;
+                return new BasicModel();
         }
     }
 

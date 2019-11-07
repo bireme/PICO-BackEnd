@@ -147,7 +147,7 @@ export function getComparisonGlobalPreviouslySaved(PICOnum) {
 }
 
 export function resNumSetHREF(objResNum, value) {
-    objResNum.attr('href', value);
+    objResNum.attr('data-href', value);
 }
 
 export function resNumSetNumber(objSpan, value) {

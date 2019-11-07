@@ -34,7 +34,7 @@ class ResultsNumberIntegrationProcess extends ServiceEntryPoint implements Servi
         $results = [];
         $results['ResultsNumber'] = $XMLresults;
         $results['query'] = $query;
-        $results['ResultsURL'] = 'http://pesquisa.bvsalud.org/portal/?count=20&q=' . $results['query'];
+        $results['ResultsURL'] = $results['query'];
         return $results;
     }
 
