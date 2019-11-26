@@ -26,7 +26,7 @@ Ubicar en la carpeta deseada de la Virtual Machine
 **Se asume que:**
 * Existen múltiples apps en la VM
 * Todos los archivos de la VM están ocultos al público
-* Todos los archivos de la VM están protegido en modo lectura
+* Todos los archivos de la VM están protegidos en modo lectura
 * Los archivos y folders visibles de cada app se asignan mediante un .htaccess
 * Los archivos y folders modificables de cada app se asignan mediante un .htaccess
  
@@ -47,7 +47,7 @@ UNA VEZ INSTALADA, ES INDISPENSABLE VERIFICAR QUE .ENV Y .ENV.EXAMPLE QUEDEN OCU
 
 **Creación de un Virtual Host**
 
-* Añadir en system32/drivers/etc/host/ unas líneas similares a estas
+* Añadir en `system32/drivers/etc/host/` unas líneas similares a estas
 ```
 127.0.0.1      PICOSearch.localhost/
 ```
@@ -67,8 +67,8 @@ CustomLog "logs/PICOSearch.localhost-access.log" common
 
 * No debe existir en el root un server.php, sino un index.php. Si existe, cambiarle el nombre a index.php
 * Se debe verificar que el .htaccess esté en el root de la app y no en public
-* La carpeta /public/ quedará inaccesible y el su contenido será desplegado en picosearch.localhost/, si se busca picosearch.localhost/ lanzará error 404
-* Para personalizar la integración entre la app y la VM, es necesario reconfigurar el .htaccess en el folder root de la app
+* La carpeta `/public/` quedará inaccesible y su contenido será desplegado en `picosearch.localhost/`, si se busca `picosearch.localhost/` lanzará error 404
+* Para personalizar la integración entre la app y la VM, es necesario reconfigurar el .htaccess en el folder `root` de la app
 
 #### 4. Primera instalación
 
@@ -108,14 +108,14 @@ ADMIN_DATA=AdminEmail1@server.com:AdminPass,AdminEmail2@server.com:AdminPass2
 
 * Realizar este paso cada vez que se instale la app
 * Realizar este paso si ocurren errores inexplicables
-* Borrar el contenido de la siguiente carpeta con toodos sus contenidos
+* Borrar el contenido de la siguiente carpeta con todos sus contenidos
 ```
 /bootstrap/cache/*
 ```
 
 #### 6. Archivos de Configuración
 
-Se encuentran en la carpeta /config/ como archivos .php
+Se encuentran en la carpeta `/config/` como archivos .php
 
 * **analytics.php =>** Config de google analytics
 * **languages.php =>** Lista de locales
@@ -124,7 +124,7 @@ Se encuentran en la carpeta /config/ como archivos .php
 
 #### 7. Archivos de locale
 
-Se encuentran en /resources/lang/ e incluye locales para cuatro idiomas, que se pueden modificar
+Se encuentran en `/resources/lang/` e incluye locales para cuatro idiomas, que se pueden modificar
 * **en =>** Inglés
 * **es =>** Español
 * **fr =>** Francés
@@ -175,9 +175,9 @@ PICOSearcher se alínea con la misión y visión de BIREME, y busca ser el busca
 ### Requerimientos funcionales
 
 La app debe ser capaz de:
-* Brindar ayudas de usuario y mensajes de error útiles y comprendibles
+* Brindar ayudas de usuario y mensajes de error útiles y comprensibles
 * Debe tener una interfaz atractiva
-* Debe entregar datos precisos y de utlilidad para los investigadores biomédicos
+* Debe entregar datos precisos y de utilidad para los investigadores biomédicos
 * El algoritmo de número de resultados tiene que entregar el número de resultados para cada ecuación y para las intersecciones de P-I-C-O según se ha detallado previamente
 * Se debe almacenar en la capa de presentación los datos ya obtenidos para evitar consumo adicional de recursos
 * Se debe poder escoger fácilmente los DeCS importados
@@ -254,16 +254,16 @@ Se seleccionó una arquitectura en capas con MVC y microservicios unidos mediant
 * Se dividió la arquitectura en las capas de presentación, negocio, integración y DTO. Todo desplegado en un único nodo, por petición de los stakeholders
 * La presentación estará orientada a los NFR de usabilidad: atractibilidad, entendibilidad, aprendizaje
 * El patrón MVC en la capa de negocio permite un enfoque en los modelos, donde yacen los datos. Favorece la funcionalidad al permitir un manejo de la adecuación y exactitud de los datos entregados a través de las reglas de validación de los modelos y de la gestión del DTO
-* El patrón de microservicios, presente tanto en la capa de negocios como integración, permite a los controladores delegar su función, aumentando la mantebilidad y tolerancia a fallos, de modo que un fallo en un microservicio no genere una caída del sistema. Además aumenta la facilidad para encontrar errores y permite testear las entradas y salidas de cada microservicio, fortaleciendo la adecuación y exactitud de los datos entregados
-* El patrón de consumo de web-service, presente en la capa de integración, y que enlaza con los web-service de BIREME, está orientado a la interoperabilidad, disponibilidad y tolerancia a fallos. El sistema de manejo de errores permite continuar la operación si los datos no se extran o no son correctos y además posee un algoritmo de Retry y loggeo
+* El patrón de microservicios, presente tanto en la capa de negocios como integración, permite a los controladores delegar su función, aumentando la mantenibilidad y tolerancia a fallos, de modo que un fallo en un microservicio no genere una caída del sistema. Además aumenta la facilidad para encontrar errores y permite testear las entradas y salidas de cada microservicio, fortaleciendo la adecuación y exactitud de los datos entregados
+* El patrón de consumo de web-service, presente en la capa de integración, y que enlaza con los web-service de BIREME, está orientado a la interoperabilidad, disponibilidad y tolerancia a fallos. El sistema de manejo de errores permite continuar la operación si los datos no se extraen o no son correctos y además posee un algoritmo de Retry y loggeo
 
 
 #### Lenguajes, frameworks y protocolos
 
 * Se escogió Bootstrap para el Front-End por petición de los stakeholders, lo cual permitiría una mejor experiencia de usuario
 * Se escogió PHP por petición de los stakeholders, para las demás capas
-* Se escogió Laravel por ser el framework más conocido de MVC en PHP, lo cual permitiría incluir muchas dependecias que agilizar el proceso de construcción
-* Se uso protocolo HTTP para la transferencia de datos
+* Se escogió Laravel por ser el framework más conocido de MVC en PHP, lo cual permitiría incluir muchas dependencias que agilizar el proceso de construcción
+* Se usó protocolo HTTP para la transferencia de datos
 
 ### Rutas relevantes
 
@@ -276,10 +276,10 @@ El folder root donde están contenidas las imagenes css y demás es el folder
 
 **Folders de la app
 
-* .htaccess está ubicado en el folder root por encima de /public/ 
-* Todos los folders estará ocultos excepto /public/ que se expondrá mediante .htaccess
-* La carpeta /storage/ debe ser reescribible en tiempo real
-* /root/public/ generará error 404. Ya que la /public/ se redireccionó al estado anterior
+* .htaccess está ubicado en el folder root por encima de `/public/` 
+* Todos los folders estará ocultos excepto `/public/` que se expondrá mediante .htaccess
+* La carpeta `/storage/` debe ser reescribible en tiempo real
+* `/root/public/` generará error 404. Ya que la `/public/` se redireccionó al estado anterior
 * Se debe tener especial cuidado con NO EXPONER el folder root, donde se encuentran los .env
 
 #### Rutas relevantes
