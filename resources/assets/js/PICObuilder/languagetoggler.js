@@ -21,12 +21,12 @@ function setLocalButtonLanguage() {
     });
     $(document).find('[id^=ResNumLocal]').each(function () {
         let PICOnum = getPICOnumFromObjId($(this));
-        $(this).find('label').first().text(PICOs[PICOnum - 1]);
+        $(this).find('.label').first().text(PICOs[PICOnum - 1]);
     });
 }
 
 function setResNumAltTextGlobal() {
-    $(document).find('a[id^=ResNum]').each(function () {
+    $(document).find('input[id^=ResNum]').each(function () {
         if ($(this).find('span').first().hasClass('fa-redo')) {
             $(this).attr('data-original-title', translate('pressres'));
         } else {

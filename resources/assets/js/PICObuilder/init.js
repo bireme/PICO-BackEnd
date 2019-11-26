@@ -6,7 +6,6 @@ import {isHiddenBootstrapObj} from "./hideshow.js";
 import {ChangeLocale} from "./localepreservedata.js";
 import {OpenInNewTab} from "./debug.js";
 import {ChangeSeekerHandler} from "./changeseeker.js";
-import {eventResultsExplore} from "./resultsmanager.js";
 
 ////PUBLIC FUNCTIONS
 
@@ -65,12 +64,6 @@ export function initEvents() {
         ChangeDeCSLanguages();
         UnBlockButton($(this));
     });
-    $(document).find('.ResNumBtn').click(function () {
-        BlockButton($(this));
-        var query=$(this).attr('data-href');
-        eventResultsExplore(query);
-        UnBlockButton($(this));
-    });
     $(modal2).find('.btn-continue').click(function () {
         BlockButton($(this));
         $('#closemodal2').click();
@@ -111,26 +104,7 @@ export function initEvents() {
     $(document).find('.studytypecheckbox').change(function() {
         ChangeSeekerHandler(5);
     });
-    $(document).find('a[id^=ResNum]').click(function (e) {
-        BlockButton($(this));
-        let PICOnum = ($(this).attr('id')).substr(-1);
-        if (PICOnum === 6) {
-            let obj = $(this).find('span').first();
-            if (isHiddenBootstrapObj(obj)) {
-                ManageResultsNumber(5);
-                UnBlockButton($(this));
-                return;
-            }
-        }
-        if ($(this).find('.PICOiconzeroElement').is(":hover")) {
-            e.preventDefault();
-            InfoNoResults();
-            UnBlockButton($(this));
-            return;
-        }
-        CheckExistantHREF($(this));
-        UnBlockButton($(this));
-    });
+
     $(document).find('#FinalGlobal').click(function () {
         if(isHiddenBootstrapObj($('#finalupdated'))){
             console.log('calculating data');
@@ -142,14 +116,14 @@ export function initEvents() {
             ManageResultsNumber(5);
             UnBlockButton($(this));
         }else{
-            console.log('opening href');
-            BlockButton($(this));
-            if (IsLoading()) {
-                UnBlockButton($(this));
-                return;
-            }
-            OpenInNewTab($(this).attr('data-href'));
-            UnBlockButton($(this));
+            //console.log('opening href');
+            //BlockButton($(this));
+            //if (IsLoading()) {
+                //UnBlockButton($(this));
+                //return;
+                //}
+            //OpenInNewTab($(this).attr('data-href'));
+            //UnBlockButton($(this));
         }
     });
 

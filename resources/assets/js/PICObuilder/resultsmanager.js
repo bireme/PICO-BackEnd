@@ -69,13 +69,13 @@ function eventResultsNumber(PICOnum, queryobject) {
     });
 }
 
-export function eventResultsExplore(query) {
-    let url = "Results";
-    let data = {
-        query: query
-    };
-    POSTrequest(url, data, function (Data) {
-        window.open(url,'_blank');
-    });
-}
+//export function eventResultsExplore(query) {
+//    let url = "Results";
+//    let data = {
+//        query: query
+//    };
+//    POSTrequest(url, data, function (Data) {
+//        window.open(url,'_blank');
+//    });
+//}
 

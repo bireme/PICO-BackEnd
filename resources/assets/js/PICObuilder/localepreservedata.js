@@ -58,7 +58,7 @@ function ObtainOldData() {
     let TOSdata = [];
     $('#collapse5').find('.form-group').each(function () {
         if ($(this).find('input').first().is(':checked')) {
-            let txt = $(this).find('label').first().text();
+            let txt = $(this).find('.label').first().text();
             TOSdata.push(txt);
         }
     });
