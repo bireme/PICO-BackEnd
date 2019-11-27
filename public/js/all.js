@@ -13476,7 +13476,7 @@ function setGlobalTitle(PICOnum, globaltitle) {
   }
 
   var globalresnum = getobjResNum(PICOnum, true);
-  $(globalresnum).find('label').first().text(globaltitle);
+  $(globalresnum).find('.label').first().text(globaltitle);
 }
 function getobjResNum(PICOnum, isGlobal) {
   var objResNum = null;
@@ -13516,13 +13516,17 @@ function MustRecalculateFinal() {
 function JustUpdatedFinal(resultsNumber, resultsURL) {
   Object(_hideshow__WEBPACK_IMPORTED_MODULE_1__["hideBootstrapObj"])($('#finalmustupdate'));
   Object(_hideshow__WEBPACK_IMPORTED_MODULE_1__["showBootstrapObj"])($('#finalupdated'));
-  $('#FinalGlobal').attr('data-href', resultsURL);
+  $('#FinalGlobal').parent().find('.data-href').val(resultsURL);
   resNumSetNumber($('#finalupdated'), resultsNumber);
   ChangeLogger(5, true, -1);
   saveToComparisonGlobal(5);
 }
 function JustUpdated(PICOnum, isGlobal, initial, resultsNumber, resultsURL) {
   var obj = getObjects(PICOnum, isGlobal);
+
+  if (resultsNumber === null) {
+    resultsNumber = "?";
+  }
 
   if (initial === true) {
     hideDataButton(obj.ResNum);
@@ -13608,7 +13612,7 @@ function getComparisonGlobalPreviouslySaved(PICOnum) {
   return $(getobjResNum(PICOnum, true)).attr('data-comparison');
 }
 function resNumSetHREF(objResNum, value) {
-  objResNum.attr('data-href', value);
+  objResNum.parent().find('.data-href').val(value);
 }
 function resNumSetNumber(objSpan, value) {
   if (value === 0) {
@@ -14286,8 +14290,6 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _localepreservedata_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./localepreservedata.js */ "./resources/assets/js/PICObuilder/localepreservedata.js");
 /* harmony import */ var _debug_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./debug.js */ "./resources/assets/js/PICObuilder/debug.js");
 /* harmony import */ var _changeseeker_js__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./changeseeker.js */ "./resources/assets/js/PICObuilder/changeseeker.js");
-/* harmony import */ var _resultsmanager_js__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./resultsmanager.js */ "./resources/assets/js/PICObuilder/resultsmanager.js");
-
 
 
 
@@ -14360,12 +14362,6 @@ function initEvents() {
     Object(_initfunctions_js__WEBPACK_IMPORTED_MODULE_0__["ChangeDeCSLanguages"])();
     Object(_initfunctions_js__WEBPACK_IMPORTED_MODULE_0__["UnBlockButton"])($(this));
   });
-  $(document).find('.ResNumBtn').click(function () {
-    Object(_initfunctions_js__WEBPACK_IMPORTED_MODULE_0__["BlockButton"])($(this));
-    var query = $(this).attr('data-href');
-    Object(_resultsmanager_js__WEBPACK_IMPORTED_MODULE_8__["eventResultsExplore"])(query);
-    Object(_initfunctions_js__WEBPACK_IMPORTED_MODULE_0__["UnBlockButton"])($(this));
-  });
   $(modal2).find('.btn-continue').click(function () {
     Object(_initfunctions_js__WEBPACK_IMPORTED_MODULE_0__["BlockButton"])($(this));
     $('#closemodal2').click();
@@ -14407,30 +14403,6 @@ function initEvents() {
   $(document).find('.studytypecheckbox').change(function () {
     Object(_changeseeker_js__WEBPACK_IMPORTED_MODULE_7__["ChangeSeekerHandler"])(5);
   });
-  $(document).find('a[id^=ResNum]').click(function (e) {
-    Object(_initfunctions_js__WEBPACK_IMPORTED_MODULE_0__["BlockButton"])($(this));
-    var PICOnum = $(this).attr('id').substr(-1);
-
-    if (PICOnum === 6) {
-      var obj = $(this).find('span').first();
-
-      if (Object(_hideshow_js__WEBPACK_IMPORTED_MODULE_4__["isHiddenBootstrapObj"])(obj)) {
-        Object(_initfunctions_js__WEBPACK_IMPORTED_MODULE_0__["ManageResultsNumber"])(5);
-        Object(_initfunctions_js__WEBPACK_IMPORTED_MODULE_0__["UnBlockButton"])($(this));
-        return;
-      }
-    }
-
-    if ($(this).find('.PICOiconzeroElement').is(":hover")) {
-      e.preventDefault();
-      Object(_initfunctions_js__WEBPACK_IMPORTED_MODULE_0__["InfoNoResults"])();
-      Object(_initfunctions_js__WEBPACK_IMPORTED_MODULE_0__["UnBlockButton"])($(this));
-      return;
-    }
-
-    Object(_initfunctions_js__WEBPACK_IMPORTED_MODULE_0__["CheckExistantHREF"])($(this));
-    Object(_initfunctions_js__WEBPACK_IMPORTED_MODULE_0__["UnBlockButton"])($(this));
-  });
   $(document).find('#FinalGlobal').click(function () {
     if (Object(_hideshow_js__WEBPACK_IMPORTED_MODULE_4__["isHiddenBootstrapObj"])($('#finalupdated'))) {
       console.log('calculating data');
@@ -14443,17 +14415,14 @@ function initEvents() {
 
       Object(_initfunctions_js__WEBPACK_IMPORTED_MODULE_0__["ManageResultsNumber"])(5);
       Object(_initfunctions_js__WEBPACK_IMPORTED_MODULE_0__["UnBlockButton"])($(this));
-    } else {
-      console.log('opening href');
-      Object(_initfunctions_js__WEBPACK_IMPORTED_MODULE_0__["BlockButton"])($(this));
-
-      if (Object(_loadingrequest_js__WEBPACK_IMPORTED_MODULE_3__["IsLoading"])()) {
-        Object(_initfunctions_js__WEBPACK_IMPORTED_MODULE_0__["UnBlockButton"])($(this));
-        return;
-      }
-
-      Object(_debug_js__WEBPACK_IMPORTED_MODULE_6__["OpenInNewTab"])($(this).attr('data-href'));
-      Object(_initfunctions_js__WEBPACK_IMPORTED_MODULE_0__["UnBlockButton"])($(this));
+    } else {//console.log('opening href');
+      //BlockButton($(this));
+      //if (IsLoading()) {
+      //UnBlockButton($(this));
+      //return;
+      //}
+      //OpenInNewTab($(this).attr('data-href'));
+      //UnBlockButton($(this));
     }
   });
   $('#collapse5').find('.studytypecheckbox').click(function () {
@@ -14709,12 +14678,12 @@ function setLocalButtonLanguage() {
   });
   $(document).find('[id^=ResNumLocal]').each(function () {
     var PICOnum = Object(_datadictionary_js__WEBPACK_IMPORTED_MODULE_2__["getPICOnumFromObjId"])($(this));
-    $(this).find('label').first().text(PICOs[PICOnum - 1]);
+    $(this).find('.label').first().text(PICOs[PICOnum - 1]);
   });
 }
 
 function setResNumAltTextGlobal() {
-  $(document).find('a[id^=ResNum]').each(function () {
+  $(document).find('input[id^=ResNum]').each(function () {
     if ($(this).find('span').first().hasClass('fa-redo')) {
       $(this).attr('data-original-title', Object(_translator_js__WEBPACK_IMPORTED_MODULE_0__["translate"])('pressres'));
     } else {
@@ -14993,7 +14962,7 @@ function ObtainOldData() {
   var TOSdata = [];
   $('#collapse5').find('.form-group').each(function () {
     if ($(this).find('input').first().is(':checked')) {
-      var txt = $(this).find('label').first().text();
+      var txt = $(this).find('.label').first().text();
       TOSdata.push(txt);
     }
   });
@@ -15085,13 +15054,12 @@ function BuildImprovedQuery(data, PICOnum) {
 /*!***********************************************************!*\
   !*** ./resources/assets/js/PICObuilder/resultsmanager.js ***!
   \***********************************************************/
-/*! exports provided: getResultsNumber, eventResultsExplore */
+/*! exports provided: getResultsNumber */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* WEBPACK VAR INJECTION */(function($) {/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "getResultsNumber", function() { return getResultsNumber; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "eventResultsExplore", function() { return eventResultsExplore; });
 /* harmony import */ var _datadictionary__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./datadictionary */ "./resources/assets/js/PICObuilder/datadictionary.js");
 /* harmony import */ var _translator_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./translator.js */ "./resources/assets/js/PICObuilder/translator.js");
 /* harmony import */ var _loadingrequest_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./loadingrequest.js */ "./resources/assets/js/PICObuilder/loadingrequest.js");
@@ -15170,17 +15138,15 @@ function eventResultsNumber(PICOnum, queryobject) {
   Object(_loadingrequest_js__WEBPACK_IMPORTED_MODULE_2__["POSTrequest"])(url, data, function (Data) {
     setResultsNumber(Data, PICOnum);
   });
-}
-
-function eventResultsExplore(query) {
-  var url = "Results";
-  var data = {
-    query: query
-  };
-  Object(_loadingrequest_js__WEBPACK_IMPORTED_MODULE_2__["POSTrequest"])(url, data, function (Data) {
-    window.open(url, '_blank');
-  });
-}
+} //export function eventResultsExplore(query) {
+//    let url = "Results";
+//    let data = {
+//        query: query
+//    };
+//    POSTrequest(url, data, function (Data) {
+//        window.open(url,'_blank');
+//    });
+//}
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! jquery */ "./node_modules/jquery/dist/jquery.js")))
 
 /***/ }),

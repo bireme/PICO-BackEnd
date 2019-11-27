@@ -14,7 +14,7 @@ export function setGlobalTitle(PICOnum, globaltitle) {
         return;
     }
     let globalresnum = getobjResNum(PICOnum, true)
-    $(globalresnum).find('label').first().text(globaltitle);
+    $(globalresnum).find('.label').first().text(globaltitle);
 }
 
 export function getobjResNum(PICOnum, isGlobal) {
@@ -53,7 +53,7 @@ export function MustRecalculateFinal() {
 export function JustUpdatedFinal(resultsNumber, resultsURL) {
     hideBootstrapObj($('#finalmustupdate'));
     showBootstrapObj($('#finalupdated'));
-    $('#FinalGlobal').attr('data-href',resultsURL);
+    $('#FinalGlobal').parent().find('.data-href').val(resultsURL);
     resNumSetNumber($('#finalupdated'), resultsNumber);
     ChangeLogger(5, true, -1);
     saveToComparisonGlobal(5);
@@ -62,6 +62,9 @@ export function JustUpdatedFinal(resultsNumber, resultsURL) {
 
 export function JustUpdated(PICOnum, isGlobal, initial, resultsNumber, resultsURL) {
     let obj = getObjects(PICOnum, isGlobal);
+    if(resultsNumber===null){
+        resultsNumber="?";
+    }
     if (initial === true) {
         hideDataButton(obj.ResNum);
     } else {
@@ -147,7 +150,7 @@ export function getComparisonGlobalPreviouslySaved(PICOnum) {
 }
 
 export function resNumSetHREF(objResNum, value) {
-    objResNum.attr('data-href', value);
+    objResNum.parent().find('.data-href').val(value);
 }
 
 export function resNumSetNumber(objSpan, value) {
