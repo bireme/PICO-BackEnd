@@ -6,7 +6,6 @@ import {isHiddenBootstrapObj} from "./hideshow.js";
 import {ChangeLocale} from "./localepreservedata.js";
 import {OpenInNewTab} from "./debug.js";
 import {ChangeSeekerHandler} from "./changeseeker.js";
-import {eventResultsExplore} from "./resultsmanager.js";
 
 ////PUBLIC FUNCTIONS
 
@@ -65,12 +64,6 @@ export function initEvents() {
         ChangeDeCSLanguages();
         UnBlockButton($(this));
     });
-    $(document).find('.ResNumBtn').click(function () {
-        BlockButton($(this));
-        var query=$(this).attr('data-href');
-        eventResultsExplore(query);
-        UnBlockButton($(this));
-    });
     $(modal2).find('.btn-continue').click(function () {
         BlockButton($(this));
         $('#closemodal2').click();
@@ -126,9 +119,9 @@ export function initEvents() {
             //console.log('opening href');
             //BlockButton($(this));
             //if (IsLoading()) {
-                //UnBlockButton($(this));
-                //return;
-                //}
+            //UnBlockButton($(this));
+            //return;
+            //}
             //OpenInNewTab($(this).attr('data-href'));
             //UnBlockButton($(this));
         }
