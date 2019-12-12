@@ -3,17 +3,19 @@
     <ul class="nav nav-tabs" id="{{$titleid}}" role="tablist">
         <?php
         $count = 0;
+        $main=false;
         ?>
         @foreach($content as $tabtitle => $tabdata)
-            @if(count($tabdata)>0)
                 <?php
                 $count++;
-                if ($count === 1) {
+                if ($main === false) {
                     $res = 'active show';
+                    $main=true;
                 } else {
                     $res = '';
                 }
                 ?>
+                    @if(count($tabdata)>0)
                 <li class="nav-item">
                     <a class="nav-link form-tab {{ $res }}" id="{{$titleid.$count}}-tab" data-toggle="tab"
                        href="#{{$titleid.$count}}-cont"
@@ -29,17 +31,19 @@
         <?php
         $count = 0;
         $counttwo = 0;
+        $main=false;
         ?>
         @foreach($content as $tabtitle => $tabdata)
-            @if(count($tabdata)>0)
                 <?php
                 $count++;
-                if ($count === 1) {
+                if ($main === false) {
                     $res = 'active show';
+                    $main=true;
                 } else {
                     $res = '';
                 }
                 ?>
+                    @if(count($tabdata)>0)
                 <div class="tab-pane fade form-tab-cont {{ $res }}" id="{{$titleid.$count}}-cont" role="tabpanel"
                      data-name="{{$tabtitle}}"
                      aria-labelledby="{{$titleid.$count}}-tab">
