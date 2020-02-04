@@ -16,15 +16,17 @@ export function initEvents() {
             UnBlockButton($(this));
             return;
         }
-        if ($(this).find('.startlanguage').is(":hover")) {
-            e.preventDefault();
-            $('#modallanguage').modal('show');
-            UnBlockButton($(this));
-            return;
-        }
         OnExpandDeCS($(this));
         UnBlockButton($(this));
     });
+
+    $('.ConfigDeCS').click(function (e) {
+        console.log("button.ConfigDeCS");
+        e.preventDefault();
+        $('#modallanguage').modal('show');
+        UnBlockButton($(this));
+    });
+
     let modal2 =$('#modal2');
     let modal3 =$('#modal3');
 
