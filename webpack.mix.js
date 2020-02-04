@@ -48,7 +48,7 @@ mix.autoload({
     jquery: ['$', 'global.jQuery']
 });
 mix.styles(['resources/assets/css/bootstrap.css',
-    'resources/assets/css/dataTables.css',
+    'resources/assets/css/dataTables.min.css',
     'resources/assets/css/logstyle.css'], 'public/css/log.css')
     .js(['resources/assets/js/jquery.js',
         'resources/assets/js/bootstrap.js',
