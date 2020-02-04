@@ -22,8 +22,7 @@
     <div class="row margin1">
         <div class="col-12">
             <button class="btn btn-primary margin2M ExpandDeCS"
-                    id="Exp{{ $PICOiterative }}">{{ __('lang.butexp') }}<span
-                    class="badge badge-light badgeM startlanguage" style="margin-left:15px;"></span></button>
+                    id="Exp{{ $PICOiterative }}">{{ __('lang.butexp') }}</button>
             <div class="btn-group">
                 <div>
                     <form method="post"

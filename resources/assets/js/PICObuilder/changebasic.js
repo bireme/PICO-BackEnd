@@ -71,6 +71,8 @@ export function JustUpdated(PICOnum, isGlobal, initial, resultsNumber, resultsUR
         resNumSetHREF(obj.ResNum, resultsURL);
         resNumSetNumber(obj.Span, resultsNumber);
         showDataButton(obj.ResNum);
+        // hide result button aftre present data button
+        hideBootstrapObj('button.calcresbut[data-piconum=' + PICOnum + ']');
         if(isGlobal){
             saveToComparisonGlobal(PICOnum);
         }else {
@@ -239,6 +241,7 @@ function CalcResAsReady(objCalcRes) {
 }
 
 function CalcResAsMustUpdate(objCalcRes) {
+    showBootstrapObj(objCalcRes);
     $(objCalcRes).html('<i class="fas fa-sync-alt"></i>');
     $(objCalcRes).addClass(getCalcResColorClass(objCalcRes));
     $(objCalcRes).removeClass(getCalcResColorClass(-1));
@@ -262,4 +265,3 @@ function getobjSpan(PICOnum, isGlobal) {
     let objResNum = getobjResNum(PICOnum, isGlobal).first();
     return objResNum.find('span').first();
 }
-
