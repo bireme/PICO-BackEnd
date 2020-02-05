@@ -11,5 +11,28 @@
                 </div>
             </div>
         @endforeach
+
+        <div>
+            <h3 class="result text-center">
+                <div class="btn-group">
+                    <b>
+                        <div>
+                            <form method="post"
+                                  action="https://pesquisa.bvsalud.org/portal/" id="form-final">
+                                <input class="data-href" name="q" type="hidden" value="">
+                            </form>
+                            <button type="submit" form="form-final" id="FinalGlobal" class="btn btn-info" data-toggle="tooltip"
+                                    data-placement="top" title="" data-piconum="5"
+                                    data-original-title="{{ __('lang.clickres') }}"><p class="p-0 m-0 label nomargin d-inline-block">{{ __('lang.butres') }}</p><span
+                                    id="finalupdated" class="badge badge-light badgeM d-none"
+                                    style="margin-left:15px;"></span></button>
+                        </div>
+                    </b>
+                </div>
+            </h3>
+        </div>
+
+
+
     </div>
 </div>
