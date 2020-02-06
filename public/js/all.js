@@ -13483,10 +13483,6 @@ function isHiddenResNum(PICOnum, isGlobal) {
   return Object(_hideshow__WEBPACK_IMPORTED_MODULE_1__["isHiddenBootstrapObj"])(getobjResNum(PICOnum, isGlobal));
 }
 function setGlobalTitle(PICOnum, globaltitle) {
-  if (PICOnum === 5) {
-    return;
-  }
-
   var globalresnum = getobjResNum(PICOnum, true);
   $(globalresnum).find('.label').first().text(globaltitle);
 }
@@ -13523,12 +13519,16 @@ function MustRecalculateFinal() {
   ChangeLogger(5, true, 0);
   removeHREF($('#FinalGlobal'));
   Object(_hideshow__WEBPACK_IMPORTED_MODULE_1__["showBootstrapObj"])($('#finalmustupdate'));
+  Object(_hideshow__WEBPACK_IMPORTED_MODULE_1__["showBootstrapObj"])($('#FinalGlobal'));
   Object(_hideshow__WEBPACK_IMPORTED_MODULE_1__["hideBootstrapObj"])($('#finalupdated'));
+  Object(_hideshow__WEBPACK_IMPORTED_MODULE_1__["hideBootstrapObj"])($('#PICOSButton'));
 }
 function JustUpdatedFinal(resultsNumber, resultsURL) {
   Object(_hideshow__WEBPACK_IMPORTED_MODULE_1__["hideBootstrapObj"])($('#finalmustupdate'));
+  Object(_hideshow__WEBPACK_IMPORTED_MODULE_1__["hideBootstrapObj"])($('#FinalGlobal'));
   Object(_hideshow__WEBPACK_IMPORTED_MODULE_1__["showBootstrapObj"])($('#finalupdated'));
   $('#FinalGlobal').parent().find('.data-href').val(resultsURL);
+  Object(_hideshow__WEBPACK_IMPORTED_MODULE_1__["showBootstrapObj"])($('#PICOSButton'));
   resNumSetNumber($('#finalupdated'), resultsNumber);
   ChangeLogger(5, true, -1);
   saveToComparisonGlobal(5);
@@ -14322,15 +14322,6 @@ function initEvents() {
       Object(_initfunctions_js__WEBPACK_IMPORTED_MODULE_0__["UnBlockButton"])($(this));
       return;
     }
-    /*
-    if ($(this).find('.startlanguage').is(":hover")) {
-        e.preventDefault();
-        $('#modallanguage').modal('show');
-        UnBlockButton($(this));
-        return;
-    }
-    */
-
 
     Object(_decsmanager_js__WEBPACK_IMPORTED_MODULE_2__["OnExpandDeCS"])($(this));
     Object(_initfunctions_js__WEBPACK_IMPORTED_MODULE_0__["UnBlockButton"])($(this));

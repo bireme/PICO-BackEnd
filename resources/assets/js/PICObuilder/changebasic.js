@@ -47,13 +47,17 @@ export function MustRecalculateFinal() {
     ChangeLogger(5, true, 0);
     removeHREF($('#FinalGlobal'));
     showBootstrapObj($('#finalmustupdate'));
+    showBootstrapObj($('#FinalGlobal'));
     hideBootstrapObj($('#finalupdated'));
+    hideBootstrapObj($('#PICOSButton'));
 }
 
 export function JustUpdatedFinal(resultsNumber, resultsURL) {
     hideBootstrapObj($('#finalmustupdate'));
+    hideBootstrapObj($('#FinalGlobal'));
     showBootstrapObj($('#finalupdated'));
     $('#FinalGlobal').parent().find('.data-href').val(resultsURL);
+    showBootstrapObj($('#PICOSButton'));
     resNumSetNumber($('#finalupdated'), resultsNumber);
     ChangeLogger(5, true, -1);
     saveToComparisonGlobal(5);
@@ -71,7 +75,7 @@ export function JustUpdated(PICOnum, isGlobal, initial, resultsNumber, resultsUR
         resNumSetHREF(obj.ResNum, resultsURL);
         resNumSetNumber(obj.Span, resultsNumber);
         showDataButton(obj.ResNum);
-        // hide result button aftre present data button
+        // hide result button after present data button
         hideBootstrapObj('button.calcresbut[data-piconum=' + PICOnum + ']');
         if(isGlobal){
             saveToComparisonGlobal(PICOnum);
